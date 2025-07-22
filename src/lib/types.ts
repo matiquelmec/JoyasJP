@@ -17,7 +17,7 @@ export interface Product {
   description?: string; // Mantener como opcional si no todos los productos tienen una descripción larga
   imageHint?: string;
   specifications?: { name: string; value: string }[];
-  gallery?: { imageUrl: string; imageHint: string }[];
+  gallery?: { imageUrl: string; imageHint: string; isPrimary?: boolean; }[];
   quantity?: number;
   sku?: string; // Stock Keeping Unit
   variants?: { // For product variations like size, color
