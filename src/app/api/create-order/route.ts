@@ -10,6 +10,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required order information.' }, { status: 400 });
     }
 
+    if (!supabase) {
+      console.error('Supabase client is not initialized.');
+      return NextResponse.json({ error: 'Database connection error.' }, { status: 500 });
+    }
+
     // Llamamos a la función de la base de datos para manejar la transacción
     const { data, error } = await supabase.rpc('create_order_and_update_stock', {
       customer_name_in: customer_name,
