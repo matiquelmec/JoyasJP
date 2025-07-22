@@ -17,7 +17,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
     // Obtener TODOS los productos de la base de datos
     const { data: allProducts, error } = await supabase
       .from('products')
-      .select('*');
+      .select('*') as { data: Product[] | null, error: any };
 
     if (error) {
       console.error('Error fetching products:', error);
