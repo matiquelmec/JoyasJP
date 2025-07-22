@@ -76,4 +76,36 @@ export async function createOrder(orderDetails: {
   return response.json();
 }
 
+export async function getProductById(id: string): Promise<Product | null> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, stock')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching product by ID:', error);
+    return null;
+  }
+
+  return data as Product;
+}
+
+export async function getRelatedProducts(currentProductId: string, category: string): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, stock')
+    .eq('category', category)
+    .neq('id', currentProductId)
+    .gt('stock', 0)
+    .limit(4); // Limita a 4 productos relacionados
+
+  if (error) {
+    console.error('Error fetching related products:', error);
+    return [];
+  }
+
+  return data as Product[];
+}
+
 // You can add more API functions here, e.g., getProductById, createProduct, etc.
