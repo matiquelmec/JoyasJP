@@ -31,7 +31,7 @@ async function getProduct(id: string) {
   // Convertir producto estático al formato correcto
   return {
     ...staticProduct,
-    description: staticProduct.description || `${staticProduct.name} - Joya de alta calidad perfecta para complementar tu estilo personal. Fabricada en ${staticProduct.materials || 'materiales premium'} con acabado ${staticProduct.color?.toLowerCase() || 'elegante'}. ${staticProduct.dimensions ? `Dimensiones: ${staticProduct.dimensions}cm.` : ''} Perfecta para regalar o para uso personal.`,
+    description: staticProduct.detail || `${staticProduct.name} - Joya de alta calidad perfecta para complementar tu estilo personal. Fabricada en ${staticProduct.materials || 'materiales premium'} con acabado ${staticProduct.color?.toLowerCase() || 'elegante'}. ${staticProduct.dimensions ? `Dimensiones: ${staticProduct.dimensions}cm.` : ''} Perfecta para regalar o para uso personal.`,
     imageHint: staticProduct.name, // Corregido de image_hint a imageHint
     sku: staticProduct.id,
     specifications: [
