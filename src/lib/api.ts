@@ -91,14 +91,14 @@ export async function getProductById(id: string): Promise<Product | null> {
   return data as Product;
 }
 
-export async function getRelatedProducts(currentProductId: string, category: string): Promise<Product[]> {
+export async function getRelatedProducts(currentProductId: string, category: string, limit?: number): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*, stock')
     .eq('category', category)
     .neq('id', currentProductId)
     .gt('stock', 0)
-    .limit(4); // Limita a 4 productos relacionados
+    .limit(limit || 4); // Usa el límite proporcionado o 4 por defecto
 
   if (error) {
     console.error('Error fetching related products:', error);
