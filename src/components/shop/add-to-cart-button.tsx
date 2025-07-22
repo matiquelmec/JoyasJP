@@ -5,11 +5,13 @@ import { Product } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 
-interface AddToCartButtonProps {
+import { ButtonProps } from '@/components/ui/button';
+
+interface AddToCartButtonProps extends ButtonProps {
   product: Product;
 }
 
-export function AddToCartButton({ product }: AddToCartButtonProps) {
+export function AddToCartButton({ product, className, size }: AddToCartButtonProps) {
   const { addItem } = useCart();
 
   const handleAddToCart = () => {
