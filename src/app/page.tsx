@@ -7,6 +7,10 @@ import { supabase } from '@/lib/supabase-client';
 import { Product } from '@/lib/types';
 
 async function getFeaturedProducts(): Promise<Product[]> {
+  if (!supabase) {
+    console.warn('Supabase client is not initialized, cannot fetch featured products.');
+    return [];
+  }
   const { data, error } = await supabase
     .from('products')
     .select('*');
