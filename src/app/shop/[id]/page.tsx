@@ -32,7 +32,7 @@ async function getProduct(id: string) {
   return {
     ...staticProduct,
     description: staticProduct.description || `${staticProduct.name} - Joya de alta calidad perfecta para complementar tu estilo personal. Fabricada en ${staticProduct.materials || 'materiales premium'} con acabado ${staticProduct.color?.toLowerCase() || 'elegante'}. ${staticProduct.dimensions ? `Dimensiones: ${staticProduct.dimensions}cm.` : ''} Perfecta para regalar o para uso personal.`,
-    image_hint: staticProduct.name,
+    imageHint: staticProduct.name, // Corregido de image_hint a imageHint
     sku: staticProduct.id,
     specifications: [
       ...(staticProduct.materials ? [{ name: 'Material', value: staticProduct.materials }] : []),
@@ -59,7 +59,7 @@ async function getProduct(id: string) {
         'chile'
       ].filter(Boolean)
     }
-  };
+  } as Product; // Añadida aserción de tipo explícita
 }
 
 // Función para obtener productos relacionados (con fallback)
