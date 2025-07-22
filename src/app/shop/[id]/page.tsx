@@ -34,7 +34,7 @@ async function getProduct(id: string): Promise<Product | null> {
       return null;
     }
 
-    return data as Product;
+    return data as unknown as Product;
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;
