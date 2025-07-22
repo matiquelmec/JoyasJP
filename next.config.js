@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuración para Netlify
@@ -43,6 +45,8 @@ const nextConfig = {
 
   // Webpack config personalizado
   webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src');
+
     // Configuración para manejar archivos estáticos
     config.module.rules.push({
             test: /\.(png|jpe?g|gif|svg|webp)$/i,
