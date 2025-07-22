@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { ProductDetailView } from '@/components/shop/product-detail-view';
 import { getProductById, getRelatedProducts } from '@/lib/api';
 import { products } from '@/lib/products'; // Fallback a los productos estáticos
+import { Product } from '@/lib/types';
 import type { Metadata } from 'next';
 
 interface ProductPageProps {
