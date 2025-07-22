@@ -30,17 +30,16 @@ export function Header() {
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
-      hasScrolled ? "bg-background/80 shadow-lg backdrop-blur-sm" : "bg-transparent"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
+      hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
-      <div className="container mx-auto flex h-24 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
           <Image
             src="/assets/logo.png"
             alt="Joyas JP Logo"
-            width={120}
-            height={120}
-            priority
+            width={160}
+            height={160}
             className="h-full w-auto"
           />
         </Link>
@@ -79,8 +78,8 @@ export function Header() {
                        <Image
                          src="/assets/logo.png"
                          alt="Joyas JP Logo"
-                         width={120}
-                         height={120}
+                         width={160}
+                         height={160}
                          className="h-full w-auto"
                        />
                     </Link>

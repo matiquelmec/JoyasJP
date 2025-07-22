@@ -1,9 +1,16 @@
 import { notFound } from 'next/navigation';
-import { ProductDetailView } from '@/components/shop/product-detail-view';
-import { getProductById, getRelatedProducts } from '@/lib/api';
-import { products } from '@/lib/products'; // Fallback a los productos estáticos
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ArrowLeft, Heart, ShoppingCart, Share2, Star, Truck, Shield, RotateCcw } from 'lucide-react';
+import { supabase } from '@/lib/supabase-client';
 import { Product } from '@/lib/types';
-import type { Metadata } from 'next';
+import { AddToCartButton } from '@/components/shop/add-to-cart-button';
+import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button';
+import { RelatedProducts } from '@/components/shop/related-products';
+import { Metadata } from 'next';
 
 interface ProductPageProps {
   params: {
@@ -11,126 +18,54 @@ interface ProductPageProps {
   };
 }
 
-// Función para obtener producto (con fallback)
-async function getProduct(id: string) {
-  try {
-    // Intentar obtener de Supabase primero
-    const product = await getProductById(id);
-    if (product) {
-      return product;
-    }
-  } catch (error) {
-    console.log('Error fetching from Supabase, using static data:', error);
-  }
-
-  // Fallback a productos estáticos
-  const staticProduct = products.find(p => p.id === id);
-  if (!staticProduct) {
+async function getProduct(id: string): Promise<Product | null> {
+  if (!supabase) {
     return null;
   }
 
-  // Convertir producto estático al formato correcto
-  return {
-    ...staticProduct,
-    description: staticProduct.detail || `${staticProduct.name} - Joya de alta calidad perfecta para complementar tu estilo personal. Fabricada en ${staticProduct.materials || 'materiales premium'} con acabado ${staticProduct.color?.toLowerCase() || 'elegante'}. ${staticProduct.dimensions ? `Dimensiones: ${staticProduct.dimensions}cm.` : ''} Perfecta para regalar o para uso personal.`,
-    imageHint: staticProduct.name, // Corregido de image_hint a imageHint
-    sku: staticProduct.id,
-    specifications: [
-      ...(staticProduct.materials ? [{ name: 'Material', value: staticProduct.materials }] : []),
-      ...(staticProduct.dimensions ? [{ name: 'Dimensiones', value: `${staticProduct.dimensions} cm` }] : []),
-      ...(staticProduct.color ? [{ name: 'Color', value: staticProduct.color }] : []),
-      { name: 'Garantía', value: '6 meses por defectos de fabricación' },
-      { name: 'Cuidado', value: 'Limpiar con paño suave y seco' }
-    ],
-    gallery: [{
-      imageUrl: staticProduct.imageUrl,
-      imageHint: staticProduct.name,
-      isPrimary: true
-    }],
-    seo: {
-      title: `${staticProduct.name} - Joyas JP`,
-      description: `${staticProduct.category} ${staticProduct.name} en ${staticProduct.color || 'acabado premium'}. ${staticProduct.materials || 'Material de alta calidad'}. Compra online con envío gratis.`,
-      keywords: [
-        staticProduct.category,
-        staticProduct.color?.toLowerCase(),
-        staticProduct.materials?.toLowerCase(),
-        'joyería',
-        'accesorios',
-        'joyas jp',
-        'chile'
-      ].filter(Boolean)
-    }
-  } as Product; // Añadida aserción de tipo explícita
-}
-
-// Función para obtener productos relacionados (con fallback)
-async function getRelated(productId: string, category: string) {
   try {
-    // Intentar obtener de Supabase primero
-    const related = await getRelatedProducts(productId, category, 4);
-    if (related.length > 0) {
-      return related;
-    }
-  } catch (error) {
-    console.log('Error fetching related from Supabase, using static data:', error);
-  }
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  // Fallback a productos estáticos
-  return products
-    .filter(p => p.category === category && p.id !== productId && p.stock > 0)
-    .slice(0, 4);
+    if (error || !data) {
+      return null;
+    }
+
+    return data as Product;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
 }
 
-// Generar metadata dinámico
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const product = await getProduct(params.id);
 
   if (!product) {
     return {
-      title: 'Producto no encontrado - Joyas JP',
-      description: 'El producto que buscas no existe.',
+      title: 'Producto no encontrado | Joyas JP',
     };
   }
 
   return {
-    title: product.seo?.title || `${product.name} - Joyas JP`,
-    description: product.seo?.description || product.description,
-    keywords: product.seo?.keywords?.join(', '),
+    title: `${product.name} | Joyas JP`,
+    description: product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
     openGraph: {
-      title: product.name,
-      description: product.description,
+      title: `${product.name} | Joyas JP`,
+      description: product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
       images: [
         {
           url: product.imageUrl,
           width: 800,
           height: 800,
           alt: product.name,
-        }
+        },
       ],
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: product.name,
-      description: product.description,
-      images: [product.imageUrl],
     },
   };
-}
-
-// Generar rutas estáticas para productos principales
-export async function generateStaticParams() {
-  // Generar para los primeros productos más populares
-  const popularProductIds = [
-    'PCD_1', 'PCD_2', 'PCD_3', 'PCD_4', 'PCD_5',
-    'PCP_1', 'PCP_2', 'PCP_3', 'PCP_4', 'PCP_5',
-    'PDD_1', 'PDD_2', 'PDD_3', 'PDD_4', 'PDD_5',
-    'PPP_1', 'PPP_2', 'PPP_3', 'PAX_1', 'PAX_2'
-  ];
-
-  return popularProductIds.map((id) => ({
-    id: id,
-  }));
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -140,12 +75,139 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const relatedProducts = await getRelated(params.id, product.category);
+  const formattedPrice = new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    minimumFractionDigits: 0,
+  }).format(product.price);
 
   return (
-    <ProductDetailView
-      product={product}
-      relatedProducts={relatedProducts}
-    />
+    <div className="min-h-screen bg-background">
+      {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
+          <Link
+            href="/shop"
+            className="flex items-center gap-2 hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver a la tienda
+          </Link>
+          <span>/</span>
+          <span className="text-foreground">{product.name}</span>
+        </nav>
+
+        {/* Main Product Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+
+          {/* Product Image */}
+          <div className="space-y-6">
+            <div className="relative aspect-square w-full max-w-lg mx-auto lg:max-w-none bg-muted/30 rounded-lg overflow-hidden">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+
+              {/* Image Actions */}
+              <div className="absolute top-4 right-4">
+                <AddToWishlistButton product={product} />
+              </div>
+            </div>
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-8">
+
+            {/* Header */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="capitalize">
+                  {product.category}
+                </Badge>
+                {product.featured && (
+                  <Badge className="bg-primary/10 text-primary">
+                    Destacado
+                  </Badge>
+                )}
+              </div>
+
+              <h1 className="text-3xl lg:text-4xl font-headline font-bold">
+                {product.name}
+              </h1>
+            </div>
+
+            {/* Price */}
+            <div className="space-y-2">
+              <p className="text-4xl font-bold text-primary">
+                {formattedPrice}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Precio incluye IVA. Envío gratis a partir de $50.000
+              </p>
+            </div>
+
+            {/* Description */}
+            {product.description && (
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Descripción</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
+
+            {/* Product Details / Characteristics */}
+            {(product.dimensions || product.materials || product.color || product.detail) && (
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Detalles del Producto</h3>
+                <ul className="list-disc list-inside text-muted-foreground">
+                  {product.dimensions && <li>Dimensiones: {product.dimensions}</li>}
+                  {product.materials && <li>Materiales: {product.materials}</li>}
+                  {product.color && <li>Color: {product.color}</li>}
+                  {product.detail && <li>Detalle: {product.detail}</li>}
+                </ul>
+              </div>
+            )}
+
+            <Separator />
+
+            {/* Actions */}
+            <div className="space-y-4">
+              <AddToCartButton product={product} className="w-full" size="lg" />
+            </div>
+
+            <Separator />
+
+            {/* Features */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Beneficios</h3>
+              <div className="grid gap-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <Truck className="w-5 h-5 text-primary" />
+                  <span>Envío gratis a partir de $50.000</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <Shield className="w-5 h-5 text-primary" />
+                  <span>Garantía de autenticidad incluida</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <RotateCcw className="w-5 h-5 text-primary" />
+                  <span>Devoluciones gratuitas hasta 30 días</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Products */}
+        <RelatedProducts currentProductId={product.id} category={product.category} />
+      </div>
+    </div>
   );
 }
