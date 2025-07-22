@@ -34,4 +34,5 @@ export interface Product {
     keywords?: string[];
   };
   created_at?: string; // Add created_at field
+  featured?: boolean; // Added featured field
 }
