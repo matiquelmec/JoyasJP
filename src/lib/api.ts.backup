@@ -1,0 +1,300 @@
+// src/lib/api.ts
+// API mejorada con nuevas funciones y mejor manejo de tipos
+
+import { createClient } from '@supabase/supabase-js';
+import { Product, ProductFilters, PaginatedResponse, OrderProduct, Database } from './types';
+import { normalizeColor } from './utils';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase URL or Anon Key');
+}
+
+const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+// ================================
+// FUNCIONES DE PRODUCTOS
+// ================================
+
+/**
+ * Obtiene todos los productos con stock disponible
+ */
+export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
+  try {
+    let query = supabase
+      .from('products')
+      .select('*')
+      .gt('stock', 0)
+      .order('created_at', { ascending: false });
+
+    // Aplicar filtros
+    if (filters) {
+      if (filters.category && filters.category !== 'all') {
+        query = query.eq('category', filters.category);
+      }
+
+      if (filters.color && filters.color !== 'all') {
+        query = query.eq('color', filters.color);
+      }
+
+      if (filters.priceRange) {
+        query = query
+          .gte('price', filters.priceRange.min)
+          .lte('price', filters.priceRange.max);
+      }
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching products:', error);
+      throw new Error(`Error al obtener productos: ${error.message}`);
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('Unexpected error in getProducts:', err);
+    throw err;
+  }
+}
+
+/**
+ * Obtiene un producto específico por ID
+ */
+export async function getProductById(id: string): Promise<Product | null> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // Producto no encontrado
+      }
+      console.error('Error fetching product by ID:', error);
+      throw new Error(`Error al obtener producto: ${error.message}`);
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Unexpected error in getProductById:', err);
+    throw err;
+  }
+}
+
+/**
+ * Obtiene productos relacionados por categoría
+ */
+export async function getRelatedProducts(
+  productId: string,
+  category: string,
+  limit: number = 4
+): Promise<Product[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('category', category)
+      .neq('id', productId)
+      .gt('stock', 0)
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching related products:', error);
+      throw new Error(`Error al obtener productos relacionados: ${error.message}`);
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('Unexpected error in getRelatedProducts:', err);
+    throw err;
+  }
+}
+
+/**
+ * Obtiene todos los colores disponibles
+ */
+export async function getColors(): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('color')
+      .gt('stock', 0);
+
+    if (error) {
+      console.error('Error fetching colors:', error);
+      throw new Error(`Error al obtener colores: ${error.message}`);
+    }
+
+    const colors = data
+      .map(item => {
+        const normalized = normalizeColor(item.color);
+        return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+      })
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .sort();
+
+    // Mover "Mixto" al principio si existe
+    const mixtoIndex = colors.indexOf('Mixto');
+    if (mixtoIndex > -1) {
+      colors.splice(mixtoIndex, 1);
+      colors.unshift('Mixto');
+    }
+
+    return colors;
+  } catch (err) {
+    console.error('Unexpected error in getColors:', err);
+    throw err;
+  }
+}
+
+/**
+ * Obtiene todas las categorías disponibles
+ */
+export async function getCategories(): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('category')
+      .gt('stock', 0);
+
+    if (error) {
+      console.error('Error fetching categories:', error);
+      throw new Error(`Error al obtener categorías: ${error.message}`);
+    }
+
+    return data
+      .map(item => item.category)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .sort();
+  } catch (err) {
+    console.error('Unexpected error in getCategories:', err);
+    throw err;
+  }
+}
+
+// ================================
+// FUNCIONES DE STOCK
+// ================================
+
+/**
+ * Verifica si hay stock disponible para un producto
+ */
+export async function checkStockAvailability(
+  productId: string,
+  quantity: number
+): Promise<boolean> {
+  try {
+    const { data, error } = await supabase
+      .rpc('check_stock_availability', {
+        product_id: productId,
+        required_quantity: quantity
+      });
+
+    if (error) {
+      console.error('Error checking stock availability:', error);
+      // Si la función no existe, hacer fallback a consulta directa
+      const { data: product } = await supabase
+        .from('products')
+        .select('stock')
+        .eq('id', productId)
+        .single();
+
+      return product ? product.stock >= quantity : false;
+    }
+
+    return data || false;
+  } catch (err) {
+    console.error('Unexpected error in checkStockAvailability:', err);
+    return false;
+  }
+}
+
+// ================================
+// FUNCIONES DE ÓRDENES
+// ================================
+
+/**
+ * Crea una nueva orden
+ */
+export async function createOrder(orderDetails: {
+  customer_name: string;
+  shipping_address: string;
+  contact_email: string;
+  ordered_products: OrderProduct[];
+  total_amount?: number;
+}) {
+  try {
+    const response = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderDetails),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to create order.');
+    }
+
+    return response.json();
+  } catch (err) {
+    console.error('Error creating order:', err);
+    throw err;
+  }
+}
+
+// ================================
+// FUNCIONES DE BÚSQUEDA
+// ================================
+
+/**
+ * Busca productos por texto
+ */
+export async function searchProducts(searchTerm: string): Promise<Product[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,materials.ilike.%${searchTerm}%`)
+      .gt('stock', 0)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error searching products:', error);
+      throw new Error(`Error en búsqueda: ${error.message}`);
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('Unexpected error in searchProducts:', err);
+    throw err;
+  }
+}
+
+// ================================
+// UTILIDADES
+// ================================
+
+/**
+ * Calcula el precio total de una lista de productos
+ */
+export function calculateTotalPrice(products: Array<{ price: number; quantity: number }>): number {
+  return products.reduce((total, product) => total + (product.price * product.quantity), 0);
+}
+
+/**
+ * Formatea precio en pesos chilenos
+ */
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    minimumFractionDigits: 0,
+  }).format(price);
+}

@@ -1,0 +1,393 @@
+"use client";
+
+import { useState, useMemo, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import ProductCard from '@/components/shop/product-card';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { useCart } from '@/hooks/use-cart';
+import { Product } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { formatPrice, checkStockAvailability } from '@/lib/api';
+import { Heart, ShoppingCart, Zoom, Shield, Truck, RotateCcw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface ProductDetailViewProps {
+  product: Product;
+  relatedProducts: Product[];
+}
+
+export function ProductDetailView({ product, relatedProducts }: ProductDetailViewProps) {
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [stockAvailable, setStockAvailable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { addItem, openCart } = useCart();
+  const { toast } = useToast();
+  const pathname = usePathname();
+
+  // Determinar si usar gallery o imagen principal
+  const hasGallery = product.gallery && product.gallery.length > 0;
+  const images = hasGallery ? product.gallery! : [{
+    imageUrl: product.imageUrl,
+    imageHint: product.image_hint || product.name,
+    isPrimary: true
+  }];
+  const mainImage = images[mainImageIndex];
+
+  // Verificar stock al cambiar cantidad
+  useEffect(() => {
+    const checkStock = async () => {
+      if (quantity > 0) {
+        try {
+          const available = await checkStockAvailability(product.id, quantity);
+          setStockAvailable(available);
+        } catch (error) {
+          console.error('Error checking stock:', error);
+          setStockAvailable(product.stock >= quantity);
+        }
+      }
+    };
+
+    checkStock();
+  }, [product.id, quantity, product.stock]);
+
+  // Manejar agregar al carrito con validación
+  const handleAddToCart = async () => {
+    if (!stockAvailable) {
+      toast({
+        title: "Stock insuficiente",
+        description: `Solo hay ${product.stock} unidades disponibles.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      addItem({ ...product, quantity });
+      openCart();
+
+      toast({
+        title: "Producto agregado",
+        description: `${product.name} agregado al carrito.`,
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Hubo un problema al agregar el producto al carrito.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Schema markup para SEO
+  const productSchema = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": product.name,
+      "description": product.description || `${product.name} - Joya de alta calidad`,
+      "image": [product.imageUrl],
+      "sku": product.sku || product.id,
+      "brand": {
+        "@type": "Brand",
+        "name": "Joyas JP"
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "CLP",
+        "price": product.price,
+        "itemCondition": "https://schema.org/NewCondition",
+        "availability": product.stock && product.stock > 0 ?
+          "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "url": `https://joyasjp.com${pathname}`
+      }
+    };
+  }, [product, pathname]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+
+          {/* Galería de Imágenes Mejorada */}
+          <div className="space-y-4 sticky top-28">
+            {/* Imagen Principal con Zoom */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-primary/20 bg-black shadow-lg cursor-zoom-in group">
+                  <Image
+                    src={mainImage.imageUrl}
+                    alt={mainImage.imageHint}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white/90 p-2 rounded-full">
+                      <Zoom className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl">
+                <div className="relative aspect-square">
+                  <Image
+                    src={mainImage.imageUrl}
+                    alt={mainImage.imageHint}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* Thumbnails */}
+            {images.length > 1 && (
+              <div className="grid grid-cols-5 gap-2">
+                {images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setMainImageIndex(index)}
+                    className={cn(
+                      'aspect-square rounded-md overflow-hidden border-2 transition-all',
+                      mainImageIndex === index
+                        ? 'border-primary shadow-md'
+                        : 'border-transparent hover:border-primary/50'
+                    )}
+                  >
+                    <Image
+                      src={img.imageUrl}
+                      alt={img.imageHint}
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-cover bg-black"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Información del Producto */}
+          <div className="space-y-8">
+
+            {/* Header */}
+            <div className="space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-headline font-bold mb-2">
+                    {product.name}
+                  </h1>
+                  {product.sku && (
+                    <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className="text-muted-foreground hover:text-red-500"
+                >
+                  <Heart className={cn("w-6 h-6", isWishlisted && "fill-red-500 text-red-500")} />
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <p className="text-3xl font-bold text-primary">
+                  {formatPrice(product.price)}
+                </p>
+                {product.stock && product.stock <= 5 && (
+                  <Badge variant="destructive">
+                    Solo {product.stock} disponibles
+                  </Badge>
+                )}
+              </div>
+
+              {/* Información básica */}
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">{product.category}</Badge>
+                {product.color && (
+                  <Badge variant="outline">{product.color}</Badge>
+                )}
+                {product.materials && (
+                  <Badge variant="outline">{product.materials}</Badge>
+                )}
+              </div>
+            </div>
+
+            {/* Cantidad y Agregar al Carrito */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="quantity" className="text-sm font-medium">
+                    Cantidad:
+                  </label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    max={product.stock}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-20 text-center"
+                  />
+                </div>
+
+                {!stockAvailable && (
+                  <p className="text-sm text-destructive">
+                    Stock insuficiente
+                  </p>
+                )}
+              </div>
+
+              <Button
+                size="lg"
+                className="w-full font-bold text-lg"
+                onClick={handleAddToCart}
+                disabled={!stockAvailable || isLoading || !product.stock}
+              >
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                {isLoading ? 'Agregando...' : 'Agregar al Carrito'}
+              </Button>
+            </div>
+
+            {/* Garantías y Beneficios */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card className="p-4">
+                <CardContent className="flex items-center gap-3 p-0">
+                  <Shield className="w-8 h-8 text-primary" />
+                  <div>
+                    <h4 className="font-semibold text-sm">Garantía</h4>
+                    <p className="text-xs text-muted-foreground">6 meses</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="p-4">
+                <CardContent className="flex items-center gap-3 p-0">
+                  <Truck className="w-8 h-8 text-primary" />
+                  <div>
+                    <h4 className="font-semibold text-sm">Envío Gratis</h4>
+                    <p className="text-xs text-muted-foreground">Todo Chile</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="p-4">
+                <CardContent className="flex items-center gap-3 p-0">
+                  <RotateCcw className="w-8 h-8 text-primary" />
+                  <div>
+                    <h4 className="font-semibold text-sm">Devoluciones</h4>
+                    <p className="text-xs text-muted-foreground">30 días</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Información Detallada con Tabs */}
+            <Tabs defaultValue="description" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="description">Descripción</TabsTrigger>
+                <TabsTrigger value="specifications">Especificaciones</TabsTrigger>
+                <TabsTrigger value="care">Cuidado</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="description" className="mt-6">
+                <div className="prose prose-sm max-w-none">
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.description || `${product.name} - Joya de alta calidad perfecta para complementar tu estilo personal. Fabricada en ${product.materials || 'materiales premium'} con acabado ${product.color?.toLowerCase() || 'elegante'}. ${product.dimensions ? `Dimensiones: ${product.dimensions}cm.` : ''} Perfecta para regalar o para uso personal.`}
+                  </p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="specifications" className="mt-6">
+                <div className="space-y-3">
+                  {product.materials && (
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span className="font-medium">Material</span>
+                      <span className="text-muted-foreground">{product.materials}</span>
+                    </div>
+                  )}
+                  {product.dimensions && (
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span className="font-medium">Dimensiones</span>
+                      <span className="text-muted-foreground">{product.dimensions} cm</span>
+                    </div>
+                  )}
+                  {product.color && (
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <span className="font-medium">Color</span>
+                      <span className="text-muted-foreground">{product.color}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <span className="font-medium">Garantía</span>
+                    <span className="text-muted-foreground">6 meses por defectos de fabricación</span>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="care" className="mt-6">
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p>Limpiar con paño suave y seco después de cada uso</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p>Evitar contacto con perfumes, cremas y productos químicos</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p>Guardar en lugar seco, preferiblemente en su empaque original</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p>No exponer a temperaturas extremas o humedad excesiva</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Productos Relacionados */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-24">
+            <Separator className="mb-12" />
+            <div className="py-12">
+              <h2 className="text-3xl font-headline font-bold text-center mb-10">
+                También te podría interesar
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {relatedProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
