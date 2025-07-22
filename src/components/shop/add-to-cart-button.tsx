@@ -22,7 +22,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
   };
 
   return (
-    <Button onClick={handleAddToCart} className="w-full">
+    <Button onClick={handleAddToCart} className={className} size={size}>
       Añadir al Carrito
     </Button>
   );
