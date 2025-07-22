@@ -45,7 +45,8 @@ const nextConfig = {
   webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
     // Configuración para manejar archivos estáticos
     config.module.rules.push({
-      test: /\.(png|jpe?g|gif|svg|webp|ico)$/,
+            test: /\.(png|jpe?g|gif|svg|webp)$/i,
+      exclude: /favicon\.ico$/,
       use: {
         loader: 'file-loader',
         options: {
