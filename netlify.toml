@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm run typecheck && npm run build"
+  command = "npm install typescript && npm install && npm run typecheck && npm run build"
   publish = ".next"
 
 [build.environment]
