@@ -3,7 +3,7 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   MP_ACCESS_TOKEN = "your_mp_access_token"
   NEXT_PUBLIC_APP_DESCRIPTION = "your_app_description"
   NODE_ENV = "production"
