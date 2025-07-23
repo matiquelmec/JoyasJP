@@ -1,4 +1,7 @@
 [build]
-  command = "rm -rf node_modules && npm ci && npm run typecheck && npm run build"
+  command = "npm ci && npm run typecheck && npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
   publish = "out"
 
