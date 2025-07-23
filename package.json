@@ -36,6 +36,7 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@supabase/supabase-js": "^2.52.0",
+    "axios": "^1.7.2",
     "bootstrap": "^5.3.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -57,13 +58,14 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2",
-    "zustand": "^5.0.6",
-    "axios": "^1.7.2"
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@types/node": "^20.19.9",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.4.3",
     "file-loader": "^6.2.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",

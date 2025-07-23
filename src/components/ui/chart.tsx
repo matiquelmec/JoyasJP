@@ -112,7 +112,7 @@ const ChartTooltipContent = React.forwardRef<
       indicator?: "line" | "dot" | "dashed"
       nameKey?: string
       labelKey?: string
-      payload?: Array<{ dataKey: string; name: string; value: any; payload: any; color?: string; }>;
+      payload?: Array<{ dataKey: string; name: string; value: unknown; payload: unknown; color?: string; }>;
       label?: string | number;
     }
 >(
@@ -266,7 +266,7 @@ const ChartLegendContent = React.forwardRef<
   React.ComponentProps<"div"> & {
       hideIcon?: boolean
       nameKey?: string
-      payload?: Array<{ value: string; type: string; id: string; color: string; payload: any; dataKey?: string; }>;
+      payload?: Array<{ value: string; type: string; id: string; color: string; payload: unknown; dataKey?: string; }>;
       verticalAlign?: "top" | "middle" | "bottom";
     }
 >(

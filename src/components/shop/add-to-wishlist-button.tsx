@@ -54,7 +54,7 @@ export function AddToWishlistButton({ product, className }: AddToWishlistButtonP
           description: `${product.name} se agregó a tus favoritos.`,
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "No se pudo actualizar favoritos. Intenta nuevamente.",

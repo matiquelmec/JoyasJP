@@ -34,7 +34,8 @@ export function RelatedProducts({ currentProductId, category }: RelatedProductsP
         }
 
         setRelatedProducts(data as unknown as Product[]);
-      } catch (err: any) {
+      } catch (e: unknown) {
+        const err = e as { message: string };
         setError(err.message);
       } finally {
         setLoading(false);

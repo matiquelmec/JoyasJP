@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Heart, ShoppingCart, Share2, Star, Truck, Shield, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Truck, Shield, RotateCcw } from 'lucide-react';
 import { supabase } from '@/lib/supabase-client';
 import { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/shop/add-to-cart-button';

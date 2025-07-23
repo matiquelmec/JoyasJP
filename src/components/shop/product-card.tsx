@@ -46,7 +46,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
         description: `${product.name} se ha agregado a tu carrito.`,
         duration: 3000,
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "No se pudo agregar el producto. Intenta nuevamente.",
@@ -75,7 +75,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
           description: `${product.name} se agregó a tus favoritos.`,
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "No se pudo actualizar favoritos. Intenta nuevamente.",

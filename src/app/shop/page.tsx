@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import ProductCard from '@/components/shop/product-card';
 import { getProducts, getColors } from '@/lib/api';
 import { Product } from '@/lib/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 

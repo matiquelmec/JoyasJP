@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ checkoutUrl: preference.init_point });
 
-  } catch (error: any) {
+  } catch (e: unknown) {
+    const error = e as { cause?: { data?: { message: string }; error: string | object; message: string }; message?: string };
     console.error("Error creating preference:", JSON.stringify(error, null, 2));
     
     let errorMessage = 'An unknown error occurred.';

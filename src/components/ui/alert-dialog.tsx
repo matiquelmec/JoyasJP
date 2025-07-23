@@ -46,7 +46,7 @@ const AlertDialogContent = React.forwardRef<
         <AlertDialogTitle>Alert</AlertDialogTitle>
         <AlertDialogDescription>
           This is an alert dialog. It is a modal dialog that interrupts the
-          user's workflow to communicate an important message and require a
+          user&apos;s workflow to communicate an important message and require a
           response.
         </AlertDialogDescription>
       </VisuallyHidden>

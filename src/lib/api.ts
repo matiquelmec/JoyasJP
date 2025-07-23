@@ -35,7 +35,7 @@ export async function getColors(): Promise<string[]> {
     throw error;
   }
 
-  let colors = data
+  const colors = data
     .map(item => {
       const normalized = normalizeColor(item.color);
       // Capitalize the first letter

@@ -1,6 +1,6 @@
 import { Mail, Phone, MapPin, MessageCircle, Instagram } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+
 import { siteConfig } from '@/lib/config';
 
 // Icono simple para TikTok
