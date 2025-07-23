@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/Footer';
+
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
 
@@ -178,7 +178,7 @@ export default function RootLayout({
           <main id="main-content" className="flex-1 pt-36">
             {children}
           </main>
-          <Footer />
+          
         </div>
 
         <Toaster />
