@@ -1,0 +1,176 @@
+// src/lib/types.ts
+// Tipos actualizados para coincidir con el nuevo esquema de Supabase
+
+export interface NavLink {
+  href: string;
+  label: string;
+}
+
+export interface ProductSpecification {
+  name: string;
+  value: string;
+}
+
+export interface ProductGalleryItem {
+  imageUrl: string;
+  imageHint: string;
+  isPrimary?: boolean;
+}
+
+export interface ProductVariant {
+  type: string; // e.g., "color", "size", "material"
+  options: {
+    value: string; // e.g., "red", "small", "gold"
+    price?: number; // Optional price adjustment for variant
+    imageUrl?: string; // Optional image for variant
+    stock?: number; // Stock specific to this variant
+  }[];
+}
+
+export interface ProductSEO {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+}
+
+export interface Product {
+  // Campos básicos (ya existían)
+  id: string;
+  name: string;
+  price: number; // Ahora es number en la DB también
+  imageUrl: string;
+  category: string;
+  stock: number;
+  created_at?: string;
+
+  // Campos de información adicional
+  color?: string;
+  dimensions?: string;
+  materials?: string;
+  detail?: string;
+  description?: string;
+  image_hint?: string;
+
+  // Campos estructurados (JSONB)
+  specifications?: ProductSpecification[];
+  gallery?: ProductGalleryItem[];
+  variants?: ProductVariant[];
+  seo?: ProductSEO;
+
+  // Campos de gestión
+  sku?: string;
+
+  // Campo temporal para el carrito
+  quantity?: number;
+}
+
+// Tipos para el carrito
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+// Tipos para órdenes
+export interface OrderProduct {
+  product_id: string;
+  quantity: number;
+  price_at_time: number; // Precio al momento de la compra
+  product_name: string; // Nombre al momento de la compra
+}
+
+export interface Order {
+  id: number;
+  created_at: string;
+  customer_name: string;
+  shipping_address: string;
+  contact_email: string;
+  ordered_products: OrderProduct[];
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  total_amount?: number;
+}
+
+// Tipos para filtros
+export interface ProductFilters {
+  category?: string;
+  color?: string;
+  priceRange?: {
+    min: number;
+    max: number;
+  };
+  inStock?: boolean;
+}
+
+// Tipos para respuestas de API
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  count: number;
+  page: number;
+  totalPages: number;
+}
+
+// Tipos para Supabase Database
+export interface Database {
+  public: {
+    Tables: {
+      products: {
+        Row: Product;
+        Insert: Omit<Product, 'id' | 'created_at'> & { id?: string };
+        Update: Partial<Omit<Product, 'id'>>;
+      };
+      orders: {
+        Row: Order;
+        Insert: Omit<Order, 'id' | 'created_at'>;
+        Update: Partial<Omit<Order, 'id' | 'created_at'>>;
+      };
+    };
+    Functions: {
+      reduce_product_stock: {
+        Args: { product_id: string; quantity: number };
+        Returns: boolean;
+      };
+      check_stock_availability: {
+        Args: { product_id: string; required_quantity: number };
+        Returns: boolean;
+      };
+      get_products_with_stock: {
+        Args: {};
+        Returns: Product[];
+      };
+    };
+  };
+}
+
+// Tipos para MercadoPago
+export interface MercadoPagoItem {
+  id: string;
+  title: string;
+  quantity: number;
+  unit_price: number;
+  currency_id: string;
+  picture_url?: string;
+  description?: string;
+}
+
+export interface CheckoutRequest {
+  items: CartItem[];
+  customer_info?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
+}
+
+export interface CheckoutResponse {
+  checkoutUrl: string;
+  preference_id: string;
+}
+
+// Utilidades de tipo
+export type ProductCategory = 'cadenas' | 'dijes' | 'pulseras' | 'aros';
+export type ProductColor = 'Dorado' | 'Plateado' | 'Negro' | 'Mixto';
+export type OrderStatus = Order['status'];
