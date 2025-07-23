@@ -69,25 +69,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export async function generateStaticParams() {
-  if (!supabase) {
-    return [];
-  }
-
-  try {
-    const { data: products, error } = await supabase.from('products').select('id');
-
-    if (error || !products) {
-      console.error('Error fetching product IDs for static generation:', error);
-      return [];
-    }
-
-    return products.map((product) => ({
-      id: product.id,
-    }));
-  } catch (error) {
-    console.error('Error in generateStaticParams:', error);
-    return [];
-  }
+  return [
+    { id: 'PCD_1' },
+    { id: 'PCD_2' },
+    { id: 'PCD_3' },
+  ];
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
