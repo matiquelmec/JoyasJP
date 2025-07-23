@@ -1,3 +1,6 @@
 [build]
-  command = "npm install && npm install --save-dev typescript @types/react @types/node && npm run build"
+  command = "npm install && npm run build"
   publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18.19.0"
