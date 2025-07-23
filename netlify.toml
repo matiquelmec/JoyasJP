@@ -1,6 +1,4 @@
 [build]
-  command = "npm install typescript && npm ci && npm run build"
+  command = "npm ci && npm run build"
   publish = "out"
 
-[build.environment]
-  NODE_VERSION = "18.19.0"
