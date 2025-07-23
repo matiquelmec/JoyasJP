@@ -1,7 +1,15 @@
 [build]
   command = "npm install typescript && npm ci && npm run build"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18"
-  publish = "out"
+  MP_ACCESS_TOKEN = "your_mp_access_token"
+  NEXT_PUBLIC_APP_DESCRIPTION = "your_app_description"
+  NODE_ENV = "production"
+  SUPABASE_SERVICE_ROLE_KEY = "your_supabase_service_role_key"
+  NEXT_PUBLIC_APP_NAME = "your_app_name"
+  NEXT_PUBLIC_SITE_URL = "your_site_url"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "your_supabase_anon_key"
+  NEXT_PUBLIC_SUPABASE_URL = "your_supabase_url"
 
