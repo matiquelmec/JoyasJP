@@ -131,7 +131,7 @@ export default function Home() {
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
             <span className="inline-flex items-center gap-2">
               <Sparkles className="w-5 h-5" />
-              Atrévete a brillar con estilo único
+              Atrévete a jugar
             </span>
           </p>
 
