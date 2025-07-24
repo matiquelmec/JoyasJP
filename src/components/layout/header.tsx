@@ -36,7 +36,7 @@ export function Header() {
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
           <Image
-            src="/assets/logo.png"
+            src="/assets/logo.webp"
             alt="Joyas JP Logo"
             width={160}
             height={160}
@@ -76,7 +76,7 @@ export function Header() {
                   <div className="flex justify-between items-center mb-8">
                      <Link href="/" className="flex items-center h-20">
                        <Image
-                         src="/assets/logo.png"
+                         src="/assets/logo.webp"
                          alt="Joyas JP Logo"
                          width={160}
                          height={160}

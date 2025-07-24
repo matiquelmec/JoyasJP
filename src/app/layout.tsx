@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: 'Joyas JP',
     images: [
       {
-        url: '/assets/logo.png',
+        url: '/assets/logo.webp',
         width: 500,
         height: 500,
         alt: 'Joyas JP - Alta joyería urbana',
@@ -68,8 +68,8 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
@@ -108,7 +108,7 @@ const jsonLd = {
   name: 'Joyas JP',
   description: 'Alta joyería para la escena urbana con diseños únicos y calidad premium',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.webp`,
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+56-9-1234-5678',
@@ -156,7 +156,7 @@ export default function RootLayout({
         />
 
         {/* Preloads corregidos */}
-        <link rel="preload" href="/assets/logo.png" as="image" type="image/png" />
+        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" />
         <link rel="preload" href="/assets/mi-video.mp4" as="video" type="video/mp4" />
       </head>
       <body className={cn(

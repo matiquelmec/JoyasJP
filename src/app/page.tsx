@@ -116,7 +116,7 @@ export default function Home() {
 
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
           <Image
-            src="/assets/logo.png"
+            src="/assets/logo.webp"
             alt="Joyas JP - Alta joyería para la escena urbana"
             width={500}
             height={500}
