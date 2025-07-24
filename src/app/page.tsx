@@ -8,6 +8,8 @@ import { Product } from '@/lib/types';
 import { Suspense } from 'react';
 import { unstable_noStore as noStore } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 async function getFeaturedProducts(): Promise<Product[]> {
   noStore();
   if (!supabase) {
