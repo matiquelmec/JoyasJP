@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
 const nextConfig = {
-  // CRITICO: Static export para Netlify
-  output: 'export',
+  
   
   images: {
     formats: ['image/avif', 'image/webp'],
