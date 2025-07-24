@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--production=true"
+  NPM_FLAGS = "--production=false"
   NEXT_TELEMETRY_DISABLED = "1"
 
 [[headers]]
