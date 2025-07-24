@@ -98,7 +98,7 @@ export const navLinks: NavLink[] = [
   },
   {
     href: '/services',
-    label: 'Servicios'
+    label: 'Servicios para artistas'
   },
   {
     href: '/about',
