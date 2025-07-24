@@ -78,9 +78,8 @@ export function Header() {
                        <Image
                          src="/assets/logo.webp"
                          alt="Joyas JP Logo"
-                         width={160}
-                         height={160}
-                         className="h-full w-auto"
+                         fill
+                         className="object-contain"
                        />
                     </Link>
                     <SheetClose asChild>
