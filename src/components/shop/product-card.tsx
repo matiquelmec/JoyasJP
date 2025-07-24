@@ -174,10 +174,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
           </h3>
         </Link>
 
-        <p className="text-sm text-muted-foreground capitalize flex items-center gap-1">
-          <Sparkles className="w-3 h-3" />
-          {product.category}
-        </p>
+        
 
         {product.description && (
           <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
