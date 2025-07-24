@@ -189,42 +189,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Trophy className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold">Calidad Premium</h3>
-              <p className="text-muted-foreground">
-                Materiales de primera calidad con certificados de autenticidad y garantía completa.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Sparkles className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold">Diseño Único</h3>
-              <p className="text-muted-foreground">
-                Cada pieza es cuidadosamente diseñada para reflejar la autenticidad del estilo urbano.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Heart className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold">Pasión por el Arte</h3>
-              <p className="text-muted-foreground">
-                Creamos más que joyas, creamos expresiones artísticas que cuentan tu historia.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      
+     </div>
   );
 }
