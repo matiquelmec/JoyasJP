@@ -1,5 +1,0 @@
-fix: Instalar typescript en el script build de Next.js
-
-Se añade `npm install --save-dev typescript` al inicio del script `build` en `package.json`.
-Esto asegura que TypeScript esté disponible para Next.js durante la construcción
-y resuelve el error "It looks like you're trying to use TypeScript but do not have the required package(s) installed.".

@@ -35,3 +35,6 @@ next-env.d.ts
 
 # Netlify
 .netlify/
+
+# Backup directory
+backup_20250723_211816/
