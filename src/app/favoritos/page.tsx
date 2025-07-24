@@ -4,7 +4,7 @@ import { useWishlist } from "@/hooks/use-wishlist";
 import ProductCard from "@/components/shop/product-card";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Added a comment to force re-build
 
 export default function WishlistPage() {
   const { items } = useWishlist();
