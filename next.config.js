@@ -3,9 +3,9 @@ const nextConfig = {
   // CRITICO: Static export para Netlify
   output: 'export',
   
-  // CRITICO: Desactivar optimizacion de imagenes
   images: {
-    unoptimized: true
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
   },
   
   // Configuracion de trailing slash

@@ -9,11 +9,23 @@ export default function NotFound() {
       <p className="text-lg text-muted-foreground max-w-md mb-8">
         Lo sentimos, no pudimos encontrar la página que buscas. Es posible que se haya movido o eliminado.
       </p>
-      <Link href="/">
-        <Button size="lg">
-          Volver al Inicio
-        </Button>
-      </Link>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Link href="/">
+          <Button size="lg">
+            Volver al Inicio
+          </Button>
+        </Link>
+        <Link href="/shop">
+          <Button size="lg" variant="outline">
+            Ir a la Tienda
+          </Button>
+        </Link>
+        <Link href="/services">
+          <Button size="lg" variant="outline">
+            Nuestros Servicios
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
