@@ -38,3 +38,6 @@ next-env.d.ts
 
 # Backup directory
 backup_20250723_211816/
+
+# Temporary files
+commit_message.txt
