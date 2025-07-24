@@ -6,8 +6,10 @@ import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react';
 import { supabase } from '@/lib/supabase-client';
 import { Product } from '@/lib/types';
 import { Suspense } from 'react';
+import { unstable_noStore as noStore } from 'next/cache';
 
 async function getFeaturedProducts(): Promise<Product[]> {
+  noStore();
   if (!supabase) {
     console.warn('Supabase client is not initialized, cannot fetch featured products.');
     return [];
