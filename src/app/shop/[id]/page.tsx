@@ -69,11 +69,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export async function generateStaticParams() {
-  return [
-    { id: 'PCD_1' },
-    { id: 'PCD_2' },
-    { id: 'PCD_3' },
-  ];
+  const { data: products } = await supabase.from('products').select('id');
+  return products?.map((product) => ({
+    id: product.id,
+  })) || [];
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
