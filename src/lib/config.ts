@@ -94,7 +94,7 @@ export const siteConfig = {
 export const navLinks: NavLink[] = [
   {
     href: '/shop',
-    label: 'Catálogo'
+    label: 'Productos'
   },
   {
     href: '/services',

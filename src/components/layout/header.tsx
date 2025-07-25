@@ -34,15 +34,20 @@ export function Header() {
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center h-full py-2">
-          <Image
-            src="/assets/logo.webp"
-            alt="Joyas JP Logo"
-            width={160}
-            height={160}
-            className="h-full w-auto"
-          />
+        {/* 🔧 LOGO PRINCIPAL CORREGIDO */}
+        <Link href="/" className="flex items-center">
+          <div className="relative h-28 w-28 md:h-32 md:w-32">
+            <Image
+              src="/assets/logo.webp"
+              alt="Joyas JP Logo"
+              fill
+              sizes="(max-width: 768px) 112px, 128px"
+              className="object-contain"
+              priority
+            />
+          </div>
         </Link>
+
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className={linkClassName}>
@@ -50,6 +55,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
+
         <div className="flex items-center gap-2">
           <Link href="/favoritos">
             <Button variant="ghost" size="lg" className="relative">
@@ -62,7 +68,7 @@ export function Header() {
             </Button>
           </Link>
           <CartPanel />
-          
+
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -74,13 +80,17 @@ export function Header() {
               <SheetContent side="right" className="bg-background/95 border-l-border/50 w-[280px]">
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                     <Link href="/" className="relative flex items-center h-20">
-                       <Image
-                         src="/assets/logo.webp"
-                         alt="Joyas JP Logo"
-                         fill
-                         className="object-contain"
-                       />
+                    {/* 🔧 LOGO MÓVIL CORREGIDO */}
+                    <Link href="/" className="flex items-center">
+                      <div className="relative h-16 w-16 aspect-square">
+                        <Image
+                          src="/assets/logo.webp"
+                          alt="Joyas JP Logo"
+                          fill
+                          sizes="64px"
+                          className="object-contain"
+                        />
+                      </div>
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-6 text-center">
