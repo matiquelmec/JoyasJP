@@ -74,7 +74,7 @@ export function Header() {
               <SheetContent side="right" className="bg-background/95 border-l-border/50 w-[280px]">
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                     <Link href="/" className="flex items-center h-20">
+                     <Link href="/" className="relative flex items-center h-20">
                        <Image
                          src="/assets/logo.webp"
                          alt="Joyas JP Logo"
