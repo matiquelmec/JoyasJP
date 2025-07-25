@@ -82,11 +82,6 @@ export function Header() {
                          className="object-contain"
                        />
                     </Link>
-                    <SheetClose asChild>
-                      <Button variant="ghost" size="lg">
-                        <X className="h-7 w-7" />
-                      </Button>
-                    </SheetClose>
                   </div>
                   <nav className="flex flex-col gap-6 text-center">
                     {navLinks.map((link) => (
