@@ -22,7 +22,22 @@ export async function getProducts(): Promise<Product[]> {
     throw error;
   }
 
-  return data as Product[];
+  // Define the desired category order
+  const categoryOrder: { [key: string]: number } = {
+    'cadenas': 1,
+    'dijes': 2,
+    'pulseras': 3,
+    'aros': 4,
+  };
+
+  // Sort the products based on the category order
+  const sortedData = (data as Product[]).sort((a, b) => {
+    const orderA = categoryOrder[a.category] || Infinity;
+    const orderB = categoryOrder[b.category] || Infinity;
+    return orderA - orderB;
+  });
+
+  return sortedData;
 }
 
 export async function getColors(): Promise<string[]> {
