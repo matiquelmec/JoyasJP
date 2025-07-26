@@ -174,6 +174,14 @@ export default function ProductCard({ product, priority = false, className }: Pr
           </h3>
         </Link>
 
+        {(product.materials || product.color) && (
+          <div className="text-sm text-muted-foreground">
+            {product.materials && <span>{product.materials}</span>}
+            {product.materials && product.color && <span> • </span>}
+            {product.color && <span>{product.color}</span>}
+          </div>
+        )}
+
         
 
         {product.description && (
