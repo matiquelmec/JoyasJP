@@ -155,7 +155,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {formattedPrice}
               </p>
               <p className="text-sm text-muted-foreground">
-                Precio incluye IVA. Envío gratis a partir de $40.000
+                Precio incluye IVA. Envío gratis a partir de $50.000
               </p>
             </div>
 
@@ -197,7 +197,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="grid gap-3">
                 <div className="flex items-center gap-3 text-sm">
                   <Truck className="w-5 h-5 text-primary" />
-                  <span>Envío gratis a partir de $40.000</span>
+                  <span>Envío gratis a partir de $50.000</span>
                 </div>
                 
                 <div className="flex items-center gap-3 text-sm">
