@@ -133,16 +133,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {/* Header */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="capitalize">
-                  {product.category}
-                </Badge>
-                {product.featured && (
-                  <Badge className="bg-primary/10 text-primary">
-                    Destacado
-                  </Badge>
-                )}
-              </div>
+              
 
               <h1 className="text-3xl lg:text-4xl font-headline font-bold">
                 {product.name}
