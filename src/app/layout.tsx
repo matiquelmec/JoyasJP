@@ -155,8 +155,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* Preloads corregidos */}
-        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" />
+        {/* Preloads optimizados */}
+        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" fetchPriority="high" />
         <link rel="preload" href="/assets/mi-video.mp4" as="video" type="video/mp4" />
       </head>
       <body className={cn(

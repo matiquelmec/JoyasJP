@@ -15,14 +15,14 @@ export default function NotFound() {
             Volver al Inicio
           </Button>
         </Link>
-        <Link href="/shop">
+        <Link href="/productos">
           <Button size="lg" variant="outline">
-            Ir a la Tienda
+            Ver Productos
           </Button>
         </Link>
-        <Link href="/services">
+        <Link href="/servicios-para-artistas">
           <Button size="lg" variant="outline">
-            Nuestros Servicios
+            Servicios para Artistas
           </Button>
         </Link>
       </div>
