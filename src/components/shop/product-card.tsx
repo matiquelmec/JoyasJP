@@ -108,7 +108,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
       )}
     >
       <Link
-        href={`/shop/${product.id}`}
+        href={`/productos/${product.id}`}
         className="contents"
         aria-label={`Ver detalles de ${product.name}`}
       >
@@ -168,7 +168,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
       </div>
 
       <div className="p-4 flex flex-col flex-grow space-y-3">
-        <Link href={`/shop/${product.id}`}>
+        <Link href={`/productos/${product.id}`}>
           <h3 className="text-lg font-semibold truncate cursor-pointer hover:text-primary transition-colors duration-200">
             {product.name}
           </h3>
