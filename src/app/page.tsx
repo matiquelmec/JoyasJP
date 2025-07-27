@@ -125,6 +125,7 @@ export default function Home() {
             width={500}
             height={500}
             priority
+            fetchPriority="high"
             className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
           />
 
@@ -176,7 +177,7 @@ export default function Home() {
           <FeaturedProductsSection />
 
           <div className="text-center mt-12">
-            <Link href="/shop">
+            <Link href="/productos">
               <Button size="lg" className="font-semibold px-8">
                 Ver Toda la Colección
                 <ArrowDown className="w-4 h-4 ml-2 rotate-[-90deg]" />

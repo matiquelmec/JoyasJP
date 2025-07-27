@@ -155,9 +155,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* Preloads optimizados */}
-        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" fetchPriority="high" />
-        <link rel="preload" href="/assets/mi-video.mp4" as="video" type="video/mp4" />
+        {/* Preloads solo para recursos críticos usados inmediatamente */}
       </head>
       <body className={cn(
         "font-body antialiased bg-background text-foreground min-h-screen",

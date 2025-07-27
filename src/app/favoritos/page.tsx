@@ -24,7 +24,7 @@ export default function WishlistPage() {
           <h2 className="mt-6 text-2xl font-semibold">Tu lista de deseos está vacía</h2>
           <p className="mt-2 text-muted-foreground">Explora nuestros productos y guarda tus favoritos para más tarde.</p>
           <div className="mt-6">
-            <Link href="/shop">
+            <Link href="/productos">
               <Button size="lg">Descubrir Productos</Button>
             </Link>
           </div>

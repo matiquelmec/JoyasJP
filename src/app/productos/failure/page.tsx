@@ -12,8 +12,8 @@ export default function FailurePage() {
           Hubo un problema al procesar tu pago. Por favor, intenta nuevamente o contacta a tu banco.
         </p>
         <Button asChild className="mt-8">
-          <Link href="/shop">
-            Volver a la Tienda
+          <Link href="/productos">
+            Ver Productos
           </Link>
         </Button>
       </div>

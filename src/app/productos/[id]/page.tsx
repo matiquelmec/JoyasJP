@@ -96,11 +96,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
           <Link
-            href="/shop"
+            href="/productos"
             className="flex items-center gap-2 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Volver a la tienda
+            Volver a productos
           </Link>
           <span>/</span>
           <span className="text-foreground">{product.name}</span>

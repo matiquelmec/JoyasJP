@@ -12,8 +12,8 @@ export default function PendingPage() {
           Tu pago está pendiente de aprobación. Te notificaremos por email una vez que se complete el proceso.
         </p>
         <Button asChild className="mt-8">
-          <Link href="/shop">
-            Volver a la Tienda
+          <Link href="/productos">
+            Ver Productos
           </Link>
         </Button>
       </div>

@@ -12,7 +12,7 @@ export default function SuccessPage() {
           Gracias por tu compra. Hemos recibido tu pago y estamos preparando tu pedido. Recibirás una confirmación por email en breve.
         </p>
         <Button asChild className="mt-8">
-          <Link href="/shop">
+          <Link href="/productos">
             Seguir Comprando
           </Link>
         </Button>
