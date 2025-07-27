@@ -101,7 +101,7 @@ export const navLinks: NavLink[] = [
     label: 'Servicios para artistas'
   },
   {
-    href: '/about',
+    href: '/nosotros',
     label: 'Nosotros'
   },
   {
