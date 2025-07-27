@@ -141,6 +141,7 @@ export const productConfig = {
     'Plata Bañada en Oro',
   ],
   colors: [
+    'Todos',
     'Dorado',
     'Plateado',
     'Negro',
