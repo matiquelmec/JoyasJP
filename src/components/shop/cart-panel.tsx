@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ShoppingBag, Trash2, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
+import { logUserAction, logError } from '@/lib/logger';
 
 export function CartPanel() {
   const { items, removeItem, updateItemQuantity, clearCart, isOpen, openCart, closeCart } = useCart();
@@ -21,7 +22,18 @@ export function CartPanel() {
   }, 0);
 
   const handleCheckout = async () => {
+    if (items.length === 0) {
+      toast({
+        title: "Carrito vacío",
+        description: "Agrega productos antes de finalizar la compra.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
+    logUserAction('checkout_initiated', { itemCount: items.length, subtotal });
+    
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -32,10 +44,19 @@ export function CartPanel() {
       const data = await response.json();
 
       if (!response.ok) {
+        logError(new Error(`Checkout API error: ${response.status}`), {
+          status: response.status,
+          errorData: data,
+          itemCount: items.length
+        });
         throw new Error(data.error || 'Error en la comunicación con el servidor.');
       }
       
       if (data.checkoutUrl) {
+        logUserAction('checkout_redirect', { 
+          url: data.checkoutUrl,
+          itemCount: items.length 
+        });
         window.location.href = data.checkoutUrl;
       } else {
         throw new Error('No se recibió la URL de pago.');
@@ -43,12 +64,18 @@ export function CartPanel() {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Ocurrió un error inesperado.";
+      
+      logError(error as Error, {
+        action: 'checkout',
+        itemCount: items.length,
+        subtotal
+      });
+      
       toast({
         title: "Error al Procesar el Pago",
         description: errorMessage,
         variant: "destructive",
       });
-      console.error("Error al crear la preferencia de pago:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,8 +117,19 @@ export function CartPanel() {
                         <input
                           type="number"
                           min="1"
+                          max="99"
                           value={item.quantity}
-                          onChange={(e) => updateItemQuantity(item.id, parseInt(e.target.value))}
+                          onChange={(e) => {
+                            const newQuantity = parseInt(e.target.value);
+                            if (newQuantity > 0 && newQuantity <= 99) {
+                              updateItemQuantity(item.id, newQuantity);
+                              logUserAction('cart_quantity_updated', {
+                                productId: item.id,
+                                oldQuantity: item.quantity,
+                                newQuantity
+                              });
+                            }
+                          }}
                           className="w-16 p-1 rounded-md border bg-transparent text-center"
                         />
                       </div>
