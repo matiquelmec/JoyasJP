@@ -50,23 +50,34 @@ export async function getColors(): Promise<string[]> {
     throw error;
   }
 
-  const colors = data
+  const uniqueColors = data
     .map(item => {
       const normalized = normalizeColor(item.color);
-      // Capitalize the first letter
       return normalized.charAt(0).toUpperCase() + normalized.slice(1);
     })
-    .filter((value, index, self) => self.indexOf(value) === index)
-    .sort(); // Sort alphabetically
+    .filter((value, index, self) => self.indexOf(value) === index); // Get unique colors
 
-  // Find and remove "Mixto" if it exists, then add it to the beginning
-  const mixtoIndex = colors.indexOf('Mixto');
-  if (mixtoIndex > -1) {
-    colors.splice(mixtoIndex, 1);
-    colors.unshift('Mixto');
-  }
+  const customOrder = ['Dorado', 'Plateado', 'Negro', 'Mixto'];
+  const orderedColors: string[] = [];
+  const otherColors: string[] = [];
 
-  return colors;
+  // Add colors in custom order first
+  customOrder.forEach(color => {
+    if (uniqueColors.includes(color)) {
+      orderedColors.push(color);
+    }
+  });
+
+  // Add remaining unique colors, sorted alphabetically
+  uniqueColors.forEach(color => {
+    if (!customOrder.includes(color)) {
+      otherColors.push(color);
+    }
+  });
+
+  otherColors.sort(); // Sort remaining colors alphabetically
+
+  return [...orderedColors, ...otherColors];
 }
 
 export async function createOrder(orderDetails: { 
