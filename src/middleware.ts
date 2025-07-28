@@ -1,0 +1,84 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Proteger rutas admin (excepto login)
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    
+    // Verificar si hay una sesión admin válida en las cookies
+    const adminAuth = request.cookies.get('admin-auth-storage');
+    
+    if (!adminAuth) {
+      // No hay sesión, redirigir al login
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    try {
+      // Parsear la cookie para verificar la sesión
+      const authData = JSON.parse(adminAuth.value);
+      const state = authData?.state;
+      
+      if (!state?.isAuthenticated || !state?.user) {
+        // Sesión inválida, redirigir al login
+        return NextResponse.redirect(new URL('/admin/login', request.url));
+      }
+
+      // Verificar si la sesión no ha expirado (8 horas)
+      const loginTime = new Date(state.user.loginTime);
+      const now = new Date();
+      const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursDiff > 8) {
+        // Sesión expirada, redirigir al login
+        const response = NextResponse.redirect(new URL('/admin/login', request.url));
+        // Limpiar la cookie expirada
+        response.cookies.delete('admin-auth-storage');
+        return response;
+      }
+
+      // Sesión válida, permitir acceso
+      return NextResponse.next();
+
+    } catch (error) {
+      // Error al parsear la cookie, redirigir al login
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
+
+  // Para el login, si ya está autenticado, redirigir al dashboard
+  if (pathname === '/admin/login') {
+    const adminAuth = request.cookies.get('admin-auth-storage');
+    
+    if (adminAuth) {
+      try {
+        const authData = JSON.parse(adminAuth.value);
+        const state = authData?.state;
+        
+        if (state?.isAuthenticated && state?.user) {
+          // Verificar si la sesión no ha expirado
+          const loginTime = new Date(state.user.loginTime);
+          const now = new Date();
+          const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
+          
+          if (hoursDiff <= 8) {
+            // Sesión válida, redirigir al dashboard
+            return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+          }
+        }
+      } catch (error) {
+        // Error al parsear, continuar al login
+      }
+    }
+  }
+
+  // Para otras rutas, continuar normalmente
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    '/admin/:path*'
+  ]
+};
