@@ -8,6 +8,7 @@ import { Product } from '@/lib/types';
 import { Suspense } from 'react';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ImagePreloader } from '@/components/performance/image-preloader';
+import { CardLoadingSkeleton } from '@/components/ui/enterprise-loading';
 import { HeroSection } from '@/components/home/hero-section';
 
 export const dynamic = 'force-dynamic';
@@ -55,22 +56,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
 function ProductSkeleton() {
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm">
-      {/* Enterprise dark loading skeleton */}
-      <div className="aspect-square bg-gray-900 relative overflow-hidden">
-        {/* Shimmer animation */}
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse" />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
-        
-        {/* Loading indicator */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3">
-          <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
-          <div className="text-white/60 text-xs font-medium">
-            Cargando productos...
-          </div>
-        </div>
-      </div>
-      
-      {/* Content skeleton */}
+      <CardLoadingSkeleton />
       <div className="p-4 space-y-3">
         <div className="h-4 bg-gray-300 rounded animate-pulse" />
         <div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse delay-100" />

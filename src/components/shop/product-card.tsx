@@ -7,10 +7,10 @@ import { Product } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useWishlist } from '@/hooks/use-wishlist';
-import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react';
+import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { ProductCardLogo } from '@/components/ui/optimized-logo';
+import { LazyLoadingPlaceholder, ErrorPlaceholder } from '@/components/ui/enterprise-loading';
 
 interface ProductCardProps {
   product: Product;
@@ -150,51 +150,25 @@ export default function ProductCard({ product, priority = false, className, inde
         aria-label={`Ver detalles de ${product.name}`}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
-          {/* Enterprise dark loading placeholder */}
+          {/* Enterprise loading state */}
           {imageLoading && isIntersecting && (
             <div className="absolute inset-0 bg-gray-900 overflow-hidden">
-              {/* Animated shimmer effect like Amazon/Shopify */}
               <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse" />
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
               
-              {/* Loading content centered */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3">
-                {/* Loading spinner */}
-                <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
-                
-                {/* Loading text */}
-                <div className="text-white/70 text-sm font-medium">
-                  Cargando...
-                </div>
-                
-                {/* Skeleton bars for product info */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3" role="status" aria-busy="true" aria-label="Cargando producto">
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" aria-hidden="true" />
+                <div className="text-white/70 text-sm font-medium">Cargando...</div>
                 <div className="space-y-2 w-20">
-                  <div className="h-2 bg-white/20 rounded animate-pulse"></div>
-                  <div className="h-2 bg-white/15 rounded animate-pulse delay-100"></div>
+                  <div className="h-2 bg-white/20 rounded animate-pulse" />
+                  <div className="h-2 bg-white/15 rounded animate-pulse delay-100" />
                 </div>
               </div>
-              
-              {/* Premium gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
             </div>
           )}
 
           {/* Lazy loading placeholder */}
-          {!isIntersecting && (
-            <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
-              <div className="flex flex-col items-center space-y-3 opacity-60">
-                {/* Waiting icon */}
-                <div className="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-                </div>
-                
-                {/* Waiting text */}
-                <div className="text-white/50 text-xs font-medium">
-                  Esperando...
-                </div>
-              </div>
-            </div>
-          )}
+          {!isIntersecting && <LazyLoadingPlaceholder />}
 
           {!imageError && isIntersecting ? (
             <Image
@@ -214,19 +188,10 @@ export default function ProductCard({ product, priority = false, className, inde
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           ) : isIntersecting && imageError ? (
-            <div className="flex items-center justify-center h-full bg-gradient-to-br from-red-50/50 via-white/80 to-red-50/50 border-2 border-red-200">
-              <div className="flex flex-col items-center space-y-3 opacity-70">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <span className="text-red-500 text-xl">⚠️</span>
-                </div>
-                <div className="text-xs text-red-600 text-center font-medium">
-                  Error al cargar imagen
-                </div>
-                <div className="text-xs text-gray-500 text-center">
-                  URL: {product.imageUrl}
-                </div>
-              </div>
-            </div>
+            <ErrorPlaceholder 
+              error="Error al cargar imagen" 
+              imageUrl={product.imageUrl}
+            />
           ) : null}
 
           {isIntersecting && (
