@@ -10,6 +10,7 @@ import { useWishlist } from '@/hooks/use-wishlist';
 import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { ProductCardLogo } from '@/components/ui/optimized-logo';
 
 interface ProductCardProps {
   product: Product;
@@ -156,14 +157,7 @@ export default function ProductCard({ product, priority = false, className, inde
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-200/30 to-transparent animate-shimmer" />
               {/* Logo centrado con opacidad suave */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <Image
-                  src="/assets/logo.webp"
-                  alt="Joyas JP Logo"
-                  width={60}
-                  height={60}
-                  className="opacity-20 animate-pulse"
-                  priority
-                />
+                <ProductCardLogo className="opacity-20 animate-pulse" />
               </div>
               {/* Overlay sutil para mejor transición */}
               <div className="absolute inset-0 bg-gradient-to-t from-white/5 via-transparent to-white/5" />
@@ -174,14 +168,7 @@ export default function ProductCard({ product, priority = false, className, inde
           {!isIntersecting && (
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50 flex items-center justify-center">
               <div className="flex flex-col items-center space-y-2 opacity-30">
-                <Image
-                  src="/assets/logo.webp"
-                  alt="Joyas JP Logo"
-                  width={40}
-                  height={40}
-                  className="opacity-60"
-                  priority
-                />
+                <ProductCardLogo className="opacity-60 !w-10 !h-10" />
                 <Sparkles className="w-6 h-6 text-amber-600/60" />
               </div>
             </div>
@@ -207,14 +194,7 @@ export default function ProductCard({ product, priority = false, className, inde
           ) : isIntersecting && imageError ? (
             <div className="flex items-center justify-center h-full bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50">
               <div className="flex flex-col items-center space-y-3 opacity-50">
-                <Image
-                  src="/assets/logo.webp"
-                  alt="Joyas JP Logo"
-                  width={48}
-                  height={48}
-                  className="opacity-60"
-                  priority
-                />
+                <ProductCardLogo className="opacity-60 !w-12 !h-12" />
                 <div className="text-xs text-amber-600/60 text-center">
                   Imagen no disponible
                 </div>

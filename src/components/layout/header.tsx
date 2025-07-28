@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { HeaderLogo } from '@/components/ui/optimized-logo';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -34,18 +35,9 @@ export function Header() {
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* 🔧 LOGO PRINCIPAL CORREGIDO */}
+        {/* Logo Principal Optimizado */}
         <Link href="/" className="flex items-center">
-          <div className="relative h-28 w-28 md:h-32 md:w-32">
-            <Image
-              src="/assets/logo.webp"
-              alt="Joyas JP Logo"
-              fill
-              sizes="(max-width: 768px) 112px, 128px"
-              className="object-contain"
-              priority
-            />
-          </div>
+          <HeaderLogo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -80,17 +72,9 @@ export function Header() {
               <SheetContent side="right" className="bg-background/95 border-l-border/50 w-[280px]">
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                    {/* 🔧 LOGO MÓVIL CORREGIDO */}
+                    {/* Logo Móvil Optimizado */}
                     <Link href="/" className="flex items-center">
-                      <div className="relative h-16 w-16 aspect-square">
-                        <Image
-                          src="/assets/logo.webp"
-                          alt="Joyas JP Logo"
-                          fill
-                          sizes="64px"
-                          className="object-contain"
-                        />
-                      </div>
+                      <HeaderLogo className="!w-16 !h-16" />
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-6 text-center">

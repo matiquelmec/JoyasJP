@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Shield, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { AdminLogo } from '@/components/ui/optimized-logo';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -83,14 +84,7 @@ export default function AdminLoginPage() {
         
         {/* Logo y título */}
         <div className="text-center space-y-4">
-          <Image
-            src="/assets/logo.webp"
-            alt="Joyas JP"
-            width={120}
-            height={120}
-            className="mx-auto"
-            priority
-          />
+          <AdminLogo />
           <div>
             <h1 className="text-2xl font-bold">Panel de Administración</h1>
             <p className="text-muted-foreground">Joyas JP</p>
