@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useDeviceType } from '@/hooks/use-mobile';
 
-// Preloader inteligente que carga recursos basado en la ruta actual
+// Preloader inteligente que carga recursos basado en la ruta actual y dispositivo
 export default function ResourcePreloader() {
   const pathname = usePathname();
+  const { deviceType, connectionType } = useDeviceType();
 
   useEffect(() => {
     // Deshabilitar completamente el Service Worker y limpiar cache
@@ -37,18 +39,18 @@ export default function ResourcePreloader() {
     // Preload crítico para todas las páginas
     preloadCriticalResources();
 
-    // Preload específico por ruta
+    // Preload específico por ruta y dispositivo
     if (pathname === '/') {
-      preloadHomeResources();
+      preloadHomeResources(deviceType, connectionType);
     } else if (pathname === '/productos') {
-      preloadProductsResources();
+      preloadProductsResources(deviceType, connectionType);
     } else if (pathname.startsWith('/productos/')) {
-      preloadProductDetailResources();
+      preloadProductDetailResources(deviceType, connectionType);
     } else if (pathname.startsWith('/admin')) {
-      preloadAdminResources();
+      preloadAdminResources(deviceType, connectionType);
     }
 
-  }, [pathname]);
+  }, [pathname, deviceType, connectionType]);
 
   return null; // Este componente no renderiza nada
 }
@@ -60,27 +62,47 @@ function preloadCriticalResources() {
   // No preload CSS específico ya que Next.js lo maneja automáticamente
 }
 
-function preloadHomeResources() {
-  // Preload componentes que se mostrarán (la API ya se llama en el servidor)
+function preloadHomeResources(deviceType: 'mobile' | 'tablet' | 'desktop', connectionType: 'slow' | 'fast') {
+  // En móvil con conexión lenta, solo preload crítico
+  if (deviceType === 'mobile' && connectionType === 'slow') {
+    return; // No preload adicional en móvil con conexión lenta
+  }
+  
+  // Preload componentes que se mostrarán
   import('@/components/shop/product-card').catch(() => {});
 }
 
-function preloadProductsResources() {
-  // Solo preload de componentes (las APIs ya se llaman en el servidor)
+function preloadProductsResources(deviceType: 'mobile' | 'tablet' | 'desktop', connectionType: 'slow' | 'fast') {
+  // En móvil, priorizar menos recursos
+  if (deviceType === 'mobile') {
+    // Solo preload crítico en móvil
+    import('@/components/shop/product-card').catch(() => {});
+    return;
+  }
+  
+  // En desktop, preload adicional
   import('@/components/shop/product-card').catch(() => {});
+  import('@/components/ui/badge').catch(() => {});
 }
 
-function preloadProductDetailResources() {
-  // Preload componentes de detalle
-  import('@/components/shop/product-detail-view').catch(() => {});
-  import('@/components/shop/related-products').catch(() => {});
+function preloadProductDetailResources(deviceType: 'mobile' | 'tablet' | 'desktop', connectionType: 'slow' | 'fast') {
+  // Preload básico siempre
+  import('@/components/shop/add-to-cart-button').catch(() => {});
+  
+  // Solo en desktop o conexión rápida preload adicional
+  if (deviceType !== 'mobile' || connectionType === 'fast') {
+    import('@/components/shop/add-to-wishlist-button').catch(() => {});
+    import('@/components/shop/related-products').catch(() => {});
+  }
 }
 
-function preloadAdminResources() {
-  // Preload componentes admin (solo si es necesario)
+function preloadAdminResources(deviceType: 'mobile' | 'tablet' | 'desktop', connectionType: 'slow' | 'fast') {
+  // Admin panel - solo preload si está autenticado y no es móvil con conexión lenta
   if (typeof window !== 'undefined' && localStorage.getItem('admin-token')) {
-    import('@/components/admin/admin-layout').catch(() => {});
-    import('@/components/admin/dashboard-stats').catch(() => {});
+    if (!(deviceType === 'mobile' && connectionType === 'slow')) {
+      import('@/components/admin/admin-layout').catch(() => {});
+      import('@/components/admin/dashboard-stats').catch(() => {});
+    }
   }
 }
 

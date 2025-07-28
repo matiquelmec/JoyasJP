@@ -24,8 +24,8 @@ const nextConfig = {
     minimumCacheTTL: 3600, // 1 hora de cache
     dangerouslyAllowSVG: false,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [375, 414, 640, 750, 828, 1080, 1200, 1920], // Agregado 375, 414 para móviles comunes
+    imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384], // Agregado 180, 320 para móvil
     remotePatterns: [
       {
         protocol: 'https',

@@ -33,7 +33,13 @@ export default function ProductCard({ product, priority = false, className, inde
 
   // Intersection Observer para lazy loading
   useEffect(() => {
-    if (index < 8) return; // Las primeras 8 ya están cargando
+    // Detectar si es móvil para optimizaciones específicas
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    
+    // En móvil cargar inmediatamente solo 4 productos (vs 8 en desktop)
+    const immediateLoadLimit = isMobile ? 4 : 8;
+    
+    if (index < immediateLoadLimit) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -43,8 +49,10 @@ export default function ProductCard({ product, priority = false, className, inde
         }
       },
       { 
-        rootMargin: '200px',
-        threshold: 0.1
+        // En móvil, rootMargin más grande para pre-cargar antes (conexión más lenta)
+        rootMargin: isMobile ? '300px' : '200px',
+        // En móvil, threshold más bajo para cargar antes
+        threshold: isMobile ? 0.05 : 0.1
       }
     );
 
@@ -160,15 +168,15 @@ export default function ProductCard({ product, priority = false, className, inde
               src={product.imageUrl}
               alt={`${product.name} - Joya urbana premium de Joyas JP`}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 480px) 50vw, (max-width: 640px) 45vw, (max-width: 1024px) 33vw, 25vw"
               className={cn(
                 "object-cover transition-transform duration-300 group-hover:scale-105",
                 imageLoading ? "scale-105 blur-sm opacity-0" : "scale-100 blur-0 opacity-100"
               )}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              priority={priority || index < 4}
-              loading={priority || index < 4 ? "eager" : "lazy"}
+              priority={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 2 : index < 4)}
+              loading={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 2 : index < 4) ? "eager" : "lazy"}
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
