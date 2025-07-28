@@ -1,55 +1,40 @@
-// Service Worker deshabilitado temporalmente para eliminar cache legacy
-const CACHE_NAME = 'joyas-jp-disabled';
-const STATIC_CACHE = 'joyas-jp-disabled';
-const DYNAMIC_CACHE = 'joyas-jp-disabled';
-
-// Recursos estáticos críticos para cachear
-const STATIC_ASSETS = [
-  '/',
-  '/productos',
-  '/manifest.json',
-  '/assets/logo.webp',
-];
-
-// URLs de APIs que deben cachearse
-const API_CACHE_PATTERNS = [
-  /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\//,
-];
+// Service Worker completamente deshabilitado
+// Este archivo fuerza la eliminación de cualquier Service Worker anterior
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .then(() => {
-        return self.skipWaiting();
-      })
-  );
+  // Saltarse la espera para activar inmediatamente
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Limpiando todos los caches antiguos');
+  console.log('SW: Eliminando TODOS los caches y deshabilitando SW');
+  
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        // Borrar TODOS los caches para eliminar datos legacy
+    Promise.all([
+      // Eliminar todos los caches existentes
+      caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            console.log('Service Worker: Eliminando cache', cacheName);
+            console.log('SW: Eliminando cache:', cacheName);
             return caches.delete(cacheName);
           })
         );
-      })
-      .then(() => {
-        console.log('Service Worker: Todos los caches eliminados');
-        return self.clients.claim();
-      })
+      }),
+      // Tomar control inmediato de todos los clientes
+      self.clients.claim()
+    ]).then(() => {
+      console.log('SW: Cache eliminado, SW será desregistrado');
+      // Notificar a todos los clientes que se desregistren el SW
+      return self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'SW_DISABLE' });
+        });
+      });
+    })
   );
 });
 
+// No interceptar ningún fetch - dejar todo pasar
 self.addEventListener('fetch', (event) => {
-  // Service Worker deshabilitado - no interceptar requests
-  // Dejar que todas las requests pasen directamente a la red
-  console.log('Service Worker: Request pasando sin intercepción:', event.request.url);
+  // No hacer nada - dejar que todas las requests pasen normalmente
 });

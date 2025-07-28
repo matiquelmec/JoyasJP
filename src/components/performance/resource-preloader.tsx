@@ -8,19 +8,29 @@ export default function ResourcePreloader() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Temporalmente registrar SW para limpiar cache legacy y luego desregistrar
+    // Deshabilitar completamente el Service Worker y limpiar cache
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => {
-          console.log('SW registrado para limpieza de cache');
-          // Después de 5 segundos, desregistrar el SW
-          setTimeout(() => {
-            navigator.serviceWorker.ready.then(registration => {
-              registration.unregister();
-              console.log('SW desregistrado después de limpieza');
-            });
-          }, 5000);
-        })
+      // Primero desregistrar cualquier SW existente
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          registration.unregister();
+          console.log('SW existente desregistrado');
+        });
+      });
+      
+      // Escuchar mensajes del SW para desregistrarlo cuando termine la limpieza
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'SW_DISABLE') {
+          navigator.serviceWorker.ready.then(registration => {
+            registration.unregister();
+            console.log('SW desregistrado después de limpieza de cache');
+          });
+        }
+      });
+      
+      // Registrar el SW de limpieza una vez
+      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
+        .then(() => console.log('SW de limpieza registrado'))
         .catch(error => console.log('Error SW:', error));
     }
     

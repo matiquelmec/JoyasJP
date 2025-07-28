@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
 const nextConfig = {
+  // Forzar recarga de assets cacheados cambiando buildId
+  generateBuildId: async () => {
+    return 'clean-build-' + Date.now()
+  },
+  
   // Compresión optimizada
   compress: true,
   
