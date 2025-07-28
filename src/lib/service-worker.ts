@@ -22,7 +22,6 @@ export function registerServiceWorker() {
           }
         });
 
-        console.log('Service Worker registrado exitosamente');
         
       } catch (error) {
         console.log('Service Worker registration falló:', error);

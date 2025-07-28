@@ -8,6 +8,22 @@ export default function ResourcePreloader() {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Temporalmente registrar SW para limpiar cache legacy y luego desregistrar
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => {
+          console.log('SW registrado para limpieza de cache');
+          // Después de 5 segundos, desregistrar el SW
+          setTimeout(() => {
+            navigator.serviceWorker.ready.then(registration => {
+              registration.unregister();
+              console.log('SW desregistrado después de limpieza');
+            });
+          }, 5000);
+        })
+        .catch(error => console.log('Error SW:', error));
+    }
+    
     // Preload crítico para todas las páginas
     preloadCriticalResources();
 
