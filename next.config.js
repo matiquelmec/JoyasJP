@@ -28,11 +28,11 @@ const nextConfig = {
   
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 86400, // 24 horas de cache (más tiempo)
+    minimumCacheTTL: 604800, // 7 days cache (enterprise-level)
     dangerouslyAllowSVG: false,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    deviceSizes: [320, 375, 414, 640, 750, 828, 1080, 1200, 1920], // Agregado 320 para móviles pequeños
-    imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384, 512], // Agregado 512 para imágenes más grandes
+    deviceSizes: [320, 375, 414, 640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384, 512],
     remotePatterns: [
       {
         protocol: 'https',
@@ -42,6 +42,112 @@ const nextConfig = {
     ],
     loader: 'default',
     loaderFile: '',
+  },
+
+  // Enterprise-level headers for advanced caching
+  async headers() {
+    return [
+      // Static assets (images, fonts, etc.)
+      {
+        source: '/assets/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding',
+          },
+        ],
+      },
+      // Critical images (logo, hero)
+      {
+        source: '/assets/(logo|hero-poster|nosotros).webp',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, s-maxage=2592000, immutable', // 30 days
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Priority',
+            value: 'high',
+          },
+        ],
+      },
+      // Product images with smart caching
+      {
+        source: '/assets/Products/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=259200', // 7 days, stale 3 days
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding, Accept',
+          },
+        ],
+      },
+      // Service Worker
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/',
+          },
+        ],
+      },
+      // API routes with smart caching
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, s-maxage=300, stale-while-revalidate=600', // 5 min cache, 10 min stale
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      // HTML pages with dynamic content
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
   },
   
   // Configuracion de trailing slash
