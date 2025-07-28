@@ -9,41 +9,36 @@ import { useEffect, useState } from 'react';
 
 export function HeroSection() {
   const { deviceType, connectionType, isClient } = useDeviceType();
-  const [shouldShowVideo, setShouldShowVideo] = useState(false);
 
-  useEffect(() => {
-    if (!isClient) return;
-    
-    // Solo mostrar video en desktop con conexión rápida
-    const showVideo = deviceType === 'desktop' && connectionType === 'fast';
-    setShouldShowVideo(showVideo);
-  }, [deviceType, connectionType, isClient]);
+  // Mostrar video por defecto para evitar flash, luego optimizar
+  const shouldShowVideo = !isClient || (deviceType !== 'mobile' && connectionType === 'fast');
 
   return (
     <section className="relative h-[calc(100vh+9rem)] w-full overflow-hidden mt-[-9rem]">
-      {shouldShowVideo ? (
-        <video
-          src="/assets/mi-video.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster="/assets/hero-poster.webp"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          aria-label="Video promocional de Joyas JP"
-        />
-      ) : (
+      {/* Siempre mostrar video primero para evitar flash, optimización se aplica después */}
+      <video
+        src="/assets/mi-video.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        aria-label="Video promocional de Joyas JP"
+        style={{ 
+          display: shouldShowVideo ? 'block' : 'none'
+        }}
+      />
+      
+      {/* Imagen de respaldo solo en móvil */}
+      {isClient && deviceType === 'mobile' && (
         <Image
           src="/assets/hero-poster.webp"
           alt="Joyas JP - Atrévete a jugar con joyas urbanas premium"
           fill
           priority
-          quality={deviceType === 'mobile' ? 75 : 90}
+          quality={75}
           sizes="100vw"
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          placeholder="blur"
-          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         />
       )}
       
