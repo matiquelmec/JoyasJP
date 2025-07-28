@@ -30,7 +30,6 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 604800, // 7 days cache (enterprise-level)
     dangerouslyAllowSVG: false,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     deviceSizes: [320, 375, 414, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384, 512],
     remotePatterns: [
@@ -41,7 +40,6 @@ const nextConfig = {
       },
     ],
     loader: 'default',
-    loaderFile: '',
   },
 
   // Enterprise-level headers for advanced caching
