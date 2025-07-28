@@ -102,8 +102,13 @@ export default function ShopPage() {
 
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {filteredProducts.map((product, index) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  index={index}
+                  priority={index < 4} // Prioridad solo para primeras 4 imágenes
+                />
               ))}
             </div>
           ) : (

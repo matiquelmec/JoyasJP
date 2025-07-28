@@ -5,7 +5,11 @@ const nextConfig = {
   
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 3600, // 1 hora de cache
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,6 +17,8 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/joyas-jp-ecommerce/**',
       },
     ],
+    loader: 'default',
+    loaderFile: '',
   },
   
   // Configuracion de trailing slash
