@@ -36,32 +36,16 @@ function preloadCriticalResources() {
   // Eliminamos font preload ya que puede no existir
   
   // No preload CSS específico ya que Next.js lo maneja automáticamente
-  console.log('Critical resources preloaded');
 }
 
 function preloadHomeResources() {
-  // Preload productos destacados API
-  fetch('/api/products?featured=true', { 
-    method: 'GET',
-    headers: { 'Priority': 'u=1' }
-  }).catch(() => {}); // Silent fail
-
-  // Preload componentes que se mostrarán
+  // Preload componentes que se mostrarán (la API ya se llama en el servidor)
   import('@/components/shop/product-card').catch(() => {});
 }
 
 function preloadProductsResources() {
-  // Preload productos API
-  fetch('/api/products', { 
-    method: 'GET',
-    headers: { 'Priority': 'u=0' }
-  }).catch(() => {});
-
-  // Preload colores API  
-  fetch('/api/colors', { 
-    method: 'GET',
-    headers: { 'Priority': 'u=2' }
-  }).catch(() => {});
+  // Solo preload de componentes (las APIs ya se llaman en el servidor)
+  import('@/components/shop/product-card').catch(() => {});
 }
 
 function preloadProductDetailResources() {

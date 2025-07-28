@@ -144,8 +144,9 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-
         
+        {/* Preload logo solo para páginas que lo usan inmediatamente */}
+        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" />
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/webp" sizes="any" href="/assets/logo.webp" />

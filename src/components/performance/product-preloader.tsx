@@ -21,15 +21,9 @@ export function ProductPreloader({ productImageUrl, relatedCategory }: ProductPr
     import('@/components/shop/add-to-cart-button').catch(() => {});
     import('@/components/shop/add-to-wishlist-button').catch(() => {});
     
-    // Preload relacionados después de un delay
-    const timer = setTimeout(() => {
-      fetch(`/api/products?category=${relatedCategory}&limit=4`, {
-        headers: { 'Priority': 'u=2' }
-      }).catch(() => {});
-    }, 1000);
+    // Los productos relacionados se cargan desde el servidor, no necesitamos preload
 
     return () => {
-      clearTimeout(timer);
       document.head.removeChild(link);
     };
   }, [productImageUrl, relatedCategory]);
