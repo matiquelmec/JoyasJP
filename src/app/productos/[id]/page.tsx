@@ -116,13 +116,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <Image
                 src={product.imageUrl}
                 alt={`${product.name} - Joya premium de ${product.category} en ${product.color || 'varios colores'}`}
-                fill
+                width={600}
+                height={600}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 45vw"
-                className="object-cover transition-transform duration-300 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 priority
                 fetchPriority="high"
+                loading="eager"
                 placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
               />
 
               {/* Image Actions */}
@@ -204,13 +206,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* Related Products with Optimized Loading */}
-        <Suspense fallback={<RelatedProductsSkeleton />}>
-          <RelatedProductsServer 
-            currentProductId={product.id} 
-            category={product.category} 
-          />
-        </Suspense>
+        {/* Related Products - Delayed to prioritize main image */}
+        <div className="mt-16">
+          <Suspense fallback={<RelatedProductsSkeleton />}>
+            <RelatedProductsServer 
+              currentProductId={product.id} 
+              category={product.category} 
+            />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

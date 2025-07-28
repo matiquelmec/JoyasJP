@@ -26,7 +26,7 @@ export async function RelatedProductsServer({
           <ProductCard 
             key={product.id} 
             product={product} 
-            index={index + 10} // Offset para que no tengan priority 
+            index={index + 50} // Offset alto para evitar priority 
           />
         ))}
       </div>
