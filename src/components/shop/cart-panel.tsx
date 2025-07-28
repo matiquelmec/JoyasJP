@@ -5,15 +5,14 @@ import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ShoppingBag, Trash2, Loader2 } from 'lucide-react';
+import { ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-import { useToast } from '@/hooks/use-toast';
-import { logUserAction, logError } from '@/lib/logger';
+import { useRouter } from 'next/navigation';
+import { logUserAction } from '@/lib/logger';
 
 export function CartPanel() {
   const { items, removeItem, updateItemQuantity, clearCart, isOpen, openCart, closeCart } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const router = useRouter();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => {
@@ -21,64 +20,19 @@ export function CartPanel() {
     return sum + item.price * item.quantity;
   }, 0);
 
-  const handleCheckout = async () => {
-    if (items.length === 0) {
-      toast({
-        title: "Carrito vacío",
-        description: "Agrega productos antes de finalizar la compra.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    logUserAction('checkout_initiated', { itemCount: items.length, subtotal });
+  const handleCheckout = () => {
+    if (items.length === 0) return;
     
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(items),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        logError(new Error(`Checkout API error: ${response.status}`), {
-          status: response.status,
-          errorData: data,
-          itemCount: items.length
-        });
-        throw new Error(data.error || 'Error en la comunicación con el servidor.');
-      }
-      
-      if (data.checkoutUrl) {
-        logUserAction('checkout_redirect', { 
-          url: data.checkoutUrl,
-          itemCount: items.length 
-        });
-        window.location.href = data.checkoutUrl;
-      } else {
-        throw new Error('No se recibió la URL de pago.');
-      }
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Ocurrió un error inesperado.";
-      
-      logError(error as Error, {
-        action: 'checkout',
-        itemCount: items.length,
-        subtotal
-      });
-      
-      toast({
-        title: "Error al Procesar el Pago",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    logUserAction('cart_proceed_to_checkout', { 
+      itemCount: items.length, 
+      subtotal 
+    });
+    
+    // Cerrar el panel del carrito
+    closeCart();
+    
+    // Redirigir a la página de checkout
+    router.push('/checkout');
   };
 
   return (
@@ -147,9 +101,9 @@ export function CartPanel() {
                   <span>Subtotal:</span>
                   <span>${subtotal.toLocaleString('es-CL')}</span>
                 </div>
-                <Button className="w-full" size="lg" onClick={handleCheckout} disabled={isLoading}>
-                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Finalizar Compra
+                <Button className="w-full" size="lg" onClick={handleCheckout}>
+                  <ArrowRight className="mr-2 h-4 w-4" />
+                  Ir a Checkout
                 </Button>
                 <Button variant="outline" className="w-full" onClick={clearCart}>
                   Limpiar Carrito
