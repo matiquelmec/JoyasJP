@@ -15,30 +15,27 @@ export function HeroSection() {
 
   return (
     <section className="relative h-[calc(100vh+9rem)] w-full overflow-hidden mt-[-9rem]">
-      {/* Siempre mostrar video primero para evitar flash, optimización se aplica después */}
-      <video
-        src="/assets/mi-video.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
+      {/* Imagen de respaldo como fondo principal */}
+      <Image
+        src="/assets/hero-poster.webp"
+        alt="Joyas JP - Atrévete a jugar con joyas urbanas premium"
+        fill
+        priority
+        quality={75}
+        sizes="100vw"
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        aria-label="Video promocional de Joyas JP"
-        style={{ 
-          display: shouldShowVideo ? 'block' : 'none'
-        }}
       />
-      
-      {/* Imagen de respaldo solo en móvil */}
-      {isClient && deviceType === 'mobile' && (
-        <Image
-          src="/assets/hero-poster.webp"
-          alt="Joyas JP - Atrévete a jugar con joyas urbanas premium"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
+
+      {/* Video solo se renderiza si la condición es verdadera */}
+      {shouldShowVideo && (
+        <video
+          src="/assets/mi-video.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          aria-label="Video promocional de Joyas JP"
         />
       )}
       
