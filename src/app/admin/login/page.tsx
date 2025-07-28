@@ -55,9 +55,9 @@ export default function AdminLoginPage() {
         
         // Esperar un momento para que se guarde el estado
         setTimeout(() => {
-          console.log('Ejecutando redirección...');
-          // Temporalmente redirigir a página de prueba
-          router.push('/admin/test');
+          console.log('Ejecutando redirección con window.location...');
+          // Usar window.location en lugar de router.push
+          window.location.href = '/admin/test';
         }, 500);
       } else {
         toast({
