@@ -9,35 +9,49 @@ node_modules/
 # Next.js
 /.next/
 /out/
+.next/
 
 # Production
 /build
+/dist
 
-# Misc
-.DS_Store
-*.pem
+# Environment files
+.env*.local
+.env
+.env.production
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Local env files
-.env*.local
-.env
-
-# Vercel
-.vercel
+.pnpm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# Netlify
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.pem
+
+# Deployment
+.vercel
 .netlify/
 
-# Backup directory
-backup_20250723_211816/
-
-# Temporary files
+# Backup and temp files
+backup_*/
+*.backup
 commit_message.txt
+.temp/
