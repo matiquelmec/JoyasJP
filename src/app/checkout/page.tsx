@@ -56,27 +56,47 @@ export default function CheckoutPage() {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!shippingData.customerName.trim()) {
+    // Sanitizar y validar nombre
+    const cleanName = shippingData.customerName.trim().replace(/[<>]/g, '');
+    if (!cleanName) {
       newErrors.customerName = 'El nombre es requerido';
+    } else if (cleanName.length < 2) {
+      newErrors.customerName = 'El nombre debe tener al menos 2 caracteres';
+    } else if (cleanName.length > 100) {
+      newErrors.customerName = 'El nombre es demasiado largo';
     }
 
-    if (!shippingData.email.trim()) {
+    // Validación robusta de email
+    const cleanEmail = shippingData.email.trim().toLowerCase();
+    if (!cleanEmail) {
       newErrors.email = 'El email es requerido';
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(shippingData.email)) {
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(cleanEmail)) {
       newErrors.email = 'Email inválido';
+    } else if (cleanEmail.length > 320) { // RFC 5321 limit
+      newErrors.email = 'Email demasiado largo';
     }
 
-    if (!shippingData.phone.trim()) {
+    // Validación mejorada de teléfono
+    const cleanPhone = shippingData.phone.trim().replace(/[^\d+\-\s()]/g, '');
+    if (!cleanPhone) {
       newErrors.phone = 'El teléfono es requerido';
-    } else if (!/^[+]?[0-9\s\-()]{8,}$/.test(shippingData.phone)) {
-      newErrors.phone = 'Teléfono inválido (mínimo 8 dígitos)';
+    } else if (!/^[+]?[0-9\s\-()]{8,15}$/.test(cleanPhone)) {
+      newErrors.phone = 'Teléfono inválido (8-15 dígitos)';
     }
 
-    if (!shippingData.address.trim()) {
+    // Sanitizar dirección
+    const cleanAddress = shippingData.address.trim().replace(/[<>]/g, '');
+    if (!cleanAddress) {
       newErrors.address = 'La dirección es requerida';
+    } else if (cleanAddress.length < 5) {
+      newErrors.address = 'La dirección debe ser más específica';
+    } else if (cleanAddress.length > 200) {
+      newErrors.address = 'La dirección es demasiado larga';
     }
 
-    if (!shippingData.comuna.trim()) {
+    // Validar comuna
+    const cleanComuna = shippingData.comuna.trim().replace(/[<>]/g, '');
+    if (!cleanComuna) {
       newErrors.comuna = 'La comuna es requerida';
     }
 
@@ -85,7 +105,20 @@ export default function CheckoutPage() {
   };
 
   const handleInputChange = (field: keyof ShippingData, value: string) => {
-    setShippingData(prev => ({ ...prev, [field]: value }));
+    // Sanitizar input en tiempo real
+    let sanitizedValue = value;
+    
+    if (field === 'email') {
+      sanitizedValue = value.trim().toLowerCase();
+    } else if (field === 'phone') {
+      // Mantener solo números, espacios, +, -, ()
+      sanitizedValue = value.replace(/[^\d+\-\s()]/g, '');
+    } else {
+      // Para nombre, dirección, comuna: remover caracteres peligrosos
+      sanitizedValue = value.replace(/[<>]/g, '');
+    }
+    
+    setShippingData(prev => ({ ...prev, [field]: sanitizedValue }));
     // Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));

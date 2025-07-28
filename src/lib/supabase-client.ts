@@ -14,11 +14,22 @@ function getSupabaseClient() {
   }
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    logger.warn('Supabase credentials missing', {
+    const error = new Error('CRITICAL: Supabase credentials missing - check environment variables');
+    logger.error('Supabase credentials missing', {
       hasUrl: !!supabaseUrl,
-      hasKey: !!supabaseAnonKey
-    });
-    return undefined;
+      hasKey: !!supabaseAnonKey,
+      NODE_ENV: process.env.NODE_ENV
+    }, error);
+    
+    // En desarrollo, mostrar error claro
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌ MISSING ENVIRONMENT VARIABLES:');
+      if (!supabaseUrl) console.error('  - NEXT_PUBLIC_SUPABASE_URL');
+      if (!supabaseAnonKey) console.error('  - NEXT_PUBLIC_SUPABASE_ANON_KEY');
+      console.error('Check your .env.local file');
+    }
+    
+    throw error;
   }
 
   try {

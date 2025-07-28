@@ -3,8 +3,16 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { CartItem } from '@/hooks/use-cart';
 import { logger, logApiCall } from '@/lib/logger';
 
+// Validar variables de entorno críticas
+const MP_ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+if (!MP_ACCESS_TOKEN) {
+  const error = new Error('CRITICAL: MP_ACCESS_TOKEN missing - MercadoPago won\'t work');
+  console.error('❌ Missing MP_ACCESS_TOKEN environment variable');
+  throw error;
+}
+
 const client = new MercadoPagoConfig({ 
-  accessToken: process.env.MP_ACCESS_TOKEN! 
+  accessToken: MP_ACCESS_TOKEN
 });
 
 export async function POST(req: NextRequest) {
@@ -48,9 +56,9 @@ export async function POST(req: NextRequest) {
           description: item.description,
         })),
         back_urls: {
-          success: `${req.nextUrl.origin}/shop/success`,
-          failure: `${req.nextUrl.origin}/shop/failure`,
-          pending: `${req.nextUrl.origin}/shop/pending`,
+          success: `${req.nextUrl.origin}/productos/success`,
+          failure: `${req.nextUrl.origin}/productos/failure`,
+          pending: `${req.nextUrl.origin}/productos/pending`,
         },
       },
     });
