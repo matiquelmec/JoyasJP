@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Trophy, Heart } from 'lucide-react';
 import { useDeviceType } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
@@ -49,50 +49,47 @@ export function HeroSection() {
       
       <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
       
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white px-4">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <Image
-            src="/assets/logo.webp"
-            alt="Joyas JP Logo"
-            width={deviceType === 'mobile' ? 180 : 240}
-            height={deviceType === 'mobile' ? 180 : 240}
-            priority
-            className="mx-auto animate-fade-in"
-          />
-          
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-up">
-            Atrévete a jugar
-          </h1>
-          
-          <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
-            Descubre nuestra exclusiva colección de joyas urbanas premium. 
-            Cada pieza cuenta una historia única de estilo y personalidad.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up animation-delay-400">
-            <Link href="/productos">
-              <Button 
-                size="lg" 
-                className="bg-white text-black hover:bg-gray-100 font-semibold px-8 py-4 text-lg transition-all duration-300 hover:scale-105"
-              >
-                Explorar Productos
-              </Button>
-            </Link>
-            <Link href="/nosotros">
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-white text-white hover:bg-white hover:text-black font-semibold px-8 py-4 text-lg transition-all duration-300 hover:scale-105"
-              >
-                Servicios para artistas
-              </Button>
-            </Link>
-          </div>
+      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
+        <Image
+          src="/assets/logo.webp"
+          alt="Joyas JP - Alta joyería para la escena urbana"
+          width={500}
+          height={500}
+          priority
+          fetchPriority="high"
+          className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
+        />
+
+        <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
+          Atrévete a jugar
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
+          <Link href="/productos" className="flex-1">
+            <Button
+              size="lg"
+              className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+            >
+              <Trophy className="w-5 h-5 mr-2" />
+              Productos
+            </Button>
+          </Link>
+          <Link href="/servicios-para-artistas" className="flex-1">
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
+            >
+              <Heart className="w-5 h-5 mr-2" />
+              Servicios para artistas
+            </Button>
+          </Link>
         </div>
-        
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white/80" />
-        </div>
+      </div>
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        <ArrowDown className="w-8 h-8 text-white/70" />
+        <span className="sr-only">Desplázate para ver más</span>
       </div>
     </section>
   );
