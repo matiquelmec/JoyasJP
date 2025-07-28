@@ -397,8 +397,7 @@ export default function CheckoutPage() {
                 <div className="bg-muted/50 p-3 rounded-lg">
                   <p className="text-sm text-muted-foreground">
                     📦 <strong>Envíos los viernes</strong><br />
-                    🚚 Tiempo de entrega: 1-3 días hábiles<br />
-                    📞 Te contactaremos para coordinar la entrega
+                    🚚 Tiempo de entrega: 1-3 días hábiles
                   </p>
                 </div>
 
