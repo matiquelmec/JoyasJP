@@ -1,11 +1,13 @@
 [build]
-  command = "npm run build"
-  publish = ".next"
+  command = "npx @netlify/plugin-nextjs"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_FLAGS = "--production=false"
   NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/*"
