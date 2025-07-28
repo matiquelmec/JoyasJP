@@ -68,9 +68,13 @@ class Logger {
   }
 
   private async sendToExternalService(entry: LogEntry) {
+    // Solo almacenar logs en el cliente, no durante el build
+    if (typeof window === 'undefined') return;
+    
     try {
       if (entry.level === 'error' || entry.level === 'warn') {
-        if (typeof window !== 'undefined' && 'localStorage' in window) {
+        // Verificación extra para estar seguro
+        if (typeof Storage !== 'undefined') {
           const logs = this.getStoredLogs()
           logs.push(entry)
           
@@ -83,29 +87,44 @@ class Logger {
         }
       }
     } catch (e) {
-      console.error('Failed to store log:', e)
+      // Solo console.error si estamos en el cliente
+      if (typeof window !== 'undefined') {
+        console.error('Failed to store log:', e)
+      }
     }
   }
 
   getStoredLogs(): LogEntry[] {
+    // Solo recuperar logs en el cliente, no durante el build
+    if (typeof window === 'undefined') return [];
+    
     try {
-      if (typeof window !== 'undefined' && 'localStorage' in window) {
+      if (typeof Storage !== 'undefined') {
         const stored = localStorage.getItem('app_logs')
         return stored ? JSON.parse(stored) : []
       }
     } catch (e) {
-      console.error('Failed to retrieve stored logs:', e)
+      // Solo console.error si estamos en el cliente
+      if (typeof window !== 'undefined') {
+        console.error('Failed to retrieve stored logs:', e)
+      }
     }
     return []
   }
 
   clearStoredLogs() {
+    // Solo limpiar logs en el cliente, no durante el build
+    if (typeof window === 'undefined') return;
+    
     try {
-      if (typeof window !== 'undefined' && 'localStorage' in window) {
+      if (typeof Storage !== 'undefined') {
         localStorage.removeItem('app_logs')
       }
     } catch (e) {
-      console.error('Failed to clear stored logs:', e)
+      // Solo console.error si estamos en el cliente
+      if (typeof window !== 'undefined') {
+        console.error('Failed to clear stored logs:', e)
+      }
     }
   }
 }

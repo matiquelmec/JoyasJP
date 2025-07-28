@@ -25,7 +25,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
       .from('products')
       .select('id, name, price, imageUrl, category, description, materials, color')
       .gt('stock', 0) // Solo productos en stock
-      .order('updated_at', { ascending: false })
+      .order('id', { ascending: false })
       .limit(20) as { data: Product[] | null; error: { message: string } | null }; // Limitar consulta inicial
 
     if (error) {

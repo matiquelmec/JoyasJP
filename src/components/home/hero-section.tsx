@@ -8,14 +8,16 @@ import { useDeviceType } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
 export function HeroSection() {
-  const { deviceType, connectionType } = useDeviceType();
+  const { deviceType, connectionType, isClient } = useDeviceType();
   const [shouldShowVideo, setShouldShowVideo] = useState(false);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     // Solo mostrar video en desktop con conexión rápida
     const showVideo = deviceType === 'desktop' && connectionType === 'fast';
     setShouldShowVideo(showVideo);
-  }, [deviceType, connectionType]);
+  }, [deviceType, connectionType, isClient]);
 
   return (
     <section className="relative h-[calc(100vh+9rem)] w-full overflow-hidden mt-[-9rem]">

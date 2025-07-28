@@ -70,28 +70,30 @@ export function RoutePreloader() {
   return null;
 }
 
-// Hook para preloading de componentes específicos
+// Hook para preloading de componentes específicos - Versión simplificada sin dynamic imports
 export function useComponentPreloading(condition: boolean, componentPaths: string[]) {
   useEffect(() => {
-    if (!condition) return;
+    if (!condition || typeof window === 'undefined') return;
 
-    const preloadComponents = async () => {
-      const promises = componentPaths.map(async (path) => {
-        try {
-          await import(path);
-        } catch (error) {
-          console.warn(`Failed to preload component: ${path}`, error);
+    // Solo hacer prefetch de rutas, no imports dinámicos para evitar critical dependency
+    const preloadRoutes = () => {
+      componentPaths.forEach(route => {
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = route;
+        
+        const existing = document.querySelector(`link[rel="prefetch"][href="${route}"]`);
+        if (!existing) {
+          document.head.appendChild(link);
         }
       });
-      
-      await Promise.allSettled(promises);
     };
 
     // Preload cuando el browser esté idle
     if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(preloadComponents, { timeout: 5000 });
+      (window as any).requestIdleCallback(preloadRoutes, { timeout: 5000 });
     } else {
-      setTimeout(preloadComponents, 1000);
+      setTimeout(preloadRoutes, 1000);
     }
 
   }, [condition, componentPaths]);

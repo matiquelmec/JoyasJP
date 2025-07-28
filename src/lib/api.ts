@@ -140,7 +140,7 @@ export async function getRelatedProducts(currentProductId: string, category: str
       .eq('category', category)
       .neq('id', currentProductId)
       .gt('stock', 0)
-      .order('updated_at', { ascending: false })
+      .order('id', { ascending: false })
       .limit(limit || 4); // Usa el límite proporcionado o 4 por defecto
 
     if (error) {
