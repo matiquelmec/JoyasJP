@@ -2,16 +2,12 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { registerServiceWorker } from '@/lib/service-worker';
 
 // Preloader inteligente que carga recursos basado en la ruta actual
 export default function ResourcePreloader() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Registrar Service Worker
-    registerServiceWorker();
-    
     // Preload crítico para todas las páginas
     preloadCriticalResources();
 

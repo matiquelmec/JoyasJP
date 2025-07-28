@@ -6,7 +6,9 @@
       "Bash(git push:*)",
       "Bash(npm uninstall:*)",
       "Bash(rm:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

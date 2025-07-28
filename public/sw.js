@@ -1,7 +1,7 @@
-// Service Worker optimizado para JoyasJP
-const CACHE_NAME = 'joyas-jp-v1';
-const STATIC_CACHE = 'joyas-jp-static-v1';
-const DYNAMIC_CACHE = 'joyas-jp-dynamic-v1';
+// Service Worker optimizado para JoyasJP  
+const CACHE_NAME = 'joyas-jp-v2';
+const STATIC_CACHE = 'joyas-jp-static-v2';
+const DYNAMIC_CACHE = 'joyas-jp-dynamic-v2';
 
 // Recursos estáticos críticos para cachear
 const STATIC_ASSETS = [
@@ -14,7 +14,6 @@ const STATIC_ASSETS = [
 // URLs de APIs que deben cachearse
 const API_CACHE_PATTERNS = [
   /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\//,
-  /^\/api\/products/,
 ];
 
 self.addEventListener('install', (event) => {
