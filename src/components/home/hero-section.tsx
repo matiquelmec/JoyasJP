@@ -44,14 +44,20 @@ export function HeroSection() {
       <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
       
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
-        <Image
-          src="/assets/logo.webp"
-          alt="Joyas JP - Alta joyería para la escena urbana"
-          width={500}
-          height={500}
-          priority
-          className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
-        />
+        {/* Logo con debugging - Forzar visibilidad */}
+        <div className="relative z-30 mb-6 bg-red-500/20 border-2 border-yellow-400">
+          <Image
+            src="/assets/logo.webp"
+            alt="Joyas JP - Alta joyería para la escena urbana"
+            width={500}
+            height={500}
+            priority
+            unoptimized
+            className="h-auto w-80 md:w-96 lg:w-[450px] drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)] relative z-40"
+            onLoad={() => console.log('LOGO LOADED SUCCESSFULLY')}
+            onError={(e) => console.error('LOGO FAILED TO LOAD:', e)}
+          />
+        </div>
 
         <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
           Atrévete a jugar
