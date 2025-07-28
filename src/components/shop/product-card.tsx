@@ -150,18 +150,18 @@ export default function ProductCard({ product, priority = false, className, inde
         aria-label={`Ver detalles de ${product.name}`}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
-          {/* Enterprise loading state */}
+          {/* Enterprise loading state con paleta de marca */}
           {imageLoading && isIntersecting && (
-            <div className="absolute inset-0 bg-gray-900 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+            <div className="absolute inset-0 bg-background overflow-hidden border border-border/20">
+              <div className="absolute inset-0 bg-gradient-to-r from-background via-muted to-background animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/20 to-transparent animate-shimmer" />
               
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3" role="status" aria-busy="true" aria-label="Cargando producto">
-                <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" aria-hidden="true" />
-                <div className="text-white/70 text-sm font-medium">Cargando...</div>
+                <div className="w-8 h-8 border-2 border-muted-foreground/30 border-t-primary rounded-full animate-spin" aria-hidden="true" />
+                <div className="text-muted-foreground text-sm font-medium">Cargando...</div>
                 <div className="space-y-2 w-20">
-                  <div className="h-2 bg-white/20 rounded animate-pulse" />
-                  <div className="h-2 bg-white/15 rounded animate-pulse delay-100" />
+                  <div className="h-2 bg-accent/30 rounded animate-pulse" />
+                  <div className="h-2 bg-accent/20 rounded animate-pulse delay-100" />
                 </div>
               </div>
             </div>

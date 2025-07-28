@@ -11,34 +11,34 @@ interface EnterpriseLoadingProps {
   showSpinner?: boolean;
 }
 
-// Configuración centralizada de variantes
+// Configuración centralizada con paleta de marca (Rojo Terciopelo + Plata Líquida)
 const LOADING_VARIANTS = {
   product: {
-    containerClass: 'aspect-square bg-gray-900 relative overflow-hidden',
+    containerClass: 'aspect-square bg-background relative overflow-hidden border border-border/20',
     message: 'Cargando...',
     spinnerSize: 'w-8 h-8',
     showSkeleton: true
   },
   card: {
-    containerClass: 'aspect-square bg-gray-900 relative overflow-hidden',
+    containerClass: 'aspect-square bg-background relative overflow-hidden border border-border/20',
     message: 'Cargando productos...',
     spinnerSize: 'w-6 h-6',
     showSkeleton: false
   },
   list: {
-    containerClass: 'h-20 bg-gray-900 relative overflow-hidden rounded-lg',
+    containerClass: 'h-20 bg-background relative overflow-hidden rounded-lg border border-border/20',
     message: 'Cargando lista...',
     spinnerSize: 'w-5 h-5',
     showSkeleton: false
   },
   hero: {
-    containerClass: 'h-96 bg-gray-900 relative overflow-hidden rounded-lg',
+    containerClass: 'h-96 bg-background relative overflow-hidden rounded-lg border border-border/20',
     message: 'Cargando contenido...',
     spinnerSize: 'w-10 h-10',
     showSkeleton: false
   },
   related: {
-    containerClass: 'aspect-square bg-gray-900 relative overflow-hidden',
+    containerClass: 'aspect-square bg-background relative overflow-hidden border border-border/20',
     message: 'Producto relacionado...',
     spinnerSize: 'w-5 h-5',
     showSkeleton: false
@@ -102,15 +102,15 @@ function LoadingContent({
 }) {
   return (
     <>
-      {/* Shimmer base animation */}
+      {/* Shimmer base con colores de marca */}
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse"
+        className="absolute inset-0 bg-gradient-to-r from-background via-muted to-background animate-pulse"
         style={{ willChange: 'opacity' }}
       />
       
-      {/* Shimmer overlay */}
+      {/* Shimmer overlay con accent (Plata Líquida) */}
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/20 to-transparent"
         style={{ 
           animation: `shimmer 2s infinite`,
           animationDelay: `${delay}ms`,
@@ -129,24 +129,24 @@ function LoadingContent({
           <div 
             className={cn(
               config.spinnerSize,
-              'border-2 border-white/20 border-t-white/60 rounded-full animate-spin'
+              'border-2 border-muted-foreground/30 border-t-primary rounded-full animate-spin'
             )}
             aria-hidden="true"
           />
         )}
         
-        <div className="text-white/70 text-sm font-medium text-center px-2">
+        <div className="text-muted-foreground text-sm font-medium text-center px-2">
           {message}
         </div>
         
         {config.showSkeleton && (
           <div className="space-y-2 w-20">
             <div 
-              className="h-2 bg-white/20 rounded animate-pulse"
+              className="h-2 bg-accent/30 rounded animate-pulse"
               style={{ animationDelay: `${delay + 100}ms` }}
             />
             <div 
-              className="h-2 bg-white/15 rounded animate-pulse"
+              className="h-2 bg-accent/20 rounded animate-pulse"
               style={{ animationDelay: `${delay + 200}ms` }}
             />
           </div>
@@ -198,8 +198,8 @@ export function RelatedProductsLoadingSkeleton({
 }) {
   return (
     <div className="space-y-6">
-      {/* Title skeleton */}
-      <div className="h-8 bg-gray-300 rounded-lg w-64 animate-pulse" />
+      {/* Title skeleton con colores de marca */}
+      <div className="h-8 bg-accent/30 rounded-lg w-64 animate-pulse" />
       
       {/* Products grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -213,15 +213,15 @@ export function RelatedProductsLoadingSkeleton({
   );
 }
 
-// Estados de loading para casos específicos  
+// Estados de loading para casos específicos con paleta de marca
 export function LazyLoadingPlaceholder({ className }: { className?: string }) {
   return (
-    <div className={cn('absolute inset-0 bg-gray-800 flex items-center justify-center', className)}>
+    <div className={cn('absolute inset-0 bg-background border border-border/20 flex items-center justify-center', className)}>
       <div className="flex flex-col items-center space-y-3 opacity-60">
-        <div className="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center">
-          <div className="w-2 h-2 bg-white/50 rounded-full animate-pulse" />
+        <div className="w-6 h-6 border border-accent/50 rounded-full flex items-center justify-center">
+          <div className="w-2 h-2 bg-primary/50 rounded-full animate-pulse" />
         </div>
-        <div className="text-white/50 text-xs font-medium">
+        <div className="text-muted-foreground text-xs font-medium">
           Esperando...
         </div>
       </div>
@@ -240,18 +240,18 @@ export function ErrorPlaceholder({
 }) {
   return (
     <div className={cn(
-      'flex items-center justify-center h-full bg-gradient-to-br from-red-50/50 via-white/80 to-red-50/50 border-2 border-red-200',
+      'flex items-center justify-center h-full bg-gradient-to-br from-background via-muted/30 to-background border-2 border-destructive/20',
       className
     )}>
       <div className="flex flex-col items-center space-y-3 opacity-70 p-4 text-center">
-        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-          <span className="text-red-500 text-xl" aria-hidden="true">⚠️</span>
+        <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center border border-destructive/20">
+          <span className="text-destructive text-xl" aria-hidden="true">⚠️</span>
         </div>
-        <div className="text-xs text-red-600 font-medium">
+        <div className="text-xs text-destructive font-medium">
           Error al cargar imagen
         </div>
         {imageUrl && (
-          <div className="text-xs text-gray-500 break-all max-w-full">
+          <div className="text-xs text-muted-foreground break-all max-w-full">
             URL: {imageUrl}
           </div>
         )}

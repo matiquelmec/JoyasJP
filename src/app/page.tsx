@@ -58,9 +58,9 @@ function ProductSkeleton() {
     <div className="border rounded-lg overflow-hidden shadow-sm">
       <CardLoadingSkeleton />
       <div className="p-4 space-y-3">
-        <div className="h-4 bg-gray-300 rounded animate-pulse" />
-        <div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse delay-100" />
-        <div className="h-5 bg-gray-400 rounded w-1/2 animate-pulse delay-200" />
+        <div className="h-4 bg-accent/30 rounded animate-pulse" />
+        <div className="h-3 bg-accent/20 rounded w-2/3 animate-pulse delay-100" />
+        <div className="h-5 bg-primary/20 rounded w-1/2 animate-pulse delay-200" />
       </div>
     </div>
   );
