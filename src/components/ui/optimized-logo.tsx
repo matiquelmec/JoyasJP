@@ -1,7 +1,7 @@
 "use client";
 
 import Image from 'next/image';
-import { siteConfig } from '@/lib/config';
+import { cn } from '@/lib/utils';
 
 interface OptimizedLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'hero';
@@ -40,7 +40,7 @@ export function OptimizedLogo({
       className
     )}>
       <Image
-        src={siteConfig.logoPath}
+        src="/assets/logo.webp"
         alt="Joyas JP Logo"
         fill
         sizes={logoSizeValues[size]}
