@@ -43,10 +43,12 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
+      console.log('🚀 Llamando función de login...', { email: email.trim() });
       const success = await login(email.trim(), password);
+      console.log('📋 Resultado del login:', { success });
       
       if (success) {
-        console.log('Login exitoso, redirigiendo a dashboard...');
+        console.log('✅ Login exitoso, redirigiendo...');
         toast({
           title: "Acceso autorizado",
           description: "Bienvenido al panel de administración",
@@ -55,11 +57,12 @@ export default function AdminLoginPage() {
         
         // Esperar un momento para que se guarde el estado
         setTimeout(() => {
-          console.log('Ejecutando redirección con window.location...');
+          console.log('🔄 Ejecutando redirección con window.location...');
           // Usar window.location en lugar de router.push
           window.location.href = '/admin/test';
         }, 500);
       } else {
+        console.log('❌ Login falló');
         toast({
           title: "Acceso denegado",
           description: "Credenciales incorrectas",
