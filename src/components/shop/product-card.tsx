@@ -149,17 +149,41 @@ export default function ProductCard({ product, priority = false, className, inde
         aria-label={`Ver detalles de ${product.name}`}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
-          {/* Placeholder optimizado */}
+          {/* Placeholder elegante con logo y efecto shimmer */}
           {imageLoading && isIntersecting && (
-            <div className="absolute inset-0 bg-gradient-to-br from-muted/40 via-muted/20 to-muted/40 animate-pulse">
-              <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-amber-50/80 overflow-hidden">
+              {/* Efecto shimmer dorado */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-200/30 to-transparent animate-shimmer" />
+              {/* Logo centrado con opacidad suave */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Image
+                  src="/assets/logo.webp"
+                  alt="Joyas JP Logo"
+                  width={60}
+                  height={60}
+                  className="opacity-20 animate-pulse"
+                  priority
+                />
+              </div>
+              {/* Overlay sutil para mejor transición */}
+              <div className="absolute inset-0 bg-gradient-to-t from-white/5 via-transparent to-white/5" />
             </div>
           )}
 
           {/* Placeholder cuando no está en viewport */}
           {!isIntersecting && (
-            <div className="absolute inset-0 bg-muted/20 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 text-muted-foreground/30" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50 flex items-center justify-center">
+              <div className="flex flex-col items-center space-y-2 opacity-30">
+                <Image
+                  src="/assets/logo.webp"
+                  alt="Joyas JP Logo"
+                  width={40}
+                  height={40}
+                  className="opacity-60"
+                  priority
+                />
+                <Sparkles className="w-6 h-6 text-amber-600/60" />
+              </div>
             </div>
           )}
 
@@ -181,8 +205,20 @@ export default function ProductCard({ product, priority = false, className, inde
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           ) : isIntersecting && imageError ? (
-            <div className="flex items-center justify-center h-full bg-muted">
-              <Sparkles className="w-12 h-12 text-muted-foreground" />
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50">
+              <div className="flex flex-col items-center space-y-3 opacity-50">
+                <Image
+                  src="/assets/logo.webp"
+                  alt="Joyas JP Logo"
+                  width={48}
+                  height={48}
+                  className="opacity-60"
+                  priority
+                />
+                <div className="text-xs text-amber-600/60 text-center">
+                  Imagen no disponible
+                </div>
+              </div>
             </div>
           ) : null}
 
