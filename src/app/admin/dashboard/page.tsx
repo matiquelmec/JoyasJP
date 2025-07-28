@@ -1,20 +1,34 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import AdminLayout from '@/components/admin/admin-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  ShoppingCart, 
-  Package, 
   TrendingUp, 
   Clock,
-  DollarSign,
-  Users,
-  Eye,
-  AlertCircle
+  Eye
 } from 'lucide-react';
+
+// Dynamic imports para componentes pesados
+const DashboardStats = dynamic(() => import('@/components/admin/dashboard-stats'), {
+  loading: () => <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {[...Array(4)].map((_, i) => (
+      <Card key={i} className="animate-pulse">
+        <CardHeader className="pb-2">
+          <div className="h-4 bg-muted rounded" />
+        </CardHeader>
+        <CardContent>
+          <div className="h-8 bg-muted rounded mb-2" />
+          <div className="h-3 bg-muted rounded" />
+        </CardContent>
+      </Card>
+    ))}
+  </div>,
+  ssr: false
+});
 import { supabase } from '@/lib/supabase-client';
 import { logger } from '@/lib/logger';
 
@@ -167,60 +181,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Estadísticas principales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Pedidos</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalOrders}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.pendingOrders} pendientes
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
-              <p className="text-xs text-muted-foreground">
-                Desde el inicio
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Productos</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalProducts}</div>
-              <p className="text-xs text-muted-foreground">
-                En catálogo
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Stock Bajo</CardTitle>
-              <AlertCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.lowStockProducts}</div>
-              <p className="text-xs text-muted-foreground">
-                Menos de 5 unidades
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <Suspense fallback={<div className="animate-pulse h-48 bg-muted rounded" />}>
+          <DashboardStats stats={stats} />
+        </Suspense>
 
         {/* Pedidos recientes */}
         <Card>
@@ -282,12 +245,12 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button className="h-20 flex-col space-y-2" variant="outline">
-                <ShoppingCart className="w-6 h-6" />
+                <Clock className="w-6 h-6" />
                 <span>Ver Pedidos</span>
               </Button>
               
               <Button className="h-20 flex-col space-y-2" variant="outline">
-                <Package className="w-6 h-6" />
+                <Eye className="w-6 h-6" />
                 <span>Gestionar Stock</span>
               </Button>
               

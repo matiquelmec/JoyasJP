@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
 const nextConfig = {
+  // Compresión optimizada
+  compress: true,
+  
+  // Minificación optimizada
+  swcMinify: true,
+  poweredByHeader: false,
+  
+  // Optimización de build
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
   
   
   images: {

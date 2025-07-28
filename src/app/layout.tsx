@@ -3,6 +3,7 @@ import { Playfair_Display, PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import ResourcePreloader from '@/components/performance/resource-preloader';
 
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
@@ -169,6 +170,8 @@ export default function RootLayout({
           Saltar al contenido principal
         </a>
 
+        <ResourcePreloader />
+        
         <div className="relative flex min-h-screen flex-col">
           <Header />
           {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
