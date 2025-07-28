@@ -78,16 +78,30 @@ export default function AdminLoginPage() {
                 border: 2px solid #22c55e;
               ">
                 <h2 style="color: #22c55e; margin-bottom: 20px;">✅ Login Exitoso</h2>
-                <p style="margin-bottom: 20px;">Haz clic para acceder al panel:</p>
-                <a href="/admin/test" style="
-                  background: #22c55e; 
-                  color: white; 
-                  padding: 15px 30px; 
-                  text-decoration: none; 
-                  border-radius: 5px; 
-                  font-weight: bold;
-                  display: inline-block;
-                ">🚀 Ir al Panel Admin</a>
+                <p style="margin-bottom: 20px;">Prueba estos links:</p>
+                <div style="margin-bottom: 15px;">
+                  <a href="/admin/dashboard" style="
+                    background: #22c55e; 
+                    color: white; 
+                    padding: 10px 20px; 
+                    text-decoration: none; 
+                    border-radius: 5px; 
+                    font-weight: bold;
+                    display: inline-block;
+                    margin: 5px;
+                  ">🚀 Dashboard</a>
+                  <a href="/admin/test" style="
+                    background: #3b82f6; 
+                    color: white; 
+                    padding: 10px 20px; 
+                    text-decoration: none; 
+                    border-radius: 5px; 
+                    font-weight: bold;
+                    display: inline-block;
+                    margin: 5px;
+                  ">🧪 Test Page</a>
+                </div>
+                <p style="font-size: 12px; color: #666;">Si ninguno funciona, hay un problema de routing en Netlify</p>
               </div>
             `;
             document.body.appendChild(successDiv);
