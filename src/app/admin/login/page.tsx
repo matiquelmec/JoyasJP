@@ -46,14 +46,18 @@ export default function AdminLoginPage() {
       const success = await login(email.trim(), password);
       
       if (success) {
+        console.log('Login exitoso, redirigiendo a dashboard...');
         toast({
           title: "Acceso autorizado",
           description: "Bienvenido al panel de administración",
           variant: "default"
         });
         
-        // Redirigir al dashboard
-        router.push('/admin/dashboard');
+        // Esperar un momento para que se guarde el estado
+        setTimeout(() => {
+          console.log('Ejecutando redirección...');
+          router.push('/admin/dashboard');
+        }, 500);
       } else {
         toast({
           title: "Acceso denegado",
