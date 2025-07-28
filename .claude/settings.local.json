@@ -11,7 +11,8 @@
       "Bash(grep:*)",
       "Bash(git commit:*)",
       "Bash(touch:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

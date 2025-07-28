@@ -15,7 +15,14 @@ const nextConfig = {
   
   // Optimización de build
   experimental: {
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    optimizePackageImports: [
+      'lucide-react', 
+      '@radix-ui/react-icons',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tabs'
+    ],
   },
   
   
@@ -53,6 +60,42 @@ const nextConfig = {
     config.resolve.alias['@/hooks'] = path.resolve(__dirname, 'src/hooks');
     config.resolve.alias['@/components'] = path.resolve(__dirname, 'src/components');
     config.resolve.alias['@/lib'] = path.resolve(__dirname, 'src/lib');
+    
+    // Optimizar chunk splitting
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+            enforce: true,
+          },
+          radixui: {
+            test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+            name: 'radix-ui',
+            chunks: 'all',
+            priority: 10,
+          },
+          lucide: {
+            test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+            name: 'lucide',
+            chunks: 'all',
+            priority: 10,
+          },
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 5,
+            reuseExistingChunk: true,
+          },
+        },
+      },
+    };
+    
     return config;
   },
 }

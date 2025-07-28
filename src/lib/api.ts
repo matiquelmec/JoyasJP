@@ -136,10 +136,11 @@ export async function getRelatedProducts(currentProductId: string, category: str
   return withCache(cacheKey, async () => {
     const { data, error } = await supabase
       .from('products')
-      .select('*, stock')
+      .select('id, name, price, imageUrl, category, description, materials, color')
       .eq('category', category)
       .neq('id', currentProductId)
       .gt('stock', 0)
+      .order('updated_at', { ascending: false })
       .limit(limit || 4); // Usa el límite proporcionado o 4 por defecto
 
     if (error) {

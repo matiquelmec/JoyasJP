@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import ResourcePreloader from '@/components/performance/resource-preloader';
+import { RoutePreloader } from '@/components/performance/route-preloader';
 
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
@@ -145,8 +146,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         
-        {/* Preload logo solo para páginas que lo usan inmediatamente */}
-        <link rel="preload" href="/assets/logo.webp" as="image" type="image/webp" />
+        {/* Preloading dinámico por ruta se maneja en RoutePreloader */}
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/webp" sizes="any" href="/assets/logo.webp" />
@@ -172,6 +172,7 @@ export default function RootLayout({
         </a>
 
         <ResourcePreloader />
+        <RoutePreloader />
         
         <div className="relative flex min-h-screen flex-col">
           <Header />
