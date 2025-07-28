@@ -1,16 +1,19 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Truck, Shield, RotateCcw } from 'lucide-react';
-import { supabase } from '@/lib/supabase-client';
+import { getProductById, getRelatedProducts } from '@/lib/api'; // Usar API cacheada
 import { Product } from '@/lib/types';
 import { AddToCartButton } from '@/components/shop/add-to-cart-button';
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button';
-import { RelatedProducts } from '@/components/shop/related-products';
+import { RelatedProductsServer, RelatedProductsSkeleton } from '@/components/shop/related-products-server';
+import { ProductPreloader } from '@/components/performance/product-preloader';
 import { Metadata } from 'next';
+import { supabase } from '@/lib/supabase-client';
 
 interface ProductPageProps {
   params: {
@@ -18,31 +21,10 @@ interface ProductPageProps {
   };
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-  if (!supabase) {
-    return null;
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error || !data) {
-      return null;
-    }
-
-    return data as unknown as Product;
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
-  }
-}
+// Eliminamos getProduct local - usamos la versión cacheada de api.ts
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProduct(params.id);
+  const product = await getProductById(params.id);
 
   if (!product) {
     return {
@@ -69,14 +51,28 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export async function generateStaticParams() {
-  const { data: products } = await supabase.from('products').select('id');
-  return products?.map((product) => ({
-    id: product.id,
-  })) || [];
+  // Solo generar static params para productos más populares
+  // El resto se generará on-demand (ISR)
+  try {
+    const { data: products } = await supabase
+      .from('products')
+      .select('id')
+      .limit(50); // Solo pre-generar top 50 productos
+    
+    return products?.map((product) => ({
+      id: product.id,
+    })) || [];
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
+// Configuración ISR - regenerar cada 1 hora
+export const revalidate = 3600;
+
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProduct(params.id);
+  const product = await getProductById(params.id);
 
   if (!product) {
     notFound();
@@ -90,6 +86,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ProductPreloader 
+        productImageUrl={product.imageUrl} 
+        relatedCategory={product.category}
+      />
+      
       {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
 
@@ -109,16 +110,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
 
-          {/* Product Image */}
+          {/* Product Image Optimizada */}
           <div className="space-y-6">
             <div className="relative aspect-square w-full max-w-lg mx-auto lg:max-w-none bg-muted/30 rounded-lg overflow-hidden">
               <Image
                 src={product.imageUrl}
-                alt={product.name}
+                alt={`${product.name} - Joya premium de ${product.category} en ${product.color || 'varios colores'}`}
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 45vw"
+                className="object-cover transition-transform duration-300 hover:scale-105"
                 priority
+                fetchPriority="high"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
               />
 
               {/* Image Actions */}
@@ -200,8 +204,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* Related Products */}
-        <RelatedProducts currentProductId={product.id} category={product.category} />
+        {/* Related Products with Optimized Loading */}
+        <Suspense fallback={<RelatedProductsSkeleton />}>
+          <RelatedProductsServer 
+            currentProductId={product.id} 
+            category={product.category} 
+          />
+        </Suspense>
       </div>
     </div>
   );
