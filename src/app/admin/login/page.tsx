@@ -56,7 +56,8 @@ export default function AdminLoginPage() {
         // Esperar un momento para que se guarde el estado
         setTimeout(() => {
           console.log('Ejecutando redirección...');
-          router.push('/admin/dashboard');
+          // Temporalmente redirigir a página de prueba
+          router.push('/admin/test');
         }, 500);
       } else {
         toast({
