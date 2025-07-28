@@ -150,26 +150,48 @@ export default function ProductCard({ product, priority = false, className, inde
         aria-label={`Ver detalles de ${product.name}`}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
-          {/* Placeholder elegante con logo y efecto shimmer */}
+          {/* Enterprise dark loading placeholder */}
           {imageLoading && isIntersecting && (
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-amber-50/80 overflow-hidden">
-              {/* Efecto shimmer dorado */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-200/30 to-transparent animate-shimmer" />
-              {/* Logo centrado con opacidad suave */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <ProductCardLogo className="opacity-20 animate-pulse" />
+            <div className="absolute inset-0 bg-gray-900 overflow-hidden">
+              {/* Animated shimmer effect like Amazon/Shopify */}
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+              
+              {/* Loading content centered */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3">
+                {/* Loading spinner */}
+                <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
+                
+                {/* Loading text */}
+                <div className="text-white/70 text-sm font-medium">
+                  Cargando...
+                </div>
+                
+                {/* Skeleton bars for product info */}
+                <div className="space-y-2 w-20">
+                  <div className="h-2 bg-white/20 rounded animate-pulse"></div>
+                  <div className="h-2 bg-white/15 rounded animate-pulse delay-100"></div>
+                </div>
               </div>
-              {/* Overlay sutil para mejor transición */}
-              <div className="absolute inset-0 bg-gradient-to-t from-white/5 via-transparent to-white/5" />
+              
+              {/* Premium gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
             </div>
           )}
 
-          {/* Placeholder cuando no está en viewport */}
+          {/* Lazy loading placeholder */}
           {!isIntersecting && (
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50 flex items-center justify-center">
-              <div className="flex flex-col items-center space-y-2 opacity-30">
-                <ProductCardLogo className="opacity-60 !w-10 !h-10" />
-                <Sparkles className="w-6 h-6 text-amber-600/60" />
+            <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+              <div className="flex flex-col items-center space-y-3 opacity-60">
+                {/* Waiting icon */}
+                <div className="w-6 h-6 border border-white/30 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+                </div>
+                
+                {/* Waiting text */}
+                <div className="text-white/50 text-xs font-medium">
+                  Esperando...
+                </div>
               </div>
             </div>
           )}

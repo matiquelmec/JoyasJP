@@ -54,12 +54,27 @@ async function getFeaturedProducts(): Promise<Product[]> {
 
 function ProductSkeleton() {
   return (
-    <div className="border rounded-lg overflow-hidden shadow-sm animate-pulse">
-      <div className="aspect-square bg-gray-200" />
-      <div className="p-4">
-        <div className="h-4 bg-gray-200 rounded mb-2" />
-        <div className="h-3 bg-gray-200 rounded w-2/3 mb-2" />
-        <div className="h-5 bg-gray-200 rounded w-1/2" />
+    <div className="border rounded-lg overflow-hidden shadow-sm">
+      {/* Enterprise dark loading skeleton */}
+      <div className="aspect-square bg-gray-900 relative overflow-hidden">
+        {/* Shimmer animation */}
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
+        
+        {/* Loading indicator */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3">
+          <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
+          <div className="text-white/60 text-xs font-medium">
+            Cargando productos...
+          </div>
+        </div>
+      </div>
+      
+      {/* Content skeleton */}
+      <div className="p-4 space-y-3">
+        <div className="h-4 bg-gray-300 rounded animate-pulse" />
+        <div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse delay-100" />
+        <div className="h-5 bg-gray-400 rounded w-1/2 animate-pulse delay-200" />
       </div>
     </div>
   );
