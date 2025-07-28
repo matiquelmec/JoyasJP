@@ -43,72 +43,20 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      console.log('🚀 Llamando función de login...', { email: email.trim() });
       const success = await login(email.trim(), password);
-      console.log('📋 Resultado del login:', { success });
       
       if (success) {
-        console.log('✅ Login exitoso, redirigiendo...');
         toast({
           title: "Acceso autorizado",
           description: "Bienvenido al panel de administración",
           variant: "default"
         });
         
-        // Mostrar botón de acceso manual después del login exitoso
-        console.log('✅ Login exitoso - mostrar acceso manual');
-        
-        // Crear y mostrar botón de acceso manual
+        // Redirección automática al dashboard
         setTimeout(() => {
-          const loginContainer = document.querySelector('.min-h-screen');
-          if (loginContainer) {
-            const successDiv = document.createElement('div');
-            successDiv.innerHTML = `
-              <div style="
-                position: fixed; 
-                top: 50%; 
-                left: 50%; 
-                transform: translate(-50%, -50%); 
-                background: white; 
-                padding: 30px; 
-                border-radius: 10px; 
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
-                text-align: center; 
-                z-index: 9999;
-                border: 2px solid #22c55e;
-              ">
-                <h2 style="color: #22c55e; margin-bottom: 20px;">✅ Login Exitoso</h2>
-                <p style="margin-bottom: 20px;">Prueba estos links:</p>
-                <div style="margin-bottom: 15px;">
-                  <a href="/admin/dashboard" style="
-                    background: #22c55e; 
-                    color: white; 
-                    padding: 10px 20px; 
-                    text-decoration: none; 
-                    border-radius: 5px; 
-                    font-weight: bold;
-                    display: inline-block;
-                    margin: 5px;
-                  ">🚀 Dashboard</a>
-                  <a href="/admin/test" style="
-                    background: #3b82f6; 
-                    color: white; 
-                    padding: 10px 20px; 
-                    text-decoration: none; 
-                    border-radius: 5px; 
-                    font-weight: bold;
-                    display: inline-block;
-                    margin: 5px;
-                  ">🧪 Test Page</a>
-                </div>
-                <p style="font-size: 12px; color: #666;">Si ninguno funciona, hay un problema de routing en Netlify</p>
-              </div>
-            `;
-            document.body.appendChild(successDiv);
-          }
-        }, 1000);
+          window.location.href = '/admin/dashboard';
+        }, 1500);
       } else {
-        console.log('❌ Login falló');
         toast({
           title: "Acceso denegado",
           description: "Credenciales incorrectas",

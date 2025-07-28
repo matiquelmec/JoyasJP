@@ -25,7 +25,6 @@ export function middleware(request: NextRequest) {
       
       if (!isAuthenticated || !user) {
         // Sesión inválida, redirigir al login
-        console.log('Middleware: Sesión inválida', { isAuthenticated, hasUser: !!user });
         return NextResponse.redirect(new URL('/admin/login', request.url));
       }
 
@@ -36,7 +35,6 @@ export function middleware(request: NextRequest) {
       
       if (hoursDiff > 8) {
         // Sesión expirada, redirigir al login
-        console.log('Middleware: Sesión expirada', { hoursDiff });
         const response = NextResponse.redirect(new URL('/admin/login', request.url));
         // Limpiar la cookie expirada
         response.cookies.delete('admin-auth-storage');
@@ -44,12 +42,10 @@ export function middleware(request: NextRequest) {
       }
 
       // Sesión válida, permitir acceso
-      console.log('Middleware: Sesión válida, permitiendo acceso');
       return NextResponse.next();
 
     } catch (error) {
       // Error al parsear la cookie, redirigir al login
-      console.log('Middleware: Error parseando cookie', error);
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
@@ -72,13 +68,11 @@ export function middleware(request: NextRequest) {
           
           if (hoursDiff <= 8) {
             // Sesión válida, redirigir al dashboard
-            console.log('Middleware: Redirigiendo a dashboard desde login');
             return NextResponse.redirect(new URL('/admin/dashboard', request.url));
           }
         }
       } catch (error) {
         // Error al parsear, continuar al login
-        console.log('Middleware: Error en verificación de login', error);
       }
     }
   }
@@ -89,7 +83,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Temporalmente deshabilitado para debug
-    // '/admin/:path*'
+    '/admin/:path*'
   ]
 };

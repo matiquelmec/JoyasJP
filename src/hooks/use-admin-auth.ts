@@ -36,17 +36,8 @@ export const useAdminAuth = create<AdminAuthState>()(
 
       login: async (email: string, password: string): Promise<boolean> => {
         try {
-          console.log('🔐 Iniciando proceso de login...', { email });
-          
           // Simular delay de autenticación
           await new Promise(resolve => setTimeout(resolve, 1000));
-
-          console.log('🔍 Validando credenciales...', { 
-            providedEmail: email, 
-            expectedEmail: ADMIN_CREDENTIALS.email,
-            emailMatch: email === ADMIN_CREDENTIALS.email,
-            passwordMatch: password === ADMIN_CREDENTIALS.password
-          });
 
           // Validar credenciales
           if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
@@ -56,23 +47,16 @@ export const useAdminAuth = create<AdminAuthState>()(
               loginTime: Date.now()
             };
 
-            console.log('✅ Credenciales válidas, guardando estado...', { user });
-
             set({ 
               user, 
               isAuthenticated: true 
             });
-
-            console.log('💾 Estado guardado, verificando...');
-            const currentState = get();
-            console.log('📊 Estado actual:', currentState);
 
             logUserAction('admin_login_success', { email });
             logger.info('Admin login successful', { email });
             
             return true;
           } else {
-            console.log('❌ Credenciales inválidas');
             logUserAction('admin_login_failed', { email, reason: 'invalid_credentials' });
             logger.warn('Admin login failed - invalid credentials', { email });
             return false;
