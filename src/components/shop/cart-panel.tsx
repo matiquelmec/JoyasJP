@@ -59,10 +59,12 @@ export function CartPanel() {
                   <div key={item.id} className="flex items-start gap-4">
                     <Image
                       src={item.imageUrl}
-                      alt={item.name}
+                      alt={`${item.name} - Miniatura en carrito`}
                       width={64}
                       height={64}
-                      className="rounded-md bg-black"
+                      sizes="64px"
+                      loading="lazy"
+                      className="rounded-md bg-black object-cover"
                     />
                     <div className="flex-grow">
                       <p className="font-semibold">{item.name}</p>

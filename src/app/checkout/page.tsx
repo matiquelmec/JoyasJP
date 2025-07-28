@@ -343,10 +343,12 @@ export default function CheckoutPage() {
                     <div key={item.id} className="flex items-center gap-3">
                       <Image
                         src={item.imageUrl}
-                        alt={item.name}
+                        alt={`${item.name} - Miniatura en checkout`}
                         width={60}
                         height={60}
-                        className="rounded-md bg-muted"
+                        sizes="60px"
+                        loading="lazy"
+                        className="rounded-md bg-muted object-cover"
                       />
                       <div className="flex-grow">
                         <p className="font-medium text-sm">{item.name}</p>

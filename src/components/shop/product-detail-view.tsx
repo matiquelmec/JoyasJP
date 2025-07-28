@@ -33,10 +33,16 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
         <div className="relative w-full aspect-square object-cover rounded-lg overflow-hidden">
           <Image 
             src={product.imageUrl} 
-            alt={product.name} 
-            fill
+            alt={`${product.name} - Joya premium de ${product.category || 'Joyas JP'}`} 
+            width={600}
+            height={600}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
+            className="w-full h-full object-cover"
+            priority
+            fetchPriority="high"
+            loading="eager"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
         </div>
         <div className="space-y-6">

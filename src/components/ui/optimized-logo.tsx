@@ -71,7 +71,7 @@ export function HeroLogo({ className }: { className?: string }) {
       size="hero" 
       priority={true}
       showDropShadow={true}
-      className={cn('mb-6', className)}
+      className={cn('mb-6 relative z-30', className)}
     />
   );
 }
