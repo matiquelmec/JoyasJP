@@ -3,6 +3,7 @@ import { NavLink } from './types';
 export const siteConfig = {
   name: "Joyas JP",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  logoPath: "/assets/logo.webp",
   description: "Alta joyería para la escena urbana. Descubre piezas únicas que definen tu estilo con materiales premium y diseños exclusivos.",
   author: "Joyas JP",
   keywords: [
