@@ -55,12 +55,44 @@ export default function AdminLoginPage() {
           variant: "default"
         });
         
-        // Esperar un momento para que se guarde el estado
+        // Mostrar botón de acceso manual después del login exitoso
+        console.log('✅ Login exitoso - mostrar acceso manual');
+        
+        // Crear y mostrar botón de acceso manual
         setTimeout(() => {
-          console.log('🔄 Ejecutando redirección con window.location...');
-          // Usar window.location en lugar de router.push
-          window.location.href = '/admin/test';
-        }, 500);
+          const loginContainer = document.querySelector('.min-h-screen');
+          if (loginContainer) {
+            const successDiv = document.createElement('div');
+            successDiv.innerHTML = `
+              <div style="
+                position: fixed; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                background: white; 
+                padding: 30px; 
+                border-radius: 10px; 
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
+                text-align: center; 
+                z-index: 9999;
+                border: 2px solid #22c55e;
+              ">
+                <h2 style="color: #22c55e; margin-bottom: 20px;">✅ Login Exitoso</h2>
+                <p style="margin-bottom: 20px;">Haz clic para acceder al panel:</p>
+                <a href="/admin/test" style="
+                  background: #22c55e; 
+                  color: white; 
+                  padding: 15px 30px; 
+                  text-decoration: none; 
+                  border-radius: 5px; 
+                  font-weight: bold;
+                  display: inline-block;
+                ">🚀 Ir al Panel Admin</a>
+              </div>
+            `;
+            document.body.appendChild(successDiv);
+          }
+        }, 1000);
       } else {
         console.log('❌ Login falló');
         toast({
