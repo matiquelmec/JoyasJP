@@ -188,15 +188,17 @@ function isExpired(response, maxAge) {
 }
 
 async function getFallbackResponse(request) {
-  // Try to return logo as fallback for any failed image
-  const cache = await caches.open(CRITICAL_IMAGES_CACHE);
-  const fallback = await cache.match('/assets/logo.webp');
+  console.log('SW: Image failed to load:', request.url);
   
-  if (fallback) {
-    return fallback;
+  // DON'T return logo for product images - let them fail naturally
+  // Only return fallback for critical assets
+  const url = new URL(request.url);
+  if (url.pathname.includes('/assets/Products/') || url.pathname.includes('supabase')) {
+    console.log('SW: Product image failed, returning network error instead of fallback');
+    return new Response('', { status: 404, statusText: 'Image not found' });
   }
   
-  // If no fallback available, return transparent 1x1 pixel
+  // Only for critical images (logo, hero), return transparent pixel
   return new Response(
     new Uint8Array([71,73,70,56,57,97,1,0,1,0,128,0,0,255,255,255,0,0,0,33,249,4,1,0,0,0,0,44,0,0,0,0,1,0,1,0,0,2,2,68,1,0,59]),
     { 

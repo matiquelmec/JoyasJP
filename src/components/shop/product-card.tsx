@@ -192,11 +192,16 @@ export default function ProductCard({ product, priority = false, className, inde
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           ) : isIntersecting && imageError ? (
-            <div className="flex items-center justify-center h-full bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50">
-              <div className="flex flex-col items-center space-y-3 opacity-50">
-                <ProductCardLogo className="opacity-60 !w-12 !h-12" />
-                <div className="text-xs text-amber-600/60 text-center">
-                  Imagen no disponible
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-red-50/50 via-white/80 to-red-50/50 border-2 border-red-200">
+              <div className="flex flex-col items-center space-y-3 opacity-70">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <span className="text-red-500 text-xl">⚠️</span>
+                </div>
+                <div className="text-xs text-red-600 text-center font-medium">
+                  Error al cargar imagen
+                </div>
+                <div className="text-xs text-gray-500 text-center">
+                  URL: {product.imageUrl}
                 </div>
               </div>
             </div>
