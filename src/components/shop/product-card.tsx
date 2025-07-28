@@ -23,7 +23,7 @@ export default function ProductCard({ product, priority = false, className, inde
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isItemInWishlist } = useWishlist();
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
-  const [isIntersecting, setIsIntersecting] = useState(index < 8); // Cargar primeras 8 inmediatamente
+  const [isIntersecting, setIsIntersecting] = useState(index < 12); // Cargar primeras 12 inmediatamente
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
@@ -36,8 +36,8 @@ export default function ProductCard({ product, priority = false, className, inde
     // Detectar si es móvil para optimizaciones específicas
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     
-    // En móvil cargar inmediatamente solo 4 productos (vs 8 en desktop)
-    const immediateLoadLimit = isMobile ? 4 : 8;
+    // En móvil cargar inmediatamente 6 productos (vs 12 en desktop)
+    const immediateLoadLimit = isMobile ? 6 : 12;
     
     if (index < immediateLoadLimit) return;
 
@@ -49,10 +49,10 @@ export default function ProductCard({ product, priority = false, className, inde
         }
       },
       { 
-        // En móvil, rootMargin más grande para pre-cargar antes (conexión más lenta)
-        rootMargin: isMobile ? '300px' : '200px',
-        // En móvil, threshold más bajo para cargar antes
-        threshold: isMobile ? 0.05 : 0.1
+        // RootMargin más agresivo para precargar antes
+        rootMargin: isMobile ? '400px' : '300px',
+        // Threshold más bajo para cargar antes
+        threshold: 0.01
       }
     );
 
@@ -175,8 +175,8 @@ export default function ProductCard({ product, priority = false, className, inde
               )}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              priority={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 2 : index < 4)}
-              loading={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 2 : index < 4) ? "eager" : "lazy"}
+              priority={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6)}
+              loading={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6) ? "eager" : "lazy"}
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />

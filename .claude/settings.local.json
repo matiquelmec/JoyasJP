@@ -10,7 +10,8 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(git commit:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

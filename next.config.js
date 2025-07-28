@@ -21,11 +21,11 @@ const nextConfig = {
   
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 3600, // 1 hora de cache
+    minimumCacheTTL: 86400, // 24 horas de cache (más tiempo)
     dangerouslyAllowSVG: false,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    deviceSizes: [375, 414, 640, 750, 828, 1080, 1200, 1920], // Agregado 375, 414 para móviles comunes
-    imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384], // Agregado 180, 320 para móvil
+    deviceSizes: [320, 375, 414, 640, 750, 828, 1080, 1200, 1920], // Agregado 320 para móviles pequeños
+    imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384, 512], // Agregado 512 para imágenes más grandes
     remotePatterns: [
       {
         protocol: 'https',
