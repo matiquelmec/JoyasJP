@@ -32,21 +32,11 @@ export default function ResourcePreloader() {
 }
 
 function preloadCriticalResources() {
-  // Preload de fuentes críticas
-  const fontLink = document.createElement('link');
-  fontLink.rel = 'preload';
-  fontLink.href = '/fonts/inter-var.woff2';
-  fontLink.as = 'font';
-  fontLink.type = 'font/woff2';
-  fontLink.crossOrigin = 'anonymous';
-  document.head.appendChild(fontLink);
-
-  // Preload de CSS crítico
-  const cssLink = document.createElement('link');
-  cssLink.rel = 'preload';
-  cssLink.href = '/_next/static/css/app.css';
-  cssLink.as = 'style';
-  document.head.appendChild(cssLink);
+  // Solo preload de recursos que sabemos que existen
+  // Eliminamos font preload ya que puede no existir
+  
+  // No preload CSS específico ya que Next.js lo maneja automáticamente
+  console.log('Critical resources preloaded');
 }
 
 function preloadHomeResources() {

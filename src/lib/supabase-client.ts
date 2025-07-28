@@ -24,9 +24,15 @@ function getSupabaseClient() {
   try {
     supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false, // Evitar problemas de múltiples instancias
-        autoRefreshToken: false,
-        detectSessionInUrl: false
+        persistSession: typeof window !== 'undefined', // Solo persistir en cliente
+        autoRefreshToken: typeof window !== 'undefined',
+        detectSessionInUrl: typeof window !== 'undefined',
+        storageKey: 'joyas-jp-auth' // Clave única para evitar conflictos
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'joyas-jp-web'
+        }
       }
     });
     
