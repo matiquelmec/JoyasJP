@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, Trophy, Heart } from 'lucide-react';
 import { useDeviceType } from '@/hooks/use-mobile';
-import { HeroLogo } from '@/components/ui/optimized-logo';
 
 export function HeroSection() {
   const { deviceType, connectionType, isClient } = useDeviceType();
@@ -45,7 +44,17 @@ export function HeroSection() {
       <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
       
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
-        <HeroLogo />
+        {/* Logo central simplificado para garantizar carga */}
+        <div className="relative w-80 h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] mb-6">
+          <Image
+            src="/assets/logo.webp"
+            alt="Joyas JP - Atrévete a jugar con joyas urbanas premium"
+            fill
+            priority
+            sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 450px"
+            className="object-contain drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
+          />
+        </div>
 
         <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
           Atrévete a jugar

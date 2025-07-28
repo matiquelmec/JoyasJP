@@ -33,13 +33,8 @@ export function ImagePreloader({ images, priority = false }: ImagePreloaderProps
         // Configurar sizes apropiados para preloading
         img.sizes = '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw';
         
-        // Cargar en diferentes formatos si está disponible
-        if (src.includes('supabase.co')) {
-          // Para imágenes de Supabase, intentar AVIF primero
-          img.src = src.replace(/\.(jpg|jpeg|png|webp)$/i, '.avif') || src;
-        } else {
-          img.src = src;
-        }
+        // Usar la imagen tal como viene, sin modificar formato
+        img.src = src;
       });
     });
 

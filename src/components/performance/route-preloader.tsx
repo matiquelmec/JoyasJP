@@ -6,8 +6,7 @@ import { usePathname } from 'next/navigation';
 // Mapeo de rutas a recursos críticos
 const routeResources = {
   '/': [
-    { href: '/assets/logo.webp', as: 'image', type: 'image/webp' },
-    { href: '/assets/hero-poster.webp', as: 'image', type: 'image/webp' }
+    { href: '/assets/logo.webp', as: 'image', type: 'image/webp' }
   ],
   '/productos': [
     { href: '/api/products', as: 'fetch' }
