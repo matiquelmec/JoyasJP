@@ -1,10 +1,11 @@
 // Enterprise-level Service Worker for Advanced Image Caching
-// Joyas JP - E-commerce Optimization
+// Joyas JP - E-commerce Optimization - OPTIMIZED VERSION
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CRITICAL_IMAGES_CACHE = `joyasjp-critical-${CACHE_VERSION}`;
 const PRODUCT_IMAGES_CACHE = `joyasjp-products-${CACHE_VERSION}`;
 const THUMBNAILS_CACHE = `joyasjp-thumbnails-${CACHE_VERSION}`;
+const STATIC_CACHE = `joyasjp-static-${CACHE_VERSION}`;
 
 // Critical assets for immediate caching
 const CRITICAL_ASSETS = [
@@ -15,16 +16,25 @@ const CRITICAL_ASSETS = [
 
 // Cache duration configurations (optimized for performance)
 const CACHE_CONFIG = {
-  critical: 12 * 60 * 60 * 1000,          // 12 hours - más frecuente para assets críticos
-  products: 6 * 60 * 60 * 1000,           // 6 hours - actualización más rápida
-  thumbnails: 3 * 60 * 60 * 1000          // 3 hours - thumbnails más frecuentes
+  critical: 24 * 60 * 60 * 1000,          // 24 hours - assets críticos
+  products: 4 * 60 * 60 * 1000,           // 4 hours - más dinámico
+  thumbnails: 2 * 60 * 60 * 1000,         // 2 hours - muy dinámico
+  static: 7 * 24 * 60 * 60 * 1000         // 7 días - assets estáticos
 };
 
-// Límites de cache para evitar usar demasiado espacio
+// Límites de cache inteligente por tipo
 const CACHE_LIMITS = {
   critical: 50,      // máximo 50 imágenes críticas
-  products: 200,     // máximo 200 imágenes de productos
-  thumbnails: 300    // máximo 300 thumbnails
+  products: 150,     // reducido para mejor performance
+  thumbnails: 250,   // reducido para ahorrar espacio
+  static: 100        // assets estáticos
+};
+
+// Configuración de conexión para optimizaciones
+const CONNECTION_CONFIG = {
+  slowConnections: ['slow-2g', '2g', '3g'],
+  reducedQuality: true,
+  maxSimultaneousRequests: 3
 };
 
 self.addEventListener('install', (event) => {

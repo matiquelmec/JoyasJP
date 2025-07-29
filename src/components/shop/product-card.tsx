@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/use-cart';
 import { Product } from '@/lib/types';
@@ -11,6 +10,10 @@ import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { LazyLoadingPlaceholder, ErrorPlaceholder } from '@/components/ui/enterprise-loading';
+import { ProgressiveImage } from '@/components/performance/progressive-image';
+import { NextGenImage } from '@/components/performance/next-gen-image';
+import { useHoverPreload } from '@/hooks/use-route-preloader';
+import { useImageOptimization, useAnimationOptimization } from '@/hooks/use-device-optimization';
 
 interface ProductCardProps {
   product: Product;
@@ -24,23 +27,24 @@ export default function ProductCard({ product, priority = false, className, inde
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isItemInWishlist } = useWishlist();
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
-  const [isIntersecting, setIsIntersecting] = useState(index < 12); // Cargar primeras 12 inmediatamente
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isClient, setIsClient] = useState(false);
+
+  // Usar nuevas optimizaciones
+  const imageConfig = useImageOptimization();
+  const animationConfig = useAnimationOptimization();
+  const { handleMouseEnter } = useHoverPreload(`/productos/${product.id}`);
+  
+  // Determinar si cargar inmediatamente basado en configuración optimizada
+  const [isIntersecting, setIsIntersecting] = useState(index < imageConfig.lazyLoading.immediateLoad);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Intersection Observer para lazy loading
+  // Intersection Observer optimizado para lazy loading
   useEffect(() => {
-    // Detectar si es móvil para optimizaciones específicas
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
-    // En móvil cargar inmediatamente 6 productos (vs 12 en desktop)
-    const immediateLoadLimit = isMobile ? 6 : 12;
-    
-    if (index < immediateLoadLimit) return;
+    if (index < imageConfig.lazyLoading.immediateLoad) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -50,10 +54,8 @@ export default function ProductCard({ product, priority = false, className, inde
         }
       },
       { 
-        // RootMargin más agresivo para precargar antes
-        rootMargin: isMobile ? '400px' : '300px',
-        // Threshold más bajo para cargar antes
-        threshold: 0.01
+        rootMargin: imageConfig.lazyLoading.rootMargin,
+        threshold: imageConfig.lazyLoading.threshold
       }
     );
 
@@ -63,7 +65,7 @@ export default function ProductCard({ product, priority = false, className, inde
     }
 
     return () => observer.disconnect();
-  }, [index, product.id]);
+  }, [index, product.id, imageConfig.lazyLoading]);
 
   const isInWishlist = isClient && isItemInWishlist(product.id);
 
@@ -142,14 +144,20 @@ export default function ProductCard({ product, priority = false, className, inde
     <article
       id={`product-card-${product.id}`}
       className={cn(
-        "group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-200 flex flex-col h-full bg-card hover:-translate-y-1",
+        "group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-xl flex flex-col h-full bg-card",
+        animationConfig.enabled && "transition-all hover:-translate-y-1",
         className
       )}
+      style={{
+        transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+        transitionTimingFunction: animationConfig.easing,
+      }}
     >
       <Link
         href={`/productos/${product.id}`}
         className="contents"
         aria-label={`Ver detalles de ${product.name}`}
+        onMouseEnter={handleMouseEnter}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
           {/* Enterprise loading state con paleta de marca */}
@@ -173,19 +181,28 @@ export default function ProductCard({ product, priority = false, className, inde
           {!isIntersecting && <LazyLoadingPlaceholder />}
 
           {!imageError && isIntersecting ? (
-            <Image
+            <NextGenImage
               src={product.imageUrl}
               alt={`${product.name} - Joya urbana premium de Joyas JP`}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes={imageConfig.sizes ? 
+                `(max-width: 640px) ${imageConfig.sizes.small}px, (max-width: 1024px) ${imageConfig.sizes.medium}px, ${imageConfig.sizes.large}px` :
+                "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              }
               className={cn(
-                "object-cover transition-transform duration-300 group-hover:scale-105",
+                "object-cover group-hover:scale-105",
+                animationConfig.enabled && "transition-transform",
                 imageLoading ? "scale-105" : "scale-100"
               )}
+              quality={imageConfig.quality}
+              priority={priority || index < (imageConfig.preloading?.maxImages || 6)}
+              enableWebP={true}
+              enableAVIF={true}
               onLoad={handleImageLoad}
               onError={handleImageError}
-              priority={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6)}
-              loading={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6) ? "eager" : "lazy"}
+              style={{
+                transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+              }}
             />
           ) : isIntersecting && imageError ? (
             <ErrorPlaceholder 

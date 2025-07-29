@@ -148,3 +148,79 @@
     transform: translateX(100%);
   }
 }
+
+/* Importar animaciones de performance */
+@import '../styles/performance-animations.css';
+
+/* Performance mode optimizations */
+html.performance-mode {
+  /* Reducir complejidad visual */
+  --blur-amount: 0px;
+  --shadow-intensity: 0.1;
+}
+
+html.performance-mode .hover-optimized {
+  will-change: auto;
+}
+
+html.performance-mode .animate-fade-in,
+html.performance-mode .animate-fade-in-up {
+  animation-duration: 0.3s;
+}
+
+/* Disable animations for low-end devices */
+html:not(.animations-enabled) * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* GPU-accelerated transforms */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Virtual scroll optimizations */
+.virtual-scroll-container {
+  contain: layout style paint;
+  overflow: auto;
+  scroll-behavior: smooth;
+}
+
+.virtual-scroll-item {
+  contain: layout style paint;
+}
+
+/* Image loading optimizations */
+img[loading="lazy"] {
+  content-visibility: auto;
+}
+
+/* Intersection observer optimizations */
+.lazy-load-observer {
+  min-height: 200px;
+  content-visibility: auto;
+  contain-intrinsic-size: 300px 200px;
+}
+
+/* Critical resource hints */
+.preload-critical {
+  content-visibility: visible;
+}
+
+/* Memory optimizations for long lists */
+.memory-optimized {
+  contain: strict;
+  content-visibility: auto;
+}
+
+/* Progressive enhancement */
+@supports (content-visibility: auto) {
+  .progressive-content {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px;
+  }
+}

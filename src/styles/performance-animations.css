@@ -1,0 +1,169 @@
+/* Performance-optimized animations */
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Wave animation for loading states */
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: initial;
+  }
+  30% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-wave {
+  animation: wave 2s ease-in-out infinite;
+}
+
+/* Optimized pulse for low-end devices */
+@keyframes pulse-optimized {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-optimized {
+  animation: pulse-optimized 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Scale in animation for images */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Performance-friendly gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Loading spinner optimizations */
+@keyframes spin-optimized {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-optimized {
+  animation: spin-optimized 1s linear infinite;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-wave,
+  .animate-pulse-optimized,
+  .animate-fadeIn,
+  .animate-scaleIn,
+  .animate-slideUp,
+  .animate-gradient,
+  .animate-spin-optimized {
+    animation: none;
+  }
+  
+  /* Keep essential loading indicators but simplified */
+  .animate-spin-optimized {
+    animation: spin-optimized 2s linear infinite;
+  }
+}
+
+/* High performance mode (for modern devices) */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .animate-shimmer {
+    animation-duration: 1s;
+  }
+  
+  .animate-fadeIn {
+    animation-duration: 0.2s;
+  }
+  
+  .animate-scaleIn {
+    animation-duration: 0.3s;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .animate-shimmer,
+  .animate-wave,
+  .animate-fadeIn,
+  .animate-scaleIn,
+  .animate-slideUp {
+    animation-duration: 0.8s;
+  }
+  
+  .animate-gradient {
+    animation-duration: 4s;
+  }
+}
