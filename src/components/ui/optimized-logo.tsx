@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface OptimizedLogoProps {
@@ -32,6 +33,28 @@ export function OptimizedLogo({
   priority = false,
   showDropShadow = false
 }: OptimizedLogoProps) {
+  const [hasError, setHasError] = useState(false);
+  
+  // If image failed to load, show text fallback immediately
+  if (hasError) {
+    return (
+      <div className={cn(
+        'relative flex items-center justify-center',
+        logoSizes[size],
+        className
+      )}>
+        <div className={cn(
+          'text-primary font-bold select-none tracking-wider',
+          size === 'hero' ? 'text-6xl' : 
+          size === 'xl' ? 'text-5xl' :
+          size === 'lg' ? 'text-4xl' : 
+          size === 'md' ? 'text-2xl' : 'text-xl'
+        )}>
+          JP
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className={cn(
@@ -41,7 +64,7 @@ export function OptimizedLogo({
     )}>
       <Image
         src="/assets/logo.webp"
-        alt="Joyas JP Logo"
+        alt="Joyas JP - Alta joyería urbana"
         fill
         sizes={logoSizeValues[size]}
         className={cn(
@@ -50,22 +73,18 @@ export function OptimizedLogo({
         )}
         priority={priority}
         unoptimized={false}
+        quality={85}
         onLoad={() => {
-          console.log('Logo WebP loaded successfully');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Logo loaded successfully from /assets/logo.webp');
+          }
         }}
         onError={(e) => {
-          console.error('Error loading logo WebP:', e);
-          const target = e.target as HTMLImageElement;
-          
-          // Log more details for debugging
-          console.log('Failed URL:', target.src);
-          console.log('Target element:', target);
-          
-          // Ultimate fallback - hide image and show text
-          target.style.display = 'none';
-          if (target.parentElement) {
-            target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-primary font-bold text-4xl select-none">JP</div>';
+          if (process.env.NODE_ENV === 'development') {
+            console.error('❌ Logo failed to load from /assets/logo.webp');
+            console.error('Falling back to JP text');
           }
+          setHasError(true);
         }}
       />
     </div>
