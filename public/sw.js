@@ -15,9 +15,16 @@ const CRITICAL_ASSETS = [
 
 // Cache duration configurations (optimized for performance)
 const CACHE_CONFIG = {
-  critical: 24 * 60 * 60 * 1000,          // 1 day - reduced for faster updates
-  products: 12 * 60 * 60 * 1000,          // 12 hours - faster product updates
-  thumbnails: 6 * 60 * 60 * 1000          // 6 hours - more frequent thumbnail refresh
+  critical: 12 * 60 * 60 * 1000,          // 12 hours - más frecuente para assets críticos
+  products: 6 * 60 * 60 * 1000,           // 6 hours - actualización más rápida
+  thumbnails: 3 * 60 * 60 * 1000          // 3 hours - thumbnails más frecuentes
+};
+
+// Límites de cache para evitar usar demasiado espacio
+const CACHE_LIMITS = {
+  critical: 50,      // máximo 50 imágenes críticas
+  products: 200,     // máximo 200 imágenes de productos
+  thumbnails: 300    // máximo 300 thumbnails
 };
 
 self.addEventListener('install', (event) => {
@@ -256,24 +263,36 @@ async function clearAllCaches() {
   console.log('SW: All caches cleared');
 }
 
-// Cache size management
+// Cache size management mejorado con límites específicos
 async function manageCacheSize() {
-  const cache = await caches.open(PRODUCT_IMAGES_CACHE);
-  const requests = await cache.keys();
+  // Gestionar cache de productos
+  const productCache = await caches.open(PRODUCT_IMAGES_CACHE);
+  const productRequests = await productCache.keys();
   
-  // If more than 200 cached images, remove oldest 50
-  if (requests.length > 200) {
-    const sorted = requests.sort((a, b) => {
-      const aTime = parseInt(a.headers.get('sw-cached-at') || '0');
-      const bTime = parseInt(b.headers.get('sw-cached-at') || '0');
-      return aTime - bTime;
-    });
-    
-    const toDelete = sorted.slice(0, 50);
-    await Promise.all(toDelete.map(req => cache.delete(req)));
-    
-    console.log('SW: Cache size managed, removed', toDelete.length, 'old entries');
+  if (productRequests.length > CACHE_LIMITS.products) {
+    await cleanOldCacheEntries(productCache, productRequests, CACHE_LIMITS.products, 50);
   }
+
+  // Gestionar cache de thumbnails
+  const thumbnailCache = await caches.open(THUMBNAILS_CACHE);
+  const thumbnailRequests = await thumbnailCache.keys();
+  
+  if (thumbnailRequests.length > CACHE_LIMITS.thumbnails) {
+    await cleanOldCacheEntries(thumbnailCache, thumbnailRequests, CACHE_LIMITS.thumbnails, 100);
+  }
+}
+
+async function cleanOldCacheEntries(cache, requests, limit, deleteCount) {
+  const sorted = requests.sort((a, b) => {
+    const aTime = parseInt(a.headers?.get('sw-cached-at') || '0');
+    const bTime = parseInt(b.headers?.get('sw-cached-at') || '0');
+    return aTime - bTime;
+  });
+  
+  const toDelete = sorted.slice(0, deleteCount);
+  await Promise.all(toDelete.map(req => cache.delete(req)));
+  
+  console.log(`SW: Cleaned ${toDelete.length} old entries from cache`);
 }
 
 // Run cache management every hour

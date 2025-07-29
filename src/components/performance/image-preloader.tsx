@@ -11,11 +11,12 @@ export function ImagePreloader({ images, priority = false }: ImagePreloaderProps
   useEffect(() => {
     if (!images.length) return;
 
-    // Precargar solo si la conexión es rápida
+    // Precargar solo si la conexión es rápida - INCLUYE 3G
     const connection = (navigator as any).connection;
     const isSlowConnection = connection && (
       connection.effectiveType === 'slow-2g' || 
       connection.effectiveType === '2g' ||
+      connection.effectiveType === '3g' ||  // ✅ AGREGADO: 3G también es lento
       connection.saveData
     );
 
