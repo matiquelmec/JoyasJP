@@ -177,7 +177,7 @@ export default function ProductCard({ product, priority = false, className, inde
               src={product.imageUrl}
               alt={`${product.name} - Joya urbana premium de Joyas JP`}
               fill
-              sizes="(max-width: 480px) 50vw, (max-width: 640px) 45vw, (max-width: 1024px) 33vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={cn(
                 "object-cover transition-transform duration-300 group-hover:scale-105",
                 imageLoading ? "scale-105" : "scale-100"

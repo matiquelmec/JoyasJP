@@ -122,9 +122,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <Image
                 src={product.imageUrl}
                 alt={`${product.name} - Joya premium de ${product.category} en ${product.color || 'varios colores'}`}
-                width={600}
-                height={600}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 45vw"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 priority
                 fetchPriority="high"
