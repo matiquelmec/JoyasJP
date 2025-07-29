@@ -43,11 +43,13 @@ export function OptimizedImage({
   );
 
   const handleLoad = () => {
+    console.log("OptimizedImage: Image loaded successfully.");
     setIsImageLoading(false);
     onLoad?.();
   };
 
   const handleError = () => {
+    console.error("OptimizedImage: Image failed to load.");
     setIsImageLoading(false);
     setHasError(true);
     onError?.();
@@ -96,7 +98,7 @@ export function OptimizedImage({
         onError={handleError}
         className={cn(
           "object-cover transition-all duration-300",
-          isImageLoading ? "scale-105 opacity-0" : "scale-100 opacity-100"
+          isImageLoading ? "scale-105" : "scale-100 opacity-100"
         )}
         {...props}
       />
