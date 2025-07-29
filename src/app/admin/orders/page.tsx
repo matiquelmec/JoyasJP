@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/admin-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,18 +45,16 @@ export default function OrdersPage() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  useEffect(() => {
-    filterOrders();
-  }, [orders, searchTerm, statusFilter]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setIsLoading(true);
       
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('orders')
         .select('*')
@@ -74,13 +72,13 @@ export default function OrdersPage() {
 
       setOrders((data || []) as unknown as Order[]);
     } catch (error) {
-      logger.error('Error loading orders:', error);
+      logger.error('Error loading orders:', error as Error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
-  const filterOrders = () => {
+  const filterOrders = useCallback(() => {
     let filtered = orders;
 
     // Filtrar por búsqueda
@@ -98,10 +96,22 @@ export default function OrdersPage() {
     }
 
     setFilteredOrders(filtered);
-  };
+  }, [orders, searchTerm, statusFilter]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  useEffect(() => {
+    filterOrders();
+  }, [orders, searchTerm, statusFilter, filterOrders]);
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        return;
+      }
       const { error } = await supabase
         .from('orders')
         .update({ status: newStatus })
@@ -129,7 +139,7 @@ export default function OrdersPage() {
       });
 
     } catch (error) {
-      logger.error('Error updating order status:', error);
+      logger.error('Error updating order status:', error as Error);
     }
   };
 

@@ -154,14 +154,7 @@ const nextConfig = {
   trailingSlash: true,
   
   // ESLint configuration
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   
-  // TypeScript configuration
-  typescript: {
-    ignoreBuildErrors: true
-  },
   webpack: (config) => {
     config.resolve.alias['@/hooks'] = path.resolve(__dirname, 'src/hooks');
     config.resolve.alias['@/components'] = path.resolve(__dirname, 'src/components');

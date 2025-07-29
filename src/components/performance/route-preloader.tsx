@@ -36,7 +36,7 @@ export function RoutePreloader() {
         link.rel = 'preload';
         link.href = resource.href;
         if (resource.as) link.as = resource.as;
-        if (resource.type) link.type = resource.type;
+        if (resource.as === 'image' && resource.type) link.type = resource.type;
         
         // Evitar duplicados
         const existing = document.querySelector(`link[href="${resource.href}"]`);

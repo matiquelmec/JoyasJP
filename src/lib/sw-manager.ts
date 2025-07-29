@@ -1,3 +1,4 @@
+import React from 'react';
 // Enterprise Service Worker Management
 // Client-side coordination with advanced caching
 
@@ -136,7 +137,7 @@ class EnterpriseServiceWorkerManager implements ServiceWorkerManager {
 
       return { critical, products, thumbnails, totalSize };
     } catch (error) {
-      console.error('SW: Failed to get cache status:', error);
+      console.error('SW: Failed to get cache status:', error as Error);
       return { critical: 0, products: 0, thumbnails: 0, totalSize: 0 };
     }
   }
@@ -205,5 +206,3 @@ export function useServiceWorker() {
   };
 }
 
-// Export React import at the end to avoid circular dependencies
-declare const React: any;

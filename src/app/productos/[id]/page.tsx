@@ -54,6 +54,10 @@ export async function generateStaticParams() {
   // Solo generar static params para productos más populares
   // El resto se generará on-demand (ISR)
   try {
+    if (!supabase) {
+      console.error('Supabase client is not initialized for generateStaticParams.');
+      return [];
+    }
     const { data: products } = await supabase
       .from('products')
       .select('id')
@@ -63,7 +67,7 @@ export async function generateStaticParams() {
       id: product.id,
     })) || [];
   } catch (error) {
-    console.error('Error generating static params:', error);
+    console.error('Error generating static params:', error as Error);
     return [];
   }
 }

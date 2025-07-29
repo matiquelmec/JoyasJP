@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AdminLayout from '@/components/admin/admin-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -67,18 +67,14 @@ export default function ProductsPage() {
   });
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
-    filterProducts();
-  }, [products, searchTerm, categoryFilter, stockFilter]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        setIsLoading(false);
+        return;
+      }
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -96,13 +92,13 @@ export default function ProductsPage() {
 
       setProducts((data || []) as unknown as Product[]);
     } catch (error) {
-      logger.error('Error loading products:', error);
+      logger.error('Error loading products:', error as Error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
-  const filterProducts = () => {
+  const filterProducts = useCallback(() => {
     let filtered = products;
 
     // Filtrar por búsqueda
@@ -127,10 +123,18 @@ export default function ProductsPage() {
     }
 
     setFilteredProducts(filtered);
-  };
+  }, [products, searchTerm, categoryFilter, stockFilter]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  useEffect(() => {
+    filterProducts();
+  }, [products, searchTerm, categoryFilter, stockFilter, filterProducts]);
 
   const getCategories = () => {
-    const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
+    const categories = Array.from(new Set(products.map(p => p.category).filter((c): c is string => typeof c === 'string')));
     return categories;
   };
 
@@ -161,6 +165,10 @@ export default function ProductsPage() {
 
   const handleSaveProduct = async () => {
     try {
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        return;
+      }
       if (!formData.name.trim()) {
         toast({
           title: "Error",
@@ -237,7 +245,7 @@ export default function ProductsPage() {
       setIsDialogOpen(false);
       loadProducts();
     } catch (error) {
-      logger.error('Error saving product:', error);
+      logger.error('Error saving product:', error as Error);
     }
   };
 
@@ -247,6 +255,10 @@ export default function ProductsPage() {
     }
 
     try {
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        return;
+      }
       const { error } = await supabase
         .from('products')
         .delete()
@@ -270,12 +282,16 @@ export default function ProductsPage() {
 
       loadProducts();
     } catch (error) {
-      logger.error('Error deleting product:', error);
+      logger.error('Error deleting product:', error as Error);
     }
   };
 
   const toggleProductStatus = async (productId: string, currentStatus: boolean) => {
     try {
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        return;
+      }
       const { error } = await supabase
         .from('products')
         .update({ is_active: !currentStatus })
@@ -299,7 +315,7 @@ export default function ProductsPage() {
 
       loadProducts();
     } catch (error) {
-      logger.error('Error updating product status:', error);
+      logger.error('Error updating product status:', error as Error);
     }
   };
 

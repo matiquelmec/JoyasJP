@@ -69,6 +69,12 @@ export default function AdminDashboard() {
     try {
       setIsLoading(true);
       
+      if (!supabase) {
+        logger.error('Supabase client is not initialized.');
+        setIsLoading(false);
+        return;
+      }
+
       // Cargar estadísticas de pedidos
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
@@ -112,7 +118,7 @@ export default function AdminDashboard() {
       }
 
     } catch (error) {
-      logger.error('Error loading dashboard data:', error);
+      logger.error('Error loading dashboard data:', error as Error);
     } finally {
       setIsLoading(false);
     }

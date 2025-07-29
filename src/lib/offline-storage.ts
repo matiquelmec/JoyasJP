@@ -1,5 +1,6 @@
 // Enterprise IndexedDB Storage for Offline E-commerce
 // Product favorites, cart persistence, and offline capabilities
+import React from 'react';
 
 interface OfflineProduct {
   id: string;
@@ -387,5 +388,3 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Export React import
-declare const React: any;
