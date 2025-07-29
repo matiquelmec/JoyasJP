@@ -35,7 +35,7 @@ export function OptimizedLogo({
   
   return (
     <div className={cn(
-      'relative bg-red-500', // Added red background for debugging
+      'relative',
       logoSizes[size],
       className
     )}>
@@ -45,7 +45,7 @@ export function OptimizedLogo({
         fill
         sizes={logoSizeValues[size]}
         className={cn(
-          'object-contain border-2 border-blue-500', // Added blue border for debugging
+          'object-contain',
           showDropShadow && 'drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]'
         )}
         priority={priority}

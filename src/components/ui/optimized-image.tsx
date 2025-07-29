@@ -32,7 +32,6 @@ export function OptimizedImage({
   ...props
 }: OptimizedImageProps) {
   const { isMobile, isLoading } = useMobile();
-  const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   // Sizes optimizados por dispositivo
@@ -44,13 +43,11 @@ export function OptimizedImage({
 
   const handleLoad = () => {
     console.log("OptimizedImage: Image loaded successfully.");
-    setIsImageLoading(false);
     onLoad?.();
   };
 
   const handleError = () => {
     console.error("OptimizedImage: Image failed to load.");
-    setIsImageLoading(false);
     setHasError(true);
     onError?.();
   };
@@ -77,11 +74,6 @@ export function OptimizedImage({
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      {/* Loading overlay */}
-      {isImageLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-muted/40 via-muted/20 to-muted/40 animate-pulse z-10" />
-      )}
-      
       <Image
         src={src}
         alt={alt}
@@ -92,16 +84,14 @@ export function OptimizedImage({
         priority={priority}
         loading={priority ? "eager" : "lazy"}
         quality={isMobile ? 75 : 85} // Menor calidad en móvil para velocidad
-        placeholder="blur"
-        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         onLoad={handleLoad}
         onError={handleError}
         className={cn(
           "object-cover transition-all duration-300",
-          isImageLoading ? "scale-105" : "scale-100 opacity-100"
         )}
         {...props}
       />
     </div>
   );
+}
 }
