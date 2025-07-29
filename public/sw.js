@@ -1,7 +1,7 @@
 // Enterprise-level Service Worker for Advanced Image Caching
 // Joyas JP - E-commerce Optimization
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CRITICAL_IMAGES_CACHE = `joyasjp-critical-${CACHE_VERSION}`;
 const PRODUCT_IMAGES_CACHE = `joyasjp-products-${CACHE_VERSION}`;
 const THUMBNAILS_CACHE = `joyasjp-thumbnails-${CACHE_VERSION}`;

@@ -49,24 +49,22 @@ export function OptimizedLogo({
           showDropShadow && 'drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]'
         )}
         priority={priority}
-        quality={95}
-        loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'auto'}
+        unoptimized={false}
         onLoad={() => {
-          console.log('Logo loaded successfully');
+          console.log('Logo WebP loaded successfully');
         }}
         onError={(e) => {
-          console.error('Error loading logo WebP, trying fallback');
+          console.error('Error loading logo WebP:', e);
           const target = e.target as HTMLImageElement;
-          // Try with different format first
-          if (target.src.includes('.webp')) {
-            target.src = '/assets/logo.webp?' + Date.now(); // Cache bust
-          } else {
-            // Ultimate fallback - hide image and show text
-            target.style.display = 'none';
-            if (target.parentElement) {
-              target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-primary font-bold text-4xl select-none">JP</div>';
-            }
+          
+          // Log more details for debugging
+          console.log('Failed URL:', target.src);
+          console.log('Target element:', target);
+          
+          // Ultimate fallback - hide image and show text
+          target.style.display = 'none';
+          if (target.parentElement) {
+            target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-primary font-bold text-4xl select-none">JP</div>';
           }
         }}
       />
