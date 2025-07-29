@@ -9,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 
 import { ProductLoadingSkeleton } from '@/components/ui/enterprise-loading';
+import { ProductGridSkeleton } from '@/components/ui/advanced-skeleton';
+import OptimizedProductGrid from '@/components/shop/optimized-product-grid';
 
-// Dynamic imports para componentes pesados
+// Dynamic imports para componentes pesados (mantenemos como fallback)
 const ProductCard = dynamic(() => import('@/components/shop/product-card'), {
   loading: () => <ProductLoadingSkeleton />,
   ssr: false
@@ -54,9 +56,16 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center">
-        <h2 className="text-2xl font-semibold">Cargando productos...</h2>
-        <p className="mt-2 text-muted-foreground">Por favor, espera.</p>
+      <div className="bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
+            <p className="mt-4 text-lg text-muted-foreground">Define tu flow con cada pieza.</p>
+          </div>
+          
+          {/* Skeleton optimizado durante la carga */}
+          <ProductGridSkeleton count={12} />
+        </div>
       </div>
     );
   }
@@ -109,16 +118,15 @@ export default function ShopPage() {
           <Separator className="mb-12" />
 
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProducts.map((product, index) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  index={index}
-                  priority={index < 4} // Prioridad solo para primeras 4 imágenes
-                />
-              ))}
-            </div>
+            <OptimizedProductGrid
+              initialProducts={filteredProducts}
+              searchQuery=""
+              category={activeCategory === 'all' ? '' : activeCategory}
+              sortBy=""
+              enableVirtualScrolling={filteredProducts.length > 20}
+              enableInfiniteScroll={false} // Deshabilitado para filtros locales
+              className="animate-fadeIn"
+            />
           ) : (
             <div className="text-center py-20">
               <h2 className="text-2xl font-semibold">No se encontraron productos</h2>

@@ -6,9 +6,15 @@ import { Button } from '@/components/ui/button';
 import { ArrowDown, Trophy, Heart } from 'lucide-react';
 import { useDeviceType } from '@/hooks/use-mobile';
 import { HeroLogo } from '@/components/ui/optimized-logo';
+import { NextGenImage } from '@/components/performance/next-gen-image';
+import { useHoverPreload } from '@/hooks/use-route-preloader';
+import { useAnimationOptimization } from '@/hooks/use-device-optimization';
 
 export function HeroSection() {
   const { deviceType, connectionType, isClient } = useDeviceType();
+  const animationConfig = useAnimationOptimization();
+  const { handleMouseEnter: preloadProducts } = useHoverPreload('/productos');
+  const { handleMouseEnter: preloadServices } = useHoverPreload('/servicios-para-artistas');
 
   // Mostrar video siempre, independiente del dispositivo y conexión
   const shouldShowVideo = true;
@@ -41,20 +47,30 @@ export function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
-          <Link href="/productos" className="flex-1">
+          <Link href="/productos" className="flex-1" onMouseEnter={preloadProducts}>
             <Button
               size="lg"
-              className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+              className={`w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 ${
+                animationConfig.enabled ? 'transition-all hover:scale-105' : ''
+              }`}
+              style={{
+                transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+              }}
             >
               <Trophy className="w-5 h-5 mr-2" />
               Productos
             </Button>
           </Link>
-          <Link href="/servicios-para-artistas" className="flex-1">
+          <Link href="/servicios-para-artistas" className="flex-1" onMouseEnter={preloadServices}>
             <Button
               size="lg"
               variant="outline"
-              className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
+              className={`w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black ${
+                animationConfig.enabled ? 'transition-all hover:scale-105' : ''
+              }`}
+              style={{
+                transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+              }}
             >
               <Heart className="w-5 h-5 mr-2" />
               Servicios para artistas

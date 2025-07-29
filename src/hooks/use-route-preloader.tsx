@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, createContext, useContext } from 'react';
+import React from 'react';
 
 interface PreloadConfig {
   delay?: number;
@@ -231,7 +232,7 @@ interface PreloadContextType {
   preloadProgress: number;
 }
 
-const PreloadContext = React.createContext<PreloadContextType>({
+const PreloadContext = createContext<PreloadContextType>({
   isPreloading: false,
   preloadedRoutes: [],
   preloadProgress: 0,
@@ -278,7 +279,7 @@ export function PreloadProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const usePreloadContext = () => {
-  const context = React.useContext(PreloadContext);
+  const context = useContext(PreloadContext);
   if (!context) {
     throw new Error('usePreloadContext must be used within PreloadProvider');
   }

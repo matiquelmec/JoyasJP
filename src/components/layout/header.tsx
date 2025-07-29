@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { navLinks } from '@/lib/config';
 import { CartPanel } from '@/components/shop/cart-panel';
+import { useHoverPreload } from '@/hooks/use-route-preloader';
+import { useAnimationOptimization } from '@/hooks/use-device-optimization';
 
 import { useWishlist } from '@/hooks/use-wishlist';
 import { Heart } from 'lucide-react';
@@ -17,6 +19,17 @@ import { Heart } from 'lucide-react';
 export function Header() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const { items: wishlistItems } = useWishlist();
+  const animationConfig = useAnimationOptimization();
+
+  // Hooks de preloading para cada ruta
+  const preloadHandlers = {
+    home: useHoverPreload('/'),
+    productos: useHoverPreload('/productos'),
+    nosotros: useHoverPreload('/nosotros'),
+    contacto: useHoverPreload('/contacto'),
+    favoritos: useHoverPreload('/favoritos'),
+    servicios: useHoverPreload('/servicios-para-artistas'),
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,8 +39,11 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Estilo unificado para todos los enlaces de navegación
-  const linkClassName = "text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
+  // Estilo unificado para todos los enlaces de navegación con animaciones optimizadas
+  const linkClassName = cn(
+    "text-sm font-medium text-muted-foreground hover:text-primary",
+    animationConfig.enabled && "transition-colors"
+  );
 
   return (
     <header className={cn(
@@ -36,24 +52,62 @@ export function Header() {
     )}>
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo Principal Optimizado */}
-        <Link href="/" className="flex items-center">
+        <Link 
+          href="/" 
+          className="flex items-center"
+          onMouseEnter={preloadHandlers.home.handleMouseEnter}
+        >
           <HeaderLogo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={linkClassName}>
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            // Mapear rutas a handlers de preloading
+            const getPreloadHandler = (href: string) => {
+              switch (href) {
+                case '/productos': return preloadHandlers.productos.handleMouseEnter;
+                case '/nosotros': return preloadHandlers.nosotros.handleMouseEnter;
+                case '/contacto': return preloadHandlers.contacto.handleMouseEnter;
+                case '/servicios-para-artistas': return preloadHandlers.servicios.handleMouseEnter;
+                default: return undefined;
+              }
+            };
+
+            return (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className={linkClassName}
+                onMouseEnter={getPreloadHandler(link.href)}
+                style={{
+                  transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href="/favoritos">
-            <Button variant="ghost" size="lg" className="relative">
+          <Link 
+            href="/favoritos"
+            onMouseEnter={preloadHandlers.favoritos.handleMouseEnter}
+          >
+            <Button 
+              variant="ghost" 
+              size="lg" 
+              className={cn(
+                "relative",
+                animationConfig.enabled && "transition-transform hover:scale-105"
+              )}
+              style={{
+                transitionDuration: animationConfig.enabled ? `${animationConfig.duration}ms` : '0ms',
+              }}
+            >
               <Heart className="h-7 w-7" />
               {wishlistItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 text-sm flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 text-sm flex items-center justify-center animate-scaleIn">
                   {wishlistItems.length}
                 </span>
               )}
@@ -78,13 +132,29 @@ export function Header() {
                     </Link>
                   </div>
                   <nav className="flex flex-col gap-6 text-center">
-                    {navLinks.map((link) => (
-                      <SheetClose asChild key={link.href}>
-                        <Link href={link.href} className={linkClassName}>
-                          {link.label}
-                        </Link>
-                      </SheetClose>
-                    ))}
+                    {navLinks.map((link) => {
+                      const getPreloadHandler = (href: string) => {
+                        switch (href) {
+                          case '/productos': return preloadHandlers.productos.handleMouseEnter;
+                          case '/nosotros': return preloadHandlers.nosotros.handleMouseEnter;
+                          case '/contacto': return preloadHandlers.contacto.handleMouseEnter;
+                          case '/servicios-para-artistas': return preloadHandlers.servicios.handleMouseEnter;
+                          default: return undefined;
+                        }
+                      };
+
+                      return (
+                        <SheetClose asChild key={link.href}>
+                          <Link 
+                            href={link.href} 
+                            className={linkClassName}
+                            onMouseEnter={getPreloadHandler(link.href)}
+                          >
+                            {link.label}
+                          </Link>
+                        </SheetClose>
+                      );
+                    })}
                   </nav>
                 </div>
               </SheetContent>
