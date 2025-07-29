@@ -21,6 +21,7 @@ interface NextGenImageProps {
   enableWebP?: boolean;
   enableAVIF?: boolean;
   fallbackFormats?: string[];
+  style?: React.CSSProperties;
 }
 
 export function NextGenImage({
@@ -40,6 +41,7 @@ export function NextGenImage({
   enableWebP = true,
   enableAVIF = true,
   fallbackFormats = ['webp', 'jpg'],
+  style,
 }: NextGenImageProps) {
   const [currentSrc, setCurrentSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
@@ -269,6 +271,7 @@ export function NextGenImage({
           style={{
             objectFit: 'cover',
             objectPosition: 'center',
+            ...style,
           }}
         />
       </picture>

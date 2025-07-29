@@ -22,8 +22,8 @@ interface InfiniteScrollReturn<T> {
   loadMore: () => void;
   reset: () => void;
   setItems: (items: T[]) => void;
-  containerRef: React.RefObject<HTMLElement>;
-  sentinelRef: React.RefObject<HTMLElement>;
+  containerRef: React.RefObject<HTMLDivElement>;
+  sentinelRef: React.RefObject<HTMLDivElement>;
 }
 
 export function useInfiniteScroll<T>(
@@ -50,8 +50,8 @@ export function useInfiniteScroll<T>(
   const [error, setError] = useState<string | null>(null);
   const [activeRequests, setActiveRequests] = useState(0);
   
-  const containerRef = useRef<HTMLElement>(null);
-  const sentinelRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 

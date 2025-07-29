@@ -118,31 +118,8 @@ export function ProgressiveImage({
 
   return (
     <>
-      {/* Imagen de baja calidad (se carga primero) */}
-      {imageState === 'loading' && (
-        <Image
-          src={getLowQualityUrl(src)}
-          alt={alt}
-          width={width}
-          height={height}
-          fill={fill}
-          sizes={sizes}
-          priority={priority}
-          quality={30}
-          placeholder={placeholder}
-          blurDataURL={blurData}
-          className={cn(
-            "transition-opacity duration-300",
-            imageState === 'low' ? "opacity-100" : "opacity-0",
-            className
-          )}
-          onLoad={handleLowQualityLoad}
-          onError={handleError}
-        />
-      )}
-
-      {/* Imagen de alta calidad (se carga después) */}
-      {(imageState === 'low' || imageState === 'high') && (
+      {/* Imagen progresiva: baja calidad primero, luego alta calidad */}
+      {(imageState === 'loading' || imageState === 'low' || imageState === 'high') && (
         <Image
           src={imageState === 'high' ? getHighQualityUrl(src) : getLowQualityUrl(src)}
           alt={alt}
@@ -151,13 +128,17 @@ export function ProgressiveImage({
           fill={fill}
           sizes={sizes}
           priority={priority}
-          quality={quality}
-          placeholder="empty"
+          quality={imageState === 'high' ? quality : 30}
+          placeholder={imageState === 'loading' ? placeholder : "empty"}
+          blurDataURL={imageState === 'loading' ? blurData : undefined}
           className={cn(
             "transition-all duration-500",
-            imageState === 'high' ? "opacity-100 scale-100" : "opacity-80 scale-105",
+            imageState === 'high' ? "opacity-100 scale-100" : 
+            imageState === 'low' ? "opacity-80 scale-105" : 
+            "opacity-0 scale-110",
             className
           )}
+          onLoad={imageState === 'loading' ? handleLowQualityLoad : onLoad}
           onError={handleError}
         />
       )}
