@@ -33,8 +33,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Cache más agresivo para imágenes optimizadas
     minimumCacheTTL: 86400, // 24 horas
-    // Límite de tamaño para evitar archivos muy pesados
-    maxFileSize: 2 * 1024 * 1024, // 2MB máximo
     remotePatterns: [
       {
         protocol: 'https',
