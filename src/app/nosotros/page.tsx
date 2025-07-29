@@ -17,10 +17,11 @@ export default function AboutPage() {
         <Image 
           src="/assets/nosotros.webp" 
           alt="Equipo de JoyasJP" 
-          fill={true}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          fill
+          sizes="100vw"
           className="object-cover opacity-20"
-          priority 
+          priority
+          quality={75}
         />
         <div className="relative z-10 p-4">
           <h1 className="text-5xl md:text-7xl font-headline font-bold">{aboutPageContent.title}</h1>
