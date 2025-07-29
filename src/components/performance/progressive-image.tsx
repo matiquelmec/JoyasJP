@@ -38,21 +38,15 @@ export function ProgressiveImage({
   const [imageState, setImageState] = useState<'loading' | 'low' | 'high' | 'error'>('loading');
   const [hasError, setHasError] = useState(false);
 
-  // Generar URLs para diferentes calidades
+  // Generar URLs para diferentes calidades - SIMPLIFICADO
   const getLowQualityUrl = useCallback((url: string) => {
-    if (url.includes('supabase')) {
-      // Para imágenes de Supabase, usar parámetros de transformación
-      return `${url}?width=300&height=300&resize=cover&quality=30&format=webp`;
-    }
-    // Para otras imágenes, agregar parámetros query estándar
-    return `${url}${url.includes('?') ? '&' : '?'}w=300&q=30`;
+    // Temporalmente deshabilitado - usar URL original
+    return url;
   }, []);
 
   const getHighQualityUrl = useCallback((url: string) => {
-    if (url.includes('supabase')) {
-      return `${url}?width=800&height=800&resize=cover&quality=${quality}&format=webp`;
-    }
-    return `${url}${url.includes('?') ? '&' : '?'}q=${quality}`;
+    // Temporalmente deshabilitado - usar URL original
+    return url;
   }, [quality]);
 
   // Generar blur placeholder simple

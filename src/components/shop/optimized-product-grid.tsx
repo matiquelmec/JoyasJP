@@ -20,7 +20,7 @@ interface OptimizedProductGridProps {
   enableInfiniteScroll?: boolean;
 }
 
-// Simulador de API para demostración
+// Función para obtener productos reales desde la API
 async function fetchProducts(
   page: number,
   searchQuery = '',
@@ -28,30 +28,48 @@ async function fetchProducts(
   sortBy = ''
 ): Promise<{ data: Product[]; hasMore: boolean; total: number }> {
   
-  // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 200));
-  
-  // Aquí iría la llamada real a tu API
-  // Por ahora simulamos con datos mock
-  const pageSize = 12;
-  const mockProducts: Product[] = Array.from({ length: pageSize }, (_, i) => ({
-    id: `product-${page}-${i}`,
-    name: `Producto ${page * pageSize + i + 1}`,
-    price: Math.floor(Math.random() * 100000) + 10000,
-    imageUrl: `https://picsum.photos/400/400?random=${page * pageSize + i}`,
-    description: `Descripción del producto ${page * pageSize + i + 1}`,
-    category: category || 'general',
-    materials: 'Oro 18k',
-    color: 'Dorado',
-    inStock: true,
-    featured: Math.random() > 0.8,
-  }));
-
-  return {
-    data: mockProducts,
-    hasMore: page < 10, // Simular 10 páginas máximo
-    total: 120
-  };
+  try {
+    // Importar getProducts desde la API real
+    const { getProducts } = await import('@/lib/api');
+    
+    // Obtener productos reales
+    const allProducts = await getProducts();
+    
+    // Aplicar filtros
+    let filteredProducts = allProducts;
+    
+    if (searchQuery) {
+      filteredProducts = filteredProducts.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    if (category) {
+      filteredProducts = filteredProducts.filter(p => p.category === category);
+    }
+    
+    // Aplicar paginación
+    const pageSize = 12;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+    
+    return {
+      data: paginatedProducts,
+      hasMore: endIndex < filteredProducts.length,
+      total: filteredProducts.length
+    };
+    
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    // Fallback en caso de error - retornar array vacío
+    return {
+      data: [],
+      hasMore: false,
+      total: 0
+    };
+  }
 }
 
 export function OptimizedProductGrid({

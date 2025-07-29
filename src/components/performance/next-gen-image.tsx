@@ -48,8 +48,13 @@ export function NextGenImage({
   const [isLoaded, setIsLoaded] = useState(false);
   const pictureRef = useRef<HTMLDivElement>(null);
 
-  // Generar URLs para diferentes formatos
+  // Generar URLs para diferentes formatos - SIMPLIFICADO para evitar problemas
   const generateImageUrl = useCallback((originalSrc: string, format: string, qualityOverride?: number) => {
+    // Temporalmente deshabilitado para debug - usar URL original
+    return originalSrc;
+    
+    // TODO: Re-implementar transformaciones URL cuando identifiquemos el problema
+    /*
     const currentQuality = qualityOverride || quality;
     
     // Para imágenes de Supabase
@@ -75,6 +80,7 @@ export function NextGenImage({
     if (height && !fill) url += `&h=${height}`;
     
     return url;
+    */
   }, [quality, width, height, fill]);
 
   // Detectar soporte para formatos modernos
