@@ -49,6 +49,26 @@ export function OptimizedLogo({
           showDropShadow && 'drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]'
         )}
         priority={priority}
+        quality={95}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
+        onLoad={() => {
+          console.log('Logo loaded successfully');
+        }}
+        onError={(e) => {
+          console.error('Error loading logo WebP, trying fallback');
+          const target = e.target as HTMLImageElement;
+          // Try with different format first
+          if (target.src.includes('.webp')) {
+            target.src = '/assets/logo.webp?' + Date.now(); // Cache bust
+          } else {
+            // Ultimate fallback - hide image and show text
+            target.style.display = 'none';
+            if (target.parentElement) {
+              target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-primary font-bold text-4xl select-none">JP</div>';
+            }
+          }
+        }}
       />
     </div>
   );
@@ -67,12 +87,19 @@ export function HeaderLogo({ className }: { className?: string }) {
 
 export function HeroLogo({ className }: { className?: string }) {
   return (
-    <OptimizedLogo 
-      size="hero" 
-      priority={true}
-      showDropShadow={true}
-      className={cn('mb-6 relative z-30', className)}
-    />
+    <div className={cn('mb-6 relative z-30', className)}>
+      <OptimizedLogo 
+        size="hero" 
+        priority={true}
+        showDropShadow={true}
+      />
+      {/* Fallback visible si el logo no carga */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-6xl md:text-8xl font-bold text-primary opacity-20 select-none">
+          JP
+        </div>
+      </div>
+    </div>
   );
 }
 

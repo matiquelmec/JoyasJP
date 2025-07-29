@@ -27,20 +27,27 @@ const nextConfig = {
   
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 604800, // 7 days cache (enterprise-level)
+    minimumCacheTTL: 86400, // 1 day cache (optimized for performance)
     dangerouslyAllowSVG: false,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     deviceSizes: [320, 375, 414, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 180, 256, 320, 384, 512],
+    domains: [], // Deprecated but kept for compatibility
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'lrsmmfpsbawznjpnllwr.supabase.co',
-        pathname: '/storage/v1/object/public/joyas-jp-ecommerce/**',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
     loader: 'default',
     loaderFile: '',
+    unoptimized: false,
   },
 
   // Enterprise-level headers for advanced caching

@@ -1,7 +1,7 @@
 // Enterprise-level Service Worker for Advanced Image Caching
 // Joyas JP - E-commerce Optimization
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CRITICAL_IMAGES_CACHE = `joyasjp-critical-${CACHE_VERSION}`;
 const PRODUCT_IMAGES_CACHE = `joyasjp-products-${CACHE_VERSION}`;
 const THUMBNAILS_CACHE = `joyasjp-thumbnails-${CACHE_VERSION}`;
@@ -13,11 +13,11 @@ const CRITICAL_ASSETS = [
   '/assets/nosotros.webp'
 ];
 
-// Cache duration configurations (enterprise-level)
+// Cache duration configurations (optimized for performance)
 const CACHE_CONFIG = {
-  critical: 7 * 24 * 60 * 60 * 1000,      // 7 days
-  products: 3 * 24 * 60 * 60 * 1000,      // 3 days  
-  thumbnails: 24 * 60 * 60 * 1000         // 1 day
+  critical: 24 * 60 * 60 * 1000,          // 1 day - reduced for faster updates
+  products: 12 * 60 * 60 * 1000,          // 12 hours - faster product updates
+  thumbnails: 6 * 60 * 60 * 1000          // 6 hours - more frequent thumbnail refresh
 };
 
 self.addEventListener('install', (event) => {
@@ -72,15 +72,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Add timeout to network requests
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Network timeout')), 8000); // 8 second timeout
+  });
+
   // Apply appropriate caching strategy
   const strategy = getCacheStrategy(url.pathname);
   
   if (strategy === 'critical') {
-    event.respondWith(cacheFirstWithFallback(request, CRITICAL_IMAGES_CACHE));
+    event.respondWith(cacheFirstWithFallback(request, CRITICAL_IMAGES_CACHE, timeoutPromise));
   } else if (strategy === 'product') {
-    event.respondWith(staleWhileRevalidate(request, PRODUCT_IMAGES_CACHE));
+    event.respondWith(staleWhileRevalidate(request, PRODUCT_IMAGES_CACHE, timeoutPromise));
   } else if (strategy === 'thumbnail') {
-    event.respondWith(cacheFirstWithExpiry(request, THUMBNAILS_CACHE, CACHE_CONFIG.thumbnails));
+    event.respondWith(cacheFirstWithExpiry(request, THUMBNAILS_CACHE, CACHE_CONFIG.thumbnails, timeoutPromise));
   }
 });
 
@@ -105,7 +110,7 @@ function getCacheStrategy(pathname) {
 }
 
 // Cache First with Fallback (for critical images)
-async function cacheFirstWithFallback(request, cacheName) {
+async function cacheFirstWithFallback(request, cacheName, timeoutPromise = null) {
   try {
     const cache = await caches.open(cacheName);
     const cachedResponse = await cache.match(request);
@@ -128,7 +133,7 @@ async function cacheFirstWithFallback(request, cacheName) {
 }
 
 // Stale While Revalidate (for product images)
-async function staleWhileRevalidate(request, cacheName) {
+async function staleWhileRevalidate(request, cacheName, timeoutPromise = null) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
   
@@ -151,7 +156,7 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 // Cache First with Expiry (for thumbnails)
-async function cacheFirstWithExpiry(request, cacheName, maxAge) {
+async function cacheFirstWithExpiry(request, cacheName, maxAge, timeoutPromise = null) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
   
