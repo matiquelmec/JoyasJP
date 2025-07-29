@@ -144,7 +144,12 @@ export const useAdminUser = () => {
   const { user, isAuthenticated, checkSession } = useAdminAuth();
   
   useEffect(() => {
-    // Verificar sesión periódicamente (cada 5 minutos)
+    // Solo verificar sesión si estamos en rutas admin
+    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
+      return;
+    }
+    
+    // Verificar sesión periódicamente (cada 5 minutos) SOLO en admin
     const interval = setInterval(() => {
       if (isAuthenticated) {
         checkSession();
