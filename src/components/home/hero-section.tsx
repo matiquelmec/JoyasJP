@@ -10,8 +10,8 @@ import { HeroLogo } from '@/components/ui/optimized-logo';
 export function HeroSection() {
   const { deviceType, connectionType, isClient } = useDeviceType();
 
-  // Mostrar video por defecto para evitar flash, luego optimizar
-  const shouldShowVideo = !isClient || (deviceType !== 'mobile' && connectionType === 'fast');
+  // Mostrar video en todos los dispositivos
+  const shouldShowVideo = !isClient || connectionType === 'fast';
 
   return (
     <section className="relative h-[calc(100vh+9rem)] w-full overflow-hidden mt-[-9rem]">
