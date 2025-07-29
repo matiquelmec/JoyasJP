@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "nvm install 20 && nvm use 20 && npm run build"
   publish = ".next"
 
 [build.environment]
