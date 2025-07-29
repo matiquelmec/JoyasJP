@@ -1,7 +1,7 @@
 // Enterprise-level Service Worker for Advanced Image Caching
 // Joyas JP - E-commerce Optimization
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CRITICAL_IMAGES_CACHE = `joyasjp-critical-${CACHE_VERSION}`;
 const PRODUCT_IMAGES_CACHE = `joyasjp-products-${CACHE_VERSION}`;
 const THUMBNAILS_CACHE = `joyasjp-thumbnails-${CACHE_VERSION}`;
@@ -72,20 +72,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Add timeout to network requests
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('Network timeout')), 8000); // 8 second timeout
-  });
-
   // Apply appropriate caching strategy
   const strategy = getCacheStrategy(url.pathname);
   
   if (strategy === 'critical') {
-    event.respondWith(cacheFirstWithFallback(request, CRITICAL_IMAGES_CACHE, timeoutPromise));
+    event.respondWith(cacheFirstWithFallback(request, CRITICAL_IMAGES_CACHE));
   } else if (strategy === 'product') {
-    event.respondWith(staleWhileRevalidate(request, PRODUCT_IMAGES_CACHE, timeoutPromise));
+    event.respondWith(staleWhileRevalidate(request, PRODUCT_IMAGES_CACHE));
   } else if (strategy === 'thumbnail') {
-    event.respondWith(cacheFirstWithExpiry(request, THUMBNAILS_CACHE, CACHE_CONFIG.thumbnails, timeoutPromise));
+    event.respondWith(cacheFirstWithExpiry(request, THUMBNAILS_CACHE, CACHE_CONFIG.thumbnails));
   }
 });
 
@@ -110,7 +105,7 @@ function getCacheStrategy(pathname) {
 }
 
 // Cache First with Fallback (for critical images)
-async function cacheFirstWithFallback(request, cacheName, timeoutPromise = null) {
+async function cacheFirstWithFallback(request, cacheName) {
   try {
     const cache = await caches.open(cacheName);
     const cachedResponse = await cache.match(request);
@@ -133,7 +128,7 @@ async function cacheFirstWithFallback(request, cacheName, timeoutPromise = null)
 }
 
 // Stale While Revalidate (for product images)
-async function staleWhileRevalidate(request, cacheName, timeoutPromise = null) {
+async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
   
@@ -156,7 +151,7 @@ async function staleWhileRevalidate(request, cacheName, timeoutPromise = null) {
 }
 
 // Cache First with Expiry (for thumbnails)
-async function cacheFirstWithExpiry(request, cacheName, maxAge, timeoutPromise = null) {
+async function cacheFirstWithExpiry(request, cacheName, maxAge) {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
   
