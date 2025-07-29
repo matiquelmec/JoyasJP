@@ -8,29 +8,13 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 
+import { ProductLoadingSkeleton } from '@/components/ui/enterprise-loading';
+
 // Dynamic imports para componentes pesados
 const ProductCard = dynamic(() => import('@/components/shop/product-card'), {
-  loading: () => <ProductCardSkeleton />,
+  loading: () => <ProductLoadingSkeleton />,
   ssr: false
 });
-
-// Skeleton component para ProductCard
-function ProductCardSkeleton() {
-  return (
-    <div className="border rounded-lg overflow-hidden shadow-sm animate-pulse">
-      <div className="aspect-square bg-gradient-to-br from-amber-50/50 via-white/80 to-amber-50/50" />
-      <div className="p-4 space-y-3">
-        <div className="h-5 bg-gray-200 rounded w-3/4" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-3 bg-gray-200 rounded w-full" />
-        <div className="flex justify-between items-center pt-2">
-          <div className="h-6 bg-gray-200 rounded w-1/3" />
-          <div className="w-10 h-10 bg-gray-200 rounded-full" />
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros'];
 
