@@ -10,8 +10,8 @@ import { HeroLogo } from '@/components/ui/optimized-logo';
 export function HeroSection() {
   const { deviceType, connectionType, isClient } = useDeviceType();
 
-  // Mostrar video en todos los dispositivos
-  const shouldShowVideo = !isClient || connectionType === 'fast';
+  // Mostrar video siempre, independiente del dispositivo y conexión
+  const shouldShowVideo = true;
 
   return (
     <section className="relative h-[calc(100vh+9rem)] w-full overflow-hidden mt-[-9rem]">
@@ -29,18 +29,7 @@ export function HeroSection() {
         }}
       />
       
-      {/* Imagen de respaldo solo en móvil */}
-      {isClient && deviceType === 'mobile' && (
-        <Image
-          src="/assets/hero-poster.webp"
-          alt="Joyas JP - Atrévete a jugar con joyas urbanas premium"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        />
-      )}
+      {/* Imagen de respaldo oculta - video se muestra siempre */}
       
       <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
       
