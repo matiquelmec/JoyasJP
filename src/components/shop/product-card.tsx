@@ -187,7 +187,6 @@ export default function ProductCard({ product, priority = false, className, inde
               priority={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6)}
               loading={priority || (typeof window !== 'undefined' && window.innerWidth < 768 ? index < 3 : index < 6) ? "eager" : "lazy"}
             />
-            />
           ) : isIntersecting && imageError ? (
             <ErrorPlaceholder 
               error="Error al cargar imagen" 
