@@ -223,12 +223,12 @@ export function OptimizedProductGrid({
 }
 
 // Componente wrapper con configuración por defecto
-export default function ProductGrid(props: Omit<OptimizedProductGridProps, 'enableVirtualScrolling' | 'enableInfiniteScroll'>) {
+export default function ProductGrid(props: OptimizedProductGridProps) {
   return (
     <OptimizedProductGrid
       {...props}
-      enableVirtualScrolling={true}
-      enableInfiniteScroll={true}
+      enableVirtualScrolling={props.enableVirtualScrolling ?? true}
+      enableInfiniteScroll={props.enableInfiniteScroll ?? true}
     />
   );
 }
