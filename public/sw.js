@@ -1,7 +1,7 @@
 // Enterprise-level Service Worker for Advanced Image Caching
 // Joyas JP - E-commerce Optimization
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CRITICAL_IMAGES_CACHE = `joyasjp-critical-${CACHE_VERSION}`;
 const PRODUCT_IMAGES_CACHE = `joyasjp-products-${CACHE_VERSION}`;
 const THUMBNAILS_CACHE = `joyasjp-thumbnails-${CACHE_VERSION}`;
@@ -116,8 +116,7 @@ async function cacheFirstWithFallback(request, cacheName) {
     
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      const responseToCache = networkResponse.clone();
-      addTimestamp(responseToCache);
+      const responseToCache = addTimestamp(networkResponse.clone());
       cache.put(request, responseToCache);
     }
     return networkResponse;
@@ -136,8 +135,7 @@ async function staleWhileRevalidate(request, cacheName) {
   // Background fetch to update cache
   const fetchPromise = fetch(request).then((networkResponse) => {
     if (networkResponse.ok) {
-      const responseToCache = networkResponse.clone();
-      addTimestamp(responseToCache);
+      const responseToCache = addTimestamp(networkResponse.clone());
       cache.put(request, responseToCache);
     }
     return networkResponse;
@@ -164,8 +162,7 @@ async function cacheFirstWithExpiry(request, cacheName, maxAge) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      const responseToCache = networkResponse.clone();
-      addTimestamp(responseToCache);
+      const responseToCache = addTimestamp(networkResponse.clone());
       cache.put(request, responseToCache);
     }
     return networkResponse;
@@ -177,7 +174,14 @@ async function cacheFirstWithExpiry(request, cacheName, maxAge) {
 
 // Cache management utilities
 function addTimestamp(response) {
-  response.headers.set('sw-cached-at', Date.now().toString());
+  const newHeaders = new Headers(response.headers);
+  newHeaders.set('sw-cached-at', Date.now().toString());
+  
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: newHeaders
+  });
 }
 
 function isExpired(response, maxAge) {
@@ -232,8 +236,8 @@ async function preloadImages(urls) {
       
       const response = await fetch(url);
       if (response.ok) {
-        addTimestamp(response);
-        await cache.put(url, response);
+        const timestampedResponse = addTimestamp(response);
+        await cache.put(url, timestampedResponse);
       }
     } catch (error) {
       console.warn('SW: Failed to preload:', url, error);
