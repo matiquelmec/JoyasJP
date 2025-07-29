@@ -3,9 +3,9 @@ import { Playfair_Display, PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import ResourcePreloader from '@/components/performance/resource-preloader';
-import { RoutePreloader } from '@/components/performance/route-preloader';
-import { PerformanceProvider, PerformanceDebugger } from '@/components/performance/performance-provider';
+// import ResourcePreloader from '@/components/performance/resource-preloader';
+// import { RoutePreloader } from '@/components/performance/route-preloader';
+// import { PerformanceProvider, PerformanceDebugger } from '@/components/performance/performance-provider';
 
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
@@ -175,35 +175,16 @@ export default function RootLayout({
           Saltar al contenido principal
         </a>
 
-        <ResourcePreloader />
-        <RoutePreloader />
-        
-        <PerformanceProvider
-          budget={{
-            maxPageSize: 2048, // 2MB para e-commerce
-            maxImageSize: 500, // 500KB por imagen
-            maxLCP: 2500, // 2.5s para Core Web Vitals
-            maxFID: 100,
-            maxCLS: 0.1,
-            maxImages: 20,
-            maxRequests: 50,
-          }}
-          enableByDefault={true}
-        >
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
-            <main id="main-content" className="flex-1 pt-36">
-              {children}
-            </main>
-            <Footer />
-          </div>
+        <div className="relative flex min-h-screen flex-col">
+          <Header />
+          {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
+          <main id="main-content" className="flex-1 pt-36">
+            {children}
+          </main>
+          <Footer />
+        </div>
 
-          <Toaster />
-          
-          {/* Performance debugger solo en desarrollo */}
-          <PerformanceDebugger />
-        </PerformanceProvider>
+        <Toaster />
       </body>
     </html>
   );
