@@ -16,15 +16,16 @@ import { Metadata } from 'next';
 import { supabase } from '@/lib/supabase-client';
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Eliminamos getProduct local - usamos la versión cacheada de api.ts
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProductById(params.id);
+  const { id } = await params;
+  const product = await getProductById(id);
 
   if (!product) {
     return {
@@ -76,7 +77,8 @@ export async function generateStaticParams() {
 export const revalidate = 3600;
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductById(params.id);
+  const { id } = await params;
+  const product = await getProductById(id);
 
   if (!product) {
     notFound();

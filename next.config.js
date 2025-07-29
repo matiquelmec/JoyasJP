@@ -9,8 +9,7 @@ const nextConfig = {
   // Compresión optimizada
   compress: true,
   
-  // Minificación optimizada
-  swcMinify: true,
+  // Minificación optimizada (swcMinify removido en Next.js 15)
   poweredByHeader: false,
   
   // Optimización de build
