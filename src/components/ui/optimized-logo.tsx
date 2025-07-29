@@ -85,19 +85,12 @@ export function HeaderLogo({ className }: { className?: string }) {
 
 export function HeroLogo({ className }: { className?: string }) {
   return (
-    <div className={cn('mb-6 relative z-30', className)}>
-      <OptimizedLogo 
-        size="hero" 
-        priority={true}
-        showDropShadow={true}
-      />
-      {/* Fallback visible si el logo no carga */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-6xl md:text-8xl font-bold text-primary opacity-20 select-none">
-          JP
-        </div>
-      </div>
-    </div>
+    <OptimizedLogo 
+      size="hero" 
+      priority={true}
+      showDropShadow={true}
+      className={cn('mb-6 relative z-30', className)}
+    />
   );
 }
 
