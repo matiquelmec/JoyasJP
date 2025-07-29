@@ -7,7 +7,7 @@ import { ProductVirtualGrid } from '@/components/performance/virtual-scroll';
 import { useProductInfiniteScroll, InfiniteScrollSentinel } from '@/hooks/use-infinite-scroll';
 import { ProductGridSkeleton } from '@/components/ui/advanced-skeleton';
 import { useVirtualScrollOptimization, useComponentOptimization } from '@/hooks/use-device-optimization';
-import { createPerformanceMonitor } from '@/utils/performance-monitor';
+// Performance monitor import removed - not used in current implementation
 import { cn } from '@/lib/utils';
 
 interface OptimizedProductGridProps {
@@ -86,20 +86,13 @@ export function OptimizedProductGrid({
   const scrollConfig = useVirtualScrollOptimization();
   const componentConfig = useComponentOptimization();
 
-  // Configurar performance monitor
-  useEffect(() => {
-    const monitor = createPerformanceMonitor({
-      maxImages: 20,
-      maxPageSize: 3072, // 3MB para páginas con productos
-      maxLCP: 3000,
-    });
-
-    return () => monitor?.destroy();
-  }, []);
+  // Performance monitoring removed for bundle optimization
 
   // Función para cargar más productos
   const loadMoreProducts = async (page: number) => {
-    console.log(`🔄 Loading page ${page} with query: "${searchQuery}", category: "${category}"`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔄 Loading page ${page} with query: "${searchQuery}", category: "${category}"`);
+    }
     return await fetchProducts(page, searchQuery, category, sortBy);
   };
 

@@ -43,10 +43,15 @@ export function ImagePreloader({ images, priority = false }: ImagePreloaderProps
     Promise.allSettled(preloadPromises)
       .then((results) => {
         const loaded = results.filter(r => r.status === 'fulfilled').length;
-        console.log(`Preloaded ${loaded}/${imagesToPreload.length} images`);
+        // Only log in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Preloaded ${loaded}/${imagesToPreload.length} images`);
+        }
       })
       .catch((error) => {
-        console.warn('Some images failed to preload:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Some images failed to preload:', error);
+        }
       });
 
   }, [images, priority]);

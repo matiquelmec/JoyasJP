@@ -169,7 +169,10 @@ export function NextGenImage({
 
   // Manejar errores con fallback en cascada
   const handleError = useCallback(async (error: any) => {
-    console.warn('Image failed to load:', currentSrc, error);
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Image failed to load:', currentSrc, error);
+    }
     
     // Intentar con el siguiente formato en la lista de fallback
     const currentIndex = fallbackFormats.findIndex(format => 

@@ -145,7 +145,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         
-        {/* Preloading dinámico por ruta se maneja en RoutePreloader */}
+        {/* Performance preloading components removed for bundle optimization */}
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/webp" sizes="any" href="/assets/logo.webp" />

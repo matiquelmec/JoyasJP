@@ -27,9 +27,15 @@ export function useRoutePreloader() {
         try {
           router.prefetch(href);
           setPreloadedRoutes(prev => new Set([...prev, href]));
-          console.log(`🚀 Route preloaded: ${href}`);
+          // Only log in development
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`🚀 Route preloaded: ${href}`);
+          }
         } catch (error) {
-          console.warn(`Failed to preload route: ${href}`, error);
+          // Only log errors in development
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`Failed to preload route: ${href}`, error);
+          }
         }
       };
 

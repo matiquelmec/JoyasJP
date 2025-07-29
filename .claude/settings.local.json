@@ -20,7 +20,8 @@
       "Bash(curl:*)",
       "Bash(npm run lint)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(npm run typecheck:*)"
     ],
     "deny": []
   }
