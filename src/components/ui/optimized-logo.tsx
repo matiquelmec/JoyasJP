@@ -63,7 +63,7 @@ export function OptimizedLogo({
       className
     )}>
       <Image
-        src="/assets/logo.webp?v=2"
+        src="/assets/logo.webp"
         alt="Joyas JP - Alta joyería urbana"
         fill
         sizes={logoSizeValues[size]}
