@@ -35,7 +35,7 @@ export function OptimizedLogo({
 }: OptimizedLogoProps) {
   const [hasError, setHasError] = useState(false);
   
-  // If image failed to load, show text fallback immediately
+  // Mostrar fallback solo si hay error (con color más suave)
   if (hasError) {
     return (
       <div className={cn(
@@ -44,7 +44,7 @@ export function OptimizedLogo({
         className
       )}>
         <div className={cn(
-          'text-primary font-bold select-none tracking-wider',
+          'text-gray-600 font-bold select-none tracking-wider',
           size === 'hero' ? 'text-6xl' : 
           size === 'xl' ? 'text-5xl' :
           size === 'lg' ? 'text-4xl' : 
@@ -63,7 +63,7 @@ export function OptimizedLogo({
       className
     )}>
       <Image
-        src="/assets/logo.webp"
+        src="/assets/logo.webp?v=2"
         alt="Joyas JP - Alta joyería urbana"
         fill
         sizes={logoSizeValues[size]}

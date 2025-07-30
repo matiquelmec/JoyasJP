@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Logo</title>
+</head>
+<body>
+    <h1>Test de carga del logo</h1>
+    <img src="/assets/logo.webp" alt="Logo directo" style="width: 200px; height: 200px;" onload="console.log('Logo cargado')" onerror="console.error('Logo falló')">
+    <br>
+    <img src="./public/assets/logo.webp" alt="Logo con ruta completa" style="width: 200px; height: 200px;" onload="console.log('Logo con ruta completa cargado')" onerror="console.error('Logo con ruta completa falló')">
+</body>
+</html>

@@ -10,6 +10,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { ImagePreloader } from '@/components/performance/image-preloader';
 import { CardLoadingSkeleton } from '@/components/ui/enterprise-loading';
 import { HeroSection } from '@/components/home/hero-section';
+import { LogoDebug } from '@/components/debug/logo-debug';
 
 export const dynamic = 'force-dynamic';
 
@@ -123,6 +124,9 @@ async function FeaturedProducts() {
 export default function Home() {
   return (
     <div className="flex flex-col">
+      {/* Debug Component - Solo en desarrollo */}
+      {process.env.NODE_ENV === 'development' && <LogoDebug />}
+      
       {/* Hero Section Adaptativo */}
       <HeroSection />
 
