@@ -1,1 +1,5 @@
-Fix: Resuelve errores de compilación para despliegue en Netlify
+fix: Añadir TypeScript como dependencia de desarrollo
+
+El build fallaba en Netlify porque el paquete `typescript` y sus tipados no estaban declarados en package.json. Esto causaba que el proceso de compilación y verificación de tipos se detuviera.
+
+Este commit añade `typescript`, `@types/node`, `@types/react`, y `@types/react-dom` a las devDependencies para asegurar que el entorno de build tenga las herramientas necesarias para compilar el proyecto.

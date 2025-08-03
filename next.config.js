@@ -2,8 +2,8 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configuración para Netlify
-  output: 'export',
+  // Configuración híbrida para Netlify con ISR
+  output: 'standalone',
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
 
