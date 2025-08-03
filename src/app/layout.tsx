@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from "@/components/ui/toaster"
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { cn } from '@/lib/utils';
 
 const playfairDisplay = Playfair_Display({
@@ -173,12 +174,20 @@ export default function RootLayout({
         </a>
 
         <div className="relative flex min-h-screen flex-col">
-          <Header />
+          <ErrorBoundary>
+            <Header />
+          </ErrorBoundary>
+          
           {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
           <main id="main-content" className="flex-1 pt-36">
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </main>
-          <Footer />
+          
+          <ErrorBoundary>
+            <Footer />
+          </ErrorBoundary>
         </div>
 
         <Toaster />

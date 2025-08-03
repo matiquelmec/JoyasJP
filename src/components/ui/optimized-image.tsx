@@ -1,38 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Image, { ImageProps } from 'next/image';
 import { cn } from '@/lib/utils';
+import { useProductImage } from '@/hooks/use-image-load';
 
 interface OptimizedImageProps extends Omit<ImageProps, 'onLoad' | 'onError'> {
   fallbackSrc?: string;
   aspectRatio?: number;
+  productName?: string;
 }
 
-export function OptimizedImage({
+export const OptimizedImage = memo(function OptimizedImage({
   src,
   alt,
   className,
   fallbackSrc = '/assets/placeholder.jpg',
   aspectRatio = 1,
+  productName,
   ...props
 }: OptimizedImageProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const { imageProps, isLoading, hasError } = useProductImage(
+    typeof src === 'string' ? src : '', 
+    productName
+  );
   
   // Generar URLs optimizadas para Netlify Image CDN
-  const optimizedSrc = typeof src === 'string' && src.startsWith('/assets/') 
-    ? `/.netlify/images?url=${encodeURIComponent(src)}&w=${props.width || 800}&q=85&fm=webp`
-    : src;
+  const optimizedSrc = typeof imageProps.src === 'string' && imageProps.src.startsWith('/assets/') 
+    ? `/.netlify/images?url=${encodeURIComponent(imageProps.src)}&w=${props.width || 800}&q=85&fm=webp`
+    : imageProps.src;
   
   return (
     <div 
       className={cn('relative overflow-hidden bg-muted', className)}
       style={{ aspectRatio }}
     >
-      {/* Skeleton loader */}
+      {/* Shimmer skeleton loader */}
       {isLoading && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-muted to-muted-foreground/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse bg-[length:200%_100%] animate-[shimmer_1.5s_ease-in-out_infinite]" />
       )}
       
       <Image
@@ -40,21 +45,45 @@ export function OptimizedImage({
         src={hasError ? fallbackSrc : optimizedSrc}
         alt={alt}
         className={cn(
-          'transition-opacity duration-300',
-          isLoading ? 'opacity-0' : 'opacity-100',
+          'transition-all duration-300 ease-in-out object-cover',
+          isLoading ? 'opacity-0 scale-110' : 'opacity-100 scale-100',
+          hasError && 'grayscale',
           className
         )}
-        onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setHasError(true);
-          setIsLoading(false);
+        onLoad={() => {
+          imageProps.onLoad();
         }}
-        loading="lazy"
+        onError={() => {
+          imageProps.onError();
+        }}
+        loading={props.priority ? "eager" : "lazy"}
         quality={85}
       />
+
+      {/* Error state with better UX */}
+      {hasError && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+          <div className="text-center text-gray-400 p-2">
+            <svg 
+              className="mx-auto h-6 w-6 mb-1 opacity-50" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={1.5} 
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+              />
+            </svg>
+            <span className="text-xs">Sin imagen</span>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+});
 
 // Componente para galería de productos con optimizaciones
 export function ProductGallery({ images }: { images: string[] }) {

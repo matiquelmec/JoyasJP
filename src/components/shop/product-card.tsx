@@ -8,7 +8,7 @@ import { toast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
@@ -17,7 +17,7 @@ interface ProductCardProps {
   className?: string;
 }
 
-export default function ProductCard({ product, priority = false, className }: ProductCardProps) {
+const ProductCard = memo(function ProductCard({ product, priority = false, className }: ProductCardProps) {
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isItemInWishlist } = useWishlist();
   const [imageLoading, setImageLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function ProductCard({ product, priority = false, className }: Pr
 
   const isInWishlist = isClient && isItemInWishlist(product.id);
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToCart = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -55,9 +55,9 @@ export default function ProductCard({ product, priority = false, className }: Pr
     } finally {
       setIsAddingToCart(false);
     }
-  };
+  }, [addItem, product, isAddingToCart, toast]);
 
-  const handleWishlistClick = (e: React.MouseEvent) => {
+  const handleWishlistClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -82,23 +82,26 @@ export default function ProductCard({ product, priority = false, className }: Pr
         variant: "destructive",
       });
     }
-  };
+  }, [isInWishlist, removeFromWishlist, addToWishlist, product, toast]);
 
-  const handleImageLoad = () => {
+  const handleImageLoad = useCallback(() => {
     setImageLoading(false);
-  };
+  }, []);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     setImageLoading(false);
     setImageError(true);
-  };
+  }, []);
 
-  // Precio formateado
-  const formattedPrice = new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(product.price);
+  // Precio formateado memoizado
+  const formattedPrice = useMemo(() => 
+    new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0,
+    }).format(product.price),
+    [product.price]
+  );
 
   return (
     <article
@@ -211,4 +214,6 @@ export default function ProductCard({ product, priority = false, className }: Pr
       </div>
     </article>
   );
-}
+});
+
+export default ProductCard;
