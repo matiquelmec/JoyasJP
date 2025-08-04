@@ -1,4 +1,4 @@
-import { ArrowDown, Heart, Sparkles, Trophy } from 'lucide-react'
+import { ArrowDown, Heart, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -188,10 +188,7 @@ export default function Home() {
           />
 
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
-            <span className="inline-flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              Atrévete a brillar con estilo único
-            </span>
+            Atrévete a jugar
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
