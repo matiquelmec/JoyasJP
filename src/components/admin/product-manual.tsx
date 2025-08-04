@@ -76,9 +76,19 @@ export function ProductManual() {
               <div>
                 <h4 className="font-medium">Nombre del Producto *</h4>
                 <p className="text-sm text-muted-foreground">
-                  Nombre descriptivo y único. Ej: "Cadena de Oro 18k con Dije Corazón"
+                  Nombre descriptivo del producto. Ej: "Cadena de Oro 18k con Dije Corazón"
                 </p>
-                <Badge variant="outline" className="mt-1">Debe ser único por categoría</Badge>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Tag className="w-5 h-5 text-primary mt-0.5" />
+              <div>
+                <h4 className="font-medium">Código del Producto *</h4>
+                <p className="text-sm text-muted-foreground">
+                  Código único del producto. Ejemplos: PCP_21, PDD_11, PCO_15
+                </p>
+                <Badge variant="outline" className="mt-1">Debe ser único - no se puede repetir</Badge>
               </div>
             </div>
 
@@ -148,8 +158,11 @@ export function ProductManual() {
               <h4 className="font-medium">Proceso Automático</h4>
             </div>
             <p className="text-sm text-muted-foreground">
-              La imagen se guarda automáticamente como <code className="bg-muted px-1 rounded">nombre-producto.jpg</code> 
+              La imagen se guarda automáticamente como <code className="bg-muted px-1 rounded">CODIGO_PRODUCTO.jpg</code> 
               en la carpeta de la categoría correspondiente.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              <strong>Ejemplo:</strong> Código "PCP_21" → Imagen: <code className="bg-muted px-1 rounded">Cadenas/PCP_21.jpg</code>
             </p>
           </div>
         </CardContent>
@@ -207,11 +220,11 @@ export function ProductManual() {
           <div className="p-4 rounded-lg border border-destructive/20 bg-destructive/5">
             <div className="flex items-center gap-2 mb-2">
               <AlertCircle className="w-5 h-5 text-destructive" />
-              <h4 className="font-medium">Productos Duplicados</h4>
+              <h4 className="font-medium">Códigos Duplicados</h4>
             </div>
             <p className="text-sm text-muted-foreground">
-              No se pueden crear productos con el mismo nombre en la misma categoría. 
-              El sistema te alertará si intentas crear un duplicado.
+              No se pueden crear productos con el mismo código. 
+              Cada código debe ser único en todo el sistema.
             </p>
           </div>
 
@@ -221,8 +234,8 @@ export function ProductManual() {
               <h4 className="font-medium">URLs Automáticas</h4>
             </div>
             <p className="text-sm text-muted-foreground">
-              Cada producto genera automáticamente una URL amigable. 
-              Ej: "Cadena de Oro 18k" → <code className="bg-muted px-1 rounded">/shop/cadena-de-oro-18k</code>
+              Cada producto genera automáticamente una URL usando su código. 
+              Ej: Código "PCP_21" → <code className="bg-muted px-1 rounded">/shop/PCP_21</code>
             </p>
           </div>
 
@@ -236,6 +249,24 @@ export function ProductManual() {
               No necesitas hacer nada adicional después de crearlos.
             </p>
           </div>
+
+          <div className="p-4 rounded-lg border border-blue-200 bg-blue-50/50">
+            <div className="flex items-center gap-2 mb-2">
+              <ImageIcon className="w-5 h-5 text-primary" />
+              <h4 className="font-medium">Sincronización Automática</h4>
+            </div>
+            <p className="text-sm text-muted-foreground mb-2">
+              <strong>IMPORTANTE:</strong> El sistema sincroniza automáticamente:
+            </p>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• <strong>URL del producto:</strong> /shop/CODIGO_PRODUCTO</li>
+              <li>• <strong>Nombre de imagen:</strong> CODIGO_PRODUCTO.extensión</li>
+              <li>• <strong>Ubicación:</strong> Carpeta de la categoría correspondiente</li>
+            </ul>
+            <p className="text-sm text-muted-foreground mt-2">
+              Esto evita inconvenientes y mantiene todo organizado automáticamente.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -247,9 +278,9 @@ export function ProductManual() {
         <CardContent className="space-y-4">
           <div className="space-y-3">
             <div className="border-l-4 border-destructive pl-4">
-              <h4 className="font-medium">Error: "Producto duplicado"</h4>
+              <h4 className="font-medium">Error: "Código duplicado"</h4>
               <p className="text-sm text-muted-foreground">
-                Ya existe un producto con ese nombre en esa categoría. Cambia el nombre o la categoría.
+                Ya existe un producto con ese código. Usa un código diferente y único.
               </p>
             </div>
 
