@@ -12,7 +12,7 @@
     "lint:biome": "biome lint .",
     "check": "biome check .",
     "fix": "biome check --write .",
-    "clean": "npm run fix && npm run format",
+    "clean": "npm run fix && npm run format"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
