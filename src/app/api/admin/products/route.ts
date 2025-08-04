@@ -69,9 +69,15 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
+    // Add UUID if not automatically generated
+    const productWithId = {
+      id: crypto.randomUUID(),
+      ...productData
+    }
+    
     const { data, error } = await client
       .from('products')
-      .insert([productData])
+      .insert([productWithId])
       .select()
 
     if (error) throw error
