@@ -10,7 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/use-cart'
 import { useToast } from '@/hooks/use-toast'
-import { createOrder } from '@/lib/api'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteConfig } from '@/hooks/use-site-config'
@@ -137,46 +136,35 @@ export default function CheckoutPage() {
 
     try {
       // Preparar datos para crear la orden
-      const orderDetails = {
-        customer_name: formData.customerName,
-        shipping_address: `${formData.address}, ${formData.city}, ${formData.region}`,
-        contact_email: formData.email,
-        ordered_products: items.map(item => ({
-          product_id: item.id,
-          quantity: item.quantity
-        }))
+      // Proceder con el pago en MercadoPago y guardar orden
+      const checkoutResponse = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cartItems: items,
+          customerInfo: {
+            name: formData.customerName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            commune: formData.region,
+            shippingCost: shippingCost
+          }
+        })
+      })
+
+      const checkoutData = await checkoutResponse.json()
+
+      if (!checkoutResponse.ok) {
+        throw new Error(checkoutData.error || 'Error en la comunicación con el servidor.')
       }
 
-      // Crear la orden en la base de datos
-      const orderResponse = await createOrder(orderDetails)
-
-      if (orderResponse.order_id) {
-        // Ahora proceder con el pago en MercadoPago
-        const checkoutResponse = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cartItems: items,
-            customerInfo: {
-              name: formData.customerName,
-              email: formData.email,
-              phone: formData.phone
-            }
-          })
-        })
-
-        const checkoutData = await checkoutResponse.json()
-
-        if (!checkoutResponse.ok) {
-          throw new Error(checkoutData.error || 'Error en la comunicación con el servidor.')
-        }
-
-        if (checkoutData.checkoutUrl) {
-          // Redirigir a MercadoPago
-          window.location.href = checkoutData.checkoutUrl
-        } else {
-          throw new Error('No se recibió la URL de pago.')
-        }
+      if (checkoutData.checkoutUrl) {
+        // Redirigir a MercadoPago
+        window.location.href = checkoutData.checkoutUrl
+      } else {
+        throw new Error('No se recibió la URL de pago.')
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error inesperado.'
