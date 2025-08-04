@@ -7,6 +7,21 @@ import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 
+// 🎯 ESTRATEGIAS DE SELECCIÓN ALEATORIA OPTIMIZADA
+function getRandomStrategy(): 'pure_random' | 'weighted_categories' | 'stock_weighted' | 'time_based' {
+  const strategies = ['pure_random', 'weighted_categories', 'stock_weighted', 'time_based'] as const
+  return strategies[Math.floor(Math.random() * strategies.length)]
+}
+
+function fisherYatesShuffle<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
 async function getFeaturedProducts(): Promise<Product[]> {
   if (!supabase) {
     console.warn(
@@ -16,10 +31,11 @@ async function getFeaturedProducts(): Promise<Product[]> {
   }
 
   try {
-    // Obtener TODOS los productos de la base de datos
+    // Obtener productos con stock disponible únicamente
     const { data: allProducts, error } = (await supabase
       .from('products')
-      .select('*')) as { data: Product[] | null; error: any }
+      .select('*')
+      .gt('stock', 0)) as { data: Product[] | null; error: any }
 
     if (error) {
       console.error('Error fetching products:', error)
@@ -30,14 +46,61 @@ async function getFeaturedProducts(): Promise<Product[]> {
       return []
     }
 
-    // 🎲 RANDOMIZACIÓN COMPLETA - Productos diferentes en cada visita
-    const shuffledProducts = allProducts
-      .map((product) => ({ product, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ product }) => product)
+    const strategy = getRandomStrategy()
+    let selectedProducts: Product[] = []
 
-    // Tomar los primeros 6 productos aleatorizados
-    return shuffledProducts.slice(0, 6)
+    switch (strategy) {
+      case 'pure_random':
+        // 🎲 Aleatorio puro con Fisher-Yates shuffle
+        selectedProducts = fisherYatesShuffle(allProducts).slice(0, 6)
+        break
+
+      case 'weighted_categories':
+        // 🏷️ Selección balanceada por categorías
+        const categories = [...new Set(allProducts.map(p => p.category))]
+        const productsPerCategory = Math.ceil(6 / categories.length)
+        
+        selectedProducts = categories.flatMap(category => {
+          const categoryProducts = allProducts.filter(p => p.category === category)
+          return fisherYatesShuffle(categoryProducts).slice(0, productsPerCategory)
+        }).slice(0, 6)
+        break
+
+      case 'stock_weighted':
+        // 📦 Ponderado por stock (más stock = más probabilidad)
+        const weightedProducts = allProducts.map(product => ({
+          product,
+          weight: Math.log(product.stock + 1) * Math.random()
+        }))
+        .sort((a, b) => b.weight - a.weight)
+        .map(({ product }) => product)
+        
+        selectedProducts = weightedProducts.slice(0, 6)
+        break
+
+      case 'time_based':
+        // ⏰ Rotación basada en tiempo (cambia cada hora)
+        const hourSeed = Math.floor(Date.now() / (1000 * 60 * 60))
+        const seededRandom = (seed: number) => {
+          const x = Math.sin(seed) * 10000
+          return x - Math.floor(x)
+        }
+        
+        const timeShuffled = allProducts
+          .map((product, index) => ({ 
+            product, 
+            sort: seededRandom(hourSeed + index)
+          }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ product }) => product)
+        
+        selectedProducts = timeShuffled.slice(0, 6)
+        break
+    }
+
+    // 🔄 Fallback shuffle final para máxima aleatoriedad
+    return fisherYatesShuffle(selectedProducts)
+
   } catch (error) {
     console.error('Error in getFeaturedProducts:', error)
     return []
