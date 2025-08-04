@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -10,8 +11,7 @@ import {
   BarChart3,
   Users,
   Settings,
-  LogOut,
-  Gem
+  LogOut
 } from 'lucide-react'
 
 const navigation = [
@@ -31,8 +31,14 @@ export function AdminSidebar() {
       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 px-6 pb-4">
         {/* Logo */}
         <div className="flex h-16 shrink-0 items-center">
-          <Link href="/" className="flex items-center space-x-2">
-            <Gem className="h-8 w-8 text-primary" />
+          <Link href="/" className="flex items-center space-x-3">
+            <Image
+              src="/assets/logo.png"
+              alt="Joyas JP Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <div>
               <h1 className="text-xl font-bold">Joyas JP</h1>
               <p className="text-xs text-muted-foreground">Admin Panel</p>

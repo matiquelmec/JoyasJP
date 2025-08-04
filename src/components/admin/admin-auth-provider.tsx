@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Gem, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
 
 const ADMIN_PASSWORD = 'joyasjp2024' // En producción esto debe estar en variables de entorno
 
@@ -50,7 +51,13 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <Gem className="h-12 w-12 text-primary" />
+              <Image
+                src="/assets/logo.png"
+                alt="Joyas JP Logo"
+                width={80}
+                height={80}
+                className="object-contain"
+              />
             </div>
             <CardTitle className="text-2xl">Panel de Administración</CardTitle>
             <p className="text-muted-foreground">Joyas JP</p>
