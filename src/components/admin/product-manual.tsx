@@ -145,10 +145,24 @@ export function ProductManual() {
             </div>
             <ul className="text-sm space-y-1">
               <li>• <strong>Resolución:</strong> Mínimo 800x800px, ideal 1200x1200px</li>
-              <li>• <strong>Formato:</strong> JPEG (mejor compresión) o PNG</li>
+              <li>• <strong>Formato:</strong> <Badge variant="secondary" className="text-xs">RECOMENDADO</Badge> WebP (mejor calidad/tamaño), también JPEG o PNG</li>
               <li>• <strong>Tamaño:</strong> Máximo 5MB</li>
               <li>• <strong>Fondo:</strong> Preferiblemente blanco o neutro</li>
               <li>• <strong>Iluminación:</strong> Bien iluminada, sin sombras fuertes</li>
+            </ul>
+          </div>
+
+          <div className="p-4 rounded-lg border border-green-200 bg-green-50/50">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <h4 className="font-medium text-green-800">¿Por qué WebP?</h4>
+            </div>
+            <ul className="text-sm text-green-700 space-y-1">
+              <li>• <strong>Tamaño 25-35% menor</strong> que JPEG con la misma calidad</li>
+              <li>• <strong>Carga más rápido</strong> - mejor experiencia para clientes</li>
+              <li>• <strong>Soporta transparencias</strong> como PNG pero más liviano</li>
+              <li>• <strong>Compatible</strong> con todos los navegadores modernos</li>
+              <li>• <strong>Mismo proceso</strong> de subida, solo cambia la extensión</li>
             </ul>
           </div>
 
@@ -158,11 +172,13 @@ export function ProductManual() {
               <h4 className="font-medium">Proceso Automático</h4>
             </div>
             <p className="text-sm text-muted-foreground">
-              La imagen se guarda automáticamente como <code className="bg-muted px-1 rounded">CODIGO_PRODUCTO.jpg</code> 
+              La imagen se guarda automáticamente como <code className="bg-muted px-1 rounded">CODIGO_PRODUCTO.extensión</code> 
               en la carpeta de la categoría correspondiente.
             </p>
             <p className="text-sm text-muted-foreground mt-2">
-              <strong>Ejemplo:</strong> Código "PCP_21" → Imagen: <code className="bg-muted px-1 rounded">Cadenas/PCP_21.jpg</code>
+              <strong>Ejemplos:</strong><br/>
+              • Código "PCP_21" + imagen WebP → <code className="bg-muted px-1 rounded">Cadenas/PCP_21.webp</code><br/>
+              • Código "PDD_11" + imagen JPEG → <code className="bg-muted px-1 rounded">Dijes/PDD_11.jpg</code>
             </p>
           </div>
         </CardContent>
@@ -294,7 +310,7 @@ export function ProductManual() {
             <div className="border-l-4 border-destructive pl-4">
               <h4 className="font-medium">La imagen no se ve</h4>
               <p className="text-sm text-muted-foreground">
-                Verifica que el formato sea JPEG o PNG y que la imagen no esté corrupta.
+                Verifica que el formato sea WebP, JPEG o PNG y que la imagen no esté corrupta.
               </p>
             </div>
           </div>
