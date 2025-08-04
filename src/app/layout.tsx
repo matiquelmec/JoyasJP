@@ -72,13 +72,9 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: [
-      { url: '/favicon.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    icon: '/assets/logo.ico',
+    shortcut: '/assets/logo.ico',
+    apple: '/assets/logo.ico',
   },
   robots: {
     index: true,
@@ -154,10 +150,10 @@ export default function RootLayout({
         <link
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/apple-touch-icon.png"
+          href="/assets/logo.ico"
         />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+        <link rel="icon" type="image/x-icon" href="/assets/logo.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/assets/logo.ico" />
         <link rel="manifest" href="/site.webmanifest" />
 
         <script
