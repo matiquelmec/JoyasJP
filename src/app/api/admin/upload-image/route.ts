@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const { data, error } = await supabaseAdmin.storage
-      .from('product-images')
+      .from('joyas-jp-ecommerce')
       .upload(filePath, buffer, {
         contentType: file.type,
         upsert: false
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // Get public URL
     const { data: { publicUrl } } = supabaseAdmin.storage
-      .from('product-images')
+      .from('joyas-jp-ecommerce')
       .getPublicUrl(filePath)
 
     return NextResponse.json({
