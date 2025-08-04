@@ -51,10 +51,18 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Generate unique filename with category folder
+    // Generate filename using product slug if provided
+    const productSlug = formData.get('productSlug') as string
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()
-    const fileName = `product-${timestamp}.${fileExtension}`
+    
+    let fileName: string
+    if (productSlug) {
+      fileName = `${productSlug}.${fileExtension}`
+    } else {
+      fileName = `product-${timestamp}.${fileExtension}`
+    }
+    
     const filePath = `products/${category}/${fileName}`
 
     // Convert file to buffer

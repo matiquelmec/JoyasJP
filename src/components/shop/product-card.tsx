@@ -126,7 +126,7 @@ const ProductCard = memo(function ProductCard({
       )}
     >
       <Link
-        href={`/shop/${product.id}`}
+        href={`/shop/${product.slug || product.id}`}
         className="contents"
         aria-label={`Ver detalles de ${product.name}`}
       >
@@ -190,7 +190,7 @@ const ProductCard = memo(function ProductCard({
       </div>
 
       <div className="p-4 flex flex-col flex-grow space-y-3">
-        <Link href={`/shop/${product.id}`}>
+        <Link href={`/shop/${product.slug || product.id}`}>
           <h3 className="text-lg font-semibold truncate cursor-pointer hover:text-primary transition-colors duration-200">
             {product.name}
           </h3>

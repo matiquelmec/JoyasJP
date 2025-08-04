@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
+import { generateUniqueSlug } from '@/lib/slug-utils'
 
 // Verificar contraseña de admin (en producción usar JWT/session mejor)
 function verifyAdminAuth(request: NextRequest) {
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     // Check for duplicate products (same name + category)
     const { data: existingProducts, error: searchError } = await client
       .from('products')
-      .select('id, name, category')
+      .select('id, name, category, slug')
       .eq('name', productData.name.trim())
       .eq('category', productData.category)
       .is('deleted_at', null) // Only check non-deleted products
@@ -86,10 +87,25 @@ export async function POST(request: NextRequest) {
         existingProduct: existingProducts[0]
       }, { status: 409 }) // 409 Conflict
     }
+
+    // Generate unique slug from product name
+    const { data: allProducts } = await client
+      .from('products')
+      .select('slug')
+      .is('deleted_at', null)
+
+    const existingSlugs = allProducts?.map(p => p.slug).filter(Boolean) || []
+    const slug = generateUniqueSlug(productData.name, existingSlugs)
+
+    // Add slug to product data
+    const productWithSlug = {
+      ...productData,
+      slug
+    }
     
     const { data, error } = await client
       .from('products')
-      .insert([productData])
+      .insert([productWithSlug])
       .select()
 
     if (error) throw error

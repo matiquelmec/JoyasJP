@@ -220,6 +220,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             onImageUploaded={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
             disabled={loading}
             category={formData.category}
+            productName={formData.name}
           />
 
           <div>

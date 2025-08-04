@@ -6,15 +6,17 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
+import { generateSlug } from '@/lib/slug-utils'
 
 interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void
   currentImage?: string
   disabled?: boolean
   category?: string
+  productName?: string
 }
 
-export function ImageUpload({ onImageUploaded, currentImage, disabled, category = 'otros' }: ImageUploadProps) {
+export function ImageUpload({ onImageUploaded, currentImage, disabled, category = 'otros', productName }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [preview, setPreview] = useState<string | null>(currentImage || null)
@@ -65,6 +67,12 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       const formData = new FormData()
       formData.append('file', file)
       formData.append('category', category)
+      
+      // Add product slug if product name is available
+      if (productName) {
+        const productSlug = generateSlug(productName)
+        formData.append('productSlug', productSlug)
+      }
 
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
