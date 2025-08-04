@@ -98,7 +98,7 @@ export function ProductsManager() {
       // Mapear los datos de Supabase al formato esperado
       const mappedProducts = (data || []).map((product: SupabaseProduct) => ({
         ...product,
-        imageUrl: product.image_url || product.imageUrl, // Mapear image_url a imageUrl
+        imageUrl: product.imageUrl || product.image_url, // Asegurar consistencia
       })) as Product[]
       setProducts(mappedProducts)
     } catch (error) {
@@ -177,26 +177,43 @@ export function ProductsManager() {
     if (!recentlyDeleted || !supabase) return
 
     try {
-      // Re-insert the product into the database with only the fields that exist in the table
+      // Re-insert the product into the database with only basic fields that definitely exist
       const productData = {
         id: recentlyDeleted.product.id,
         name: recentlyDeleted.product.name,
         price: recentlyDeleted.product.price,
         category: recentlyDeleted.product.category,
         stock: recentlyDeleted.product.stock || 0,
-        description: recentlyDeleted.product.description || null,
-        image_url: recentlyDeleted.product.imageUrl || null,
-        materials: recentlyDeleted.product.materials || null,
-        dimensions: recentlyDeleted.product.dimensions || null,
-        color: recentlyDeleted.product.color || null,
-        detail: recentlyDeleted.product.detail || null,
+      }
+
+      // Add optional fields only if they exist and have values
+      if (recentlyDeleted.product.description) {
+        productData.description = recentlyDeleted.product.description
+      }
+      if (recentlyDeleted.product.imageUrl) {
+        productData.imageUrl = recentlyDeleted.product.imageUrl
+      }
+      if (recentlyDeleted.product.materials) {
+        productData.materials = recentlyDeleted.product.materials
+      }
+      if (recentlyDeleted.product.dimensions) {
+        productData.dimensions = recentlyDeleted.product.dimensions
+      }
+      if (recentlyDeleted.product.color) {
+        productData.color = recentlyDeleted.product.color
+      }
+      if (recentlyDeleted.product.detail) {
+        productData.detail = recentlyDeleted.product.detail
       }
 
       const { error } = await supabase
         .from('products')
         .insert([productData])
 
-      if (error) throw error
+      if (error) {
+        console.error('Detailed error:', error)
+        throw error
+      }
 
       // Add back to UI
       setProducts(prev => [...prev, recentlyDeleted.product])
@@ -212,7 +229,7 @@ export function ProductsManager() {
       console.error('Error restoring product:', error)
       toast({
         title: 'Error',
-        description: 'No se pudo restaurar el producto. Es posible que ya no se pueda recuperar.',
+        description: `No se pudo restaurar el producto: ${error.message || 'Error desconocido'}`,
         variant: 'destructive'
       })
     }

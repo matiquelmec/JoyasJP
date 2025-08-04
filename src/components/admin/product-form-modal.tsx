@@ -110,7 +110,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
-        image_url: formData.imageUrl || null,
+        imageUrl: formData.imageUrl || null,
         stock: parseInt(formData.stock) || 0,
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
