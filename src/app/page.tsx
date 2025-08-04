@@ -103,7 +103,7 @@ async function FeaturedProducts() {
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col -mt-36">
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <video
@@ -117,7 +117,7 @@ export default function Home() {
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
 
-        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
+        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40">
           <img
             src="/assets/logo.png"
             alt="Joyas JP - Alta joyería para la escena urbana"
