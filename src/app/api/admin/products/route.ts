@@ -69,16 +69,21 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
-    // Ensure code is uppercase
-    if (productData.code) {
-      productData.code = productData.code.trim().toUpperCase()
+    // Validate and ensure code exists and is uppercase
+    if (!productData.code || typeof productData.code !== 'string') {
+      return NextResponse.json({ 
+        error: 'Código del producto requerido',
+        message: 'El código del producto es obligatorio.'
+      }, { status: 400 })
     }
+    
+    productData.code = productData.code.trim().toUpperCase()
     
     // Check for duplicate products (same code)
     const { data: existingProducts, error: searchError } = await client
       .from('products')
       .select('id, name, code')
-      .eq('code', productData.code.trim().toUpperCase())
+      .eq('code', productData.code)
       .is('deleted_at', null) // Only check non-deleted products
 
     if (searchError) {
