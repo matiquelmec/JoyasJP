@@ -43,8 +43,8 @@ export async function GET(request: NextRequest) {
       .select('*')
       .single()
 
-    if (error && error.code === 'PGRST116') {
-      // No configuration exists, return defaults from config.ts
+    if (error && (error.code === 'PGRST116' || error.message?.includes('relation "public.configuration" does not exist'))) {
+      // Table doesn't exist or no configuration exists, return defaults from config.ts
       return NextResponse.json({ 
         configuration: {
           store_name: siteConfig.name,
