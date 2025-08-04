@@ -35,14 +35,10 @@ interface ProductFormModalProps {
 }
 
 const categories = [
-  'anillos',
-  'collares',
-  'pulseras',
-  'aretes',
-  'relojes',
   'cadenas',
-  'pendientes',
-  'otros'
+  'dijes', 
+  'pulseras',
+  'aros'
 ]
 
 export function ProductFormModal({ mode, product, onSave, trigger }: ProductFormModalProps) {
