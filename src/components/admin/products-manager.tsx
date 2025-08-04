@@ -31,6 +31,13 @@ import {
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 
+// Tipo para los datos que vienen de Supabase
+interface SupabaseProduct {
+  [key: string]: any
+  image_url?: string
+  imageUrl?: string
+}
+
 export function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -55,7 +62,12 @@ export function ProductsManager() {
         return
       }
 
-      setProducts(data || [])
+      // Mapear los datos de Supabase al formato esperado
+      const mappedProducts = (data || []).map((product: SupabaseProduct) => ({
+        ...product,
+        imageUrl: product.image_url || product.imageUrl, // Mapear image_url a imageUrl
+      })) as Product[]
+      setProducts(mappedProducts)
     } catch (error) {
       console.error('Error loading products:', error)
     } finally {
@@ -95,7 +107,7 @@ export function ProductsManager() {
     return matchesSearch && matchesCategory
   })
 
-  const categories = [...new Set(products.map(p => p.category))]
+  const categories = Array.from(new Set(products.map(p => p.category)))
   const lowStockProducts = products.filter(p => p.stock <= 5)
 
   const formatCLP = (amount: number) => {
@@ -230,7 +242,7 @@ export function ProductsManager() {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <img
-                          src={product.image_url || '/assets/logo.png'}
+                          src={product.imageUrl || '/assets/logo.png'}
                           alt={product.name}
                           className="h-10 w-10 rounded-lg object-cover"
                         />

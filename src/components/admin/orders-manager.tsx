@@ -115,13 +115,13 @@ export function OrdersManager() {
       shipped: { label: 'Enviado', variant: 'outline' as const, icon: Truck },
       delivered: { label: 'Entregado', variant: 'default' as const, icon: CheckCircle, className: 'bg-green-100 text-green-800' },
       cancelled: { label: 'Cancelado', variant: 'destructive' as const, icon: XCircle }
-    }
+    } as const
 
     const config = statusConfig[status]
     const Icon = config.icon
 
     return (
-      <Badge variant={config.variant} className={config.className}>
+      <Badge variant={config.variant} className={'className' in config ? config.className : undefined}>
         <Icon className="mr-1 h-3 w-3" />
         {config.label}
       </Badge>
@@ -292,7 +292,7 @@ export function OrdersManager() {
                       {new Date(order.date).toLocaleDateString('es-CL')}
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(order.status)}
+                      {getStatusBadge(order.status as OrderStatus)}
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">

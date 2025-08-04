@@ -1,8 +1,7 @@
 'use client'
 
-import { Loader2, ShoppingBag, Trash2 } from 'lucide-react'
+import { ShoppingBag, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -14,7 +13,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useCart } from '@/hooks/use-cart'
-import { useToast } from '@/hooks/use-toast'
 
 export function CartPanel() {
   const {
@@ -26,8 +24,6 @@ export function CartPanel() {
     openCart,
     closeCart,
   } = useCart()
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const subtotal = items.reduce((sum, item) => {
@@ -35,40 +31,10 @@ export function CartPanel() {
     return sum + item.price * item.quantity
   }, 0)
 
-  const handleCheckout = async () => {
-    setIsLoading(true)
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(items),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(
-          data.error || 'Error en la comunicación con el servidor.'
-        )
-      }
-
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl
-      } else {
-        throw new Error('No se recibió la URL de pago.')
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Ocurrió un error inesperado.'
-      toast({
-        title: 'Error al Procesar el Pago',
-        description: errorMessage,
-        variant: 'destructive',
-      })
-      console.error('Error al crear la preferencia de pago:', error)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleCheckout = () => {
+    // Redirigir a la página de checkout en lugar de ir directo al pago
+    closeCart()
+    window.location.href = '/checkout'
   }
 
   return (
@@ -144,12 +110,8 @@ export function CartPanel() {
                   className="w-full"
                   size="lg"
                   onClick={handleCheckout}
-                  disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Finalizar Compra
+                  Ir a Checkout
                 </Button>
                 <Button
                   variant="outline"

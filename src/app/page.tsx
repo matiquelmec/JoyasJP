@@ -57,7 +57,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
 
       case 'weighted_categories':
         // 🏷️ Selección balanceada por categorías
-        const categories = [...new Set(allProducts.map(p => p.category))]
+        const categories = Array.from(new Set(allProducts.map(p => p.category)))
         const productsPerCategory = Math.ceil(6 / categories.length)
         
         selectedProducts = categories.flatMap(category => {

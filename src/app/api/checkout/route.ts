@@ -8,7 +8,22 @@ const client = new MercadoPagoConfig({
 
 export async function POST(req: NextRequest) {
   try {
-    const cartItems: CartItem[] = await req.json()
+    const requestData = await req.json()
+    
+    // Puede venir como array de items (legacy) o como object con cartItems y customerInfo
+    let cartItems: CartItem[]
+    let customerInfo: any = null
+    
+    if (Array.isArray(requestData)) {
+      cartItems = requestData
+      // Verificar si los items tienen customerInfo
+      if (requestData[0]?.customerInfo) {
+        customerInfo = requestData[0].customerInfo
+      }
+    } else {
+      cartItems = requestData.cartItems || requestData
+      customerInfo = requestData.customerInfo
+    }
 
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json(
@@ -17,23 +32,36 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const preference = await new Preference(client).create({
-      body: {
-        items: cartItems.map((item) => ({
-          id: item.id,
-          title: item.name,
-          quantity: item.quantity,
-          unit_price: item.price,
-          currency_id: 'CLP',
-          picture_url: item.imageUrl,
-          description: item.description,
-        })),
-        back_urls: {
-          success: `${req.nextUrl.origin}/shop/success`,
-          failure: `${req.nextUrl.origin}/shop/failure`,
-          pending: `${req.nextUrl.origin}/shop/pending`,
-        },
+    const preferenceBody: any = {
+      items: cartItems.map((item) => ({
+        id: item.id,
+        title: item.name,
+        quantity: item.quantity,
+        unit_price: item.price,
+        currency_id: 'CLP',
+        picture_url: item.imageUrl,
+        description: item.description,
+      })),
+      back_urls: {
+        success: `${req.nextUrl.origin}/shop/success`,
+        failure: `${req.nextUrl.origin}/shop/failure`,
+        pending: `${req.nextUrl.origin}/shop/pending`,
       },
+    }
+
+    // Agregar información del cliente si está disponible
+    if (customerInfo) {
+      preferenceBody.payer = {
+        name: customerInfo.name,
+        email: customerInfo.email,
+        phone: {
+          number: customerInfo.phone
+        }
+      }
+    }
+
+    const preference = await new Preference(client).create({
+      body: preferenceBody,
     })
 
     return NextResponse.json({ checkoutUrl: preference.init_point })

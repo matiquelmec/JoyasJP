@@ -51,7 +51,7 @@ export function AdminDashboard() {
         .select('*')
 
       const totalProducts = products?.length || 0
-      const lowStockProducts = products?.filter(p => p.stock <= 5).length || 0
+      const lowStockProducts = products?.filter(p => (p.stock as number) <= 5).length || 0
 
       // Para demo, usar datos simulados para órdenes y ventas
       // En producción conectarías con tu tabla de órdenes real
@@ -64,11 +64,11 @@ export function AdminDashboard() {
         monthlyRevenue: 480000, // CLP
         totalCustomers: 89,
         topSellingProducts: products?.slice(0, 5).map((p, i) => ({
-          id: p.id,
-          name: p.name,
+          id: p.id as string,
+          name: p.name as string,
           sold: Math.floor(Math.random() * 20) + 5,
           revenue: Math.floor(Math.random() * 100000) + 50000,
-          image_url: p.image_url || '/assets/logo.png'
+          image_url: (p.image_url as string) || '/assets/logo.png'
         })) || []
       }
 
