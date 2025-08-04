@@ -1,0 +1,93 @@
+// Utilities for calling admin API endpoints with proper authentication
+
+const ADMIN_PASSWORD = 'joyasjp2024'
+
+class AdminAPI {
+  private getHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${ADMIN_PASSWORD}`
+    }
+  }
+
+  async getProducts() {
+    const response = await fetch('/api/admin/products', {
+      headers: this.getHeaders()
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.products
+  }
+
+  async createProduct(productData: any) {
+    const response = await fetch('/api/admin/products', {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(productData)
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.product
+  }
+
+  async updateProduct(id: string, productData: any) {
+    const response = await fetch('/api/admin/products', {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ id, ...productData })
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.product
+  }
+
+  async deleteProduct(id: string, permanent = false) {
+    const url = new URL('/api/admin/products', window.location.origin)
+    url.searchParams.set('id', id)
+    if (permanent) url.searchParams.set('permanent', 'true')
+
+    const response = await fetch(url.toString(), {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    return response.json()
+  }
+
+  async restoreProduct(productId: string, originalStock: number) {
+    const response = await fetch('/api/admin/products/restore', {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ productId, originalStock })
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.product
+  }
+
+  async updateStock(id: string, stock: number) {
+    return this.updateProduct(id, { stock })
+  }
+}
+
+export const adminAPI = new AdminAPI()

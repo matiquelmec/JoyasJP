@@ -22,8 +22,8 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Save, X } from 'lucide-react'
-import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
+import { adminAPI } from '@/lib/admin-api'
 import { toast } from '@/hooks/use-toast'
 
 interface ProductFormModalProps {
@@ -93,15 +93,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!supabase) {
-      toast({
-        title: 'Error',
-        description: 'No se pudo conectar con la base de datos',
-        variant: 'destructive'
-      })
-      return
-    }
-
     setLoading(true)
 
     try {
@@ -118,19 +109,11 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         detail: formData.detail || null
       }
 
-      let result
       if (mode === 'create') {
-        result = await supabase
-          .from('products')
-          .insert([productData])
+        await adminAPI.createProduct(productData)
       } else {
-        result = await supabase
-          .from('products')
-          .update(productData)
-          .eq('id', product?.id)
+        await adminAPI.updateProduct(product?.id || '', productData)
       }
-
-      if (result.error) throw result.error
 
       toast({
         title: mode === 'create' ? 'Producto creado' : 'Producto actualizado',

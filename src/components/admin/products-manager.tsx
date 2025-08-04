@@ -41,10 +41,10 @@ import {
   Undo2,
   Clock,
 } from 'lucide-react'
-import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 import { ProductFormModal } from './product-form-modal'
 import { ProductDetailsModal } from './product-details-modal'
+import { adminAPI } from '@/lib/admin-api'
 import { toast } from '@/hooks/use-toast'
 
 // Tipo para los datos que vienen de Supabase
@@ -83,30 +83,25 @@ export function ProductsManager() {
 
   const loadProducts = async () => {
     try {
-      if (!supabase) return
-
-      // Try to filter by deleted_at if column exists, otherwise get all products
-      let query = supabase
-        .from('products')
-        .select('*')
-        .order('id', { ascending: false })
-
-      // Try to add deleted_at filter, but don't fail if column doesn't exist
-      const { data, error } = await query
-
-      if (error) {
-        console.error('Error loading products:', error)
-        return
-      }
-
-      // Mapear los datos de Supabase al formato esperado
-      const mappedProducts = (data || []).map((product: SupabaseProduct) => ({
+      const data = await adminAPI.getProducts()
+      
+      // Filtrar productos no eliminados para la vista normal del admin
+      const activeProducts = data.filter((product: any) => !product.deleted_at)
+      
+      // Mapear los datos al formato esperado
+      const mappedProducts = activeProducts.map((product: SupabaseProduct) => ({
         ...product,
         imageUrl: product.imageUrl || product.image_url, // Asegurar consistencia
       })) as Product[]
+      
       setProducts(mappedProducts)
     } catch (error) {
       console.error('Error loading products:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudieron cargar los productos. Verifica tu conexión.',
+        variant: 'destructive'
+      })
     } finally {
       setLoading(false)
     }
@@ -114,17 +109,7 @@ export function ProductsManager() {
 
   const updateStock = async (productId: string, newStock: number) => {
     try {
-      if (!supabase) return
-
-      const { error } = await supabase
-        .from('products')
-        .update({ stock: newStock })
-        .eq('id', productId)
-
-      if (error) {
-        console.error('Error updating stock:', error)
-        return
-      }
+      await adminAPI.updateStock(productId, newStock)
 
       // Actualizar el estado local
       setProducts(prev => 
@@ -134,35 +119,20 @@ export function ProductsManager() {
       )
     } catch (error) {
       console.error('Error updating stock:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el stock.',
+        variant: 'destructive'
+      })
     }
   }
 
   const handleDeleteProduct = async () => {
-    if (!deleteProduct || !supabase) return
+    if (!deleteProduct) return
 
     setDeleting(true)
     try {
-      // Try soft delete first, if that fails, do hard delete
-      let deleteError = null
-      
-      try {
-        // Attempt soft delete
-        const { error } = await supabase
-          .from('products')
-          .update({ 
-            deleted_at: new Date().toISOString(),
-            stock: 0  // Set stock to 0 to hide from public view
-          })
-          .eq('id', deleteProduct.id)
-        
-        deleteError = error
-      } catch (softDeleteError) {
-        // If soft delete fails (column doesn't exist), try hard delete but with limited capability
-        console.log('Soft delete failed, product will be hidden from UI only')
-        deleteError = null // Don't actually delete from DB if we can't soft delete
-      }
-
-      if (deleteError) throw deleteError
+      await adminAPI.deleteProduct(deleteProduct.id)
 
       // Store the deleted product for potential undo
       setRecentlyDeleted({
@@ -193,32 +163,13 @@ export function ProductsManager() {
   }
 
   const handleUndoDelete = async () => {
-    if (!recentlyDeleted || !supabase) return
+    if (!recentlyDeleted) return
 
     try {
-      // Try to restore via update first (soft delete undo)
-      let restoreError = null
-      
-      try {
-        const { error } = await supabase
-          .from('products')
-          .update({ 
-            deleted_at: null,
-            stock: recentlyDeleted.product.stock || 0  // Restore original stock
-          })
-          .eq('id', recentlyDeleted.product.id)
-        
-        restoreError = error
-      } catch (updateError) {
-        // If update fails, the product was only hidden in UI, so just restore it
-        console.log('Product was only hidden in UI, restoring to UI')
-        restoreError = null
-      }
-
-      if (restoreError) {
-        console.error('Detailed error:', restoreError)
-        throw restoreError
-      }
+      await adminAPI.restoreProduct(
+        recentlyDeleted.product.id, 
+        recentlyDeleted.product.stock || 0
+      )
 
       // Add back to UI
       setProducts(prev => [...prev, recentlyDeleted.product])
@@ -232,14 +183,10 @@ export function ProductsManager() {
       })
     } catch (error) {
       console.error('Error restoring product:', error)
-      
-      // If database restore fails, at least restore in UI
-      setProducts(prev => [...prev, recentlyDeleted.product])
-      setRecentlyDeleted(null)
-      
       toast({
-        title: 'Producto restaurado (solo interfaz)',
-        description: `${recentlyDeleted.product.name} ha sido restaurado en la interfaz.`,
+        title: 'Error',
+        description: 'No se pudo restaurar el producto.',
+        variant: 'destructive'
       })
     }
   }
