@@ -340,9 +340,15 @@ export function ProductsManager() {
       {/* Tabla de productos */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Productos ({filteredProducts.length})
-          </CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>
+              Productos ({filteredProducts.length})
+            </CardTitle>
+            <ProductFormModal
+              mode="create"
+              onSave={loadProducts}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">

@@ -70,23 +70,7 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl">{product.name}</DialogTitle>
-            <ProductFormModal
-              mode="edit"
-              product={product}
-              onSave={() => {
-                onSave()
-                setOpen(false)
-              }}
-              trigger={
-                <Button size="sm" className="ml-2">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Editar
-                </Button>
-              }
-            />
-          </div>
+          <DialogTitle className="text-2xl">{product.name}</DialogTitle>
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
@@ -253,20 +237,6 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cerrar
           </Button>
-          <ProductFormModal
-            mode="edit"
-            product={product}
-            onSave={() => {
-              onSave()
-              setOpen(false)
-            }}
-            trigger={
-              <Button>
-                <Edit className="w-4 h-4 mr-2" />
-                Editar Producto
-              </Button>
-            }
-          />
         </div>
       </DialogContent>
     </Dialog>
