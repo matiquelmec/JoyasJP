@@ -1,98 +1,106 @@
-"use client";
+'use client'
 
-import { Button } from '@/components/ui/button';
-import { OptimizedImage } from '@/components/ui/optimized-image';
-import { useCart } from '@/hooks/use-cart';
-import { Product } from '@/lib/types';
-import { toast } from '@/hooks/use-toast';
-import Link from 'next/link';
-import { useWishlist } from '@/hooks/use-wishlist';
-import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button'
+import { OptimizedImage } from '@/components/ui/optimized-image'
+import { useCart } from '@/hooks/use-cart'
+import { Product } from '@/lib/types'
+import { toast } from '@/hooks/use-toast'
+import Link from 'next/link'
+import { useWishlist } from '@/hooks/use-wishlist'
+import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 
 interface ProductCardProps {
-  product: Product;
-  priority?: boolean;
-  className?: string;
+  product: Product
+  priority?: boolean
+  className?: string
 }
 
-export default function ProductCardOptimized({ product, priority = false, className }: ProductCardProps) {
-  const { addItem } = useCart();
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isItemInWishlist } = useWishlist();
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+export default function ProductCardOptimized({
+  product,
+  priority = false,
+  className,
+}: ProductCardProps) {
+  const { addItem } = useCart()
+  const {
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isItemInWishlist,
+  } = useWishlist()
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    setIsClient(true)
+  }, [])
 
-  const isInWishlist = isClient && isItemInWishlist(product.id);
+  const isInWishlist = isClient && isItemInWishlist(product.id)
 
   const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
 
-    if (isAddingToCart) return;
+    if (isAddingToCart) return
 
-    setIsAddingToCart(true);
+    setIsAddingToCart(true)
 
     try {
-      addItem(product);
+      addItem(product)
       toast({
-        title: "¡Producto añadido! 🎉",
+        title: '¡Producto añadido! 🎉',
         description: `${product.name} se ha agregado a tu carrito.`,
         duration: 3000,
-      });
+      })
     } catch (error) {
       toast({
-        title: "Error",
-        description: "No se pudo agregar el producto. Intenta nuevamente.",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'No se pudo agregar el producto. Intenta nuevamente.',
+        variant: 'destructive',
+      })
     } finally {
-      setIsAddingToCart(false);
+      setIsAddingToCart(false)
     }
-  };
+  }
 
   const handleWishlistClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
 
     try {
       if (isInWishlist) {
-        removeFromWishlist(product.id);
+        removeFromWishlist(product.id)
         toast({
-          title: "Eliminado de favoritos",
+          title: 'Eliminado de favoritos',
           description: `${product.name} se eliminó de tus favoritos.`,
-        });
+        })
       } else {
-        addToWishlist(product);
+        addToWishlist(product)
         toast({
-          title: "¡Añadido a favoritos! ❤️",
+          title: '¡Añadido a favoritos! ❤️',
           description: `${product.name} se agregó a tus favoritos.`,
-        });
+        })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "No se pudo actualizar favoritos. Intenta nuevamente.",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'No se pudo actualizar favoritos. Intenta nuevamente.',
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   // Precio formateado
   const formattedPrice = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
     minimumFractionDigits: 0,
-  }).format(product.price);
+  }).format(product.price)
 
   return (
     <article
       className={cn(
-        "group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full bg-card hover:-translate-y-1",
+        'group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full bg-card hover:-translate-y-1',
         className
       )}
     >
@@ -130,12 +138,16 @@ export default function ProductCardOptimized({ product, priority = false, classN
           variant="ghost"
           className="bg-white/90 hover:bg-white rounded-full shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-110"
           onClick={handleWishlistClick}
-          aria-label={isInWishlist ? "Quitar de favoritos" : "Añadir a favoritos"}
+          aria-label={
+            isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'
+          }
         >
           <Heart
             className={cn(
-              "w-5 h-5 transition-colors duration-200",
-              isInWishlist ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-400'
+              'w-5 h-5 transition-colors duration-200',
+              isInWishlist
+                ? 'text-red-500 fill-current'
+                : 'text-gray-600 hover:text-red-400'
             )}
           />
         </Button>
@@ -163,9 +175,7 @@ export default function ProductCardOptimized({ product, priority = false, classN
 
         <div className="flex items-center justify-between mt-auto pt-2">
           <div className="flex flex-col">
-            <p className="text-2xl font-bold text-primary">
-              {formattedPrice}
-            </p>
+            <p className="text-2xl font-bold text-primary">{formattedPrice}</p>
           </div>
 
           <Button
@@ -184,5 +194,5 @@ export default function ProductCardOptimized({ product, priority = false, classN
         </div>
       </div>
     </article>
-  );
+  )
 }

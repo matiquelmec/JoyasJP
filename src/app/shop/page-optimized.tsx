@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { useState, useCallback, useEffect } from 'react';
-import ProductCard from '@/components/shop/product-card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useCallback, useEffect } from 'react'
+import ProductCard from '@/components/shop/product-card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Search, Filter, Loader2 } from 'lucide-react';
-import { productConfig } from '@/lib/config';
-import { useProducts, useProductSearch } from '@/hooks/use-products';
-import { useInView } from 'react-intersection-observer';
+} from '@/components/ui/select'
+import { Search, Filter, Loader2 } from 'lucide-react'
+import { productConfig } from '@/lib/config'
+import { useProducts, useProductSearch } from '@/hooks/use-products'
+import { useInView } from 'react-intersection-observer'
 
 function ProductSkeleton() {
   return (
@@ -27,27 +27,27 @@ function ProductSkeleton() {
         <Skeleton className="h-5 w-1/2" />
       </div>
     </div>
-  );
+  )
 }
 
 export default function ShopPageOptimized() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [priceRange, setPriceRange] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>('created_at');
-  const [page, setPage] = useState(1);
-  const [allProducts, setAllProducts] = useState<any[]>([]);
-  
+  const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [priceRange, setPriceRange] = useState<string>('')
+  const [sortBy, setSortBy] = useState<string>('created_at')
+  const [page, setPage] = useState(1)
+  const [allProducts, setAllProducts] = useState<any[]>([])
+
   // Intersection observer para infinite scroll
   const { ref, inView } = useInView({
     threshold: 0,
-    triggerOnce: false
-  });
-  
+    triggerOnce: false,
+  })
+
   // Parse price range
   const { min: minPrice, max: maxPrice } = priceRange
-    ? productConfig.priceRanges.find(r => r.label === priceRange) || {}
-    : {};
-  
+    ? productConfig.priceRanges.find((r) => r.label === priceRange) || {}
+    : {}
+
   // Fetch products con paginación
   const { products, pagination, isLoading } = useProducts({
     page,
@@ -56,40 +56,45 @@ export default function ShopPageOptimized() {
     minPrice,
     maxPrice: maxPrice === Infinity ? undefined : maxPrice,
     sortBy: sortBy.split('_')[0],
-    sortOrder: sortBy.includes('asc') ? 'asc' : 'desc'
-  });
-  
+    sortOrder: sortBy.includes('asc') ? 'asc' : 'desc',
+  })
+
   // Búsqueda
-  const { search, setSearch, results: searchResults, isSearching } = useProductSearch();
-  
+  const {
+    search,
+    setSearch,
+    results: searchResults,
+    isSearching,
+  } = useProductSearch()
+
   // Acumular productos para infinite scroll
   useEffect(() => {
     if (products.length > 0) {
       if (page === 1) {
-        setAllProducts(products);
+        setAllProducts(products)
       } else {
-        setAllProducts(prev => [...prev, ...products]);
+        setAllProducts((prev) => [...prev, ...products])
       }
     }
-  }, [products, page]);
-  
+  }, [products, page])
+
   // Cargar más productos cuando el observador está en vista
   useEffect(() => {
     if (inView && pagination.hasMore && !isLoading && !search) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1)
     }
-  }, [inView, pagination.hasMore, isLoading, search]);
-  
+  }, [inView, pagination.hasMore, isLoading, search])
+
   // Reset página cuando cambian filtros
   useEffect(() => {
-    setPage(1);
-    setAllProducts([]);
-  }, [selectedCategory, priceRange, sortBy, search]);
-  
+    setPage(1)
+    setAllProducts([])
+  }, [selectedCategory, priceRange, sortBy, search])
+
   // Productos a mostrar (búsqueda o listado normal)
-  const displayProducts = search ? searchResults : allProducts;
-  const isLoadingProducts = search ? isSearching : (isLoading && page === 1);
-  
+  const displayProducts = search ? searchResults : allProducts
+  const isLoadingProducts = search ? isSearching : isLoading && page === 1
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -99,7 +104,8 @@ export default function ShopPageOptimized() {
             Nuestra Colección
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explora nuestra exclusiva selección de joyas urbanas diseñadas para quienes se atreven a destacar
+            Explora nuestra exclusiva selección de joyas urbanas diseñadas para
+            quienes se atreven a destacar
           </p>
         </div>
 
@@ -119,7 +125,10 @@ export default function ShopPageOptimized() {
 
           {/* Filtros */}
           <div className="flex flex-wrap gap-4 justify-center">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Categoría" />
@@ -167,7 +176,9 @@ export default function ShopPageOptimized() {
           {search ? (
             <>Mostrando resultados para "{search}"</>
           ) : (
-            <>Mostrando {displayProducts.length} de {pagination.total} productos</>
+            <>
+              Mostrando {displayProducts.length} de {pagination.total} productos
+            </>
           )}
         </div>
 
@@ -183,12 +194,12 @@ export default function ShopPageOptimized() {
             <p className="text-lg text-muted-foreground mb-4">
               No se encontraron productos que coincidan con tu búsqueda
             </p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
-                setSearch('');
-                setSelectedCategory('');
-                setPriceRange('');
+                setSearch('')
+                setSelectedCategory('')
+                setPriceRange('')
               }}
             >
               Limpiar filtros
@@ -214,5 +225,5 @@ export default function ShopPageOptimized() {
         )}
       </div>
     </div>
-  );
+  )
 }

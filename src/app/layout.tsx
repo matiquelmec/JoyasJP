@@ -1,31 +1,32 @@
-import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, PT_Sans } from 'next/font/google';
-import './globals.css';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
-import { Toaster } from "@/components/ui/toaster"
-import { ErrorBoundary } from '@/components/ui/error-boundary';
-import { cn } from '@/lib/utils';
+import type { Metadata, Viewport } from 'next'
+import { Playfair_Display, PT_Sans } from 'next/font/google'
+import './globals.css'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
+import { Toaster } from '@/components/ui/toaster'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { cn } from '@/lib/utils'
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-headline',
   display: 'swap',
-});
+})
 
 const ptSans = PT_Sans({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-body',
   display: 'swap',
-});
+})
 
 export const metadata: Metadata = {
   title: {
     default: 'Joyas JP | Alta Joyería para la Escena Urbana',
-    template: '%s | Joyas JP'
+    template: '%s | Joyas JP',
   },
-  description: 'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico. Perfecto para quienes buscan expresar su personalidad a través de piezas extraordinarias.',
+  description:
+    'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico. Perfecto para quienes buscan expresar su personalidad a través de piezas extraordinarias.',
   keywords: [
     'joyas urbanas Chile',
     'joyería premium',
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     'alta joyería',
     'accesorios premium',
     'joyas artesanales',
-    'Chile joyería'
+    'Chile joyería',
   ],
   authors: [{ name: 'Joyas JP' }],
   creator: 'Joyas JP',
@@ -44,7 +45,9 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  ),
   alternates: {
     canonical: '/',
     languages: {
@@ -56,7 +59,8 @@ export const metadata: Metadata = {
     locale: 'es_CL',
     url: '/',
     title: 'Joyas JP | Alta Joyería para la Escena Urbana',
-    description: 'Descubre nuestra exclusiva colección de joyas urbanas con diseños únicos y calidad premium.',
+    description:
+      'Descubre nuestra exclusiva colección de joyas urbanas con diseños únicos y calidad premium.',
     siteName: 'Joyas JP',
     images: [
       {
@@ -90,7 +94,7 @@ export const metadata: Metadata = {
     },
   },
   category: 'shopping',
-};
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -108,7 +112,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Joyas JP',
-  description: 'Alta joyería para la escena urbana con diseños únicos y calidad premium',
+  description:
+    'Alta joyería para la escena urbana con diseños únicos y calidad premium',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.png`,
   contactPoint: {
@@ -118,10 +123,7 @@ const jsonLd = {
     areaServed: 'CL',
     availableLanguage: 'Spanish',
   },
-  sameAs: [
-    'https://instagram.com/joyasjp',
-    'https://tiktok.com/@joyasjp',
-  ],
+  sameAs: ['https://instagram.com/joyasjp', 'https://tiktok.com/@joyasjp'],
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'CL',
@@ -132,22 +134,28 @@ const jsonLd = {
     '@type': 'Person',
     name: 'Joyas JP',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="es-CL" className="dark scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
 
-        
-
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
         <link rel="manifest" href="/site.webmanifest" />
@@ -158,14 +166,26 @@ export default function RootLayout({
         />
 
         {/* Preloads corregidos */}
-        <link rel="preload" href="/assets/logo.png" as="image" type="image/png" />
-        <link rel="preload" href="/assets/mi-video.mp4" as="video" type="video/mp4" />
+        <link
+          rel="preload"
+          href="/assets/logo.png"
+          as="image"
+          type="image/png"
+        />
+        <link
+          rel="preload"
+          href="/assets/mi-video.mp4"
+          as="video"
+          type="video/mp4"
+        />
       </head>
-      <body className={cn(
-        "font-body antialiased bg-background text-foreground min-h-screen",
-        playfairDisplay.variable,
-        ptSans.variable
-      )}>
+      <body
+        className={cn(
+          'font-body antialiased bg-background text-foreground min-h-screen',
+          playfairDisplay.variable,
+          ptSans.variable
+        )}
+      >
         <a
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
           href="#main-content"
@@ -177,14 +197,12 @@ export default function RootLayout({
           <ErrorBoundary>
             <Header />
           </ErrorBoundary>
-          
+
           {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
           <main id="main-content" className="flex-1 pt-36">
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
           </main>
-          
+
           <ErrorBoundary>
             <Footer />
           </ErrorBoundary>
@@ -193,5 +211,5 @@ export default function RootLayout({
         <Toaster />
       </body>
     </html>
-  );
+  )
 }

@@ -1,38 +1,46 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ShoppingBag, Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { navLinks } from '@/lib/config';
-import { CartPanel } from '@/components/shop/cart-panel';
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ShoppingBag, Menu, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from '@/components/ui/sheet'
+import { navLinks } from '@/lib/config'
+import { CartPanel } from '@/components/shop/cart-panel'
 
-import { useWishlist } from '@/hooks/use-wishlist';
-import { Heart } from 'lucide-react';
+import { useWishlist } from '@/hooks/use-wishlist'
+import { Heart } from 'lucide-react'
 
 export function Header() {
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const { items: wishlistItems } = useWishlist();
+  const [hasScrolled, setHasScrolled] = useState(false)
+  const { items: wishlistItems } = useWishlist()
 
   useEffect(() => {
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      setHasScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Estilo unificado para todos los enlaces de navegación
-  const linkClassName = "text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
+  const linkClassName =
+    'text-sm font-medium text-muted-foreground transition-colors hover:text-primary'
 
   return (
-    <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
-      hasScrolled ? "shadow-lg" : "shadow-none"
-    )}>
+    <header
+      className={cn(
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm',
+        hasScrolled ? 'shadow-lg' : 'shadow-none'
+      )}
+    >
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
           <Image
@@ -62,7 +70,7 @@ export function Header() {
             </Button>
           </Link>
           <CartPanel />
-          
+
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -71,17 +79,20 @@ export function Header() {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="bg-background/95 border-l-border/50 w-[280px]">
+              <SheetContent
+                side="right"
+                className="bg-background/95 border-l-border/50 w-[280px]"
+              >
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                     <Link href="/" className="flex items-center h-20">
-                       <Image
-                         src="/assets/logo.png"
-                         alt="Joyas JP Logo"
-                         width={160}
-                         height={160}
-                         className="h-full w-auto"
-                       />
+                    <Link href="/" className="flex items-center h-20">
+                      <Image
+                        src="/assets/logo.png"
+                        alt="Joyas JP Logo"
+                        width={160}
+                        height={160}
+                        className="h-full w-auto"
+                      />
                     </Link>
                     <SheetClose asChild>
                       <Button variant="ghost" size="lg">
@@ -105,5 +116,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

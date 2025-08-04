@@ -1499,4 +1499,4 @@ export const products = [
     detail: '',
     stock: 1,
   },
-];
+]

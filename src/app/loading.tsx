@@ -4,5 +4,5 @@ export default function Loading() {
       <h2 className="text-2xl font-bold">Cargando piezas destacadas...</h2>
       <p className="mt-2">Por favor, espera un momento.</p>
     </div>
-  );
+  )
 }

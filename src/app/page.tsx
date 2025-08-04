@@ -1,45 +1,46 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import ProductCard from '@/components/shop/product-card';
-import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react';
-import { supabase } from '@/lib/supabase-client';
-import { Product } from '@/lib/types';
-import { Suspense } from 'react';
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import ProductCard from '@/components/shop/product-card'
+import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react'
+import { supabase } from '@/lib/supabase-client'
+import { Product } from '@/lib/types'
+import { Suspense } from 'react'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   if (!supabase) {
-    console.warn('Supabase client is not initialized, cannot fetch featured products.');
-    return [];
+    console.warn(
+      'Supabase client is not initialized, cannot fetch featured products.'
+    )
+    return []
   }
 
   try {
     // Obtener TODOS los productos de la base de datos
-    const { data: allProducts, error } = await supabase
+    const { data: allProducts, error } = (await supabase
       .from('products')
-      .select('*') as { data: Product[] | null, error: any };
+      .select('*')) as { data: Product[] | null; error: any }
 
     if (error) {
-      console.error('Error fetching products:', error);
-      return [];
+      console.error('Error fetching products:', error)
+      return []
     }
 
     if (!allProducts || allProducts.length === 0) {
-      return [];
+      return []
     }
 
     // 🎲 RANDOMIZACIÓN COMPLETA - Productos diferentes en cada visita
     const shuffledProducts = allProducts
-      .map(product => ({ product, sort: Math.random() }))
+      .map((product) => ({ product, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
-      .map(({ product }) => product);
+      .map(({ product }) => product)
 
     // Tomar los primeros 6 productos aleatorizados
-    return shuffledProducts.slice(0, 6);
-
+    return shuffledProducts.slice(0, 6)
   } catch (error) {
-    console.error('Error in getFeaturedProducts:', error);
-    return [];
+    console.error('Error in getFeaturedProducts:', error)
+    return []
   }
 }
 
@@ -53,25 +54,27 @@ function ProductSkeleton() {
         <div className="h-5 bg-gray-200 rounded w-1/2" />
       </div>
     </div>
-  );
+  )
 }
 
 function FeaturedProductsSection() {
   return (
-    <Suspense fallback={
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {Array.from({length: 6}).map((_, i) => (
-          <ProductSkeleton key={i} />
-        ))}
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ProductSkeleton key={i} />
+          ))}
+        </div>
+      }
+    >
       <FeaturedProducts />
     </Suspense>
-  );
+  )
 }
 
 async function FeaturedProducts() {
-  const featuredProducts = await getFeaturedProducts();
+  const featuredProducts = await getFeaturedProducts()
 
   if (featuredProducts.length === 0) {
     return (
@@ -86,7 +89,7 @@ async function FeaturedProducts() {
           </Button>
         </Link>
       </div>
-    );
+    )
   }
 
   return (
@@ -95,7 +98,7 @@ async function FeaturedProducts() {
         <ProductCard key={product.id} product={product} />
       ))}
     </div>
-  );
+  )
 }
 
 export default function Home() {
@@ -168,7 +171,8 @@ export default function Home() {
               Piezas Destacadas
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Descubre nuestra selección de joyas únicas, diseñadas para expresar tu personalidad y estilo.
+              Descubre nuestra selección de joyas únicas, diseñadas para
+              expresar tu personalidad y estilo.
             </p>
           </div>
 
@@ -195,7 +199,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold">Calidad Premium</h3>
               <p className="text-muted-foreground">
-                Materiales de primera calidad con certificados de autenticidad y garantía completa.
+                Materiales de primera calidad con certificados de autenticidad y
+                garantía completa.
               </p>
             </div>
 
@@ -205,7 +210,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold">Diseño Único</h3>
               <p className="text-muted-foreground">
-                Cada pieza es cuidadosamente diseñada para reflejar la autenticidad del estilo urbano.
+                Cada pieza es cuidadosamente diseñada para reflejar la
+                autenticidad del estilo urbano.
               </p>
             </div>
 
@@ -215,12 +221,13 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold">Pasión por el Arte</h3>
               <p className="text-muted-foreground">
-                Creamos más que joyas, creamos expresiones artísticas que cuentan tu historia.
+                Creamos más que joyas, creamos expresiones artísticas que
+                cuentan tu historia.
               </p>
             </div>
           </div>
         </div>
       </section>
     </div>
-  );
+  )
 }

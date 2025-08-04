@@ -1,24 +1,27 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react';
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react'
+import { Suspense } from 'react'
+import dynamic from 'next/dynamic'
 
 // Dynamic imports para reducir el bundle inicial
 const FeaturedProductsSection = dynamic(
   () => import('@/components/home/featured-products-section'),
-  { 
+  {
     loading: () => <ProductsLoadingSkeleton />,
-    ssr: true 
+    ssr: true,
   }
-);
+)
 
 function ProductsLoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {Array.from({length: 6}).map((_, i) => (
-        <div key={i} className="border rounded-lg overflow-hidden shadow-sm animate-pulse">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="border rounded-lg overflow-hidden shadow-sm animate-pulse"
+        >
           <div className="aspect-square bg-gray-200" />
           <div className="p-4">
             <div className="h-4 bg-gray-200 rounded mb-2" />
@@ -28,7 +31,7 @@ function ProductsLoadingSkeleton() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 export default function HomeOptimized() {
@@ -101,7 +104,8 @@ export default function HomeOptimized() {
               Piezas Destacadas
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Descubre nuestra selección de joyas únicas, diseñadas para expresar tu personalidad y estilo.
+              Descubre nuestra selección de joyas únicas, diseñadas para
+              expresar tu personalidad y estilo.
             </p>
           </div>
 
@@ -130,7 +134,8 @@ export default function HomeOptimized() {
               </div>
               <h3 className="text-xl font-bold">Calidad Premium</h3>
               <p className="text-muted-foreground">
-                Materiales de primera calidad con certificados de autenticidad y garantía completa.
+                Materiales de primera calidad con certificados de autenticidad y
+                garantía completa.
               </p>
             </div>
 
@@ -140,7 +145,8 @@ export default function HomeOptimized() {
               </div>
               <h3 className="text-xl font-bold">Diseño Único</h3>
               <p className="text-muted-foreground">
-                Cada pieza es cuidadosamente diseñada para reflejar la autenticidad del estilo urbano.
+                Cada pieza es cuidadosamente diseñada para reflejar la
+                autenticidad del estilo urbano.
               </p>
             </div>
 
@@ -150,12 +156,13 @@ export default function HomeOptimized() {
               </div>
               <h3 className="text-xl font-bold">Pasión por el Arte</h3>
               <p className="text-muted-foreground">
-                Creamos más que joyas, creamos expresiones artísticas que cuentan tu historia.
+                Creamos más que joyas, creamos expresiones artísticas que
+                cuentan tu historia.
               </p>
             </div>
           </div>
         </div>
       </section>
     </div>
-  );
+  )
 }

@@ -1,61 +1,66 @@
-"use client";
+'use client'
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/hooks/use-cart';
-import { Product } from '@/lib/types';
-import { toast } from '@/hooks/use-toast';
-import { ShoppingCart, Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { useCart } from '@/hooks/use-cart'
+import { Product } from '@/lib/types'
+import { toast } from '@/hooks/use-toast'
+import { ShoppingCart, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface AddToCartButtonProps {
-  product: Product;
-  className?: string;
-  size?: "default" | "sm" | "lg" | "icon";
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  product: Product
+  className?: string
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
 }
 
 export function AddToCartButton({
   product,
   className,
-  size = "default",
-  variant = "default"
+  size = 'default',
+  variant = 'default',
 }: AddToCartButtonProps) {
-  const { addItem } = useCart();
-  const [isAdding, setIsAdding] = useState(false);
-  const [justAdded, setJustAdded] = useState(false);
+  const { addItem } = useCart()
+  const [isAdding, setIsAdding] = useState(false)
+  const [justAdded, setJustAdded] = useState(false)
 
   const handleAddToCart = async () => {
-    if (isAdding || justAdded) return;
+    if (isAdding || justAdded) return
 
-    setIsAdding(true);
+    setIsAdding(true)
 
     try {
-      addItem(product);
+      addItem(product)
 
       toast({
-        title: "¡Producto añadido! 🎉",
+        title: '¡Producto añadido! 🎉',
         description: `${product.name} se ha agregado a tu carrito.`,
         duration: 3000,
-      });
+      })
 
-      setJustAdded(true);
+      setJustAdded(true)
 
       // Reset after 2 seconds
       setTimeout(() => {
-        setJustAdded(false);
-      }, 2000);
-
+        setJustAdded(false)
+      }, 2000)
     } catch (error) {
       toast({
-        title: "Error",
-        description: "No se pudo agregar el producto. Intenta nuevamente.",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'No se pudo agregar el producto. Intenta nuevamente.',
+        variant: 'destructive',
+      })
     } finally {
-      setIsAdding(false);
+      setIsAdding(false)
     }
-  };
+  }
 
   return (
     <Button
@@ -82,5 +87,5 @@ export function AddToCartButton({
         </>
       )}
     </Button>
-  );
+  )
 }

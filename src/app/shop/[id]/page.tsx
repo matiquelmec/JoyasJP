@@ -1,26 +1,35 @@
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Heart, ShoppingCart, Share2, Star, Truck, Shield, RotateCcw } from 'lucide-react';
-import { supabase } from '@/lib/supabase-client';
-import { Product } from '@/lib/types';
-import { AddToCartButton } from '@/components/shop/add-to-cart-button';
-import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button';
-import { RelatedProducts } from '@/components/shop/related-products';
-import { Metadata } from 'next';
+import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import {
+  ArrowLeft,
+  Heart,
+  ShoppingCart,
+  Share2,
+  Star,
+  Truck,
+  Shield,
+  RotateCcw,
+} from 'lucide-react'
+import { supabase } from '@/lib/supabase-client'
+import { Product } from '@/lib/types'
+import { AddToCartButton } from '@/components/shop/add-to-cart-button'
+import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
+import { RelatedProducts } from '@/components/shop/related-products'
+import { Metadata } from 'next'
 
 interface ProductPageProps {
   params: {
-    id: string;
-  };
+    id: string
+  }
 }
 
 async function getProduct(id: string): Promise<Product | null> {
   if (!supabase) {
-    return null;
+    return null
   }
 
   try {
@@ -28,34 +37,40 @@ async function getProduct(id: string): Promise<Product | null> {
       .from('products')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
     if (error || !data) {
-      return null;
+      return null
     }
 
-    return data as unknown as Product;
+    return data as unknown as Product
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
+    console.error('Error fetching product:', error)
+    return null
   }
 }
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await getProduct(params.id);
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const product = await getProduct(params.id)
 
   if (!product) {
     return {
       title: 'Producto no encontrado | Joyas JP',
-    };
+    }
   }
 
   return {
     title: `${product.name} | Joyas JP`,
-    description: product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
+    description:
+      product.description ||
+      `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
     openGraph: {
       title: `${product.name} | Joyas JP`,
-      description: product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
+      description:
+        product.description ||
+        `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
       images: [
         {
           url: product.imageUrl,
@@ -65,49 +80,50 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         },
       ],
     },
-  };
+  }
 }
 
 export async function generateStaticParams() {
   if (!supabase) {
-    return [];
+    return []
   }
 
   try {
-    const { data: products, error } = await supabase.from('products').select('id');
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('id')
 
     if (error || !products) {
-      console.error('Error fetching product IDs for static generation:', error);
-      return [];
+      console.error('Error fetching product IDs for static generation:', error)
+      return []
     }
 
     return products.map((product) => ({
       id: product.id,
-    }));
+    }))
   } catch (error) {
-    console.error('Error in generateStaticParams:', error);
-    return [];
+    console.error('Error in generateStaticParams:', error)
+    return []
   }
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProduct(params.id);
+  const product = await getProduct(params.id)
 
   if (!product) {
-    notFound();
+    notFound()
   }
 
   const formattedPrice = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
     minimumFractionDigits: 0,
-  }).format(product.price);
+  }).format(product.price)
 
   return (
     <div className="min-h-screen bg-background">
       {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
           <Link
@@ -123,7 +139,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-
           {/* Product Image */}
           <div className="space-y-6">
             <div className="relative aspect-square w-full max-w-lg mx-auto lg:max-w-none bg-muted/30 rounded-lg overflow-hidden">
@@ -145,7 +160,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Product Details */}
           <div className="space-y-8">
-
             {/* Header */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -185,12 +199,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
             )}
 
             {/* Product Details / Characteristics */}
-            {(product.dimensions || product.materials || product.color || product.detail) && (
+            {(product.dimensions ||
+              product.materials ||
+              product.color ||
+              product.detail) && (
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold">Detalles del Producto</h3>
                 <ul className="list-disc list-inside text-muted-foreground">
-                  {product.dimensions && <li>Dimensiones: {product.dimensions}</li>}
-                  {product.materials && <li>Materiales: {product.materials}</li>}
+                  {product.dimensions && (
+                    <li>Dimensiones: {product.dimensions}</li>
+                  )}
+                  {product.materials && (
+                    <li>Materiales: {product.materials}</li>
+                  )}
                   {product.color && <li>Color: {product.color}</li>}
                   {product.detail && <li>Detalle: {product.detail}</li>}
                 </ul>
@@ -228,8 +249,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         {/* Related Products */}
-        <RelatedProducts currentProductId={product.id} category={product.category} />
+        <RelatedProducts
+          currentProductId={product.id}
+          category={product.category}
+        />
       </div>
     </div>
-  );
+  )
 }

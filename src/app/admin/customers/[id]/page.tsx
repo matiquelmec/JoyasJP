@@ -1,89 +1,104 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase-client';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Mail, Phone, MapPin, Calendar, ShoppingBag, CreditCard, TrendingUp, Package } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase-client'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  ShoppingBag,
+  CreditCard,
+  TrendingUp,
+  Package,
+} from 'lucide-react'
+import Link from 'next/link'
 
 interface CustomerDetails {
-  id: string;
-  email: string;
-  phone: string | null;
-  first_name: string;
-  last_name: string;
-  city: string | null;
-  region: string | null;
-  address: string | null;
-  created_at: string;
+  id: string
+  email: string
+  phone: string | null
+  first_name: string
+  last_name: string
+  city: string | null
+  region: string | null
+  address: string | null
+  created_at: string
 }
 
 interface Order {
-  id: string;
-  total_amount: number;
-  status: string;
-  payment_status: string;
-  created_at: string;
+  id: string
+  total_amount: number
+  status: string
+  payment_status: string
+  created_at: string
   items: Array<{
-    id: string;
-    product_name: string;
-    quantity: number;
-    price: number;
-  }>;
+    id: string
+    product_name: string
+    quantity: number
+    price: number
+  }>
 }
 
 interface CustomerStats {
-  total_orders: number;
-  total_spent: number;
-  average_order_value: number;
-  last_order_date: string | null;
-  favorite_category: string | null;
+  total_orders: number
+  total_spent: number
+  average_order_value: number
+  last_order_date: string | null
+  favorite_category: string | null
 }
 
 export default function CustomerDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const customerId = params.id as string;
+  const params = useParams()
+  const router = useRouter()
+  const customerId = params.id as string
 
-  const [customer, setCustomer] = useState<CustomerDetails | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [stats, setStats] = useState<CustomerStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [customer, setCustomer] = useState<CustomerDetails | null>(null)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [stats, setStats] = useState<CustomerStats | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (customerId) {
-      fetchCustomerData();
+      fetchCustomerData()
     }
-  }, [customerId]);
+  }, [customerId])
 
   const fetchCustomerData = async () => {
     if (!supabase) {
-      console.error('Supabase not initialized');
-      setLoading(false);
-      return;
+      console.error('Supabase not initialized')
+      setLoading(false)
+      return
     }
 
     try {
-      setLoading(true);
+      setLoading(true)
 
       // Obtener datos del cliente
       const { data: customerData } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', customerId)
-        .single();
+        .single()
 
       if (customerData) {
-        setCustomer(customerData as unknown as CustomerDetails);
+        setCustomer(customerData as unknown as CustomerDetails)
       } else {
-        router.push('/admin/customers');
-        return;
+        router.push('/admin/customers')
+        return
       }
 
       // Por ahora solo obtener pedidos básicos
@@ -91,44 +106,47 @@ export default function CustomerDetailPage() {
         .from('orders')
         .select('*')
         .eq('user_id', customerId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
 
       if (ordersData) {
-        const formattedOrders = ordersData.map(order => ({
+        const formattedOrders = ordersData.map((order) => ({
           ...order,
-          items: [] // Simplificamos por ahora
-        }));
-        setOrders(formattedOrders as unknown as Order[]);
-        
+          items: [], // Simplificamos por ahora
+        }))
+        setOrders(formattedOrders as unknown as Order[])
+
         // Calcular estadísticas básicas
-        const totalOrders = ordersData.length;
-        const totalSpent = ordersData.reduce((sum, order) => sum + (Number(order.total_amount) || 0), 0);
-        const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
-        const lastOrderDate = ordersData.length > 0 ? String(ordersData[0].created_at) : null;
-        
+        const totalOrders = ordersData.length
+        const totalSpent = ordersData.reduce(
+          (sum, order) => sum + (Number(order.total_amount) || 0),
+          0
+        )
+        const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0
+        const lastOrderDate =
+          ordersData.length > 0 ? String(ordersData[0].created_at) : null
+
         setStats({
           total_orders: totalOrders,
           total_spent: totalSpent,
           average_order_value: averageOrderValue,
           last_order_date: lastOrderDate,
-          favorite_category: null
-        });
+          favorite_category: null,
+        })
       }
-
     } catch (error) {
-      console.error('Error fetching customer data:', error);
+      console.error('Error fetching customer data:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
       minimumFractionDigits: 0,
-    }).format(amount);
-  };
+    }).format(amount)
+  }
 
   const formatDate = (dateString: string) => {
     return new Intl.DateTimeFormat('es-CL', {
@@ -136,35 +154,41 @@ export default function CustomerDetailPage() {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
-    }).format(new Date(dateString));
-  };
+      minute: '2-digit',
+    }).format(new Date(dateString))
+  }
 
   const getStatusBadge = (status: string) => {
     const statusMap = {
-      'pending': { label: 'Pendiente', variant: 'secondary' as const },
-      'confirmed': { label: 'Confirmado', variant: 'default' as const },
-      'processing': { label: 'Procesando', variant: 'default' as const },
-      'shipped': { label: 'Enviado', variant: 'default' as const },
-      'delivered': { label: 'Entregado', variant: 'default' as const },
-      'cancelled': { label: 'Cancelado', variant: 'destructive' as const }
-    };
+      pending: { label: 'Pendiente', variant: 'secondary' as const },
+      confirmed: { label: 'Confirmado', variant: 'default' as const },
+      processing: { label: 'Procesando', variant: 'default' as const },
+      shipped: { label: 'Enviado', variant: 'default' as const },
+      delivered: { label: 'Entregado', variant: 'default' as const },
+      cancelled: { label: 'Cancelado', variant: 'destructive' as const },
+    }
 
-    const statusInfo = statusMap[status as keyof typeof statusMap] || { label: status, variant: 'secondary' as const };
-    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
-  };
+    const statusInfo = statusMap[status as keyof typeof statusMap] || {
+      label: status,
+      variant: 'secondary' as const,
+    }
+    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+  }
 
   const getPaymentStatusBadge = (status: string) => {
     const statusMap = {
-      'pending': { label: 'Pendiente', variant: 'secondary' as const },
-      'paid': { label: 'Pagado', variant: 'default' as const },
-      'failed': { label: 'Fallido', variant: 'destructive' as const },
-      'refunded': { label: 'Reembolsado', variant: 'outline' as const }
-    };
+      pending: { label: 'Pendiente', variant: 'secondary' as const },
+      paid: { label: 'Pagado', variant: 'default' as const },
+      failed: { label: 'Fallido', variant: 'destructive' as const },
+      refunded: { label: 'Reembolsado', variant: 'outline' as const },
+    }
 
-    const statusInfo = statusMap[status as keyof typeof statusMap] || { label: status, variant: 'secondary' as const };
-    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>;
-  };
+    const statusInfo = statusMap[status as keyof typeof statusMap] || {
+      label: status,
+      variant: 'secondary' as const,
+    }
+    return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+  }
 
   if (loading) {
     return (
@@ -179,7 +203,7 @@ export default function CustomerDetailPage() {
           <div className="h-96 bg-gray-200 rounded"></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (!customer) {
@@ -190,7 +214,7 @@ export default function CustomerDetailPage() {
           <Link href="/admin/customers">Volver a clientes</Link>
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -236,7 +260,9 @@ export default function CustomerDetailPage() {
             {customer.city && (
               <div>
                 <p className="text-sm text-muted-foreground">Ubicación</p>
-                <p className="font-medium">{customer.city}, {customer.region}</p>
+                <p className="font-medium">
+                  {customer.city}, {customer.region}
+                </p>
               </div>
             )}
             {customer.address && (
@@ -262,11 +288,17 @@ export default function CustomerDetailPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total Gastado</p>
-              <p className="text-2xl font-bold">{formatCurrency(stats?.total_spent || 0)}</p>
+              <p className="text-2xl font-bold">
+                {formatCurrency(stats?.total_spent || 0)}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Valor Promedio por Pedido</p>
-              <p className="text-xl font-semibold">{formatCurrency(stats?.average_order_value || 0)}</p>
+              <p className="text-sm text-muted-foreground">
+                Valor Promedio por Pedido
+              </p>
+              <p className="text-xl font-semibold">
+                {formatCurrency(stats?.average_order_value || 0)}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -282,16 +314,23 @@ export default function CustomerDetailPage() {
             <div>
               <p className="text-sm text-muted-foreground">Último Pedido</p>
               <p className="font-medium">
-                {stats?.last_order_date 
+                {stats?.last_order_date
                   ? formatDate(stats.last_order_date)
-                  : 'Sin pedidos'
-                }
+                  : 'Sin pedidos'}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Estado</p>
-              <Badge variant={stats?.total_orders && stats.total_orders > 0 ? 'default' : 'secondary'}>
-                {stats?.total_orders && stats.total_orders > 0 ? 'Cliente Activo' : 'Sin Compras'}
+              <Badge
+                variant={
+                  stats?.total_orders && stats.total_orders > 0
+                    ? 'default'
+                    : 'secondary'
+                }
+              >
+                {stats?.total_orders && stats.total_orders > 0
+                  ? 'Cliente Activo'
+                  : 'Sin Compras'}
               </Badge>
             </div>
           </CardContent>
@@ -305,9 +344,7 @@ export default function CustomerDetailPage() {
             <Package className="h-5 w-5" />
             Historial de Pedidos
           </CardTitle>
-          <CardDescription>
-            {orders.length} pedidos en total
-          </CardDescription>
+          <CardDescription>{orders.length} pedidos en total</CardDescription>
         </CardHeader>
         <CardContent>
           {orders.length > 0 ? (
@@ -317,7 +354,9 @@ export default function CustomerDetailPage() {
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-medium">Pedido #{order.id.slice(-8)}</h3>
+                        <h3 className="font-medium">
+                          Pedido #{order.id.slice(-8)}
+                        </h3>
                         {getStatusBadge(order.status)}
                         {getPaymentStatusBadge(order.payment_status)}
                       </div>
@@ -326,9 +365,12 @@ export default function CustomerDetailPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold">{formatCurrency(order.total_amount)}</p>
+                      <p className="text-2xl font-bold">
+                        {formatCurrency(order.total_amount)}
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        {order.items.length} producto{order.items.length !== 1 ? 's' : ''}
+                        {order.items.length} producto
+                        {order.items.length !== 1 ? 's' : ''}
                       </p>
                     </div>
                   </div>
@@ -338,7 +380,10 @@ export default function CustomerDetailPage() {
                   <div className="space-y-2">
                     <h4 className="font-medium text-sm">Productos:</h4>
                     {order.items.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center text-sm">
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-center text-sm"
+                      >
                         <span>
                           {item.quantity}x {item.product_name}
                         </span>
@@ -367,5 +412,5 @@ export default function CustomerDetailPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

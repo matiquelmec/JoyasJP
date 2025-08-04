@@ -1,33 +1,33 @@
-import useSWR from 'swr';
-import { Product } from '@/lib/types';
+import useSWR from 'swr'
+import { Product } from '@/lib/types'
 
 interface ProductsResponse {
-  products: Product[];
+  products: Product[]
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasMore: boolean;
-  };
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasMore: boolean
+  }
 }
 
 interface UseProductsOptions {
-  page?: number;
-  limit?: number;
-  category?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  page?: number
+  limit?: number
+  category?: string
+  minPrice?: number
+  maxPrice?: number
+  search?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Failed to fetch');
-  return res.json();
-};
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('Failed to fetch')
+  return res.json()
+}
 
 export function useProducts(options: UseProductsOptions = {}) {
   const {
@@ -38,21 +38,21 @@ export function useProducts(options: UseProductsOptions = {}) {
     maxPrice,
     search,
     sortBy = 'created_at',
-    sortOrder = 'desc'
-  } = options;
-  
+    sortOrder = 'desc',
+  } = options
+
   // Construir URL con parámetros
-  const params = new URLSearchParams();
-  params.append('page', page.toString());
-  params.append('limit', limit.toString());
-  params.append('sortBy', sortBy);
-  params.append('sortOrder', sortOrder);
-  
-  if (category) params.append('category', category);
-  if (minPrice !== undefined) params.append('minPrice', minPrice.toString());
-  if (maxPrice !== undefined) params.append('maxPrice', maxPrice.toString());
-  if (search) params.append('search', search);
-  
+  const params = new URLSearchParams()
+  params.append('page', page.toString())
+  params.append('limit', limit.toString())
+  params.append('sortBy', sortBy)
+  params.append('sortOrder', sortOrder)
+
+  if (category) params.append('category', category)
+  if (minPrice !== undefined) params.append('minPrice', minPrice.toString())
+  if (maxPrice !== undefined) params.append('maxPrice', maxPrice.toString())
+  if (search) params.append('search', search)
+
   const { data, error, isLoading, mutate } = useSWR<ProductsResponse>(
     `/api/products?${params.toString()}`,
     fetcher,
@@ -62,8 +62,8 @@ export function useProducts(options: UseProductsOptions = {}) {
       dedupingInterval: 60000, // Deduplicar requests por 1 minuto
       keepPreviousData: true, // Mantener datos anteriores mientras carga nuevos
     }
-  );
-  
+  )
+
   return {
     products: data?.products || [],
     pagination: data?.pagination || {
@@ -71,12 +71,12 @@ export function useProducts(options: UseProductsOptions = {}) {
       limit: 20,
       total: 0,
       totalPages: 0,
-      hasMore: false
+      hasMore: false,
     },
     isLoading,
     isError: error,
-    mutate
-  };
+    mutate,
+  }
 }
 
 // Hook para producto individual
@@ -88,41 +88,41 @@ export function useProduct(id: string) {
       revalidateOnFocus: false,
       dedupingInterval: 3600000, // 1 hora para productos individuales
     }
-  );
-  
+  )
+
   return {
     product: data,
     isLoading,
-    isError: error
-  };
+    isError: error,
+  }
 }
 
 // Hook para búsqueda con debounce
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 export function useProductSearch(initialSearch = '') {
-  const [search, setSearch] = useState(initialSearch);
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
-  
+  const [search, setSearch] = useState(initialSearch)
+  const [debouncedSearch, setDebouncedSearch] = useState(search)
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300); // 300ms debounce
-    
-    return () => clearTimeout(timer);
-  }, [search]);
-  
+      setDebouncedSearch(search)
+    }, 300) // 300ms debounce
+
+    return () => clearTimeout(timer)
+  }, [search])
+
   const { products, pagination, isLoading, isError } = useProducts({
     search: debouncedSearch,
-    limit: 10
-  });
-  
+    limit: 10,
+  })
+
   return {
     search,
     setSearch,
     results: products,
     isSearching: isLoading,
     isError,
-    hasResults: products.length > 0
-  };
+    hasResults: products.length > 0,
+  }
 }
