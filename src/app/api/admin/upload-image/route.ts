@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Generate filename using product code if provided
+    // Generate filename using product code if provided, otherwise use timestamp
     const productCode = formData.get('productCode') as string
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()

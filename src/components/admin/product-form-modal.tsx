@@ -106,8 +106,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         detail: formData.detail || null
       }
 
+      let createdProduct = null
       if (mode === 'create') {
-        await adminAPI.createProduct(productData)
+        createdProduct = await adminAPI.createProduct(productData)
       } else {
         await adminAPI.updateProduct(product?.id || '', productData)
       }
@@ -116,6 +117,15 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         title: mode === 'create' ? 'Producto creado' : 'Producto actualizado',
         description: `${formData.name} se ha ${mode === 'create' ? 'creado' : 'actualizado'} exitosamente.`,
       })
+
+      // Show generated code to user for new products
+      if (mode === 'create' && createdProduct?.code) {
+        toast({
+          title: 'Código generado',
+          description: `Código del producto: ${createdProduct.code}`,
+          duration: 10000,
+        })
+      }
 
       setOpen(false)
       onSave()
