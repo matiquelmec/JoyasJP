@@ -137,19 +137,48 @@ src/
 ```
 
 ## Commits Importantes
+- `19a1663`: feat: Implement complete checkout flow with shipping data collection ⭐
+- `d4e8bc1`: docs: Add comprehensive development documentation
 - `60a5185`: fix: Add missing table component for admin panel
 - `8ed47ce`: feat: Complete admin panel with authentication and management
 - `899df09`: fix: Solución definitiva conflicto ESLint
 - `30eb83c`: security: Remover credenciales expuestas
 
+## Características Principales (Actualizado)
+
+### 4. Sistema de Checkout Completo ⭐ **NUEVO**
+**Flujo Completo**: `Carrito → Checkout (/checkout) → Formulario Envío → Crear Orden → MercadoPago → Success`
+
+#### Formulario de Checkout (`/checkout`)
+- **Información Personal**: Nombre completo, email, teléfono con validación
+- **Dirección de Envío**: Dirección completa, ciudad, selector de 16 regiones chilenas
+- **Validación robusta** de todos los campos requeridos
+- **Resumen del pedido** con productos, imágenes y cálculos
+- **UI moderna** con iconos Lucide, diseño responsive y componentes shadcn/ui
+
+#### Integración Backend Mejorada
+- **Crea orden en BD** ANTES del pago (usando API `/api/create-order`)
+- **Envía info del cliente** a MercadoPago (nombre, email, teléfono pre-cargado)
+- **Manejo de stock** y validaciones automáticas
+- **Compatible** con admin panel existente para ver órdenes con datos de envío
+
+#### Cart Panel Optimizado
+- Botón actualizado a "Ir a Checkout"
+- Redirige al formulario en lugar de pago directo
+- Mantiene funcionalidad de cantidad, eliminar, limpiar
+
 ## Estado Actual
 ✅ **Completado**:
 - E-commerce funcional con 126 productos
 - Panel de administración completo
+- **Checkout completo con datos de envío** ⭐
+- **Formulario de recolección de datos** con regiones chilenas ⭐
+- **Integración orden → pago → confirmación** ⭐
 - Autenticación segura
 - Gestión de inventario en tiempo real
 - Despliegue exitoso en Netlify
 - Limpieza completa del código
+- TypeScript sin errores
 
 ## Próximos Pasos Sugeridos
 1. Conectar gestión de pedidos con base de datos real
@@ -165,6 +194,47 @@ src/
 - **GitHub**: Repositorio sincronizado
 - **Netlify**: Deploy automático desde main branch
 
+## Detalles Técnicos del Checkout
+
+### Archivos Creados/Modificados
+```typescript
+// NUEVO: Página de checkout completa
+src/app/checkout/page.tsx
+- Formulario con validación completa
+- Selector de regiones chilenas (16 regiones)
+- Integración con createOrder() y MercadoPago
+- UI responsive con shadcn/ui components
+
+// MODIFICADO: Cart panel simplificado
+src/components/shop/cart-panel.tsx
+- handleCheckout() redirige a /checkout
+- Eliminado código de pago directo
+- Botón "Ir a Checkout" en lugar de "Finalizar Compra"
+
+// MEJORADO: API de checkout con info cliente
+src/app/api/checkout/route.ts
+- Acepta customerInfo junto con cartItems
+- Envía datos del cliente a MercadoPago (payer)
+- Mantiene compatibilidad con flujo anterior
+```
+
+### Flujo de Datos
+```
+1. Usuario llena formulario → Validación frontend
+2. Crear orden en BD → API /api/create-order 
+3. Orden confirmada → Proceder a MercadoPago
+4. MercadoPago con datos pre-cargados → Pago
+5. Success → Auto-limpia carrito
+```
+
+### Validaciones Implementadas
+- Campos requeridos: nombre, email, teléfono, dirección, ciudad, región
+- Validación de email con formato @
+- Teléfono requerido (formato libre)
+- Dirección completa obligatoria
+- Región de selector predefinido
+
 ---
 *Última actualización: 04 de Agosto 2025*
+*Checkout completo implementado - Sistema de envío funcional*
 *Desarrollado con Claude Code*
