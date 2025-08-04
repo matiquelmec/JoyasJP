@@ -46,6 +46,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
+    code: '',
     price: '',
     category: '',
     description: '',
@@ -61,6 +62,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     if (product && mode === 'edit') {
       setFormData({
         name: product.name || '',
+        code: product.code || '',
         price: product.price?.toString() || '',
         category: product.category || '',
         description: product.description || '',
@@ -75,6 +77,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       // Reset form for create mode
       setFormData({
         name: '',
+        code: '',
         price: '',
         category: '',
         description: '',
@@ -169,6 +172,19 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               />
             </div>
             <div>
+              <Label htmlFor="code">Código del Producto *</Label>
+              <Input
+                id="code"
+                value={formData.code}
+                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
+                required
+                placeholder="Ej: PCP_21, PDD_11"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="price">Precio (CLP) *</Label>
               <Input
                 id="price"
@@ -179,27 +195,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 placeholder="99000"
                 min="0"
               />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="category">Categoría *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona una categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
             <div>
               <Label htmlFor="stock">Stock Inicial *</Label>
@@ -215,12 +210,31 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
           </div>
 
+          <div>
+            <Label htmlFor="category">Categoría *</Label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona una categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <ImageUpload
             currentImage={formData.imageUrl}
             onImageUploaded={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
             disabled={loading}
             category={formData.category}
-            productName={formData.name}
+            productCode={formData.code}
           />
 
           <div>

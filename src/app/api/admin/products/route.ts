@@ -69,12 +69,16 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
-    // Check for duplicate products (same name + category)
+    // Ensure code is uppercase
+    if (productData.code) {
+      productData.code = productData.code.trim().toUpperCase()
+    }
+    
+    // Check for duplicate products (same code)
     const { data: existingProducts, error: searchError } = await client
       .from('products')
-      .select('id, name, category, slug')
-      .eq('name', productData.name.trim())
-      .eq('category', productData.category)
+      .select('id, name, code')
+      .eq('code', productData.code.trim().toUpperCase())
       .is('deleted_at', null) // Only check non-deleted products
 
     if (searchError) {
@@ -82,8 +86,8 @@ export async function POST(request: NextRequest) {
       // Continue with creation if duplicate check fails
     } else if (existingProducts && existingProducts.length > 0) {
       return NextResponse.json({ 
-        error: 'Producto duplicado',
-        message: `Ya existe un producto llamado "${productData.name}" en la categoría "${productData.category}". Los productos deben tener nombres únicos dentro de cada categoría.`,
+        error: 'Código duplicado',
+        message: `Ya existe un producto con el código "${productData.code}". Los códigos de producto deben ser únicos.`,
         existingProduct: existingProducts[0]
       }, { status: 409 }) // 409 Conflict
     }

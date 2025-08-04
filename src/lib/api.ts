@@ -75,12 +75,24 @@ export async function createOrder(orderDetails: {
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-  // Try to find by slug first, then by ID as fallback
+  // Try to find by code first, then slug, then ID as fallback
   let { data, error } = await supabase
     .from('products')
     .select('*, stock')
-    .eq('slug', id)
+    .eq('code', id)
     .single()
+
+  // If not found by code, try by slug
+  if (error && error.code === 'PGRST116') {
+    const result = await supabase
+      .from('products')
+      .select('*, stock')
+      .eq('slug', id)
+      .single()
+    
+    data = result.data
+    error = result.error
+  }
 
   // If not found by slug, try by ID (for backwards compatibility)
   if (error && error.code === 'PGRST116') {
@@ -95,7 +107,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   }
 
   if (error) {
-    console.error('Error fetching product by ID/slug:', error)
+    console.error('Error fetching product by code/slug/ID:', error)
     return null
   }
 

@@ -13,10 +13,10 @@ interface ImageUploadProps {
   currentImage?: string
   disabled?: boolean
   category?: string
-  productName?: string
+  productCode?: string
 }
 
-export function ImageUpload({ onImageUploaded, currentImage, disabled, category = 'otros', productName }: ImageUploadProps) {
+export function ImageUpload({ onImageUploaded, currentImage, disabled, category = 'otros', productCode }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [preview, setPreview] = useState<string | null>(currentImage || null)
@@ -68,10 +68,9 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       formData.append('file', file)
       formData.append('category', category)
       
-      // Add product slug if product name is available
-      if (productName) {
-        const productSlug = generateSlug(productName)
-        formData.append('productSlug', productSlug)
+      // Add product code if available
+      if (productCode) {
+        formData.append('productCode', productCode)
       }
 
       // Simulate progress for better UX

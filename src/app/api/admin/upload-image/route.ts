@@ -51,14 +51,14 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Generate filename using product slug if provided
-    const productSlug = formData.get('productSlug') as string
+    // Generate filename using product code if provided
+    const productCode = formData.get('productCode') as string
     const timestamp = Date.now()
     const fileExtension = file.name.split('.').pop()
     
     let fileName: string
-    if (productSlug) {
-      fileName = `${productSlug}.${fileExtension}`
+    if (productCode) {
+      fileName = `${productCode}.${fileExtension}`
     } else {
       fileName = `product-${timestamp}.${fileExtension}`
     }
