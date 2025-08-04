@@ -91,24 +91,28 @@ export async function POST(request: NextRequest) {
     const configData = await request.json()
     
     // Check if configuration exists
-    const { data: existing } = await client
+    const { data: existing, error: checkError } = await client
       .from('configuration')
       .select('id')
       .single()
 
+    // Log for debugging
+    console.log('Updating configuration:', configData)
+    console.log('Existing record:', existing)
+
     let result
-    if (existing) {
-      // Update existing configuration
+    if (existing && !checkError) {
+      // Update existing configuration (always id = 1)
       result = await client
         .from('configuration')
         .update(configData)
-        .eq('id', existing.id)
+        .eq('id', 1)
         .select()
     } else {
-      // Create new configuration
+      // Create new configuration with id = 1
       result = await client
         .from('configuration')
-        .insert([configData])
+        .insert([{ id: 1, ...configData }])
         .select()
     }
 
