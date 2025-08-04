@@ -1,11 +1,11 @@
+import { ArrowDown, Heart, Sparkles, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import ProductCard from '@/components/shop/product-card'
-import { ArrowDown, Sparkles, Trophy, Heart } from 'lucide-react'
-import { supabase } from '@/lib/supabase-client'
-import { Product } from '@/lib/types'
 import { Suspense } from 'react'
+import ProductCard from '@/components/shop/product-card'
+import { Button } from '@/components/ui/button'
+import { supabase } from '@/lib/supabase-client'
+import type { Product } from '@/lib/types'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   if (!supabase) {
@@ -106,26 +106,13 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
-        <video
-          src="/assets/mi-video.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          aria-label="Video promocional de Joyas JP"
-        />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black via-gray-900 to-black z-0" />
+        <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10" />
 
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
-          <Image
-            src="/assets/logo.png"
-            alt="Joyas JP - Alta joyería para la escena urbana"
-            width={500}
-            height={500}
-            priority
-            className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
-          />
+          <div className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]">
+            Joyas JP
+          </div>
 
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
             <span className="inline-flex items-center gap-2">

@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Product } from '@/lib/types'
 import ProductCard from '@/components/shop/product-card'
 import { supabase } from '@/lib/supabase-client'
+import type { Product } from '@/lib/types'
 
 interface RelatedProductsProps {
   currentProductId: string

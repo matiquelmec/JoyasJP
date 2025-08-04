@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { MercadoPagoConfig, Preference } from 'mercadopago'
-import { CartItem } from '@/hooks/use-cart'
+import { type NextRequest, NextResponse } from 'next/server'
+import type { CartItem } from '@/hooks/use-cart'
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,

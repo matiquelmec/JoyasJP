@@ -1,9 +1,9 @@
 'use client'
 
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import { Product } from '@/lib/types'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { toast } from '@/hooks/use-toast'
+import type { Product } from '@/lib/types'
 
 interface WishlistState {
   items: Product[]

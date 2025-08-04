@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase-client'
 
 // Configurar para Edge Runtime (más rápido)

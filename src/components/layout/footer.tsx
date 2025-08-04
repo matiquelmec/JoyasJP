@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { Instagram } from 'lucide-react'
-import { siteConfig, navLinks } from '@/lib/config'
+import Link from 'next/link'
+import { navLinks, siteConfig } from '@/lib/config'
 
 const TikTokIcon = () => (
   <svg

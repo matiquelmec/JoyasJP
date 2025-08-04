@@ -1,10 +1,10 @@
 'use client'
-import { useState } from 'react'
-import { useCart } from '@/hooks/use-cart'
-import { Product } from '@/lib/types'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import { Minus, Plus } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { useCart } from '@/hooks/use-cart'
+import type { Product } from '@/lib/types'
 
 interface ProductDetailViewProps {
   product: Product

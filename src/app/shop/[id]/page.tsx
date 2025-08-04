@@ -1,25 +1,25 @@
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
   ArrowLeft,
   Heart,
-  ShoppingCart,
+  RotateCcw,
   Share2,
+  Shield,
+  ShoppingCart,
   Star,
   Truck,
-  Shield,
-  RotateCcw,
 } from 'lucide-react'
-import { supabase } from '@/lib/supabase-client'
-import { Product } from '@/lib/types'
+import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
 import { RelatedProducts } from '@/components/shop/related-products'
-import { Metadata } from 'next'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { supabase } from '@/lib/supabase-client'
+import type { Product } from '@/lib/types'
 
 interface ProductPageProps {
   params: {

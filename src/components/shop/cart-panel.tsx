@@ -1,19 +1,19 @@
 'use client'
 
+import { Loader2, ShoppingBag, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import { useState } from 'react'
-import { useCart } from '@/hooks/use-cart'
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
 } from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { ShoppingBag, Trash2, Loader2 } from 'lucide-react'
-import Image from 'next/image'
+import { useCart } from '@/hooks/use-cart'
 import { useToast } from '@/hooks/use-toast'
 
 export function CartPanel() {

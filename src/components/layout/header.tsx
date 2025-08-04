@@ -1,22 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ShoppingBag, Menu, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { CartPanel } from '@/components/shop/cart-panel'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
-  SheetClose,
 } from '@/components/ui/sheet'
-import { navLinks } from '@/lib/config'
-import { CartPanel } from '@/components/shop/cart-panel'
-
 import { useWishlist } from '@/hooks/use-wishlist'
-import { Heart } from 'lucide-react'
+import { navLinks } from '@/lib/config'
+import { cn } from '@/lib/utils'
 
 export function Header() {
   const [hasScrolled, setHasScrolled] = useState(false)
@@ -43,13 +40,7 @@ export function Header() {
     >
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
-          <Image
-            src="/assets/logo.png"
-            alt="Joyas JP Logo"
-            width={160}
-            height={160}
-            className="h-full w-auto"
-          />
+          <span className="text-2xl font-bold text-primary">Joyas JP</span>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
@@ -86,13 +77,9 @@ export function Header() {
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
                     <Link href="/" className="flex items-center h-20">
-                      <Image
-                        src="/assets/logo.png"
-                        alt="Joyas JP Logo"
-                        width={160}
-                        height={160}
-                        className="h-full w-auto"
-                      />
+                      <span className="text-2xl font-bold text-primary">
+                        Joyas JP
+                      </span>
                     </Link>
                     <SheetClose asChild>
                       <Button variant="ghost" size="lg">

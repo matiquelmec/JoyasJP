@@ -1,10 +1,10 @@
 'use client'
 
+import { CheckCircle2, Heart, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
-import { CheckCircle2, ShoppingBag, Heart } from 'lucide-react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
-import { useEffect } from 'react'
 
 export default function SuccessPage() {
   const { clearCart } = useCart()

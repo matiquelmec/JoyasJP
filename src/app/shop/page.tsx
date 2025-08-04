@@ -1,10 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
-import { getProducts, getColors } from '@/lib/api'
-import { Product } from '@/lib/types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -13,6 +10,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getColors, getProducts } from '@/lib/api'
+import type { Product } from '@/lib/types'
 
 const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros']
 

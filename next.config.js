@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -54,10 +54,7 @@ const nextConfig = {
   assetPrefix: '',
 
   // Webpack config personalizado
-  webpack: (
-    config,
-    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
-  ) => {
+  webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src')
 
     // Configuración para manejar archivos estáticos

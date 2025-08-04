@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { Product } from '@/lib/types'
+import type { Product } from '@/lib/types'
 
 interface ProductsResponse {
   products: Product[]

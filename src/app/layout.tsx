@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, PT_Sans } from 'next/font/google'
 import './globals.css'
-import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { Toaster } from '@/components/ui/toaster'
+import { Header } from '@/components/layout/header'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 
 const playfairDisplay = Playfair_Display({
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: 'Joyas JP',
     images: [
       {
-        url: '/assets/logo.png',
+        url: '/favicon.png',
         width: 500,
         height: 500,
         alt: 'Joyas JP - Alta joyería urbana',
@@ -115,7 +115,7 @@ const jsonLd = {
   description:
     'Alta joyería para la escena urbana con diseños únicos y calidad premium',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/favicon.png`,
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+56-9-1234-5678',
@@ -166,18 +166,6 @@ export default function RootLayout({
         />
 
         {/* Preloads corregidos */}
-        <link
-          rel="preload"
-          href="/assets/logo.png"
-          as="image"
-          type="image/png"
-        />
-        <link
-          rel="preload"
-          href="/assets/mi-video.mp4"
-          as="video"
-          type="video/mp4"
-        />
       </head>
       <body
         className={cn(

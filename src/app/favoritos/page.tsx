@@ -1,10 +1,10 @@
 'use client'
 
-import { useWishlist } from '@/hooks/use-wishlist'
-import ProductCard from '@/components/shop/product-card'
 import { Heart } from 'lucide-react'
 import Link from 'next/link'
+import ProductCard from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
+import { useWishlist } from '@/hooks/use-wishlist'
 
 export default function WishlistPage() {
   const { items } = useWishlist()

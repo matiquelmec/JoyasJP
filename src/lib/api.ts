@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Product } from './types'
+import type { Product } from './types'
 import { normalizeColor } from './utils'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -33,7 +33,7 @@ export async function getColors(): Promise<string[]> {
     throw error
   }
 
-  let colors = data
+  const colors = data
     .map((item) => {
       const normalized = normalizeColor(item.color)
       // Capitalize the first letter

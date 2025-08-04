@@ -1,14 +1,14 @@
 'use client'
 
+import { Eye, Heart, ShoppingCart, Sparkles } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
-import { Product } from '@/lib/types'
 import { toast } from '@/hooks/use-toast'
-import Link from 'next/link'
 import { useWishlist } from '@/hooks/use-wishlist'
-import { Heart, ShoppingCart, Eye, Sparkles } from 'lucide-react'
-import { useState, useEffect, useCallback, memo, useMemo } from 'react'
+import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 interface ProductCardProps {

@@ -1,11 +1,9 @@
 'use client'
 
+import { Button, type ButtonProps } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
-import { Product } from '@/lib/types'
-import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
-
-import { ButtonProps } from '@/components/ui/button'
+import type { Product } from '@/lib/types'
 
 interface AddToCartButtonProps extends ButtonProps {
   product: Product
