@@ -46,7 +46,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    code: '',
     price: '',
     category: '',
     description: '',
@@ -62,7 +61,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     if (product && mode === 'edit') {
       setFormData({
         name: product.name || '',
-        code: product.code || '',
         price: product.price?.toString() || '',
         category: product.category || '',
         description: product.description || '',
@@ -77,7 +75,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       // Reset form for create mode
       setFormData({
         name: '',
-        code: '',
         price: '',
         category: '',
         description: '',
@@ -98,7 +95,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     try {
       const productData = {
         name: formData.name,
-        code: formData.code,
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
@@ -173,19 +169,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               />
             </div>
             <div>
-              <Label htmlFor="code">Código del Producto *</Label>
-              <Input
-                id="code"
-                value={formData.code}
-                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                required
-                placeholder="Ej: PCP_21, PDD_11"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
               <Label htmlFor="price">Precio (CLP) *</Label>
               <Input
                 id="price"
@@ -197,6 +180,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 min="0"
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="stock">Stock Inicial *</Label>
               <Input
@@ -235,7 +221,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             onImageUploaded={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
             disabled={loading}
             category={formData.category}
-            productCode={formData.code}
           />
 
           <div>

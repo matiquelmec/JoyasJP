@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
-import { generateUniqueSlug } from '@/lib/slug-utils'
 
 // Verificar contraseña de admin (en producción usar JWT/session mejor)
 function verifyAdminAuth(request: NextRequest) {
@@ -69,52 +68,9 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
-    // Validate and ensure code exists and is uppercase
-    if (!productData.code || typeof productData.code !== 'string') {
-      return NextResponse.json({ 
-        error: 'Código del producto requerido',
-        message: 'El código del producto es obligatorio.'
-      }, { status: 400 })
-    }
-    
-    productData.code = productData.code.trim().toUpperCase()
-    
-    // Check for duplicate products (same code)
-    const { data: existingProducts, error: searchError } = await client
-      .from('products')
-      .select('id, name, code')
-      .eq('code', productData.code)
-      .is('deleted_at', null) // Only check non-deleted products
-
-    if (searchError) {
-      console.warn('Error checking for duplicates:', searchError)
-      // Continue with creation if duplicate check fails
-    } else if (existingProducts && existingProducts.length > 0) {
-      return NextResponse.json({ 
-        error: 'Código duplicado',
-        message: `Ya existe un producto con el código "${productData.code}". Los códigos de producto deben ser únicos.`,
-        existingProduct: existingProducts[0]
-      }, { status: 409 }) // 409 Conflict
-    }
-
-    // Generate unique slug from product name
-    const { data: allProducts } = await client
-      .from('products')
-      .select('slug')
-      .is('deleted_at', null)
-
-    const existingSlugs = allProducts?.map(p => p.slug).filter(Boolean) || []
-    const slug = generateUniqueSlug(productData.name, existingSlugs)
-
-    // Add slug to product data
-    const productWithSlug = {
-      ...productData,
-      slug
-    }
-    
     const { data, error } = await client
       .from('products')
-      .insert([productWithSlug])
+      .insert([productData])
       .select()
 
     if (error) throw error
