@@ -201,7 +201,7 @@ export default function Home() {
                 className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
               >
                 <Trophy className="w-5 h-5 mr-2" />
-                Ver Colección
+                Productos
               </Button>
             </Link>
             <Link href="/services" className="flex-1">
@@ -211,7 +211,7 @@ export default function Home() {
                 className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
               >
                 <Heart className="w-5 h-5 mr-2" />
-                Servicios
+                Servicio para artistas
               </Button>
             </Link>
           </div>
@@ -241,7 +241,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/shop">
               <Button size="lg" className="font-semibold px-8">
-                Ver Toda la Colección
+                Ver Todos los Productos
                 <ArrowDown className="w-4 h-4 ml-2 rotate-[-90deg]" />
               </Button>
             </Link>
