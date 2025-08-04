@@ -1,0 +1,35 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { Footer } from '@/components/layout/footer'
+import { Header } from '@/components/layout/header'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
+
+interface ConditionalLayoutProps {
+  children: React.ReactNode
+}
+
+export function ConditionalLayout({ children }: ConditionalLayoutProps) {
+  const pathname = usePathname()
+  
+  if (pathname?.startsWith('/admin')) {
+    return <>{children}</>
+  }
+
+  return (
+    <div className="relative flex min-h-screen flex-col">
+      <ErrorBoundary>
+        <Header />
+      </ErrorBoundary>
+
+      {/* 🔧 SOLUCIÓN: Padding responsivo para compensar header fijo */}
+      <main id="main-content" className="flex-1 pt-36 md:pt-40">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
+
+      <ErrorBoundary>
+        <Footer />
+      </ErrorBoundary>
+    </div>
+  )
+}
