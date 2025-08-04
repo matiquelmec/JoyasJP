@@ -18,7 +18,12 @@ export async function POST(request: NextRequest) {
   }
 
   if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Admin client not available' }, { status: 500 })
+    console.error('Admin client not available - missing SUPABASE_SERVICE_ROLE_KEY')
+    return NextResponse.json({ 
+      error: 'Admin client not available - missing SUPABASE_SERVICE_ROLE_KEY',
+      hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    }, { status: 500 })
   }
 
   try {
