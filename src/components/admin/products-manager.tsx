@@ -20,6 +20,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
   AlertTriangle,
   Edit,
   Eye,
@@ -27,9 +37,12 @@ import {
   Package,
   Search,
   Trash2,
+  Plus,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
+import { ProductFormModal } from './product-form-modal'
+import { toast } from '@/hooks/use-toast'
 
 // Tipo para los datos que vienen de Supabase
 interface SupabaseProduct {
@@ -43,6 +56,8 @@ export function ProductsManager() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     loadProducts()
@@ -97,6 +112,36 @@ export function ProductsManager() {
       )
     } catch (error) {
       console.error('Error updating stock:', error)
+    }
+  }
+
+  const handleDeleteProduct = async () => {
+    if (!deleteProduct || !supabase) return
+
+    setDeleting(true)
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', deleteProduct.id)
+
+      if (error) throw error
+
+      setProducts(prev => prev.filter(p => p.id !== deleteProduct.id))
+      toast({
+        title: 'Producto eliminado',
+        description: `${deleteProduct.name} ha sido eliminado exitosamente.`,
+      })
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar el producto. Intenta nuevamente.',
+        variant: 'destructive'
+      })
+    } finally {
+      setDeleting(false)
+      setDeleteProduct(null)
     }
   }
 
@@ -218,9 +263,15 @@ export function ProductsManager() {
       {/* Tabla de productos */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Productos ({filteredProducts.length})
-          </CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>
+              Productos ({filteredProducts.length})
+            </CardTitle>
+            <ProductFormModal
+              mode="create"
+              onSave={loadProducts}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -293,11 +344,21 @@ export function ProductsManager() {
                             <Eye className="mr-2 h-4 w-4" />
                             Ver detalles
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
+                          <ProductFormModal
+                            mode="edit"
+                            product={product}
+                            onSave={loadProducts}
+                            trigger={
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                              </DropdownMenuItem>
+                            }
+                          />
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => setDeleteProduct(product)}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Eliminar
                           </DropdownMenuItem>
@@ -311,6 +372,28 @@ export function ProductsManager() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Diálogo de confirmación para eliminar */}
+      <AlertDialog open={!!deleteProduct} onOpenChange={() => setDeleteProduct(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. El producto "{deleteProduct?.name}" será eliminado permanentemente de la base de datos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteProduct}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleting}
+            >
+              {deleting ? 'Eliminando...' : 'Eliminar'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
