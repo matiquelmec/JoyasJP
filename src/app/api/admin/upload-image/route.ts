@@ -66,9 +66,14 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Storage upload error:', error)
+      console.error('File path:', filePath)
+      console.error('File type:', file.type)
+      console.error('Buffer size:', buffer.length)
       return NextResponse.json({ 
         error: 'Failed to upload image to storage',
-        details: error.message 
+        details: error.message,
+        filePath,
+        category 
       }, { status: 500 })
     }
 
