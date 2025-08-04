@@ -28,7 +28,9 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
 -- Política para permitir que los administradores vean todos los pedidos
 -- Nota: En producción, deberías usar un sistema de autenticación más robusto
-CREATE POLICY IF NOT EXISTS "Allow admin access to orders" ON public.orders
+-- Primero eliminar la política si existe, luego crearla
+DROP POLICY IF EXISTS "Allow admin access to orders" ON public.orders;
+CREATE POLICY "Allow admin access to orders" ON public.orders
   FOR ALL USING (true);
 
 -- Comentarios para documentar la tabla
