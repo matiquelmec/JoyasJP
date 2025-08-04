@@ -16,7 +16,8 @@ class AdminAPI {
     })
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
     
     const data = await response.json()
@@ -64,7 +65,8 @@ class AdminAPI {
     })
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
     
     return response.json()
