@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
+import { siteConfig } from '@/lib/config'
 
 // Verificar contraseña de admin (en producción usar JWT/session mejor)
 function verifyAdminAuth(request: NextRequest) {
@@ -43,21 +44,21 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (error && error.code === 'PGRST116') {
-      // No configuration exists, return defaults
+      // No configuration exists, return defaults from config.ts
       return NextResponse.json({ 
         configuration: {
-          store_name: 'Joyas JP',
-          store_email: 'contacto@joyasjp.com',
-          store_description: 'Alta joyería para la escena urbana con diseños únicos y calidad premium.',
+          store_name: siteConfig.name,
+          store_email: siteConfig.business.contact.email,
+          store_description: siteConfig.description,
           shipping_cost: 3000,
           free_shipping_from: 50000,
-          shipping_zones: 'Santiago, Valparaíso, Concepción, La Serena',
-          admin_email: 'admin@joyasjp.com',
+          shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
+          admin_email: siteConfig.business.contact.email,
           notify_new_orders: true,
           notify_low_stock: true,
           notify_new_customers: false,
-          mercadopago_public_key: '',
-          mercadopago_access_token: ''
+          mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || '',
+          mercadopago_access_token: process.env.MP_ACCESS_TOKEN || ''
         }
       })
     }

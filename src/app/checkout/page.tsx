@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast'
 import { createOrder } from '@/lib/api'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSiteConfig } from '@/hooks/use-site-config'
 
 interface CheckoutFormData {
   customerName: string
@@ -46,6 +47,7 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { items, clearCart } = useCart()
   const { toast } = useToast()
+  const { config } = useSiteConfig()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
@@ -58,6 +60,8 @@ export default function CheckoutPage() {
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const shippingCost = subtotal >= (config?.free_shipping_from || 50000) ? 0 : (config?.shipping_cost || 3000)
+  const total = subtotal + shippingCost
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -366,12 +370,21 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Envío</span>
-                      <span className="text-green-600">Gratis</span>
+                      {shippingCost === 0 ? (
+                        <span className="text-green-600">Gratis</span>
+                      ) : (
+                        <span>${shippingCost.toLocaleString('es-CL')}</span>
+                      )}
                     </div>
+                    {subtotal < (config?.free_shipping_from || 50000) && (
+                      <div className="text-xs text-muted-foreground">
+                        Envío gratis en compras sobre ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
+                      </div>
+                    )}
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
-                      <span>${subtotal.toLocaleString('es-CL')}</span>
+                      <span>${total.toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>
