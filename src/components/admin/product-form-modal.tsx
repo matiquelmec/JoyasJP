@@ -25,6 +25,7 @@ import { Plus, Save, X } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from '@/hooks/use-toast'
+import { ImageUpload } from './image-upload'
 
 interface ProductFormModalProps {
   mode: 'create' | 'edit'
@@ -218,28 +219,12 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="imageUrl">URL de la Imagen</Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-              placeholder="https://ejemplo.com/imagen.jpg"
-            />
-            {formData.imageUrl && (
-              <div className="mt-2">
-                <img
-                  src={formData.imageUrl}
-                  alt="Preview"
-                  className="w-20 h-20 object-cover rounded-lg border"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              </div>
-            )}
-          </div>
+          <ImageUpload
+            currentImage={formData.imageUrl}
+            onImageUploaded={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
+            disabled={loading}
+            category={formData.category}
+          />
 
           <div>
             <Label htmlFor="description">Descripción</Label>
