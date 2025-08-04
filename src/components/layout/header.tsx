@@ -40,7 +40,11 @@ export function Header() {
     >
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
-          <span className="text-2xl font-bold text-primary">Joyas JP</span>
+          <img
+            src="/assets/logo.png"
+            alt="Joyas JP Logo"
+            className="h-16 w-auto"
+          />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
@@ -77,9 +81,11 @@ export function Header() {
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
                     <Link href="/" className="flex items-center h-20">
-                      <span className="text-2xl font-bold text-primary">
-                        Joyas JP
-                      </span>
+                      <img
+                        src="/assets/logo.png"
+                        alt="Joyas JP Logo"
+                        className="h-12 w-auto"
+                      />
                     </Link>
                     <SheetClose asChild>
                       <Button variant="ghost" size="lg">
