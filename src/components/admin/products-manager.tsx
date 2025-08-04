@@ -35,7 +35,6 @@ import {
   Eye,
   MoreHorizontal,
   Package,
-  Search,
   Trash2,
   Plus,
   Undo2,
@@ -58,7 +57,6 @@ interface SupabaseProduct {
 export function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -193,10 +191,8 @@ export function ProductsManager() {
   }
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.category.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory
-    return matchesSearch && matchesCategory
+    return matchesCategory
   })
 
   const categories = Array.from(new Set(products.map(p => p.category)))
@@ -320,22 +316,13 @@ export function ProductsManager() {
         </Card>
       </div>
 
-      {/* Filtros y búsqueda */}
+      {/* Filtros */}
       <Card>
         <CardHeader>
           <CardTitle>Filtrar Productos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nombre o categoría..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
-            </div>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
@@ -353,15 +340,9 @@ export function ProductsManager() {
       {/* Tabla de productos */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>
-              Productos ({filteredProducts.length})
-            </CardTitle>
-            <ProductFormModal
-              mode="create"
-              onSave={loadProducts}
-            />
-          </div>
+          <CardTitle>
+            Productos ({filteredProducts.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">

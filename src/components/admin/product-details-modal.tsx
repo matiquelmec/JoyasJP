@@ -175,7 +175,7 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
                     {product.materials && (
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-gray-600">Materiales:</span>
-                        <span className="text-sm bg-gray-100 px-2 py-1 rounded">
+                        <span className="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded">
                           {product.materials}
                         </span>
                       </div>
@@ -187,7 +187,7 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
                           <Palette className="w-4 h-4 mr-1" />
                           Color:
                         </span>
-                        <span className="text-sm bg-gray-100 px-2 py-1 rounded">
+                        <span className="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded">
                           {product.color}
                         </span>
                       </div>
@@ -199,7 +199,7 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
                           <Ruler className="w-4 h-4 mr-1" />
                           Dimensiones:
                         </span>
-                        <span className="text-sm bg-gray-100 px-2 py-1 rounded">
+                        <span className="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded">
                           {product.dimensions}
                         </span>
                       </div>
