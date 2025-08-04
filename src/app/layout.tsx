@@ -72,9 +72,9 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: '/assets/logo.ico',
-    shortcut: '/assets/logo.ico',
-    apple: '/assets/logo.ico',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   robots: {
     index: true,
@@ -147,13 +147,9 @@ export default function RootLayout({
           crossOrigin=""
         />
 
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/assets/logo.ico"
-        />
-        <link rel="icon" type="image/x-icon" href="/assets/logo.ico" />
-        <link rel="shortcut icon" type="image/x-icon" href="/assets/logo.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
 
         <script
