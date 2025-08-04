@@ -32,7 +32,12 @@ class AdminAPI {
     })
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      // Handle duplicate product error specifically
+      if (response.status === 409) {
+        throw new Error(errorData.message || 'Producto duplicado')
+      }
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
     
     const data = await response.json()

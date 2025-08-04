@@ -68,6 +68,25 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
+    // Check for duplicate products (same name + category)
+    const { data: existingProducts, error: searchError } = await client
+      .from('products')
+      .select('id, name, category')
+      .eq('name', productData.name.trim())
+      .eq('category', productData.category)
+      .is('deleted_at', null) // Only check non-deleted products
+
+    if (searchError) {
+      console.warn('Error checking for duplicates:', searchError)
+      // Continue with creation if duplicate check fails
+    } else if (existingProducts && existingProducts.length > 0) {
+      return NextResponse.json({ 
+        error: 'Producto duplicado',
+        message: `Ya existe un producto llamado "${productData.name}" en la categoría "${productData.category}". Los productos deben tener nombres únicos dentro de cada categoría.`,
+        existingProduct: existingProducts[0]
+      }, { status: 409 }) // 409 Conflict
+    }
+    
     const { data, error } = await client
       .from('products')
       .insert([productData])
