@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Dialog,
   DialogContent,
@@ -165,8 +166,13 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Crear Nuevo Producto' : 'Editar Producto'}
+            {mode === 'create' ? 'Crear Nuevo Producto' : `Editar: ${product?.name || 'Producto'}`}
           </DialogTitle>
+          {mode === 'edit' && (
+            <p className="text-sm text-muted-foreground">
+              ID: {product?.id} • Modifica los campos que necesites actualizar
+            </p>
+          )}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">

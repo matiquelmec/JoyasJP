@@ -42,6 +42,7 @@ import {
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 import { ProductFormModal } from './product-form-modal'
+import { ProductDetailsModal } from './product-details-modal'
 import { toast } from '@/hooks/use-toast'
 
 // Tipo para los datos que vienen de Supabase
@@ -340,10 +341,16 @@ export function ProductsManager() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalles
-                          </DropdownMenuItem>
+                          <ProductDetailsModal
+                            product={product}
+                            onSave={loadProducts}
+                            trigger={
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Ver detalles
+                              </DropdownMenuItem>
+                            }
+                          />
                           <ProductFormModal
                             mode="edit"
                             product={product}
@@ -351,7 +358,7 @@ export function ProductsManager() {
                             trigger={
                               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                Editar
+                                Editar rápido
                               </DropdownMenuItem>
                             }
                           />
