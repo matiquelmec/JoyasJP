@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -6,14 +6,14 @@ const nextConfig = {
   output: 'standalone',
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
-  
+
   // 🚨 CONFIGURACIÓN TEMPORAL PARA LANZAMIENTO RÁPIDO
   typescript: {
     // Ignorar errores de TypeScript temporalmente
     ignoreBuildErrors: true,
   },
   eslint: {
-    // Ignorar warnings de ESLint temporalmente  
+    // Ignorar warnings de ESLint temporalmente
     ignoreDuringBuilds: true,
   },
 
@@ -54,12 +54,15 @@ const nextConfig = {
   assetPrefix: '',
 
   // Webpack config personalizado
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
-    config.resolve.alias['@'] = path.resolve(__dirname, 'src');
+  webpack: (
+    config,
+    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
+  ) => {
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src')
 
     // Configuración para manejar archivos estáticos
     config.module.rules.push({
-            test: /\.(png|jpe?g|gif|svg|webp)$/i,
+      test: /\.(png|jpe?g|gif|svg|webp)$/i,
       exclude: /favicon\.ico$/,
       use: {
         loader: 'file-loader',
@@ -69,7 +72,7 @@ const nextConfig = {
           name: '[name].[hash].[ext]',
         },
       },
-    });
+    })
 
     // Configuración para videos
     config.module.rules.push({
@@ -82,20 +85,21 @@ const nextConfig = {
           name: '[name].[hash].[ext]',
         },
       },
-    });
+    })
 
-    return config;
+    return config
   },
 
   // Variables de entorno públicas
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app',
+    NEXT_PUBLIC_SITE_URL:
+      process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app',
   },
 
   // Optimizaciones adicionales
   experimental: {
     optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

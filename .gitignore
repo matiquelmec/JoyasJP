@@ -37,9 +37,35 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.genkit/*
+# environment files
 .env*
+!.env.example
+
+# temporary files
+.genkit/*
+nul
+*.tmp
+*.temp
+
+# backup files
+*.backup
+*.backup*
+*~
+
+# documentation files (temporary)
+*.md
+!README.md
+
+# netlify build scripts (temporary)
+netlify-build*.sh
+netlify-optimized.toml
+commit_message.txt
 
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# scripts de desarrollo temporal
+scripts/migrate-*.js
+scripts/check-*.ts
+scripts/test-*.ts

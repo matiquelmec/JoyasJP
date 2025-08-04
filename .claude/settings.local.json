@@ -15,7 +15,12 @@
       "Bash(mv:*)",
       "Bash(git fetch:*)",
       "Bash(cp:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npx @modelcontextprotocol/server-filesystem:*)",
+      "Bash(npm run clean:*)",
+      "Bash(npm run db:test:*)",
+      "Bash(npm run:*)",
+      "Bash(true)"
     ],
     "deny": []
   }

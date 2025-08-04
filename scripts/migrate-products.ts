@@ -1,97 +1,126 @@
 import { createClient } from '@supabase/supabase-js';
 import { products } from '../src/lib/products';
 import * as dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
-// Load environment variables
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: join(__dirname, '..', '.env.local') });
+// Cargar variables de entorno
+dotenv.config({ path: '.env.local' });
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Falta configuración de Supabase en .env.local');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function testConnection() {
+  console.log('🔗 Probando conexión a Supabase...');
+  
+  const { data, error } = await supabase
+    .from('products')
+    .select('count', { count: 'exact', head: true });
+    
+  if (error) {
+    console.error('❌ Error de conexión:', error.message);
+    return false;
+  }
+  
+  console.log('✅ Conexión exitosa');
+  return true;
+}
 
 async function migrateProducts() {
   console.log('🚀 Iniciando migración de productos a Supabase...');
+  console.log(`📦 Total de productos a migrar: ${products.length}`);
   
-  try {
-    // Verificar si la tabla existe y tiene productos
-    const { count, error: countError } = await supabase
+  // Probar conexión
+  const connected = await testConnection();
+  if (!connected) {
+    console.error('❌ No se pudo conectar a Supabase. Verifica:');
+    console.error('  1. Que la URL y ANON_KEY sean correctos');
+    console.error('  2. Que la tabla "products" exista en Supabase');
+    console.error('  3. Que tengas permisos de escritura');
+    process.exit(1);
+  }
+  
+  // Limpiar tabla existente
+  console.log('🧹 Limpiando productos existentes...');
+  const { error: deleteError } = await supabase
+    .from('products')
+    .delete()
+    .gte('id', '');
+    
+  if (deleteError && !deleteError.message.includes('0 rows')) {
+    console.log('⚠️  Error limpiando tabla:', deleteError.message);
+  }
+  
+  // Migrar productos en lotes
+  const batchSize = 100;
+  let migrated = 0;
+  let errors = 0;
+  
+  for (let i = 0; i < products.length; i += batchSize) {
+    const batch = products.slice(i, i + batchSize);
+    const batchNumber = Math.floor(i / batchSize) + 1;
+    
+    console.log(`📤 Procesando lote ${batchNumber}/${Math.ceil(products.length / batchSize)}: ${batch.length} productos...`);
+    
+    const { data, error } = await supabase
       .from('products')
-      .select('*', { count: 'exact', head: true });
+      .insert(batch)
+      .select();
     
-    if (countError) {
-      console.error('Error al verificar productos:', countError);
-      return;
+    if (error) {
+      console.error(`❌ Error en lote ${batchNumber}:`, error.message);
+      errors += batch.length;
+    } else {
+      migrated += data?.length || 0;
+      console.log(`✅ Lote ${batchNumber} completado: ${data?.length || 0} productos`);
     }
     
-    if (count && count > 0) {
-      console.log(`⚠️  La tabla ya tiene ${count} productos. ¿Deseas continuar? (esto agregará productos duplicados)`);
-      console.log('Presiona Ctrl+C para cancelar o espera 5 segundos para continuar...');
-      await new Promise(resolve => setTimeout(resolve, 5000));
+    // Pausa entre lotes
+    if (i + batchSize < products.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
+  }
+  
+  console.log('\n📊 RESUMEN DE MIGRACIÓN:');
+  console.log(`✅ Productos migrados exitosamente: ${migrated}`);
+  console.log(`❌ Productos con errores: ${errors}`);
+  console.log(`📈 Total procesados: ${migrated + errors}/${products.length}`);
+  
+  // Verificar migración
+  console.log('\n🔍 Verificando migración...');
+  const { count, error: countError } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true });
     
-    // Migrar productos en lotes de 50
-    const batchSize = 50;
-    const batches = [];
+  if (countError) {
+    console.error('❌ Error verificando migración:', countError.message);
+  } else {
+    console.log(`📊 Productos confirmados en base de datos: ${count}`);
     
-    for (let i = 0; i < products.length; i += batchSize) {
-      batches.push(products.slice(i, i + batchSize));
+    if (count === products.length) {
+      console.log('🎉 ¡MIGRACIÓN COMPLETADA EXITOSAMENTE!');
+      console.log('🚀 Tu e-commerce está listo para funcionar con Supabase');
+    } else {
+      console.log(`⚠️  Advertencia: Esperados ${products.length}, encontrados ${count}`);
     }
+  }
+  
+  // Mostrar ejemplos
+  console.log('\n📝 Ejemplo de productos migrados:');
+  const { data: sampleProducts } = await supabase
+    .from('products')
+    .select('id, name, price, category')
+    .limit(3);
     
-    console.log(`📦 Migrando ${products.length} productos en ${batches.length} lotes...`);
-    
-    for (let i = 0; i < batches.length; i++) {
-      const batch = batches[i];
-      console.log(`  Procesando lote ${i + 1}/${batches.length}...`);
-      
-      const { error } = await supabase
-        .from('products')
-        .insert(batch);
-      
-      if (error) {
-        console.error(`❌ Error en lote ${i + 1}:`, error);
-        continue;
-      }
-      
-      console.log(`  ✅ Lote ${i + 1} migrado exitosamente`);
-    }
-    
-    // Verificar migración
-    const { count: finalCount } = await supabase
-      .from('products')
-      .select('*', { count: 'exact', head: true });
-    
-    console.log(`\n✨ Migración completada! Total de productos en la base de datos: ${finalCount}`);
-    
-    // Crear índices para optimización
-    console.log('\n🔧 Creando índices para optimización...');
-    
-    // Nota: Estos índices deben crearse directamente en Supabase SQL Editor
-    console.log(`
-Por favor, ejecuta estos comandos en el SQL Editor de Supabase:
-
--- Índices para búsqueda y filtrado
-CREATE INDEX IF NOT EXISTS idx_products_name ON products USING gin(to_tsvector('spanish', name));
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
-CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
-CREATE INDEX IF NOT EXISTS idx_products_stock ON products(stock);
-CREATE INDEX IF NOT EXISTS idx_products_created ON products(created_at DESC);
-
--- Índice compuesto para queries comunes
-CREATE INDEX IF NOT EXISTS idx_products_category_price ON products(category, price);
-
--- Full text search
-ALTER TABLE products ADD COLUMN IF NOT EXISTS search_vector tsvector 
-  GENERATED ALWAYS AS (to_tsvector('spanish', coalesce(name, '') || ' ' || coalesce(description, '') || ' ' || coalesce(category, ''))) STORED;
-CREATE INDEX IF NOT EXISTS idx_products_search ON products USING gin(search_vector);
-    `);
-    
-  } catch (error) {
-    console.error('❌ Error durante la migración:', error);
+  if (sampleProducts) {
+    sampleProducts.forEach(product => {
+      console.log(`  • ${product.name} (${product.category}) - $${product.price}`);
+    });
   }
 }
 
