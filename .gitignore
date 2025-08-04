@@ -55,6 +55,7 @@ nul
 # documentation files (temporary)
 *.md
 !README.md
+!DESARROLLO.md
 
 # netlify build scripts (temporary)
 netlify-build*.sh
