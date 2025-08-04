@@ -69,10 +69,16 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
-    // Add UUID if not automatically generated
+    // Use provided code as ID if available, otherwise generate UUID
+    const productId = productData.code || crypto.randomUUID()
+    
+    // Remove code from productData since it's not a database column
+    const { code, ...productDataWithoutCode } = productData
+    
+    // Add the ID
     const productWithId = {
-      id: crypto.randomUUID(),
-      ...productData
+      id: productId,
+      ...productDataWithoutCode
     }
     
     const { data, error } = await client
@@ -105,7 +111,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
     }
 
-    const { id, ...productData } = await request.json()
+    const { id, code, ...productData } = await request.json()
     
     const { data, error } = await client
       .from('products')
