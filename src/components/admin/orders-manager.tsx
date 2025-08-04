@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,92 +13,44 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
   Clock,
   Package,
   Truck,
   CheckCircle,
   XCircle,
-  MoreHorizontal,
-  Eye,
-  MessageSquare,
+  ShoppingBag,
+  Plus,
+  AlertCircle
 } from 'lucide-react'
+import Link from 'next/link'
 
-// Datos de ejemplo para pedidos (en producción vendrían de Supabase)
-const mockOrders = [
-  {
-    id: 'ORD-001',
-    customerName: 'María González',
-    customerEmail: 'maria@example.com',
-    date: '2024-08-04',
-    status: 'pending',
-    total: 85000,
-    items: [
-      { name: 'Collar Oro Rosa', quantity: 1, price: 85000 }
-    ],
-    shippingAddress: 'Av. Providencia 1234, Santiago'
-  },
-  {
-    id: 'ORD-002',
-    customerName: 'Carlos Martínez',
-    customerEmail: 'carlos@example.com',
-    date: '2024-08-03',
-    status: 'processing',
-    total: 120000,
-    items: [
-      { name: 'Anillo Plata 925', quantity: 2, price: 60000 }
-    ],
-    shippingAddress: 'Las Condes 567, Santiago'
-  },
-  {
-    id: 'ORD-003',
-    customerName: 'Ana Rodríguez',
-    customerEmail: 'ana@example.com',
-    date: '2024-08-02',
-    status: 'shipped',
-    total: 95000,
-    items: [
-      { name: 'Pulsera Cuero', quantity: 1, price: 45000 },
-      { name: 'Aros Plata', quantity: 1, price: 50000 }
-    ],
-    shippingAddress: 'Ñuñoa 890, Santiago'
-  },
-  {
-    id: 'ORD-004',
-    customerName: 'Luis Herrera',
-    customerEmail: 'luis@example.com',
-    date: '2024-08-01',
-    status: 'delivered',
-    total: 150000,
-    items: [
-      { name: 'Collar Premium', quantity: 1, price: 150000 }
-    ],
-    shippingAddress: 'Vitacura 123, Santiago'
-  },
-  {
-    id: 'ORD-005',
-    customerName: 'Carmen Silva',
-    customerEmail: 'carmen@example.com',
-    date: '2024-07-31',
-    status: 'cancelled',
-    total: 75000,
-    items: [
-      { name: 'Anillo Básico', quantity: 1, price: 75000 }
-    ],
-    shippingAddress: 'Maipú 456, Santiago'
-  }
-]
-
-type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+interface Order {
+  id: string
+  customerName: string
+  customerEmail: string
+  date: string
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  total: number
+  items: Array<{
+    name: string
+    quantity: number
+    price: number
+  }>
+  shippingAddress: string
+}
 
 export function OrdersManager() {
-  const [orders] = useState(mockOrders)
-  const [filterStatus, setFilterStatus] = useState<OrderStatus | 'all'>('all')
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Simular carga de pedidos - en realidad vendrían de una API
+    // Por ahora mostramos que no hay pedidos
+    setTimeout(() => {
+      setOrders([]) // Array vacío = no hay pedidos
+      setLoading(false)
+    }, 1000)
+  }, [])
 
   const formatCLP = (amount: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -106,26 +58,6 @@ export function OrdersManager() {
       currency: 'CLP',
       minimumFractionDigits: 0,
     }).format(amount)
-  }
-
-  const getStatusBadge = (status: OrderStatus) => {
-    const statusConfig = {
-      pending: { label: 'Pendiente', variant: 'secondary' as const, icon: Clock },
-      processing: { label: 'Procesando', variant: 'default' as const, icon: Package },
-      shipped: { label: 'Enviado', variant: 'outline' as const, icon: Truck },
-      delivered: { label: 'Entregado', variant: 'default' as const, icon: CheckCircle, className: 'bg-green-100 text-green-800' },
-      cancelled: { label: 'Cancelado', variant: 'destructive' as const, icon: XCircle }
-    } as const
-
-    const config = statusConfig[status]
-    const Icon = config.icon
-
-    return (
-      <Badge variant={config.variant} className={'className' in config ? config.className : undefined}>
-        <Icon className="mr-1 h-3 w-3" />
-        {config.label}
-      </Badge>
-    )
   }
 
   const getStatusStats = () => {
@@ -138,14 +70,18 @@ export function OrdersManager() {
     }
   }
 
-  const filteredOrders = filterStatus === 'all' 
-    ? orders 
-    : orders.filter(order => order.status === filterStatus)
-
   const stats = getStatusStats()
   const totalRevenue = orders
     .filter(o => o.status === 'delivered')
     .reduce((sum, order) => sum + order.total, 0)
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-muted-foreground">Cargando pedidos...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -211,132 +147,63 @@ export function OrdersManager() {
         </Card>
       </div>
 
-      {/* Filtros */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtrar por Estado</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-2 flex-wrap">
-            <Button
-              variant={filterStatus === 'all' ? 'default' : 'outline'}
-              onClick={() => setFilterStatus('all')}
-              size="sm"
-            >
-              Todos ({orders.length})
-            </Button>
-            <Button
-              variant={filterStatus === 'pending' ? 'default' : 'outline'}
-              onClick={() => setFilterStatus('pending')}
-              size="sm"
-            >
-              <Clock className="mr-1 h-3 w-3" />
-              Pendientes ({stats.pending})
-            </Button>
-            <Button
-              variant={filterStatus === 'processing' ? 'default' : 'outline'}
-              onClick={() => setFilterStatus('processing')}
-              size="sm"
-            >
-              <Package className="mr-1 h-3 w-3" />
-              Procesando ({stats.processing})
-            </Button>
-            <Button
-              variant={filterStatus === 'shipped' ? 'default' : 'outline'}
-              onClick={() => setFilterStatus('shipped')}
-              size="sm"
-            >
-              <Truck className="mr-1 h-3 w-3" />
-              Enviados ({stats.shipped})
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Estado sin pedidos */}
+      {orders.length === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
+              <ShoppingBag className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No hay pedidos aún</h3>
+            <p className="text-muted-foreground text-center max-w-md mb-6">
+              Los pedidos aparecerán aquí cuando los clientes realicen compras en tu tienda. 
+              Mientras tanto, asegúrate de tener productos disponibles.
+            </p>
+            <div className="flex gap-3">
+              <Link href="/admin/productos">
+                <Button>
+                  <Package className="w-4 h-4 mr-2" />
+                  Ver Productos
+                </Button>
+              </Link>
+              <Link href="/shop">
+                <Button variant="outline">
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  Ir a la Tienda
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Tabla de pedidos */}
-      <Card>
+      {/* Información sobre el sistema de pedidos */}
+      <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-900">
         <CardHeader>
-          <CardTitle>
-            Pedidos ({filteredOrders.length})
+          <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+            <AlertCircle className="h-5 w-5" />
+            Sistema de Pedidos
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Pedido</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Fecha</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Productos</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">
-                      {order.id}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{order.customerName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {order.customerEmail}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(order.date).toLocaleDateString('es-CL')}
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(order.status as OrderStatus)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        {order.items.map((item, index) => (
-                          <div key={index} className="text-sm">
-                            <span className="font-medium">{item.quantity}x</span> {item.name}
-                          </div>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-bold">
-                      {formatCLP(order.total)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalles
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Contactar cliente
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Package className="mr-2 h-4 w-4" />
-                            Marcar como procesado
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Truck className="mr-2 h-4 w-4" />
-                            Marcar como enviado
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div className="text-blue-700 dark:text-blue-300 space-y-2">
+            <p className="text-sm">
+              <strong>Estado actual:</strong> Los pedidos se procesan actualmente de forma manual a través de:
+            </p>
+            <ul className="text-sm list-disc list-inside space-y-1 ml-4">
+              <li>Formulario de checkout que envía emails con los datos del pedido</li>
+              <li>La información de compra se guarda temporalmente en el navegador</li>
+              <li>Los pagos se procesan mediante MercadoPago</li>
+            </ul>
+            <div className="mt-4 p-3 bg-white dark:bg-gray-900 rounded-lg border">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                Para automatizar completamente el sistema:
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Se puede implementar una tabla 'orders' en Supabase para almacenar todos los pedidos 
+                y mostrar estadísticas detalladas aquí.
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

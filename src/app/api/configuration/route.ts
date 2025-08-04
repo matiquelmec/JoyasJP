@@ -29,8 +29,6 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    console.log('Configuration from DB:', data)
-
     // Filter out sensitive data
     const publicConfig = {
       store_name: data.store_name,
@@ -41,8 +39,6 @@ export async function GET(request: NextRequest) {
       shipping_zones: data.shipping_zones,
       mercadopago_public_key: data.mercadopago_public_key
     }
-
-    console.log('Public config being sent:', publicConfig)
 
     return NextResponse.json({ configuration: publicConfig })
   } catch (error) {

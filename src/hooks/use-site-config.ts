@@ -42,7 +42,6 @@ export function useSiteConfig() {
     })
       .then(res => res.json())
       .then(data => {
-        console.log('Configuration loaded:', data.configuration)
         if (data.configuration) {
           setConfig(data.configuration)
         }

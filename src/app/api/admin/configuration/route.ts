@@ -96,9 +96,6 @@ export async function POST(request: NextRequest) {
       .select('id')
       .single()
 
-    // Log for debugging
-    console.log('Updating configuration:', configData)
-    console.log('Existing record:', existing)
 
     let result
     if (existing && !checkError) {
