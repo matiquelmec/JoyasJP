@@ -198,8 +198,8 @@ export default function RootLayout({
             <Header />
           </ErrorBoundary>
 
-          {/* 🔧 SOLUCIÓN: Agregamos pt-36 para compensar el header fijo de h-36 */}
-          <main id="main-content" className="flex-1 pt-36">
+          {/* 🔧 SOLUCIÓN: Padding responsivo para compensar header fijo */}
+          <main id="main-content" className="flex-1 pt-36 md:pt-40">
             <ErrorBoundary>{children}</ErrorBoundary>
           </main>
 
