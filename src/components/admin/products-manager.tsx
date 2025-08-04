@@ -38,6 +38,8 @@ import {
   Search,
   Trash2,
   Plus,
+  Undo2,
+  Clock,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
@@ -59,10 +61,25 @@ export function ProductsManager() {
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [recentlyDeleted, setRecentlyDeleted] = useState<{
+    product: Product
+    timestamp: number
+  } | null>(null)
 
   useEffect(() => {
     loadProducts()
   }, [])
+
+  // Auto-clear recently deleted after 10 seconds
+  useEffect(() => {
+    if (recentlyDeleted) {
+      const timer = setTimeout(() => {
+        setRecentlyDeleted(null)
+      }, 10000) // 10 seconds to undo
+
+      return () => clearTimeout(timer)
+    }
+  }, [recentlyDeleted])
 
   const loadProducts = async () => {
     try {
@@ -128,10 +145,20 @@ export function ProductsManager() {
 
       if (error) throw error
 
+      // Store the deleted product for potential undo
+      setRecentlyDeleted({
+        product: deleteProduct,
+        timestamp: Date.now()
+      })
+
+      // Remove from UI
       setProducts(prev => prev.filter(p => p.id !== deleteProduct.id))
+      
+      // Show success toast
       toast({
         title: 'Producto eliminado',
-        description: `${deleteProduct.name} ha sido eliminado exitosamente.`,
+        description: `${deleteProduct.name} ha sido eliminado. Puedes restaurarlo desde el banner naranja que aparece arriba.`,
+        duration: 5000,
       })
     } catch (error) {
       console.error('Error deleting product:', error)
@@ -143,6 +170,44 @@ export function ProductsManager() {
     } finally {
       setDeleting(false)
       setDeleteProduct(null)
+    }
+  }
+
+  const handleUndoDelete = async () => {
+    if (!recentlyDeleted || !supabase) return
+
+    try {
+      // Re-insert the product into the database
+      const productData = {
+        ...recentlyDeleted.product,
+        // Remove any computed fields that shouldn't be inserted
+        imageUrl: undefined,
+        image_url: recentlyDeleted.product.imageUrl || null,
+      }
+
+      const { error } = await supabase
+        .from('products')
+        .insert([productData])
+
+      if (error) throw error
+
+      // Add back to UI
+      setProducts(prev => [...prev, recentlyDeleted.product])
+      
+      // Clear the recently deleted state
+      setRecentlyDeleted(null)
+
+      toast({
+        title: 'Producto restaurado',
+        description: `${recentlyDeleted.product.name} ha sido restaurado exitosamente.`,
+      })
+    } catch (error) {
+      console.error('Error restoring product:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudo restaurar el producto. Es posible que ya no se pueda recuperar.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -182,6 +247,46 @@ export function ProductsManager() {
 
   return (
     <div className="space-y-6">
+      {/* Banner de producto eliminado recientemente */}
+      {recentlyDeleted && (
+        <Card className="border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-950">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-orange-600" />
+                <div>
+                  <p className="font-medium text-orange-800 dark:text-orange-200">
+                    Producto eliminado recientemente
+                  </p>
+                  <p className="text-sm text-orange-700 dark:text-orange-300">
+                    "{recentlyDeleted.product.name}" - Puedes restaurarlo antes de que expire
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleUndoDelete}
+                  className="border-orange-300 text-orange-800 hover:bg-orange-100"
+                >
+                  <Undo2 className="w-4 h-4 mr-2" />
+                  Restaurar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setRecentlyDeleted(null)}
+                  className="text-orange-600 hover:bg-orange-100"
+                >
+                  Descartar
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Estadísticas rápidas */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
