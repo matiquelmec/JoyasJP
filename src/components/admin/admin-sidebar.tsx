@@ -11,12 +11,14 @@ import {
   BarChart3,
   Users,
   Settings,
+  BookOpen,
   LogOut
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Productos', href: '/admin/productos', icon: Package },
+  { name: 'Manual', href: '/admin/manual', icon: BookOpen },
   { name: 'Pedidos', href: '/admin/pedidos', icon: ShoppingCart },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Clientes', href: '/admin/clientes', icon: Users },
