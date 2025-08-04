@@ -95,6 +95,36 @@ class AdminAPI {
   async updateStock(id: string, stock: number) {
     return this.updateProduct(id, { stock })
   }
+
+  async getConfiguration() {
+    const response = await fetch('/api/admin/configuration', {
+      headers: this.getHeaders()
+    })
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.configuration
+  }
+
+  async updateConfiguration(configData: any) {
+    const response = await fetch('/api/admin/configuration', {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(configData)
+    })
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data.configuration
+  }
 }
 
 export const adminAPI = new AdminAPI()
