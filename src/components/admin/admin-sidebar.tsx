@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { useSiteConfig } from '@/hooks/use-site-config'
 import {
   LayoutDashboard,
   Package,
@@ -27,6 +28,7 @@ const navigation = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const { config } = useSiteConfig()
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
@@ -36,13 +38,13 @@ export function AdminSidebar() {
           <Link href="/" className="flex items-center space-x-3">
             <Image
               src="/assets/logo.png"
-              alt="Joyas JP Logo"
+              alt={`${config?.store_name || 'Joyas JP'} Logo`}
               width={40}
               height={40}
               className="object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold">Joyas JP</h1>
+              <h1 className="text-xl font-bold">{config?.store_name || 'Joyas JP'}</h1>
               <p className="text-xs text-muted-foreground">Admin Panel</p>
             </div>
           </Link>

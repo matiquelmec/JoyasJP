@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
+import { useSiteConfig } from '@/hooks/use-site-config'
 
 export default function SuccessPage() {
   const { clearCart } = useCart()
+  const { config } = useSiteConfig()
 
   useEffect(() => {
     // Limpiar carrito después de compra exitosa
@@ -22,7 +24,7 @@ export default function SuccessPage() {
           ¡Pago Exitoso!
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          Gracias por tu compra en <strong>Joyas JP</strong>. Hemos recibido tu
+          Gracias por tu compra en <strong>{config?.store_name || 'Joyas JP'}</strong>. Hemos recibido tu
           pago exitosamente y estamos preparando tu pedido con mucho cuidado.
         </p>
 

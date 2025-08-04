@@ -1,7 +1,10 @@
+'use client'
+
 import { Instagram, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { siteConfig } from '@/lib/config'
+import { useSiteConfig } from '@/hooks/use-site-config'
 
 // Icono simple para TikTok
 const TikTokIcon = () => (
@@ -42,6 +45,8 @@ const contactPageContent = {
 }
 
 export default function ContactPage() {
+  const { config } = useSiteConfig()
+
   return (
     <div className="bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
@@ -74,6 +79,17 @@ export default function ContactPage() {
               >
                 {contactPageContent.phone.number}
               </a>
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Envío gratis en compras sobre{' '}
+                  <span className="font-semibold text-primary">
+                    ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
+                  </span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Costo de envío: ${(config?.shipping_cost || 3000).toLocaleString('es-CL')}
+                </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -123,10 +139,10 @@ export default function ContactPage() {
                 {contactPageContent.email.label}
               </p>
               <a
-                href={`mailto:${contactPageContent.email.address}`}
+                href={`mailto:${config?.store_email || contactPageContent.email.address}`}
                 className="text-accent text-lg hover:underline"
               >
-                {contactPageContent.email.address}
+                {config?.store_email || contactPageContent.email.address}
               </a>
             </CardContent>
           </Card>
@@ -145,6 +161,11 @@ export default function ContactPage() {
               <p className="text-muted-foreground">
                 {contactPageContent.showroom.note}
               </p>
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Zonas de envío: {config?.shipping_zones || 'Santiago, Regiones'}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

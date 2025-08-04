@@ -1,6 +1,9 @@
-import { Instagram } from 'lucide-react'
+'use client'
+
+import { Instagram, Mail, Phone } from 'lucide-react'
 import Link from 'next/link'
 import { navLinks, siteConfig } from '@/lib/config'
+import { useSiteConfig } from '@/hooks/use-site-config'
 
 const TikTokIcon = () => (
   <svg
@@ -14,24 +17,26 @@ const TikTokIcon = () => (
 )
 
 export function Footer() {
+  const { config } = useSiteConfig()
+  
   const linkClassName =
     'text-sm text-muted-foreground transition-colors hover:text-primary'
 
   return (
     <footer className="bg-background border-t border-border/50 py-12">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8 text-center">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8 text-center md:text-left">
         {/* Columna 1: Marca */}
-        <div className="flex flex-col items-center">
-          {/* "Joyas JP" ahora en blanco (color por defecto de text-foreground) */}
-          <h3 className="text-xl font-bold font-headline">{siteConfig.name}</h3>
-          {/* "Alta joyería..." ahora en amarillo (text-primary) */}
+        <div className="flex flex-col items-center md:items-start">
+          <h3 className="text-xl font-bold font-headline">
+            {config?.store_name || siteConfig.name}
+          </h3>
           <p className="mt-2 text-sm text-primary">
-            Alta joyería para la escena urbana.
+            {config?.store_description || siteConfig.description}
           </p>
         </div>
 
         {/* Columna 2: Navegación */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center md:items-start">
           <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
             Navegación
           </h4>
@@ -46,12 +51,29 @@ export function Footer() {
           </ul>
         </div>
 
-        {/* Columna 3: Redes Sociales */}
-        <div className="flex flex-col items-center">
+        {/* Columna 3: Contacto */}
+        <div className="flex flex-col items-center md:items-start">
+          <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
+            Contacto
+          </h4>
+          <div className="mt-4 space-y-2 text-sm">
+            <div className="flex items-center justify-center md:justify-start gap-2">
+              <Mail className="h-4 w-4" />
+              <span>{config?.store_email || siteConfig.business.contact.email}</span>
+            </div>
+            <div className="flex items-center justify-center md:justify-start gap-2">
+              <Phone className="h-4 w-4" />
+              <span>{siteConfig.business.contact.phone}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Columna 4: Redes Sociales */}
+        <div className="flex flex-col items-center md:items-start">
           <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
             Síguenos
           </h4>
-          <div className="mt-4 flex space-x-4">
+          <div className="mt-4 flex space-x-4 justify-center md:justify-start">
             <Link
               href={siteConfig.links.instagram}
               target="_blank"
@@ -71,11 +93,17 @@ export function Footer() {
               <TikTokIcon />
             </Link>
           </div>
+          <div className="mt-4 text-sm text-muted-foreground">
+            <p>Envío gratis desde</p>
+            <p className="font-semibold text-primary">
+              ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
+            </p>
+          </div>
         </div>
       </div>
       <div className="container mx-auto mt-8 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
         <p>
-          &copy; {new Date().getFullYear()} {siteConfig.author}. Todos los
+          &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author}. Todos los
           derechos reservados.
         </p>
       </div>

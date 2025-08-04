@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Eye, EyeOff } from 'lucide-react'
+import { useSiteConfig } from '@/hooks/use-site-config'
 import Image from 'next/image'
 
 const ADMIN_PASSWORD = 'joyasjp2024' // En producción esto debe estar en variables de entorno
@@ -15,6 +16,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const { config } = useSiteConfig()
 
   useEffect(() => {
     // Verificar si ya está autenticado (en localStorage para demo)
@@ -53,14 +55,14 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
             <div className="flex justify-center mb-4">
               <Image
                 src="/assets/logo.png"
-                alt="Joyas JP Logo"
+                alt={`${config?.store_name || 'Joyas JP'} Logo`}
                 width={80}
                 height={80}
                 className="object-contain"
               />
             </div>
             <CardTitle className="text-2xl">Panel de Administración</CardTitle>
-            <p className="text-muted-foreground">Joyas JP</p>
+            <p className="text-muted-foreground">{config?.store_name || 'Joyas JP'}</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">

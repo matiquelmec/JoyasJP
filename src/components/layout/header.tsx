@@ -13,11 +13,13 @@ import {
 } from '@/components/ui/sheet'
 import { useWishlist } from '@/hooks/use-wishlist'
 import { navLinks } from '@/lib/config'
+import { useSiteConfig } from '@/hooks/use-site-config'
 import { cn } from '@/lib/utils'
 
 export function Header() {
   const [hasScrolled, setHasScrolled] = useState(false)
   const { items: wishlistItems } = useWishlist()
+  const { config } = useSiteConfig()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,7 +44,7 @@ export function Header() {
         <Link href="/" className="flex items-center h-full py-2">
           <img
             src="/assets/logo.png"
-            alt="Joyas JP Logo"
+            alt={`${config?.store_name || 'Joyas JP'} Logo`}
             className="h-20 sm:h-24 md:h-28 w-auto transition-all duration-300"
           />
         </Link>

@@ -138,7 +138,7 @@ const ProductCard = memo(function ProductCard({
           {!imageError ? (
             <Image
               src={product.imageUrl}
-              alt={`${product.name} - Joya urbana premium de Joyas JP`}
+              alt={`${product.name} - Joya urbana premium`}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={cn(
