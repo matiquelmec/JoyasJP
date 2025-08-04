@@ -147,7 +147,7 @@ export async function DELETE(request: NextRequest) {
         .delete()
         .eq('id', productId)
     } else {
-      // Soft delete (always safe)
+      // Try soft delete first
       try {
         result = await client
           .from('products')
@@ -158,6 +158,7 @@ export async function DELETE(request: NextRequest) {
           .eq('id', productId)
       } catch (softDeleteError) {
         // If soft delete fails (column doesn't exist), just set stock to 0
+        console.log('Soft delete failed, falling back to stock=0:', softDeleteError.message)
         result = await client
           .from('products')
           .update({ stock: 0 })

@@ -44,6 +44,7 @@ import {
 import type { Product } from '@/lib/types'
 import { ProductFormModal } from './product-form-modal'
 import { ProductDetailsModal } from './product-details-modal'
+import { DatabaseSetup } from './database-setup'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from '@/hooks/use-toast'
 
@@ -227,6 +228,9 @@ export function ProductsManager() {
 
   return (
     <div className="space-y-6">
+      {/* Configuración de base de datos */}
+      <DatabaseSetup />
+
       {/* Banner de producto eliminado recientemente */}
       {recentlyDeleted && (
         <Card className="border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-950">
