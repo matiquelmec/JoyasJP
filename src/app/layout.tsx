@@ -72,9 +72,7 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: '/assets/favicon.ico',
-    shortcut: '/assets/favicon.ico',
-    apple: '/assets/favicon.ico',
+    icon: '/favicon.ico',
   },
   robots: {
     index: true,
@@ -147,27 +145,21 @@ export default function RootLayout({
           crossOrigin=""
         />
 
-        <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-        <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
-        <link rel="apple-touch-icon" href="/assets/favicon.ico" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
+        <link rel="apple-touch-icon" href="/favicon.ico?v=2" />
 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* Preloads corregidos */}
+        {/* Preloads optimizados */}
         <link
           rel="preload"
           href="/assets/logo.png"
           as="image"
           type="image/png"
-        />
-        <link
-          rel="preload"
-          href="/assets/mi-video.mp4"
-          as="video"
-          type="video/mp4"
         />
       </head>
       <body

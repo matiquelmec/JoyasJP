@@ -21,7 +21,8 @@
       "Bash(npm run db:test:*)",
       "Bash(npm run:*)",
       "Bash(true)",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
