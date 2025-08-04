@@ -29,8 +29,7 @@ import {
   Smartphone,
   Monitor,
   Zap,
-  Star,
-  ArrowRight
+  Star
 } from 'lucide-react'
 
 export function CompleteManual() {
@@ -52,35 +51,6 @@ export function CompleteManual() {
         </CardHeader>
       </Card>
 
-      {/* Navegación rápida */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ArrowRight className="w-5 h-5" />
-            Navegación Rápida
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Badge variant="outline" className="p-3 justify-center cursor-pointer hover:bg-primary/10">
-              <Package className="w-4 h-4 mr-2" />
-              Productos
-            </Badge>
-            <Badge variant="outline" className="p-3 justify-center cursor-pointer hover:bg-primary/10">
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Pedidos
-            </Badge>
-            <Badge variant="outline" className="p-3 justify-center cursor-pointer hover:bg-primary/10">
-              <Settings className="w-4 h-4 mr-2" />
-              Configuración
-            </Badge>
-            <Badge variant="outline" className="p-3 justify-center cursor-pointer hover:bg-primary/10">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Dashboard
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Sección 1: Productos */}
       <Card>
