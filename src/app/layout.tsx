@@ -1,3 +1,5 @@
+'use client'
+
 import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, PT_Sans } from 'next/font/google'
 import './globals.css'
@@ -130,8 +132,6 @@ const jsonLd = {
     name: 'Joyas JP',
   },
 }
-
-'use client'
 
 export default function RootLayout({
   children,
