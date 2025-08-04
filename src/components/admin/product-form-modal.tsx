@@ -98,6 +98,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     try {
       const productData = {
         name: formData.name,
+        code: formData.code,
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
