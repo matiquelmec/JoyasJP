@@ -69,26 +69,9 @@ export async function POST(request: NextRequest) {
 
     const productData = await request.json()
     
-    // Get all existing codes to generate next available code
-    const { data: allProducts } = await client
-      .from('products')
-      .select('code')
-      .is('deleted_at', null)
-
-    const existingCodes = allProducts?.map(p => p.code).filter(Boolean) || []
-    
-    // Generate unique code for this category
-    const code = generateProductCode(productData.category, existingCodes)
-    
-    // Add code to product data
-    const productWithCode = {
-      ...productData,
-      code
-    }
-    
     const { data, error } = await client
       .from('products')
-      .insert([productWithCode])
+      .insert([productData])
       .select()
 
     if (error) throw error

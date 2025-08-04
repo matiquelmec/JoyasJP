@@ -118,12 +118,12 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         description: `${formData.name} se ha ${mode === 'create' ? 'creado' : 'actualizado'} exitosamente.`,
       })
 
-      // Show generated code to user for new products
-      if (mode === 'create' && createdProduct?.code) {
+      // Show product info to user for new products
+      if (mode === 'create' && createdProduct?.id) {
         toast({
-          title: 'Código generado',
-          description: `Código del producto: ${createdProduct.code}`,
-          duration: 10000,
+          title: 'Producto creado exitosamente',
+          description: `ID del producto: ${createdProduct.id}`,
+          duration: 5000,
         })
       }
 

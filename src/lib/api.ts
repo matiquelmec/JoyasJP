@@ -75,27 +75,14 @@ export async function createOrder(orderDetails: {
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-  // Try to find by code first, then by ID as fallback
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from('products')
     .select('*, stock')
-    .eq('code', id)
+    .eq('id', id)
     .single()
 
-  // If not found by code, try by ID (for backwards compatibility)
-  if (error && error.code === 'PGRST116') {
-    const result = await supabase
-      .from('products')
-      .select('*, stock')
-      .eq('id', id)
-      .single()
-    
-    data = result.data
-    error = result.error
-  }
-
   if (error) {
-    console.error('Error fetching product by code/ID:', error)
+    console.error('Error fetching product by ID:', error)
     return null
   }
 
