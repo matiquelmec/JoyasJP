@@ -10,10 +10,12 @@ import { Settings, Store, Mail, Globe, Shield, Save, Loader2 } from 'lucide-reac
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from '@/hooks/use-toast'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useSiteConfig } from '@/hooks/use-site-config'
 
 export default function ConfiguracionPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const { refreshConfig } = useSiteConfig()
   const [config, setConfig] = useState({
     store_name: '',
     store_email: '',
@@ -53,6 +55,10 @@ export default function ConfiguracionPage() {
     setSaving(true)
     try {
       await adminAPI.updateConfiguration(config)
+      
+      // Refrescar la configuración en toda la aplicación
+      await refreshConfig()
+      
       toast({
         title: 'Configuración guardada',
         description: `La ${section} se ha actualizado correctamente.`
