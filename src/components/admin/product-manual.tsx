@@ -41,20 +41,20 @@ export function ProductManual() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3">
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+            <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
+              <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">1</div>
               <span>Haz clic en <Badge variant="default">Agregar Producto</Badge></span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+            <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
+              <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">2</div>
               <span>Completa los campos obligatorios (*)</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+            <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
+              <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">3</div>
               <span>Sube una imagen del producto</span>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
+            <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
+              <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">4</div>
               <span>Haz clic en <Badge variant="default">Crear Producto</Badge></span>
             </div>
           </div>
@@ -65,14 +65,14 @@ export function ProductManual() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-red-600" />
+            <AlertCircle className="w-5 h-5 text-destructive" />
             Campos Obligatorios
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
             <div className="flex items-start gap-3">
-              <Tag className="w-5 h-5 text-blue-600 mt-0.5" />
+              <Tag className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Nombre del Producto *</h4>
                 <p className="text-sm text-muted-foreground">
@@ -83,7 +83,7 @@ export function ProductManual() {
             </div>
 
             <div className="flex items-start gap-3">
-              <DollarSign className="w-5 h-5 text-green-600 mt-0.5" />
+              <DollarSign className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Precio (CLP) *</h4>
                 <p className="text-sm text-muted-foreground">
@@ -93,21 +93,21 @@ export function ProductManual() {
             </div>
 
             <div className="flex items-start gap-3">
-              <Package className="w-5 h-5 text-purple-600 mt-0.5" />
+              <Package className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Categoría *</h4>
                 <p className="text-sm text-muted-foreground">Selecciona una categoría:</p>
                 <div className="flex gap-2 mt-2">
-                  <Badge>Cadenas</Badge>
-                  <Badge>Dijes</Badge>
-                  <Badge>Pulseras</Badge>
-                  <Badge>Aros</Badge>
+                  <Badge variant="outline">Cadenas</Badge>
+                  <Badge variant="outline">Dijes</Badge>
+                  <Badge variant="outline">Pulseras</Badge>
+                  <Badge variant="outline">Aros</Badge>
                 </div>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <Package className="w-5 h-5 text-orange-600 mt-0.5" />
+              <Package className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Stock Inicial *</h4>
                 <p className="text-sm text-muted-foreground">
@@ -123,17 +123,17 @@ export function ProductManual() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <ImageIcon className="w-5 h-5 text-indigo-600" />
+            <ImageIcon className="w-5 h-5 text-primary" />
             Guía de Subida de Imágenes
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <div className="p-4 rounded-lg border bg-muted/50">
             <div className="flex items-center gap-2 mb-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <h4 className="font-medium text-green-800">Recomendaciones</h4>
+              <CheckCircle className="w-5 h-5 text-primary" />
+              <h4 className="font-medium">Recomendaciones</h4>
             </div>
-            <ul className="text-sm text-green-700 space-y-1">
+            <ul className="text-sm space-y-1">
               <li>• <strong>Resolución:</strong> Mínimo 800x800px, ideal 1200x1200px</li>
               <li>• <strong>Formato:</strong> JPEG (mejor compresión) o PNG</li>
               <li>• <strong>Tamaño:</strong> Máximo 5MB</li>
@@ -142,13 +142,13 @@ export function ProductManual() {
             </ul>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <div className="p-4 rounded-lg border bg-muted/50">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="w-5 h-5 text-blue-600" />
-              <h4 className="font-medium text-blue-800">Proceso Automático</h4>
+              <Clock className="w-5 h-5 text-primary" />
+              <h4 className="font-medium">Proceso Automático</h4>
             </div>
-            <p className="text-sm text-blue-700">
-              La imagen se guarda automáticamente como <code className="bg-blue-100 px-1 rounded">nombre-producto.jpg</code> 
+            <p className="text-sm text-muted-foreground">
+              La imagen se guarda automáticamente como <code className="bg-muted px-1 rounded">nombre-producto.jpg</code> 
               en la carpeta de la categoría correspondiente.
             </p>
           </div>
@@ -159,14 +159,14 @@ export function ProductManual() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <FileText className="w-5 h-5 text-gray-600" />
+            <FileText className="w-5 h-5 text-primary" />
             Campos Opcionales
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
             <div className="flex items-start gap-3">
-              <FileText className="w-5 h-5 text-gray-600 mt-0.5" />
+              <FileText className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Descripción</h4>
                 <p className="text-sm text-muted-foreground">
@@ -176,7 +176,7 @@ export function ProductManual() {
             </div>
 
             <div className="flex items-start gap-3">
-              <Palette className="w-5 h-5 text-pink-600 mt-0.5" />
+              <Palette className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Materiales y Color</h4>
                 <p className="text-sm text-muted-foreground">
@@ -186,7 +186,7 @@ export function ProductManual() {
             </div>
 
             <div className="flex items-start gap-3">
-              <Ruler className="w-5 h-5 text-teal-600 mt-0.5" />
+              <Ruler className="w-5 h-5 text-primary mt-0.5" />
               <div>
                 <h4 className="font-medium">Dimensiones</h4>
                 <p className="text-sm text-muted-foreground">
@@ -204,34 +204,34 @@ export function ProductManual() {
           <CardTitle className="text-lg">💡 Consejos y Advertencias</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+          <div className="p-4 rounded-lg border border-destructive/20 bg-destructive/5">
             <div className="flex items-center gap-2 mb-2">
-              <AlertCircle className="w-5 h-5 text-yellow-600" />
-              <h4 className="font-medium text-yellow-800">Productos Duplicados</h4>
+              <AlertCircle className="w-5 h-5 text-destructive" />
+              <h4 className="font-medium">Productos Duplicados</h4>
             </div>
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-muted-foreground">
               No se pueden crear productos con el mismo nombre en la misma categoría. 
               El sistema te alertará si intentas crear un duplicado.
             </p>
           </div>
 
-          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <div className="p-4 rounded-lg border bg-muted/50">
             <div className="flex items-center gap-2 mb-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <h4 className="font-medium text-green-800">URLs Automáticas</h4>
+              <CheckCircle className="w-5 h-5 text-primary" />
+              <h4 className="font-medium">URLs Automáticas</h4>
             </div>
-            <p className="text-sm text-green-700">
+            <p className="text-sm text-muted-foreground">
               Cada producto genera automáticamente una URL amigable. 
-              Ej: "Cadena de Oro 18k" → <code className="bg-green-100 px-1 rounded">/shop/cadena-de-oro-18k</code>
+              Ej: "Cadena de Oro 18k" → <code className="bg-muted px-1 rounded">/shop/cadena-de-oro-18k</code>
             </p>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <div className="p-4 rounded-lg border bg-muted/50">
             <div className="flex items-center gap-2 mb-2">
-              <Upload className="w-5 h-5 text-blue-600" />
-              <h4 className="font-medium text-blue-800">Cambios Inmediatos</h4>
+              <Upload className="w-5 h-5 text-primary" />
+              <h4 className="font-medium">Cambios Inmediatos</h4>
             </div>
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-muted-foreground">
               Los productos aparecen inmediatamente en la tienda online. 
               No necesitas hacer nada adicional después de crearlos.
             </p>
@@ -246,23 +246,23 @@ export function ProductManual() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <div className="border-l-4 border-red-400 pl-4">
-              <h4 className="font-medium text-red-800">Error: "Producto duplicado"</h4>
-              <p className="text-sm text-red-600">
+            <div className="border-l-4 border-destructive pl-4">
+              <h4 className="font-medium">Error: "Producto duplicado"</h4>
+              <p className="text-sm text-muted-foreground">
                 Ya existe un producto con ese nombre en esa categoría. Cambia el nombre o la categoría.
               </p>
             </div>
 
-            <div className="border-l-4 border-orange-400 pl-4">
-              <h4 className="font-medium text-orange-800">Error: "Archivo muy grande"</h4>
-              <p className="text-sm text-orange-600">
+            <div className="border-l-4 border-destructive pl-4">
+              <h4 className="font-medium">Error: "Archivo muy grande"</h4>
+              <p className="text-sm text-muted-foreground">
                 La imagen debe ser menor a 5MB. Comprime la imagen antes de subirla.
               </p>
             </div>
 
-            <div className="border-l-4 border-yellow-400 pl-4">
-              <h4 className="font-medium text-yellow-800">La imagen no se ve</h4>
-              <p className="text-sm text-yellow-600">
+            <div className="border-l-4 border-destructive pl-4">
+              <h4 className="font-medium">La imagen no se ve</h4>
+              <p className="text-sm text-muted-foreground">
                 Verifica que el formato sea JPEG o PNG y que la imagen no esté corrupta.
               </p>
             </div>
