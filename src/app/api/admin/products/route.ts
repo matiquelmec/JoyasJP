@@ -139,6 +139,18 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Product ID required' }, { status: 400 })
     }
 
+    // First, check if deleted_at column exists by trying to query it
+    let hasDeletedAtColumn = false
+    try {
+      await client
+        .from('products')
+        .select('deleted_at')
+        .limit(1)
+      hasDeletedAtColumn = true
+    } catch (error) {
+      hasDeletedAtColumn = false
+    }
+
     let result
     if (permanent && isAdmin) {
       // Hard delete (permanent) - only with admin client
@@ -146,24 +158,21 @@ export async function DELETE(request: NextRequest) {
         .from('products')
         .delete()
         .eq('id', productId)
+    } else if (hasDeletedAtColumn) {
+      // Soft delete with deleted_at column
+      result = await client
+        .from('products')
+        .update({ 
+          deleted_at: new Date().toISOString(),
+          stock: 0 
+        })
+        .eq('id', productId)
     } else {
-      // Try soft delete first
-      try {
-        result = await client
-          .from('products')
-          .update({ 
-            deleted_at: new Date().toISOString(),
-            stock: 0 
-          })
-          .eq('id', productId)
-      } catch (softDeleteError) {
-        // If soft delete fails (column doesn't exist), just set stock to 0
-        console.log('Soft delete failed, falling back to stock=0:', softDeleteError.message)
-        result = await client
-          .from('products')
-          .update({ stock: 0 })
-          .eq('id', productId)
-      }
+      // Fallback: just set stock to 0 (hide product)
+      result = await client
+        .from('products')
+        .update({ stock: 0 })
+        .eq('id', productId)
     }
 
     if (result.error) throw result.error
