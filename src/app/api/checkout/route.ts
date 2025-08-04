@@ -1,5 +1,6 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase-client'
 import type { CartItem } from '@/hooks/use-cart'
 
 const client = new MercadoPagoConfig({
@@ -64,7 +65,57 @@ export async function POST(req: NextRequest) {
       body: preferenceBody,
     })
 
-    return NextResponse.json({ checkoutUrl: preference.init_point })
+    // Guardar orden en la base de datos
+    const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    
+    try {
+      const orderData = {
+        id: preference.id, // Usar el ID de MercadoPago como referencia
+        customer_name: customerInfo?.name || 'Cliente',
+        customer_email: customerInfo?.email || '',
+        customer_phone: customerInfo?.phone || '',
+        shipping_address: customerInfo?.address || '',
+        shipping_city: customerInfo?.city || '',
+        shipping_commune: customerInfo?.commune || '',
+        items: JSON.stringify(cartItems.map(item => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          imageUrl: item.imageUrl
+        }))),
+        total_amount: totalAmount,
+        shipping_cost: customerInfo?.shippingCost || 0,
+        status: 'pending',
+        payment_id: preference.id,
+        payment_status: 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
+      const { data: savedOrder, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderData)
+        .select()
+        .single()
+
+      if (orderError) {
+        console.error('Error saving order to database:', orderError)
+        // No fallar el checkout si no se puede guardar la orden
+        // El usuario aún puede continuar con el pago
+      } else {
+        console.log('Order saved successfully:', savedOrder.id)
+      }
+
+    } catch (dbError) {
+      console.error('Database error when saving order:', dbError)
+      // Continue with checkout even if DB save fails
+    }
+
+    return NextResponse.json({ 
+      checkoutUrl: preference.init_point,
+      orderId: preference.id
+    })
   } catch (error: any) {
     console.error('Error creating preference:', JSON.stringify(error, null, 2))
 

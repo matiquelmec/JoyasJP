@@ -26,17 +26,20 @@ import Link from 'next/link'
 
 interface Order {
   id: string
-  customerName: string
-  customerEmail: string
-  date: string
+  customer_name: string
+  customer_email: string
+  customer_phone?: string
+  shipping_address?: string
+  shipping_city?: string
+  shipping_commune?: string
+  created_at: string
+  updated_at: string
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
-  total: number
-  items: Array<{
-    name: string
-    quantity: number
-    price: number
-  }>
-  shippingAddress: string
+  total_amount: number
+  shipping_cost: number
+  items: string // JSON string
+  payment_id?: string
+  payment_status?: string
 }
 
 export function OrdersManager() {
@@ -44,13 +47,31 @@ export function OrdersManager() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simular carga de pedidos - en realidad vendrían de una API
-    // Por ahora mostramos que no hay pedidos
-    setTimeout(() => {
-      setOrders([]) // Array vacío = no hay pedidos
-      setLoading(false)
-    }, 1000)
+    fetchOrders()
   }, [])
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('/api/admin/orders', {
+        headers: {
+          'Authorization': 'Bearer joyasjp2024'
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setOrders(data.orders || [])
+      } else {
+        console.error('Error fetching orders:', response.statusText)
+        setOrders([])
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error)
+      setOrders([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const formatCLP = (amount: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -73,7 +94,32 @@ export function OrdersManager() {
   const stats = getStatusStats()
   const totalRevenue = orders
     .filter(o => o.status === 'delivered')
-    .reduce((sum, order) => sum + order.total, 0)
+    .reduce((sum, order) => sum + order.total_amount, 0)
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    try {
+      const response = await fetch('/api/admin/orders', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer joyasjp2024'
+        },
+        body: JSON.stringify({
+          orderId,
+          status: newStatus
+        })
+      })
+
+      if (response.ok) {
+        // Refresh orders after update
+        fetchOrders()
+      } else {
+        console.error('Error updating order status:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error)
+    }
+  }
 
   if (loading) {
     return (
@@ -177,6 +223,108 @@ export function OrdersManager() {
         </Card>
       )}
 
+      {/* Tabla de pedidos */}
+      {orders.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pedidos Recientes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {orders.map((order) => {
+                  const orderItems = JSON.parse(order.items)
+                  const itemCount = orderItems.reduce((sum: number, item: any) => sum + item.quantity, 0)
+                  
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-mono text-xs">
+                        {order.id.slice(0, 8)}...
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{order.customer_name}</p>
+                          <p className="text-xs text-muted-foreground">{order.customer_email}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(order.created_at).toLocaleDateString('es-CL')}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{formatCLP(order.total_amount)}</p>
+                          <p className="text-xs text-muted-foreground">{itemCount} items</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={
+                            order.status === 'delivered' ? 'default' :
+                            order.status === 'cancelled' ? 'destructive' :
+                            order.status === 'processing' ? 'secondary' :
+                            'outline'
+                          }
+                        >
+                          {order.status === 'pending' && 'Pendiente'}
+                          {order.status === 'processing' && 'Procesando'}
+                          {order.status === 'shipped' && 'Enviado'}
+                          {order.status === 'delivered' && 'Entregado'}
+                          {order.status === 'cancelled' && 'Cancelado'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {order.status === 'pending' && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => updateOrderStatus(order.id, 'processing')}
+                            >
+                              <Package className="w-4 h-4 mr-1" />
+                              Procesar
+                            </Button>
+                          )}
+                          {order.status === 'processing' && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => updateOrderStatus(order.id, 'shipped')}
+                            >
+                              <Truck className="w-4 h-4 mr-1" />
+                              Enviar
+                            </Button>
+                          )}
+                          {order.status === 'shipped' && (
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => updateOrderStatus(order.id, 'delivered')}
+                            >
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Entregar
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Información sobre el sistema de pedidos */}
       <Card className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-900">
         <CardHeader>
@@ -188,20 +336,21 @@ export function OrdersManager() {
         <CardContent>
           <div className="text-blue-700 dark:text-blue-300 space-y-2">
             <p className="text-sm">
-              <strong>Estado actual:</strong> Los pedidos se procesan actualmente de forma manual a través de:
+              <strong>Sistema de Pedidos Conectado:</strong> ✅ Completamente funcional
             </p>
             <ul className="text-sm list-disc list-inside space-y-1 ml-4">
-              <li>Formulario de checkout que envía emails con los datos del pedido</li>
-              <li>La información de compra se guarda temporalmente en el navegador</li>
-              <li>Los pagos se procesan mediante MercadoPago</li>
+              <li>✅ Checkout guarda pedidos automáticamente en la base de datos</li>
+              <li>✅ Datos del cliente y productos se almacenan en Supabase</li>
+              <li>✅ Estados de pedidos se pueden actualizar desde el admin</li>
+              <li>✅ Estadísticas e ingresos se calculan en tiempo real</li>
+              <li>✅ Integración completa con MercadoPago</li>
             </ul>
             <div className="mt-4 p-3 bg-white dark:bg-gray-900 rounded-lg border">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Para automatizar completamente el sistema:
+                Estados de pedidos disponibles:
               </p>
               <p className="text-xs text-gray-600 dark:text-gray-400">
-                Se puede implementar una tabla 'orders' en Supabase para almacenar todos los pedidos 
-                y mostrar estadísticas detalladas aquí.
+                Pendiente → Procesando → Enviado → Entregado | Cancelado
               </p>
             </div>
           </div>
