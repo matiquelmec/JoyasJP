@@ -60,6 +60,14 @@ export default function CheckoutPage() {
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  
+  // Debug configuration
+  console.log('Checkout config:', {
+    free_shipping_from: config?.free_shipping_from,
+    shipping_cost: config?.shipping_cost,
+    subtotal: subtotal
+  })
+  
   const shippingCost = subtotal >= (config?.free_shipping_from || 50000) ? 0 : (config?.shipping_cost || 3000)
   const total = subtotal + shippingCost
 

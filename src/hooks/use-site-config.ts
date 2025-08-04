@@ -37,9 +37,12 @@ export function useSiteConfig() {
 
   useEffect(() => {
     // Fetch configuration from API (public endpoint)
-    fetch('/api/configuration')
+    fetch('/api/configuration', {
+      cache: 'no-store' // Evitar caché para obtener datos frescos
+    })
       .then(res => res.json())
       .then(data => {
+        console.log('Configuration loaded:', data.configuration)
         if (data.configuration) {
           setConfig(data.configuration)
         }
