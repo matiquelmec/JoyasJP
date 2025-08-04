@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/header'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
+import { usePathname } from 'next/navigation'
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -130,6 +131,8 @@ const jsonLd = {
   },
 }
 
+'use client'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -176,23 +179,35 @@ export default function RootLayout({
           Saltar al contenido principal
         </a>
 
-        <div className="relative flex min-h-screen flex-col">
-          <ErrorBoundary>
-            <Header />
-          </ErrorBoundary>
-
-          {/* 🔧 SOLUCIÓN: Padding responsivo para compensar header fijo */}
-          <main id="main-content" className="flex-1 pt-36 md:pt-40">
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </main>
-
-          <ErrorBoundary>
-            <Footer />
-          </ErrorBoundary>
-        </div>
+        <LayoutContent>{children}</LayoutContent>
 
         <Toaster />
       </body>
     </html>
+  )
+}
+
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  
+  if (pathname?.startsWith('/admin')) {
+    return <>{children}</>
+  }
+
+  return (
+    <div className="relative flex min-h-screen flex-col">
+      <ErrorBoundary>
+        <Header />
+      </ErrorBoundary>
+
+      {/* 🔧 SOLUCIÓN: Padding responsivo para compensar header fijo */}
+      <main id="main-content" className="flex-1 pt-36 md:pt-40">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
+
+      <ErrorBoundary>
+        <Footer />
+      </ErrorBoundary>
+    </div>
   )
 }
