@@ -70,7 +70,7 @@ export function ProductsManager() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
 
       if (error) {
         console.error('Error loading products:', error)

@@ -114,8 +114,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
         color: formData.color || null,
-        detail: formData.detail || null,
-        created_at: mode === 'create' ? new Date().toISOString() : undefined
+        detail: formData.detail || null
       }
 
       let result
