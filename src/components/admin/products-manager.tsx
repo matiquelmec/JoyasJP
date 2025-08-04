@@ -177,12 +177,19 @@ export function ProductsManager() {
     if (!recentlyDeleted || !supabase) return
 
     try {
-      // Re-insert the product into the database
+      // Re-insert the product into the database with only the fields that exist in the table
       const productData = {
-        ...recentlyDeleted.product,
-        // Remove any computed fields that shouldn't be inserted
-        imageUrl: undefined,
+        id: recentlyDeleted.product.id,
+        name: recentlyDeleted.product.name,
+        price: recentlyDeleted.product.price,
+        category: recentlyDeleted.product.category,
+        stock: recentlyDeleted.product.stock || 0,
+        description: recentlyDeleted.product.description || null,
         image_url: recentlyDeleted.product.imageUrl || null,
+        materials: recentlyDeleted.product.materials || null,
+        dimensions: recentlyDeleted.product.dimensions || null,
+        color: recentlyDeleted.product.color || null,
+        detail: recentlyDeleted.product.detail || null,
       }
 
       const { error } = await supabase
