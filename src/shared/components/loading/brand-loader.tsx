@@ -186,8 +186,8 @@ export function BrandLoader({
                 key={i}
                 className="absolute w-2 h-2 bg-gradient-to-r from-yellow-400/30 to-yellow-600/30 rounded-full"
                 initial={{ 
-                  x: Math.random() * window.innerWidth,
-                  y: window.innerHeight + 20,
+                  x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 800,
+                  y: typeof window !== 'undefined' ? window.innerHeight + 20 : 600,
                   scale: 0 
                 }}
                 animate={{ 
