@@ -168,19 +168,8 @@ export default function Home() {
   return (
     <div className="flex flex-col -mt-36 md:-mt-40">
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden">
-        <video
-          src="/assets/mi-video2.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          aria-label="Video promocional de Joyas JP"
-          poster="/assets/video-poster.jpg"
-        />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
+      <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10" />
 
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
           <img
