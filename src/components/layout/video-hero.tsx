@@ -16,31 +16,31 @@ export function VideoHero() {
             loop
             muted
             playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover"
+            className="absolute top-0 left-0 w-full h-full"
             style={{
-              transform: 'scale(1.3)',
-              filter: 'blur(20px) brightness(0.7)',
-              opacity: 0.8
+              transform: 'scale(1.5)',
+              filter: 'blur(30px) saturate(1.5)',
+              objectFit: 'cover'
             }}
           >
             <source src="/assets/mi-video1.mp4" type="video/mp4" />
           </video>
         </div>
 
-        {/* Main video */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{
-            width: '100vw',
-            height: '100vh'
-          }}
-        >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
-        </video>
+        {/* Main video - centered with max width to show blur sides */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative h-full" style={{ maxWidth: '85vw' }}>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="h-full w-full object-cover"
+            >
+              <source src="/assets/mi-video1.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
       </div>
 
       {/* Overlay */}
