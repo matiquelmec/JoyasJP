@@ -159,6 +159,20 @@ const nextConfig = {
             value: 'public, max-age=86400, stale-while-revalidate=604800'
           }
         ],
+      },
+      // Cache videos with range support
+      {
+        source: '/assets/(.*).mp4',
+        headers: [
+          {
+            key: 'Accept-Ranges',
+            value: 'bytes'
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate=86400'
+          }
+        ],
       }
     ]
   }

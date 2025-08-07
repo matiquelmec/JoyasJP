@@ -43,11 +43,22 @@ export function VideoHero() {
           muted
           playsInline
           preload="metadata"
-          className="w-full h-full object-cover"
+          crossOrigin="anonymous"
+          className="w-full h-full object-cover object-center min-w-full min-h-full"
           onLoadedData={() => setVideoLoaded(true)}
           onCanPlay={() => setVideoLoaded(true)}
+          onError={(e) => {
+            console.warn('Video error:', e)
+            setVideoLoaded(true) // Show content even if video fails
+          }}
           poster="/assets/video-poster.jpg"
-          style={{ willChange: 'transform' }}
+          style={{ 
+            willChange: 'transform',
+            objectFit: 'cover',
+            objectPosition: 'center center',
+            width: '100vw',
+            height: '100vh'
+          }}
         >
           <source src="/assets/mi-video1.mp4" type="video/mp4" />
           {/* Fallback para navegadores sin soporte de video */}
