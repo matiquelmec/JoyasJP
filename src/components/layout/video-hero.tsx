@@ -26,19 +26,19 @@ export function VideoHero() {
           <source src="/assets/mi-video1.mp4" type="video/mp4" />
         </video>
 
-        {/* Main centered video */}
+        {/* Main centered video - maintain height, limit width */}
         <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="max-h-full"
+            className="h-full"
             style={{
-              width: '70vw',
-              height: 'auto',
-              maxHeight: '100vh',
-              objectFit: 'contain'
+              height: '100vh',
+              width: 'auto',
+              maxWidth: '70vw',
+              objectFit: 'cover'
             }}
           >
             <source src="/assets/mi-video1.mp4" type="video/mp4" />
