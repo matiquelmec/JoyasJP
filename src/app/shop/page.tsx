@@ -13,7 +13,6 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getColors, getProducts } from '@/lib/api'
 import type { Product } from '@/lib/types'
-import { ProductSkeleton } from '@/shared/components/loading/product-skeleton'
 
 const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros']
 
@@ -74,7 +73,15 @@ export default function ShopPage() {
             </div>
           </div>
           
-          <ProductSkeleton count={8} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="space-y-4">
+                <div className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     )
