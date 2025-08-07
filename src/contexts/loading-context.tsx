@@ -27,13 +27,23 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
   const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
-    // Simulate initial app load
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      setIsInitialLoad(false)
-    }, 2000)
+    // Wait for the page to fully load
+    const handleLoad = () => {
+      // Add a small delay to ensure all resources are loaded
+      setTimeout(() => {
+        setIsLoading(false)
+        setTimeout(() => {
+          setIsInitialLoad(false)
+        }, 500)
+      }, 1000)
+    }
 
-    return () => clearTimeout(timer)
+    if (document.readyState === 'complete') {
+      handleLoad()
+    } else {
+      window.addEventListener('load', handleLoad)
+      return () => window.removeEventListener('load', handleLoad)
+    }
   }, [])
 
   return (
