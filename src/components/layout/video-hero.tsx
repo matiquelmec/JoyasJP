@@ -8,9 +8,9 @@ export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden bg-black">
       
-      {/* Desktop: Blurred background + centered video */}
-      <div className="hidden lg:block">
-        {/* Blurred background video */}
+      {/* Desktop: Single video with center sharp, sides blurred */}
+      <div className="hidden lg:block relative">
+        {/* Base video (blurred) */}
         <video
           autoPlay
           loop
@@ -18,32 +18,28 @@ export function VideoHero() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
           style={{
-            filter: 'blur(40px) brightness(0.6) saturate(1.8)',
-            transform: 'scale(1.2)',
+            filter: 'blur(20px)',
             zIndex: 1
           }}
         >
           <source src="/assets/mi-video1.mp4" type="video/mp4" />
         </video>
 
-        {/* Main centered video - maintain height, limit width */}
-        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full"
-            style={{
-              height: '100vh',
-              width: 'auto',
-              maxWidth: '70vw',
-              objectFit: 'cover'
-            }}
-          >
-            <source src="/assets/mi-video1.mp4" type="video/mp4" />
-          </video>
-        </div>
+        {/* Sharp center overlay with mask */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            zIndex: 2,
+            maskImage: 'radial-gradient(ellipse 60% 100% at center, black 50%, transparent 70%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 60% 100% at center, black 50%, transparent 70%)'
+          }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
       </div>
 
       {/* Mobile: Full screen video */}
