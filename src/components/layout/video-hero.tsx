@@ -6,24 +6,46 @@ import { Button } from '@/components/ui/button'
 
 export function VideoHero() {
   return (
-    <section className="relative h-screen w-screen overflow-hidden">
-      {/* Simple full screen video that works */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ zIndex: -1 }}
-      >
-        <source src="/assets/mi-video1.mp4" type="video/mp4" />
-      </video>
+    <section className="relative h-screen w-screen overflow-hidden bg-black">
+      {/* Video container with blur sides effect */}
+      <div className="absolute inset-0">
+        {/* Background: Blurred and scaled video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            filter: 'blur(25px) brightness(0.8)',
+            transform: 'scale(1.1)',
+            zIndex: 1
+          }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+
+        {/* Foreground: Sharp video with clip-path to create center window */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            clipPath: 'ellipse(40% 50% at 50% 50%)',
+            zIndex: 2
+          }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-10" />
+      <div className="absolute inset-0 bg-black/30" style={{ zIndex: 3 }} />
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
+      <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44" style={{ zIndex: 10 }}>
         {/* Logo */}
         <div className="mb-8">
           <img
