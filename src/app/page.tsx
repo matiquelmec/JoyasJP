@@ -6,6 +6,7 @@ import ProductCard from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
+import { VideoHero } from '@/components/layout/video-hero'
 
 // 🎯 ESTRATEGIAS DE SELECCIÓN ALEATORIA OPTIMIZADA
 function getRandomStrategy(): 'pure_random' | 'weighted_categories' | 'stock_weighted' | 'time_based' {
@@ -167,49 +168,8 @@ async function FeaturedProducts() {
 export default function Home() {
   return (
     <div className="flex flex-col -mt-36 md:-mt-40">
-      {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-        <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10" />
-
-        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
-          <img
-            src="/assets/logo.png"
-            alt="Joyas JP - Alta joyería para la escena urbana"
-            className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
-          />
-
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
-            Atrévete a jugar
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
-            <Link href="/shop" className="flex-1">
-              <Button
-                size="lg"
-                className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
-              >
-                <Trophy className="w-5 h-5 mr-2" />
-                Productos
-              </Button>
-            </Link>
-            <Link href="/services" className="flex-1">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
-              >
-                <Heart className="w-5 h-5 mr-2" />
-                Servicio para artistas
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white/70" />
-          <span className="sr-only">Desplázate para ver más</span>
-        </div>
-      </section>
+      {/* Video Hero Section */}
+      <VideoHero />
 
       {/* Featured Products Section */}
       <section className="py-20 md:py-28 bg-background">
