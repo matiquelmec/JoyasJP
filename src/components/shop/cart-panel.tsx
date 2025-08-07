@@ -2,6 +2,7 @@
 
 import { ShoppingBag, Trash2 } from 'lucide-react'
 import Image from 'next/image'
+import { memo, useMemo, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/sheet'
 import { useCart } from '@/hooks/use-cart'
 
-export function CartPanel() {
+export const CartPanel = memo(function CartPanel() {
   const {
     items,
     removeItem,
@@ -25,11 +26,19 @@ export function CartPanel() {
     closeCart,
   } = useCart()
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const subtotal = items.reduce((sum, item) => {
-    // item.price ya es un número, no necesita conversión.
-    return sum + item.price * item.quantity
-  }, 0)
+  // ⚡ Memoize expensive calculations
+  const cartStats = useMemo(() => ({
+    totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+    subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }), [items])
+
+  const handleQuantityChange = useCallback((id: string, quantity: number) => {
+    updateItemQuantity(id, quantity)
+  }, [updateItemQuantity])
+
+  const handleRemoveItem = useCallback((id: string) => {
+    removeItem(id)
+  }, [removeItem])
 
   const handleCheckout = () => {
     // Redirigir a la página de checkout en lugar de ir directo al pago
@@ -45,9 +54,9 @@ export function CartPanel() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <ShoppingBag className="h-6 w-6" />
-          {totalItems > 0 && (
+          {cartStats.totalItems > 0 && (
             <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center">
-              {totalItems}
+              {cartStats.totalItems}
             </span>
           )}
         </Button>
@@ -80,7 +89,7 @@ export function CartPanel() {
                           min="1"
                           value={item.quantity}
                           onChange={(e) =>
-                            updateItemQuantity(
+                            handleQuantityChange(
                               item.id,
                               parseInt(e.target.value)
                             )
@@ -92,7 +101,7 @@ export function CartPanel() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -104,7 +113,7 @@ export function CartPanel() {
               <div className="w-full space-y-4">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Subtotal:</span>
-                  <span>${subtotal.toLocaleString('es-CL')}</span>
+                  <span>${cartStats.subtotal.toLocaleString('es-CL')}</span>
                 </div>
                 <Button
                   className="w-full"
@@ -135,4 +144,4 @@ export function CartPanel() {
       </SheetContent>
     </Sheet>
   )
-}
+})

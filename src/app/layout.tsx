@@ -70,7 +70,9 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: '/assets/logo.png',
+    shortcut: '/assets/logo.png',
+    apple: '/assets/logo.png',
   },
   robots: {
     index: true,
