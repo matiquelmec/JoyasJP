@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -57,10 +57,13 @@ export default function CheckoutPage() {
     region: ''
   })
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shippingCost = subtotal >= (config?.free_shipping_from || 50000) ? 0 : (config?.shipping_cost || 3000)
-  const total = subtotal + shippingCost
+  // ⚡ Memoize expensive calculations
+  const cartStats = useMemo(() => ({
+    totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+    subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }), [items])
+  const shippingCost = cartStats.subtotal >= (config?.free_shipping_from || 50000) ? 0 : (config?.shipping_cost || 3000)
+  const total = cartStats.subtotal + shippingCost
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -353,8 +356,8 @@ export default function CheckoutPage() {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Subtotal ({totalItems} productos)</span>
-                      <span>${subtotal.toLocaleString('es-CL')}</span>
+                      <span>Subtotal ({cartStats.totalItems} productos)</span>
+                      <span>${cartStats.subtotal.toLocaleString('es-CL')}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Envío</span>
@@ -364,7 +367,7 @@ export default function CheckoutPage() {
                         <span>${shippingCost.toLocaleString('es-CL')}</span>
                       )}
                     </div>
-                    {subtotal < (config?.free_shipping_from || 50000) && (
+                    {cartStats.subtotal < (config?.free_shipping_from || 50000) && (
                       <div className="text-xs text-muted-foreground">
                         Envío gratis en compras sobre ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
                       </div>

@@ -63,7 +63,7 @@ export const CartPanel = memo(function CartPanel() {
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>Carrito de Compras ({totalItems})</SheetTitle>
+          <SheetTitle>Carrito de Compras ({cartStats.totalItems})</SheetTitle>
         </SheetHeader>
         {items.length > 0 ? (
           <>
