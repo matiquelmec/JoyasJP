@@ -1,10 +1,10 @@
 'use client'
 
 import { Eye, Heart, ShoppingCart, Sparkles } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { OptimizedSupabaseImage } from '@/components/ui/optimized-supabase-image'
 import { useCart } from '@/hooks/use-cart'
 import { toast } from '@/hooks/use-toast'
 import { useWishlist } from '@/hooks/use-wishlist'
@@ -135,25 +135,20 @@ const ProductCard = memo(function ProductCard({
             <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted/70 to-muted animate-pulse" />
           )}
 
-          {!imageError ? (
-            <Image
-              src={product.imageUrl}
-              alt={`${product.name} - Joya urbana premium`}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className={cn(
-                'object-cover transition-all duration-700 group-hover:scale-110',
-                imageLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'
-              )}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              priority={priority}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full bg-muted">
-              <Sparkles className="w-12 h-12 text-muted-foreground" />
-            </div>
-          )}
+          <OptimizedSupabaseImage
+            src={product.imageUrl}
+            alt={`${product.name} - Joya urbana premium`}
+            width={400}
+            height={400}
+            priority={priority}
+            quality={85}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className={cn(
+              'transition-all duration-700 group-hover:scale-110',
+              imageLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'
+            )}
+            objectFit="cover"
+          />
 
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
             <Button

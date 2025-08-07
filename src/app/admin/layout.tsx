@@ -1,7 +1,39 @@
 import { Metadata } from 'next'
-import { AdminSidebar } from '@/components/admin/admin-sidebar'
-import { AdminHeader } from '@/components/admin/admin-header'
+import dynamic from 'next/dynamic'
 import { AdminAuthProvider } from '@/components/admin/admin-auth-provider'
+
+// ⚡ Dynamic imports para componentes admin pesados - No afectan al cliente
+const AdminSidebar = dynamic(
+  () => import('@/components/admin/admin-sidebar').then(mod => ({ default: mod.AdminSidebar })),
+  {
+    loading: () => (
+      <div className="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-lg animate-pulse">
+        <div className="h-16 bg-gray-200 m-4 rounded"></div>
+        <div className="space-y-2 p-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-10 bg-gray-200 rounded"></div>
+          ))}
+        </div>
+      </div>
+    ),
+    ssr: false
+  }
+)
+
+const AdminHeader = dynamic(
+  () => import('@/components/admin/admin-header').then(mod => ({ default: mod.AdminHeader })),
+  {
+    loading: () => (
+      <div className="h-16 bg-white border-b border-gray-200 animate-pulse">
+        <div className="flex justify-between items-center h-full px-8">
+          <div className="h-6 w-32 bg-gray-200 rounded"></div>
+          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+        </div>
+      </div>
+    ),
+    ssr: false
+  }
+)
 
 export const metadata: Metadata = {
   title: 'Admin Panel | Joyas JP',

@@ -25,6 +25,8 @@ const nextConfig = {
       '@radix-ui/react-tabs',
       '@radix-ui/react-accordion'
     ],
+    // Separar completamente el código de admin
+    appDir: true,
     serverComponentsExternalPackages: ['sharp']
   },
 

@@ -170,13 +170,15 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <video
-          src="/assets/mi-video.mp4"
+          src="/assets/mi-video2.mp4"
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
           aria-label="Video promocional de Joyas JP"
+          poster="/assets/video-poster.jpg"
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
 
