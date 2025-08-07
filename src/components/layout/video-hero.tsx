@@ -6,48 +6,65 @@ import { Button } from '@/components/ui/button'
 
 export function VideoHero() {
   return (
-    <section className="relative h-screen w-screen overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0" style={{ zIndex: -2 }}>
-        {/* Blurred background (only on desktop) */}
-        <div className="hidden lg:block absolute inset-0">
+    <section className="relative h-screen w-screen overflow-hidden bg-black">
+      
+      {/* Desktop: Blurred background + centered video */}
+      <div className="hidden lg:block">
+        {/* Blurred background video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            filter: 'blur(40px) brightness(0.6) saturate(1.8)',
+            transform: 'scale(1.2)',
+            zIndex: 1
+          }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+
+        {/* Main centered video */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="absolute top-0 left-0 w-full h-full"
+            className="max-h-full"
             style={{
-              transform: 'scale(1.5)',
-              filter: 'blur(30px) saturate(1.5)',
-              objectFit: 'cover'
+              width: '70vw',
+              height: 'auto',
+              maxHeight: '100vh',
+              objectFit: 'contain'
             }}
           >
             <source src="/assets/mi-video1.mp4" type="video/mp4" />
           </video>
         </div>
+      </div>
 
-        {/* Main video - centered with max width to show blur sides */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative h-full" style={{ maxWidth: '85vw' }}>
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover"
-            >
-              <source src="/assets/mi-video1.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </div>
+      {/* Mobile: Full screen video */}
+      <div className="lg:hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ zIndex: 1 }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
       </div>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-10" />
+      <div className="absolute inset-0 bg-black/30" style={{ zIndex: 3 }} />
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
+      <div className="absolute inset-0 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44" style={{ zIndex: 10 }}>
         {/* Logo */}
         <div className="mb-8">
           <img
