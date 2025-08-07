@@ -105,18 +105,7 @@ const nextConfig = {
       }
     }
 
-    // Configuración para archivos estáticos (más eficiente)
-    config.module.rules.push({
-      test: /\.(png|jpe?g|gif|svg|webp)$/i,
-      use: {
-        loader: 'file-loader',
-        options: {
-          publicPath: '/_next/static/images/',
-          outputPath: 'static/images/',
-          name: '[name].[contenthash].[ext]',
-        },
-      },
-    })
+    // Next.js maneja automáticamente los assets estáticos
 
     return config
   },

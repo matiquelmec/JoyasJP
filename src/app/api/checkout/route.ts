@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         // No fallar el checkout si no se puede guardar la orden
         // El usuario aún puede continuar con el pago
       } else {
-        console.log('Order saved successfully:', savedOrder.id)
+        // Order saved successfully
       }
 
     } catch (dbError) {

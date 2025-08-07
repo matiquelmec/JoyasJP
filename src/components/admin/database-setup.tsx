@@ -39,7 +39,7 @@ export function DatabaseSetup() {
             description: 'Ve la consola para instrucciones detalladas.',
             variant: 'destructive'
           })
-          console.log('Manual setup instructions:', result.instructions)
+          // Manual setup instructions available in result
         } else {
           toast({
             title: 'Error en configuración',
