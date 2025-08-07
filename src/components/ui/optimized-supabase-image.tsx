@@ -18,24 +18,14 @@ interface OptimizedSupabaseImageProps {
   blurDataURL?: string
 }
 
-// ⚡ Optimización de URLs de Supabase Storage
+// ⚡ Supabase Storage no soporta transformaciones de imagen por URL
+// Devolver la URL original para evitar problemas de carga
 function getOptimizedSupabaseUrl(
   originalUrl: string, 
   width: number, 
   height: number, 
   quality = 80
 ): string {
-  // Si es URL de Supabase Storage, optimizar
-  if (originalUrl.includes('supabase.co/storage/v1/object/public/')) {
-    // Supabase puede transformar imágenes agregando parámetros
-    const url = new URL(originalUrl)
-    url.searchParams.set('width', width.toString())
-    url.searchParams.set('height', height.toString())
-    url.searchParams.set('quality', quality.toString())
-    url.searchParams.set('format', 'webp') // Forzar WebP para mejor compresión
-    return url.toString()
-  }
-  
   return originalUrl
 }
 
