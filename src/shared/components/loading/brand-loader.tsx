@@ -75,7 +75,7 @@ export function BrandLoader({
         >
           {/* Subtle background pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-transparent to-yellow-600/10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-400/10 via-transparent to-primary/10" />
             {/* Subtle diamond pattern */}
             <div className="absolute inset-0" style={{
               backgroundImage: `radial-gradient(circle at 20px 20px, rgba(255,255,255,0.02) 1px, transparent 0)`,
@@ -104,7 +104,7 @@ export function BrandLoader({
               className="mb-8 relative"
             >
               {/* Glow effect */}
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-yellow-400/30 via-yellow-500/20 to-yellow-600/30 blur-lg animate-pulse" />
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-teal-400/30 via-primary/20 to-teal-600/30 blur-lg animate-pulse" />
               
               <div className="relative bg-white/5 backdrop-blur-sm rounded-full p-6 border border-white/10">
                 <Image
@@ -126,7 +126,7 @@ export function BrandLoader({
               className="text-center mb-6"
             >
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-wide">
-                <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-teal-400 via-primary to-teal-600 bg-clip-text text-transparent">
                   Joyas JP
                 </span>
               </h1>
@@ -153,7 +153,7 @@ export function BrandLoader({
               <div className="relative">
                 <div className="h-1 bg-gray-700/50 rounded-full overflow-hidden backdrop-blur-sm">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-full relative"
+                    className="h-full bg-gradient-to-r from-teal-400 via-primary to-teal-600 rounded-full relative"
                     initial={{ width: '0%' }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
@@ -184,7 +184,7 @@ export function BrandLoader({
             {[...Array(20)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-2 h-2 bg-gradient-to-r from-yellow-400/30 to-yellow-600/30 rounded-full"
+                className="absolute w-2 h-2 bg-gradient-to-r from-teal-400/30 to-primary/30 rounded-full"
                 initial={{ 
                   x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 800,
                   y: typeof window !== 'undefined' ? window.innerHeight + 20 : 600,
