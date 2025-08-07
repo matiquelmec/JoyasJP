@@ -5,20 +5,28 @@ import { Footer } from '@/components/layout/footer'
 import { Header } from '@/components/layout/header'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { SiteConfigProvider } from '@/contexts/site-config-context'
+import { LoadingProvider, useLoading } from '@/contexts/loading-context'
+import { BrandLoader } from '@/shared/components/loading/brand-loader'
 
 interface ConditionalLayoutProps {
   children: React.ReactNode
 }
 
-export function ConditionalLayout({ children }: ConditionalLayoutProps) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { isLoading, isInitialLoad } = useLoading()
   
   if (pathname?.startsWith('/admin')) {
-    return <SiteConfigProvider>{children}</SiteConfigProvider>
+    return <>{children}</>
   }
 
   return (
-    <SiteConfigProvider>
+    <>
+      <BrandLoader 
+        isLoading={isLoading && isInitialLoad} 
+        showSlogan={true}
+      />
+      
       <div className="relative flex min-h-screen flex-col">
         <ErrorBoundary>
           <Header />
@@ -33,6 +41,26 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
           <Footer />
         </ErrorBoundary>
       </div>
+    </>
+  )
+}
+
+export function ConditionalLayout({ children }: ConditionalLayoutProps) {
+  const pathname = usePathname()
+  
+  if (pathname?.startsWith('/admin')) {
+    return (
+      <SiteConfigProvider>
+        {children}
+      </SiteConfigProvider>
+    )
+  }
+
+  return (
+    <SiteConfigProvider>
+      <LoadingProvider>
+        <LayoutContent>{children}</LayoutContent>
+      </LoadingProvider>
     </SiteConfigProvider>
   )
 }

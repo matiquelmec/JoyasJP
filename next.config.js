@@ -115,7 +115,7 @@ const nextConfig = {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app',
   },
 
-  // ⚡ Headers de performance
+  // ⚡ Headers de performance y cacheo avanzado
   async headers() {
     return [
       {
@@ -137,6 +137,26 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable'
+          }
+        ],
+      },
+      // Cache API responses
+      {
+        source: '/api/products/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300'
+          }
+        ],
+      },
+      // Cache images
+      {
+        source: '/assets/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
           }
         ],
       }

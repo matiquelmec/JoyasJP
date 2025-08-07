@@ -2,24 +2,23 @@
 // Este archivo centraliza todos los dynamic imports para mejor performance
 
 import dynamic from 'next/dynamic'
-import { ComponentType } from 'react'
 
 // ⚡ COMPONENTES ADMIN - Solo cargan cuando se necesitan
-export const AdminDashboard = dynamic(() => import('./admin/admin-dashboard'), {
+export const AdminDashboard = dynamic(() => import('./admin/admin-dashboard').then(mod => ({ default: mod.AdminDashboard })), {
   loading: () => (
     <div className="flex items-center justify-center h-64">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
     </div>
   ),
-  ssr: false // Admin no necesita SSR
+  ssr: false
 })
 
-export const ProductsManager = dynamic(() => import('./admin/products-manager'), {
+export const ProductsManager = dynamic(() => import('./admin/products-manager').then(mod => ({ default: mod.ProductsManager })), {
   loading: () => <div>Cargando gestión de productos...</div>,
   ssr: false
 })
 
-export const OrdersManager = dynamic(() => import('./admin/orders-manager'), {
+export const OrdersManager = dynamic(() => import('./admin/orders-manager').then(mod => ({ default: mod.OrdersManager })), {
   loading: () => <div>Cargando gestión de pedidos...</div>,
   ssr: false
 })
@@ -40,7 +39,7 @@ export const MercadoPagoCheckout = dynamic(
 )
 
 // ⚡ CARRITO - Solo carga cuando se abre
-export const CartPanel = dynamic(() => import('./shop/cart-panel'), {
+export const CartPanel = dynamic(() => import('./shop/cart-panel').then(mod => ({ default: mod.CartPanel })), {
   loading: () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-4 rounded">Cargando carrito...</div>
@@ -50,12 +49,7 @@ export const CartPanel = dynamic(() => import('./shop/cart-panel'), {
 })
 
 // ⚡ CAROUSEL - Solo en páginas que lo necesiten
-export const EmblaCarousel = dynamic(() => import('embla-carousel-react').then(mod => ({
-  default: mod.default
-})), {
-  loading: () => <div className="h-64 bg-gray-100 rounded animate-pulse"></div>,
-  ssr: false
-})
+// Note: embla-carousel-react exports a hook, not a component, so we won't use dynamic import for it
 
 // ⚡ COMPONENTES RADIX PESADOS - Lazy load
 export const Dialog = dynamic(() => import('@radix-ui/react-dialog').then(mod => ({
@@ -77,7 +71,7 @@ export const Toast = dynamic(() => import('@radix-ui/react-toast').then(mod => (
 })
 
 // ⚡ COMPONENTES DE PRODUCTO - Para páginas específicas
-export const ProductDetailView = dynamic(() => import('./shop/product-detail-view'), {
+export const ProductDetailView = dynamic(() => import('./shop/product-detail-view').then(mod => ({ default: mod.ProductDetailView })), {
   loading: () => (
     <div className="space-y-4">
       <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
@@ -87,7 +81,7 @@ export const ProductDetailView = dynamic(() => import('./shop/product-detail-vie
   )
 })
 
-export const RelatedProducts = dynamic(() => import('./shop/related-products'), {
+export const RelatedProducts = dynamic(() => import('./shop/related-products').then(mod => ({ default: mod.RelatedProducts })), {
   loading: () => (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {[...Array(4)].map((_, i) => (

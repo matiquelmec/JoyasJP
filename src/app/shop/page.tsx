@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getColors, getProducts } from '@/lib/api'
 import type { Product } from '@/lib/types'
+import { ProductSkeleton } from '@/shared/components/loading/product-skeleton'
 
 const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros']
 
@@ -52,9 +53,29 @@ export default function ShopPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center">
-        <h2 className="text-2xl font-semibold">Cargando productos...</h2>
-        <p className="mt-2 text-muted-foreground">Por favor, espera.</p>
+      <div className="bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Define tu flow con cada pieza.
+            </p>
+          </div>
+          
+          {/* Loading skeleton */}
+          <div className="mb-8">
+            <div className="grid grid-cols-5 gap-2 mb-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-10 bg-gray-200 rounded-md animate-pulse" />
+              ))}
+            </div>
+            <div className="flex justify-end mb-8">
+              <div className="w-48 h-10 bg-gray-200 rounded-md animate-pulse" />
+            </div>
+          </div>
+          
+          <ProductSkeleton count={8} />
+        </div>
       </div>
     )
   }
