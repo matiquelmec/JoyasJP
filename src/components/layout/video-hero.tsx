@@ -8,25 +8,40 @@ export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
       {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover"
-        style={{
-          minWidth: '100%',
-          minHeight: '100%',
-          width: '100vw',
-          height: '100vh',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          zIndex: -2
-        }}
-      >
-        <source src="/assets/mi-video1.mp4" type="video/mp4" />
-      </video>
+      <div className="absolute inset-0" style={{ zIndex: -2 }}>
+        {/* Blurred background (only on desktop) */}
+        <div className="hidden lg:block absolute inset-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover"
+            style={{
+              transform: 'scale(1.3)',
+              filter: 'blur(20px) brightness(0.7)',
+              opacity: 0.8
+            }}
+          >
+            <source src="/assets/mi-video1.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Main video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{
+            width: '100vw',
+            height: '100vh'
+          }}
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
