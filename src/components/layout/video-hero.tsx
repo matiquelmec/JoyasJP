@@ -6,61 +6,24 @@ import { Button } from '@/components/ui/button'
 
 export function VideoHero() {
   return (
-    <section className="relative h-screen w-screen overflow-hidden bg-black">
-      
-      {/* Desktop: Single video with center sharp, sides blurred */}
-      <div className="hidden lg:block relative">
-        {/* Base video (blurred) */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            filter: 'blur(20px)',
-            zIndex: 1
-          }}
-        >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
-        </video>
-
-        {/* Sharp center overlay with mask */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            zIndex: 2,
-            maskImage: 'radial-gradient(ellipse 60% 100% at center, black 50%, transparent 70%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 60% 100% at center, black 50%, transparent 70%)'
-          }}
-        >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
-        </video>
-      </div>
-
-      {/* Mobile: Full screen video */}
-      <div className="lg:hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: 1 }}
-        >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
-        </video>
-      </div>
+    <section className="relative h-screen w-screen overflow-hidden">
+      {/* Simple full screen video that works */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ zIndex: -1 }}
+      >
+        <source src="/assets/mi-video1.mp4" type="video/mp4" />
+      </video>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30" style={{ zIndex: 3 }} />
+      <div className="absolute inset-0 bg-black/40 z-10" />
 
       {/* Content Container */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44" style={{ zIndex: 10 }}>
+      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
         {/* Logo */}
         <div className="mb-8">
           <img
