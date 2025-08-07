@@ -18,7 +18,14 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/ui": ["./src/components/ui"],
+      "@/components": ["./src/components"],
+      "@/lib": ["./src/lib"],
+      "@/hooks": ["./src/hooks"]
     },
     "plugins": [
       {

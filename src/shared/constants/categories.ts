@@ -1,0 +1,20 @@
+export const PRODUCT_CATEGORIES = {
+  CHAINS: 'cadenas',
+  PENDANTS: 'dijes', 
+  BRACELETS: 'pulseras',
+  EARRINGS: 'aros',
+} as const
+
+export const CATEGORY_PREFIXES = {
+  [PRODUCT_CATEGORIES.CHAINS]: 'PCA',
+  [PRODUCT_CATEGORIES.PENDANTS]: 'PDD', 
+  [PRODUCT_CATEGORIES.BRACELETS]: 'PPU',
+  [PRODUCT_CATEGORIES.EARRINGS]: 'PAR',
+} as const
+
+export const CATEGORY_LABELS = {
+  [PRODUCT_CATEGORIES.CHAINS]: 'Cadenas',
+  [PRODUCT_CATEGORIES.PENDANTS]: 'Dijes',
+  [PRODUCT_CATEGORIES.BRACELETS]: 'Pulseras', 
+  [PRODUCT_CATEGORIES.EARRINGS]: 'Aros',
+} as const
