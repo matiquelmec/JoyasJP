@@ -1,10 +1,10 @@
 'use client'
 
 import { Eye, Heart, ShoppingCart, Sparkles } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { OptimizedImage } from '@/components/ui/optimized-image'
 import { useCart } from '@/hooks/use-cart'
 import { toast } from '@/hooks/use-toast'
 import { useWishlist } from '@/hooks/use-wishlist'
@@ -131,29 +131,17 @@ const ProductCard = memo(function ProductCard({
         aria-label={`Ver detalles de ${product.name}`}
       >
         <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-800">
-          {imageLoading && (
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 animate-shimmer" />
-          )}
-
-          {!imageError ? (
-            <Image
-              src={product.imageUrl}
-              alt={`${product.name} - Joya urbana premium`}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className={cn(
-                'object-cover product-image-hover',
-                imageLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'
-              )}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              priority={priority}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full bg-muted">
-              <Sparkles className="w-12 h-12 text-muted-foreground" />
-            </div>
-          )}
+          <OptimizedImage
+            src={product.imageUrl}
+            alt={`${product.name} - Joya urbana premium`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover product-image-hover"
+            priority={priority}
+            quality={85}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
 
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
             <Button

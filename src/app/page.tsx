@@ -158,8 +158,20 @@ async function FeaturedProducts() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {featuredProducts.map((product) => (
-        <ProductCard key={product.id} product={product} />
+      {featuredProducts.map((product, index) => (
+        <div
+          key={product.id}
+          className="animate-fadeInUp"
+          style={{
+            animationDelay: `${index * 100}ms`,
+            animationFillMode: 'both',
+          }}
+        >
+          <ProductCard 
+            product={product} 
+            priority={index < 3} // Solo los primeros 3 con prioridad
+          />
+        </div>
       ))}
     </div>
   )
