@@ -97,8 +97,8 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+    <div className="bg-background scroll-optimized">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-optimize">
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -146,9 +146,13 @@ export default function ShopPage() {
           <Separator className="mb-12" />
 
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+            <div className="product-grid responsive-container responsive-grid gap-8">
+              {filteredProducts.map((product, index) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  priority={index < 4}
+                />
               ))}
             </div>
           ) : (

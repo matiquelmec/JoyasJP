@@ -246,3 +246,78 @@ html {
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 }
+
+/* ⚡ OPTIMIZACIONES CRÍTICAS PARA PERFORMANCE */
+
+/* Optimizar contenido above-the-fold */
+.hero-section {
+  contain: layout style paint;
+  will-change: opacity, transform;
+}
+
+/* Lazy loading optimizado para imágenes */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Reducir paint y layout shifts */
+.product-grid {
+  contain: layout style;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Optimizar scroll performance */
+.scroll-optimized {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* Preload crítico para fonts */
+@font-face {
+  font-family: 'System';
+  src: local('BlinkMacSystemFont'), local('Segoe UI'), local('Roboto'), local('Arial');
+  font-display: swap;
+}
+
+/* Micro-optimizaciones para animaciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimizar rendering de texto */
+.text-optimize {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container queries para responsive más eficiente */
+.responsive-container {
+  container-type: inline-size;
+}
+
+@container (min-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
