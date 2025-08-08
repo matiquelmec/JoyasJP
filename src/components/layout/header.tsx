@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { CartPanel } from '@/components/shop/cart-panel'
@@ -42,9 +43,12 @@ export function Header() {
     >
       <div className="container mx-auto flex h-20 sm:h-24 md:h-32 lg:h-40 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
-          <img
+          <Image
             src="/assets/logo.png"
             alt={`${config?.store_name || 'Joyas JP'} Logo`}
+            width={200}
+            height={200}
+            priority
             className="h-12 sm:h-16 md:h-20 lg:h-28 w-auto transition-all duration-300"
           />
         </Link>

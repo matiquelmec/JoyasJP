@@ -25,7 +25,16 @@ const nextConfig = {
       '@radix-ui/react-tabs',
       '@radix-ui/react-accordion'
     ],
-    serverComponentsExternalPackages: ['sharp']
+    serverComponentsExternalPackages: ['sharp'],
+    // Optimización adicional para performance
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
 
   // Configuración de imágenes optimizada

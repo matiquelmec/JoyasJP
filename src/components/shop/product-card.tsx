@@ -142,12 +142,14 @@ const ProductCard = memo(function ProductCard({
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={cn(
-                'object-cover product-image-hover',
-                imageLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'
+                'object-cover product-image-hover transition-all duration-500',
+                imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100'
               )}
               onLoad={handleImageLoad}
               onError={handleImageError}
               priority={priority}
+              loading={priority ? 'eager' : 'lazy'}
+              quality={priority ? 90 : 75}
             />
           ) : (
             <div className="flex items-center justify-center h-full bg-muted">

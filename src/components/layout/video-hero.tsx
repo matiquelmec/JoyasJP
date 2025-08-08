@@ -1,8 +1,10 @@
 'use client'
 
 import { ArrowDown, Heart, Trophy } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { LazyVideo } from '@/components/ui/lazy-video'
 import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 
 export function VideoHero() {
@@ -10,28 +12,26 @@ export function VideoHero() {
     <section className="relative h-screen w-screen overflow-hidden">
       {/* Blurred Background Video - More visible effect */}
       <div className="absolute inset-0" style={{ zIndex: 1 }}>
-        <video
+        <LazyVideo
+          src={getVideoUrl('mi-video1.mp4')}
           autoPlay
           loop
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
-        >
-          <source src={getVideoUrl('mi-video1.mp4')} type="video/mp4" />
-        </video>
+        />
       </div>
 
       {/* Main Video - Centered and Sharp */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
-        <video
+        <LazyVideo
+          src={getVideoUrl('mi-video1.mp4')}
           autoPlay
           loop
           muted
           playsInline
           className="w-auto h-full max-w-full object-contain shadow-2xl"
-        >
-          <source src={getVideoUrl('mi-video1.mp4')} type="video/mp4" />
-        </video>
+        />
       </div>
 
       {/* Elegant gradient overlay for smooth transition */}
@@ -47,9 +47,12 @@ export function VideoHero() {
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
         {/* Logo */}
         <div className="mb-8">
-          <img
+          <Image
             src={getImageUrl('logo.png')}
             alt="Joyas JP - Alta joyería para la escena urbana"
+            width={450}
+            height={200}
+            priority
             className="h-auto w-80 md:w-96 lg:w-[450px] drop-shadow-[0_4px_20px_rgba(255,255,255,0.3)]"
           />
         </div>

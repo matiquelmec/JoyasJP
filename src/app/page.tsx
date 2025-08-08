@@ -1,12 +1,25 @@
 import { ArrowDown, Heart, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
-import { VideoHero } from '@/components/layout/video-hero'
+
+// Dynamic import del VideoHero para mejorar performance inicial
+const VideoHero = dynamic(() => import('@/components/layout/video-hero').then(mod => ({ default: mod.VideoHero })), {
+  ssr: true, // Mantenemos SSR para SEO
+  loading: () => (
+    <section className="relative h-screen w-screen overflow-hidden bg-gradient-to-b from-zinc-900 to-black flex items-center justify-center">
+      <div className="text-center text-white">
+        <div className="w-80 h-40 bg-zinc-800 animate-pulse rounded-lg mb-8 mx-auto" />
+        <div className="h-6 bg-zinc-800 animate-pulse rounded w-48 mx-auto" />
+      </div>
+    </section>
+  )
+})
 
 // 🎯 ESTRATEGIAS DE SELECCIÓN ALEATORIA OPTIMIZADA
 function getRandomStrategy(): 'pure_random' | 'weighted_categories' | 'stock_weighted' | 'time_based' {
