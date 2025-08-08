@@ -66,13 +66,26 @@ export default function ServicesPage() {
             </Link>
           </div>
           <div className="mt-12 relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl shadow-primary/10 bg-black">
+            {/* Blurred Background Video */}
             <video
               src="/assets/mi-video2.mp4"
               autoPlay
               loop
               muted
-              className="w-full h-full object-contain"
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
             />
+            {/* Main Video - Centered and Sharp */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <video
+                src="/assets/mi-video2.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-auto h-full max-w-full object-contain shadow-2xl"
+              />
+            </div>
           </div>
         </div>
       </div>
