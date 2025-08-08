@@ -7,32 +7,31 @@ import { Button } from '@/components/ui/button'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Blurred Background Video - Extended to fill screen */}
+      {/* Blurred Background Video - More visible effect */}
       <div className="absolute inset-0" style={{ zIndex: 1 }}>
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover scale-125 filter blur-lg opacity-70 saturate-150"
+          className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
         >
           <source src="/assets/mi-video1.mp4" type="video/mp4" />
         </video>
-        {/* Gradient overlay on background video for better blending */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
       </div>
 
       {/* Main Video - Centered and Sharp */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-contain"
-        style={{ zIndex: 2 }}
-      >
-        <source src="/assets/mi-video1.mp4" type="video/mp4" />
-      </video>
+      <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-auto h-full max-w-full object-contain shadow-2xl"
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+      </div>
 
       {/* Subtle overlay - Above videos but below content */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/40" style={{ zIndex: 3 }} />
