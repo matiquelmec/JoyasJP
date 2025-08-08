@@ -147,20 +147,8 @@ export default function ShopPage() {
 
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProducts.map((product, index) => (
-                <div
-                  key={product.id}
-                  className="animate-fadeInUp"
-                  style={{
-                    animationDelay: `${Math.min(index * 50, 500)}ms`,
-                    animationFillMode: 'both',
-                  }}
-                >
-                  <ProductCard 
-                    product={product} 
-                    priority={index < 4} // Solo los primeros 4 con prioridad
-                  />
-                </div>
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
