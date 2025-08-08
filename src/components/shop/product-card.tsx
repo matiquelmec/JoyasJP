@@ -121,7 +121,7 @@ const ProductCard = memo(function ProductCard({
   return (
     <article
       className={cn(
-        'group relative border rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full bg-card hover:-translate-y-1',
+        'group relative border rounded-lg overflow-hidden shadow-sm flex flex-col h-full bg-card product-card-hover',
         className
       )}
     >
@@ -142,7 +142,7 @@ const ProductCard = memo(function ProductCard({
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={cn(
-                'object-cover transition-all duration-700 group-hover:scale-110',
+                'object-cover product-image-hover',
                 imageLoading ? 'scale-110 blur-sm' : 'scale-100 blur-0'
               )}
               onLoad={handleImageLoad}
@@ -189,9 +189,9 @@ const ProductCard = memo(function ProductCard({
         </Button>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow space-y-3">
+      <div className="p-5 flex flex-col flex-grow space-y-4">
         <Link href={`/shop/${product.id}`}>
-          <h3 className="text-lg font-semibold truncate cursor-pointer hover:text-primary transition-colors duration-200">
+          <h3 className="text-xl font-headline font-semibold truncate cursor-pointer link-hover leading-tight">
             {product.name}
           </h3>
         </Link>
@@ -202,16 +202,16 @@ const ProductCard = memo(function ProductCard({
         </p>
 
         {product.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed font-body">
             {product.description}
           </p>
         )}
 
         <div className="flex-grow" />
 
-        <div className="flex items-center justify-between mt-auto pt-2">
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
           <div className="flex flex-col">
-            <p className="text-2xl font-bold text-primary">{formattedPrice}</p>
+            <p className="text-2xl font-bold text-primary font-headline">{formattedPrice}</p>
           </div>
 
           <Button

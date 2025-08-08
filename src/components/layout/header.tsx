@@ -31,7 +31,7 @@ export function Header() {
 
   // Estilo unificado para todos los enlaces de navegación
   const linkClassName =
-    'text-sm font-medium text-muted-foreground transition-colors hover:text-primary'
+    'text-sm font-medium text-muted-foreground link-hover'
 
   return (
     <header

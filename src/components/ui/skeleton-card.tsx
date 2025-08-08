@@ -18,9 +18,9 @@ export function SkeletonCard({ className }: SkeletonCardProps) {
       </div>
 
       {/* Content skeleton */}
-      <div className="p-4 flex flex-col flex-grow space-y-3">
+      <div className="p-5 flex flex-col flex-grow space-y-4">
         {/* Title skeleton */}
-        <div className="h-6 bg-zinc-800 rounded animate-pulse" />
+        <div className="h-7 bg-zinc-800 rounded animate-pulse" />
         
         {/* Category skeleton */}
         <div className="h-4 bg-zinc-800 rounded w-2/3 animate-pulse" />
@@ -34,7 +34,7 @@ export function SkeletonCard({ className }: SkeletonCardProps) {
         <div className="flex-grow" />
 
         {/* Price and button skeleton */}
-        <div className="flex items-center justify-between mt-auto pt-2">
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
           <div className="h-8 bg-zinc-800 rounded w-1/2 animate-pulse" />
           <div className="h-10 w-10 bg-zinc-800 rounded animate-pulse" />
         </div>

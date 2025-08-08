@@ -148,14 +148,59 @@
   animation: bounce-subtle 1s ease-in-out infinite;
 }
 
-/* Transiciones suaves para hover states */
+/* Transiciones suaves para hover states premium */
 .transition-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .transition-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Premium hover effects para product cards */
+.product-card-hover {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(346.8, 85%, 45%, 0.1);
+}
+
+.product-image-hover {
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-image-hover:hover {
+  transform: scale(1.1) rotate(1deg);
+}
+
+/* Link hover effects premium */
+.link-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 50%;
+  background: hsl(var(--primary));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+.link-hover:hover {
+  transform: scale(1.05);
+  color: hsl(var(--primary));
 }
 
 /* Scroll behavior mejorado */
