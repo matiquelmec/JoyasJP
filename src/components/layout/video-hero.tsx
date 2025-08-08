@@ -3,6 +3,7 @@
 import { ArrowDown, Heart, Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 
 export function VideoHero() {
   return (
@@ -16,7 +17,7 @@ export function VideoHero() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
         >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+          <source src={getVideoUrl('mi-video1.mp4')} type="video/mp4" />
         </video>
       </div>
 
@@ -29,7 +30,7 @@ export function VideoHero() {
           playsInline
           className="w-auto h-full max-w-full object-contain shadow-2xl"
         >
-          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+          <source src={getVideoUrl('mi-video1.mp4')} type="video/mp4" />
         </video>
       </div>
 
@@ -41,7 +42,7 @@ export function VideoHero() {
         {/* Logo */}
         <div className="mb-8">
           <img
-            src="/assets/logo.png"
+            src={getImageUrl('logo.png')}
             alt="Joyas JP - Alta joyería para la escena urbana"
             className="h-auto w-80 md:w-96 lg:w-[450px] drop-shadow-[0_4px_20px_rgba(255,255,255,0.3)]"
           />

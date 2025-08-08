@@ -166,13 +166,37 @@ const nextConfig = {
           }
         ],
       },
-      // Cache images
+      // Cache para assets estáticos (imágenes no críticas)
       {
-        source: '/assets/(.*)',
+        source: '/assets/nosotros.jpg',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=86400, stale-while-revalidate=604800'
+          }
+        ],
+      },
+      // Cache más agresivo para logo (cambia raramente)
+      {
+        source: '/assets/logo.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, stale-while-revalidate=2592000'
+          }
+        ],
+      },
+      // Cache corto para videos (para ver cambios rápidamente)
+      {
+        source: '/assets/mi-video(.*).mp4',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate=86400'
+          },
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding'
           }
         ],
       },

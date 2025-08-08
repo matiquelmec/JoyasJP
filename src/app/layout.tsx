@@ -154,12 +154,29 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
 
-        {/* Preloads optimizados */}
+        {/* Cache busting y optimización */}
+        <meta name="build-version" content={`${Date.now()}`} />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+        
+        {/* DNS Prefetch para mejor performance */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
+        
+        {/* Preloads optimizados con versionado */}
         <link
           rel="preload"
-          href="/assets/logo.png"
+          href="/assets/logo.png?v=1"
           as="image"
           type="image/png"
+        />
+        <link
+          rel="preload"
+          href="/assets/mi-video1.mp4?v=2"
+          as="video"
+          type="video/mp4"
         />
       </head>
       <body
