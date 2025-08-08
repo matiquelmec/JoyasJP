@@ -34,8 +34,14 @@ export function VideoHero() {
         </video>
       </div>
 
-      {/* Subtle overlay - Above videos but below content */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/40" style={{ zIndex: 3 }} />
+      {/* Elegant gradient overlay for smooth transition */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/80" style={{ zIndex: 3 }} />
+      
+      {/* Bottom fade for seamless transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-32 bg-gradient-to-t from-background via-background/90 to-transparent" style={{ zIndex: 4 }} />
+      
+      {/* Ultra-smooth transition overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-background" style={{ zIndex: 4 }} />
 
       {/* Content Container */}
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
@@ -76,9 +82,9 @@ export function VideoHero() {
           </Link>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white/70" />
+        {/* Scroll indicator - Above the fade */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-bounce" style={{ zIndex: 5 }}>
+          <ArrowDown className="w-8 h-8 text-white/90 drop-shadow-md" />
           <span className="sr-only">Desplázate para ver más</span>
         </div>
       </div>

@@ -172,7 +172,7 @@ export default function Home() {
       <VideoHero />
 
       {/* Featured Products Section */}
-      <section className="py-20 md:py-28 bg-background">
+      <section className="pt-8 pb-20 md:pt-16 md:pb-28 bg-background">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">
