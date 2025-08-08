@@ -1,28 +1,58 @@
 'use client'
 
-import { ArrowDown, Heart, Trophy } from 'lucide-react'
+import { ArrowDown, Heart, Maximize, Trophy } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { FullscreenVideoModal } from '@/components/ui/fullscreen-video-modal'
 
 export function VideoHero() {
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false)
+
   return (
-    <section className="relative h-screen w-screen overflow-hidden">
-      {/* Simple full screen video */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+    <>
+      <section className="relative h-screen w-screen overflow-hidden group cursor-pointer"
+        onClick={() => setIsFullscreenOpen(true)}
       >
-        <source src="/assets/mi-video1.mp4" type="video/mp4" />
-      </video>
+        {/* Hero Video with hover effects */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+        {/* Interactive Overlay */}
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500" />
 
-      {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44">
+        {/* Fullscreen Button */}
+        <div className="absolute top-6 right-6 z-30">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="bg-black/30 hover:bg-black/50 text-white rounded-full backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsFullscreenOpen(true)
+            }}
+          >
+            <Maximize className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Click to expand hint */}
+        <div className="absolute bottom-20 right-6 z-30">
+          <div className="bg-black/50 text-white px-3 py-2 rounded-full text-sm font-medium backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse">
+            Click para expandir
+          </div>
+        </div>
+
+        {/* Content Container */}
+        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44 pointer-events-none">
+          <div className="pointer-events-auto">
         {/* Logo */}
         <div className="mb-8">
           <img
@@ -60,12 +90,22 @@ export function VideoHero() {
           </Link>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white/70" />
-          <span className="sr-only">Desplázate para ver más</span>
+            {/* Scroll indicator */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+              <ArrowDown className="w-8 h-8 text-white/70" />
+              <span className="sr-only">Desplázate para ver más</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Fullscreen Video Modal */}
+      <FullscreenVideoModal
+        isOpen={isFullscreenOpen}
+        onClose={() => setIsFullscreenOpen(false)}
+        videoSrc="/assets/mi-video1.mp4"
+        title="Joyas JP - Alta joyería para la escena urbana"
+      />
+    </>
   )
 }
