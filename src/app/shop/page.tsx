@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { SkeletonGrid } from '@/components/ui/skeleton-card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getColors, getProducts } from '@/lib/api'
 import type { Product } from '@/lib/types'
@@ -61,27 +62,21 @@ export default function ShopPage() {
             </p>
           </div>
           
-          {/* Loading skeleton */}
+          {/* Premium Loading skeleton */}
           <div className="mb-8">
             <div className="grid grid-cols-5 gap-2 mb-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-200 rounded-md animate-pulse" />
+                <div key={i} className="h-10 bg-zinc-800 rounded-md animate-pulse" />
               ))}
             </div>
             <div className="flex justify-end mb-8">
-              <div className="w-48 h-10 bg-gray-200 rounded-md animate-pulse" />
+              <div className="w-48 h-10 bg-zinc-800 rounded-md animate-pulse" />
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
-                <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-              </div>
-            ))}
-          </div>
+          <Separator className="mb-12" />
+          
+          <SkeletonGrid count={8} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" />
         </div>
       </div>
     )

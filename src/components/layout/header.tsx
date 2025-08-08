@@ -40,12 +40,12 @@ export function Header() {
         hasScrolled ? 'shadow-lg' : 'shadow-none'
       )}
     >
-      <div className="container mx-auto flex h-36 md:h-40 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex h-20 sm:h-24 md:h-32 lg:h-40 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
           <img
             src="/assets/logo.png"
             alt={`${config?.store_name || 'Joyas JP'} Logo`}
-            className="h-20 sm:h-24 md:h-28 w-auto transition-all duration-300"
+            className="h-12 sm:h-16 md:h-20 lg:h-28 w-auto transition-all duration-300"
           />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
@@ -82,11 +82,11 @@ export function Header() {
               >
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                    <Link href="/" className="flex items-center h-20">
+                    <Link href="/" className="flex items-center h-16">
                       <img
                         src="/assets/logo.png"
                         alt="Joyas JP Logo"
-                        className="h-16 w-auto"
+                        className="h-12 w-auto"
                       />
                     </Link>
                     <SheetClose asChild>

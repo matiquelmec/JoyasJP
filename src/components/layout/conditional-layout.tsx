@@ -28,8 +28,8 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
           <Header />
         </ErrorBoundary>
 
-        {/* 🔧 SOLUCIÓN: Padding responsivo para compensar header fijo */}
-        <main id="main-content" className="flex-1 pt-36 md:pt-40">
+        {/* 🔧 SOLUCIÓN: Padding responsivo optimizado para compensar header fijo */}
+        <main id="main-content" className="flex-1 pt-20 sm:pt-24 md:pt-32 lg:pt-40">
           <ErrorBoundary>{children}</ErrorBoundary>
         </main>
 

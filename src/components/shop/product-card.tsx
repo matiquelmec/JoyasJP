@@ -130,9 +130,9 @@ const ProductCard = memo(function ProductCard({
         className="contents"
         aria-label={`Ver detalles de ${product.name}`}
       >
-        <div className="relative w-full aspect-square overflow-hidden bg-muted/30">
+        <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-800">
           {imageLoading && (
-            <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted/70 to-muted animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 animate-shimmer" />
           )}
 
           {!imageError ? (

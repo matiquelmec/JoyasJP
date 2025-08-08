@@ -22,7 +22,7 @@ export function VideoHero() {
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-40 md:pt-44">
+      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44">
         {/* Logo */}
         <div className="mb-8">
           <img
