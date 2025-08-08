@@ -1,9 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { getBlurDataURL } from '@/lib/image-optimization'
 
 interface OptimizedImageProps {
   src: string
@@ -32,35 +31,8 @@ export function OptimizedImage({
   onLoad,
   onError,
 }: OptimizedImageProps) {
-  const [isInView, setIsInView] = useState(priority)
   const [hasLoaded, setHasLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const imgRef = useRef<HTMLDivElement>(null)
-
-  // Intersection Observer para lazy loading
-  useEffect(() => {
-    if (priority || !imgRef.current) {
-      setIsInView(true)
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsInView(true)
-          observer.disconnect()
-        }
-      },
-      {
-        rootMargin: '50px', // Precargar 50px antes
-        threshold: 0.01,
-      }
-    )
-
-    observer.observe(imgRef.current)
-
-    return () => observer.disconnect()
-  }, [priority])
 
   const handleLoad = () => {
     setHasLoaded(true)
@@ -74,22 +46,14 @@ export function OptimizedImage({
   }
 
   return (
-    <div ref={imgRef} className={cn('relative overflow-hidden', className)}>
+    <div className={cn('relative overflow-hidden', className)}>
       {/* Blur placeholder mientras carga */}
       {!hasLoaded && (
-        <div 
-          className="absolute inset-0 animate-pulse"
-          style={{
-            backgroundImage: `url(${getBlurDataURL()})`,
-            backgroundSize: 'cover',
-            filter: 'blur(20px)',
-            transform: 'scale(1.1)',
-          }}
-        />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 animate-shimmer" />
       )}
 
-      {/* Imagen real - solo se carga cuando está en viewport */}
-      {isInView && !hasError && (
+      {/* Imagen real */}
+      {!hasError ? (
         fill ? (
           <Image
             src={src}
@@ -98,7 +62,7 @@ export function OptimizedImage({
             sizes={sizes}
             quality={quality}
             className={cn(
-              'transition-all duration-700',
+              'transition-all duration-700 object-cover',
               hasLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm',
               className
             )}
@@ -124,10 +88,8 @@ export function OptimizedImage({
             priority={priority}
           />
         )
-      )}
-
-      {/* Fallback si hay error */}
-      {hasError && (
+      ) : (
+        // Fallback si hay error
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-800">
           <div className="text-center p-4">
             <svg
