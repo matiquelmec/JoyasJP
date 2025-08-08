@@ -15,6 +15,7 @@ export interface Product {
   gallery?: { imageUrl: string; imageHint: string; isPrimary?: boolean }[]
   quantity?: number
   sku?: string
+  code?: string
   variants?: {
     type: string
     options: {
@@ -29,6 +30,7 @@ export interface Product {
     keywords?: string[]
   }
   created_at?: string
+  updated_at?: string
   featured?: boolean
 }
 

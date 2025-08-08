@@ -7,12 +7,12 @@ const nextConfig = {
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
 
-  // 🚨 CONFIGURACIÓN TEMPORAL PARA LANZAMIENTO RÁPIDO
+  // ✅ CONFIGURACIÓN SEGURA PARA PRODUCCIÓN
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   // 🚀 OPTIMIZACIÓN CRÍTICA: Bundle Splitting
@@ -128,6 +128,22 @@ const nextConfig = {
           {
             key: 'X-Frame-Options',
             value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
           }
         ],
       },

@@ -62,16 +62,24 @@ export async function generateMetadata({
     }
   }
 
+  const productDescription = product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`
+
   return {
     title: `${product.name} | Joyas JP`,
-    description:
-      product.description ||
-      `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
+    description: productDescription,
+    keywords: [
+      product.name,
+      product.category,
+      'joyas urbanas',
+      'joyería premium Chile',
+      'alta joyería',
+      'Joyas JP',
+      product.category === 'rings' ? 'anillos' : product.category === 'necklaces' ? 'collares' : product.category,
+    ],
     openGraph: {
+      type: 'website',
       title: `${product.name} | Joyas JP`,
-      description:
-        product.description ||
-        `Descubre ${product.name} - Alta joyería urbana de Joyas JP`,
+      description: productDescription,
       images: [
         {
           url: product.imageUrl,
@@ -80,6 +88,16 @@ export async function generateMetadata({
           alt: product.name,
         },
       ],
+      siteName: 'Joyas JP',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} | Joyas JP`,
+      description: productDescription,
+      images: [product.imageUrl],
+    },
+    alternates: {
+      canonical: `/shop/${product.id}`,
     },
   }
 }
