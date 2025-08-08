@@ -7,22 +7,38 @@ import { Button } from '@/components/ui/button'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Simple full screen video */}
+      {/* Blurred Background Video - Extended to fill screen */}
+      <div className="absolute inset-0" style={{ zIndex: 1 }}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover scale-125 filter blur-lg opacity-70 saturate-150"
+        >
+          <source src="/assets/mi-video1.mp4" type="video/mp4" />
+        </video>
+        {/* Gradient overlay on background video for better blending */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
+      </div>
+
+      {/* Main Video - Centered and Sharp */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-contain"
+        style={{ zIndex: 2 }}
       >
         <source src="/assets/mi-video1.mp4" type="video/mp4" />
       </video>
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Subtle overlay - Above videos but below content */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/40" style={{ zIndex: 3 }} />
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44">
+      <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
         {/* Logo */}
         <div className="mb-8">
           <img
