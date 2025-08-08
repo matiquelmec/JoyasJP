@@ -62,17 +62,17 @@ export const metadata: Metadata = {
     siteName: 'Joyas JP',
     images: [
       {
-        url: '/assets/logo.png',
-        width: 500,
-        height: 500,
+        url: '/assets/logo.webp',
+        width: 450,
+        height: 200,
         alt: 'Joyas JP - Alta joyería urbana',
       },
     ],
   },
   icons: {
-    icon: '/assets/logo.png',
-    shortcut: '/assets/logo.png',
-    apple: '/assets/logo.png',
+    icon: '/assets/logo.webp',
+    shortcut: '/assets/logo.webp',
+    apple: '/assets/logo.webp',
   },
   robots: {
     index: true,
@@ -165,12 +165,12 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
         
-        {/* Preloads optimizados con versionado */}
+        {/* Preloads optimizados con versionado WebP */}
         <link
           rel="preload"
-          href="/assets/logo.png?v=1"
+          href="/assets/logo.webp?v=2"
           as="image"
-          type="image/png"
+          type="image/webp"
         />
         <link
           rel="preload"

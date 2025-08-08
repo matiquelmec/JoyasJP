@@ -11,11 +11,11 @@ export const ASSET_VERSIONS = {
   'mi-video1.mp4': 'v2',
   'mi-video2.mp4': 'v3', 
   
-  // Logo - incrementa cuando cambies el logo
-  'logo.png': 'v1',
+  // Logo WebP optimizado - incrementa cuando cambies el logo
+  'logo.webp': 'v2',
   
-  // Imágenes estáticas
-  'nosotros.jpg': 'v1'
+  // Imágenes WebP optimizadas
+  'nosotros.webp': 'v2'
 } as const
 
 export function getAssetUrl(assetPath: string): string {

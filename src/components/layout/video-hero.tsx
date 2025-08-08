@@ -48,7 +48,7 @@ export function VideoHero() {
         {/* Logo */}
         <div className="mb-8">
           <Image
-            src={getImageUrl('logo.png')}
+            src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
             width={450}
             height={200}
