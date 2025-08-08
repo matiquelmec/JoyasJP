@@ -50,9 +50,10 @@ export function VideoHero() {
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
-            width={450}
-            height={200}
+            width={320}
+            height={142}
             priority
+            sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 450px"
             className="h-auto w-80 md:w-96 lg:w-[450px] drop-shadow-[0_4px_20px_rgba(255,255,255,0.3)]"
           />
         </div>

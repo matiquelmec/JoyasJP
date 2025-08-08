@@ -95,13 +95,16 @@ const nextConfig = {
             priority: 15,
             enforce: true
           },
-          // Radix UI separado
+          // Radix UI separado y optimizado
           radix: {
             name: 'radix-ui',
             chunks: 'all',
             test: /[\\/]node_modules[\\/]@radix-ui/,
             priority: 12,
-            enforce: true
+            enforce: true,
+            // Solo incluir lo que realmente usamos
+            minSize: 0,
+            maxSize: 50000,
           },
           // Vendor chunk para otras librerías
           vendor: {

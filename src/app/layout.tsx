@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, PT_Sans } from 'next/font/google'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
+import { DeferredScripts } from '@/components/layout/script-loader'
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 
@@ -9,6 +10,7 @@ const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-headline',
   display: 'swap',
+  preload: true,
 })
 
 const ptSans = PT_Sans({
@@ -16,6 +18,7 @@ const ptSans = PT_Sans({
   weight: ['400', '700'],
   variable: '--font-body',
   display: 'swap',
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -160,6 +163,16 @@ export default function RootLayout({
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
         
+        {/* Critical CSS inline */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            body{background:#0a0a0a;color:#fafafa}
+            .animate-shimmer{animation:shimmer 1.5s infinite;background:linear-gradient(90deg,rgba(39,39,42,0.8) 25%,rgba(63,63,70,0.6) 50%,rgba(39,39,42,0.8) 75%);background-size:200% 100%}
+            @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+            .transition-all{transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
+          `
+        }} />
+
         {/* DNS Prefetch para mejor performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
@@ -196,6 +209,7 @@ export default function RootLayout({
         <ConditionalLayout>{children}</ConditionalLayout>
 
         <Toaster />
+        <DeferredScripts />
       </body>
     </html>
   )
