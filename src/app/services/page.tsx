@@ -68,7 +68,7 @@ export default function ServicesPage() {
           <div className="mt-12 relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl shadow-primary/10 bg-black">
             {/* Blurred Background Video */}
             <video
-              src="/assets/mi-video1.mp4"
+              src="/assets/mi-video2.mp4"
               autoPlay
               loop
               muted
@@ -78,7 +78,7 @@ export default function ServicesPage() {
             {/* Main Video - Centered and Sharp */}
             <div className="absolute inset-0 flex items-center justify-center">
               <video
-                src="/assets/mi-video1.mp4"
+                src="/assets/mi-video2.mp4"
                 autoPlay
                 loop
                 muted
