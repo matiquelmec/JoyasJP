@@ -6,10 +6,10 @@ export default function ProductsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Gestión de Productos
+          Gestión de Productos - DISEÑO SIMPLE
         </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Administra tu inventario y stock de joyas
+          Administra tu inventario y stock de joyas (Versión Simple)
         </p>
       </div>
 
