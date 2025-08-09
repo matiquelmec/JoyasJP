@@ -152,7 +152,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         // Removed is_featured and is_deleted as they don't exist in database
       }
 
-      console.log('📦 Enviando datos del producto:', productData)
+      console.log('📦 Enviando datos del producto (FIXED VERSION):', productData)
       
       let createdProduct = null
       if (mode === 'create') {
