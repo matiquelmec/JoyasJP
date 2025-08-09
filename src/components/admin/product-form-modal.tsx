@@ -157,7 +157,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background text-foreground border-border shadow-2xl">
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Crear Nuevo Producto' : `Editar: ${product?.name || 'Producto'}`}
