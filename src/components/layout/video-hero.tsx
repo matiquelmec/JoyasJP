@@ -9,12 +9,20 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Background image for immediate LCP - no video */}
+      {/* Background video - darkened and blurred */}
       <div className="absolute inset-0" style={{ zIndex: 1 }}>
-        <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black blur-md scale-110 brightness-[0.3]" />
+        <video
+          src={getVideoUrl('mi-video1.mp4')}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover blur-md scale-110 brightness-[0.3] contrast-[1.2] saturate-[0.8]"
+        />
       </div>
 
-      {/* Main video - lazy loaded after LCP */}
+      {/* Main video - centered with subtle filter */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
@@ -22,11 +30,8 @@ export function VideoHero() {
           loop
           muted
           playsInline
-          preload="none"
-          className="w-auto h-full max-w-full object-contain shadow-2xl brightness-[0.85] contrast-[1.1] saturate-[1.1] opacity-0 transition-opacity duration-1000"
-          onLoadedData={(e) => {
-            (e.target as HTMLVideoElement).style.opacity = '1';
-          }}
+          preload="metadata"
+          className="w-auto h-full max-w-full object-contain shadow-2xl brightness-[0.85] contrast-[1.1] saturate-[1.1]"
         />
       </div>
 
