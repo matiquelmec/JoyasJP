@@ -37,9 +37,9 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Estilo unificado para todos los enlaces de navegación
+  // Estilo unificado para todos los enlaces de navegación - rojo terciopelo brand
   const linkClassName =
-    'text-sm font-medium text-muted-foreground link-hover'
+    'text-sm font-medium text-primary hover:brightness-110 link-hover transition-all duration-300'
 
   return (
     <header
@@ -72,7 +72,7 @@ export function Header() {
             <Button 
               variant="ghost" 
               size="lg" 
-              className="relative"
+              className="relative text-primary hover:brightness-110 transition-all duration-300"
               aria-label={`Ver favoritos (${wishlistItems.length} productos)`}
             >
               <Heart className="h-7 w-7" />
@@ -91,6 +91,7 @@ export function Header() {
                 <Button 
                   variant="ghost" 
                   size="lg"
+                  className="text-primary hover:brightness-110 transition-all duration-300"
                   aria-label="Abrir menú de navegación"
                 >
                   <Menu className="h-7 w-7" />
@@ -114,6 +115,7 @@ export function Header() {
                       <Button 
                         variant="ghost" 
                         size="lg"
+                        className="text-primary hover:brightness-110 transition-all duration-300"
                         aria-label="Cerrar menú"
                       >
                         <X className="h-7 w-7" />
