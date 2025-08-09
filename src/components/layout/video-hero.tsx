@@ -23,7 +23,6 @@ export function VideoHero() {
           muted
           playsInline
           preload="none"
-          loading="lazy"
           className="w-auto h-full max-w-full object-contain shadow-2xl brightness-[0.85] contrast-[1.1] saturate-[1.1] opacity-0 transition-opacity duration-1000"
           onLoadedData={(e) => {
             (e.target as HTMLVideoElement).style.opacity = '1';
