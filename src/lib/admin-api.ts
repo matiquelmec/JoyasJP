@@ -25,14 +25,21 @@ class AdminAPI {
   }
 
   async createProduct(productData: any) {
-    const response = await fetch('/api/admin/products', {
+    console.log('🚀 AdminAPI: Creating product with data:', productData)
+    
+    // Use the fixed endpoint that works independently 
+    const response = await fetch('/api/admin/products-fixed', {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(productData)
     })
     
+    console.log('📡 AdminAPI: Response status:', response.status)
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
+      console.error('❌ AdminAPI: Error response:', errorData)
+      
       // Handle duplicate product error specifically
       if (response.status === 409) {
         throw new Error(errorData.message || 'Producto duplicado')
@@ -41,6 +48,7 @@ class AdminAPI {
     }
     
     const data = await response.json()
+    console.log('✅ AdminAPI: Product created successfully:', data.product)
     return data.product
   }
 

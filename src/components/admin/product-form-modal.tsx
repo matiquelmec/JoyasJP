@@ -96,25 +96,73 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     setLoading(true)
 
     try {
+      // Validación básica
+      if (!formData.name.trim()) {
+        toast({
+          title: 'Error de validación',
+          description: 'El nombre del producto es requerido.',
+          variant: 'destructive'
+        })
+        setLoading(false)
+        return
+      }
+
+      if (!formData.price || parseFloat(formData.price) <= 0) {
+        toast({
+          title: 'Error de validación', 
+          description: 'El precio debe ser mayor a 0.',
+          variant: 'destructive'
+        })
+        setLoading(false)
+        return
+      }
+
+      if (!formData.category) {
+        toast({
+          title: 'Error de validación',
+          description: 'La categoría es requerida.',
+          variant: 'destructive'
+        })
+        setLoading(false)
+        return
+      }
+
+      if (!formData.stock || parseInt(formData.stock) < 0) {
+        toast({
+          title: 'Error de validación',
+          description: 'El stock debe ser 0 o mayor.',
+          variant: 'destructive'
+        })
+        setLoading(false)
+        return
+      }
+
       const productData = {
         name: formData.name,
         code: formData.code || null,
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
-        imageUrl: formData.imageUrl || null,
+        imageUrl: formData.imageUrl || null, // Database column is imageUrl
         stock: parseInt(formData.stock) || 0,
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
         color: formData.color || null,
         detail: formData.detail || null
+        // Removed is_featured and is_deleted as they don't exist in database
       }
 
+      console.log('📦 Enviando datos del producto:', productData)
+      
       let createdProduct = null
       if (mode === 'create') {
+        console.log('🚀 Creando producto...')
         createdProduct = await adminAPI.createProduct(productData)
+        console.log('✅ Producto creado:', createdProduct)
       } else {
+        console.log('🔄 Actualizando producto...', product?.id)
         await adminAPI.updateProduct(product?.id || '', productData)
+        console.log('✅ Producto actualizado')
       }
 
       toast({
@@ -134,10 +182,15 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       setOpen(false)
       onSave()
     } catch (error) {
-      console.error('Error saving product:', error)
+      console.error('💥 Error saving product:', error)
+      
+      // Mensaje de error más específico
+      const errorMessage = error.message || 'Error desconocido'
+      console.error('💥 Error details:', errorMessage)
+      
       toast({
         title: 'Error',
-        description: `No se pudo ${mode === 'create' ? 'crear' : 'actualizar'} el producto. Intenta nuevamente.`,
+        description: `No se pudo ${mode === 'create' ? 'crear' : 'actualizar'} el producto: ${errorMessage}`,
         variant: 'destructive'
       })
     } finally {
