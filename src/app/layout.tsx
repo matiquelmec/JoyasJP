@@ -142,8 +142,6 @@ export default function RootLayout({
       <head>
         {/* MUST be first - disable browser interventions */}
         <script src="/disable-interventions.js" />
-        {/* Debug script SIMPLE para capturar rectángulo blanco */}
-        <script src="/debug-simple.js" />
         
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
