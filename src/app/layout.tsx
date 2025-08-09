@@ -166,7 +166,8 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{
           __html: `
             body{background:#0a0a0a;color:#fafafa}
-            .sr-only{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+            .sr-only{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+            .sr-only:focus{position:absolute!important;left:1rem!important;top:1rem!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;white-space:normal!important}
             .animate-shimmer{animation:shimmer 1.5s infinite;background:linear-gradient(90deg,rgba(39,39,42,0.8) 25%,rgba(63,63,70,0.6) 50%,rgba(39,39,42,0.8) 75%);background-size:200% 100%}
             @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
             .transition-all{transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
@@ -197,28 +198,6 @@ export default function RootLayout({
         <a
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
           href="#main-content"
-          style={{
-            position: 'absolute',
-            left: '-9999px',
-            width: '1px',
-            height: '1px',
-            overflow: 'hidden'
-          }}
-          onFocus={(e) => {
-            e.target.style.position = 'absolute'
-            e.target.style.top = '1rem'
-            e.target.style.left = '1rem'
-            e.target.style.width = 'auto'
-            e.target.style.height = 'auto'
-            e.target.style.overflow = 'visible'
-          }}
-          onBlur={(e) => {
-            e.target.style.position = 'absolute'
-            e.target.style.left = '-9999px'
-            e.target.style.width = '1px'
-            e.target.style.height = '1px'
-            e.target.style.overflow = 'hidden'
-          }}
         >
           Saltar al contenido principal
         </a>
