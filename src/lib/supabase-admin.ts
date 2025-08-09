@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-let supabaseAdmin: ReturnType<typeof createClient> | undefined
-let clientInitialized = false
+let supabaseAdminClient: ReturnType<typeof createClient> | undefined
+let adminClientInitialized = false
 
 function initializeSupabaseAdmin() {
-  if (clientInitialized) {
-    return supabaseAdmin
+  if (adminClientInitialized) {
+    return supabaseAdminClient
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -13,7 +13,7 @@ function initializeSupabaseAdmin() {
 
   if (supabaseUrl && supabaseServiceKey) {
     try {
-      supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      supabaseAdminClient = createClient(supabaseUrl, supabaseServiceKey, {
         auth: {
           autoRefreshToken: false,
           persistSession: false
@@ -22,14 +22,14 @@ function initializeSupabaseAdmin() {
       console.log('✅ Supabase admin client initialized on demand')
     } catch (error) {
       console.error('❌ Failed to initialize Supabase admin client:', error)
-      supabaseAdmin = undefined
+      supabaseAdminClient = undefined
     }
   } else {
     console.warn('Supabase URL or Service Role Key are missing. Admin operations will not be available.')
   }
 
-  clientInitialized = true
-  return supabaseAdmin
+  adminClientInitialized = true
+  return supabaseAdminClient
 }
 
 // Export function to get client on demand

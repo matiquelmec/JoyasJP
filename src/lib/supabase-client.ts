@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-let supabase: ReturnType<typeof createClient> | undefined
+let supabaseClient: ReturnType<typeof createClient> | undefined
 let clientInitialized = false
 
 function initializeSupabase() {
   if (clientInitialized) {
-    return supabase
+    return supabaseClient
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -13,18 +13,18 @@ function initializeSupabase() {
 
   if (supabaseUrl && supabaseAnonKey) {
     try {
-      supabase = createClient(supabaseUrl, supabaseAnonKey)
+      supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
       console.log('✅ Supabase client initialized on demand')
     } catch (error) {
       console.error('❌ Failed to initialize Supabase client:', error)
-      supabase = undefined
+      supabaseClient = undefined
     }
   } else {
     console.warn('Supabase URL or Anon Key are missing. Supabase client will not be initialized.')
   }
 
   clientInitialized = true
-  return supabase
+  return supabaseClient
 }
 
 // Export function to get client on demand
