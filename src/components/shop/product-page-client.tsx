@@ -61,8 +61,6 @@ export function ProductPageClient({ product }: ProductPageClientProps) {
         </div>
       )}
 
-      <Separator />
-
       {/* Actions */}
       <div className="space-y-4">
         <AddToCartButton product={product} className="w-full" size="lg" />
