@@ -40,11 +40,7 @@ export const MercadoPagoCheckout = dynamic(
 
 // ⚡ CARRITO - Solo carga cuando se abre
 export const CartPanel = dynamic(() => import('./shop/cart-panel').then(mod => ({ default: mod.CartPanel })), {
-  loading: () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-900 border border-gray-800 p-4 rounded text-white">Cargando carrito...</div>
-    </div>
-  ),
+  loading: () => null,
   ssr: false
 })
 
