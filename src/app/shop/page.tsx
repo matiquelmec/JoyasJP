@@ -39,7 +39,7 @@ export default function ShopPage() {
           product.name && 
           product.name.toLowerCase() !== 'prueba' &&
           product.price > 0 &&
-          !product.is_deleted
+          !product.deleted_at
         );
         
         setProducts(validProducts)
