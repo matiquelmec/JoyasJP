@@ -20,9 +20,8 @@ const VideoHero = dynamic(() => import('@/components/layout/video-hero').then(mo
       
       {/* Content skeleton matching VideoHero layout */}
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
-        {/* Logo skeleton with glow */}
+        {/* Logo skeleton without white glow */}
         <div className="mb-8 relative">
-          <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-110 animate-pulse" />
           <div className="relative w-80 md:w-96 lg:w-[450px] h-32 md:h-40 lg:h-48 bg-gradient-to-br from-zinc-700 to-zinc-800 animate-pulse rounded-lg shadow-2xl" />
         </div>
 
@@ -32,12 +31,12 @@ const VideoHero = dynamic(() => import('@/components/layout/video-hero').then(mo
         {/* Buttons skeleton */}
         <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full mb-16">
           <div className="flex-1 h-14 bg-primary/30 animate-pulse rounded-md" />
-          <div className="flex-1 h-14 bg-zinc-700/50 animate-pulse rounded-md border border-white/20" />
+          <div className="flex-1 h-14 bg-zinc-700/50 animate-pulse rounded-md border border-zinc-700" />
         </div>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-          <div className="w-8 h-8 bg-white/20 animate-bounce rounded-full" />
+          <div className="w-8 h-8 bg-zinc-700/50 animate-bounce rounded-full" />
         </div>
       </div>
 
