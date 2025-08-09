@@ -321,3 +321,27 @@ html {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ✨ FIX PARA HEADER ESTABLE CON DROPDOWNS */
+header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Prevenir que los dropdowns muevan el layout */
+[data-radix-portal] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  transform: none;
+}
+
+/* Asegurar que el body no se mueva */
+body:has([data-radix-portal]) {
+  transform: none !important;
+}
