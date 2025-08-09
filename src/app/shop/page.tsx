@@ -171,7 +171,16 @@ export default function ShopPage() {
                 Color:
               </span>
               <Select onValueChange={setActiveColor} value={activeColor}>
-                <SelectTrigger className="w-[180px] color-filter-trigger">
+                <SelectTrigger 
+                  className="w-[180px] color-filter-trigger"
+                  style={{
+                    background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3))',
+                    border: '2px solid rgba(239, 68, 68, 0.6)',
+                    color: 'white',
+                    fontWeight: '600',
+                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
                   <SelectValue placeholder="Filtrar por color" />
                 </SelectTrigger>
                 <SelectContent 
