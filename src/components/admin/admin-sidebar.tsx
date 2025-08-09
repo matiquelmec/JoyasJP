@@ -36,19 +36,24 @@ export function AdminSidebar() {
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 px-6 pb-4">
+      <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-background to-card border-r border-border px-6 pb-4 shadow-lg">
         {/* Logo */}
         <div className="flex h-16 shrink-0 items-center">
-          <Link href="/" className="flex items-center space-x-3">
-            <Image
-              src="/assets/logo.png"
-              alt={`${config?.store_name || 'Joyas JP'} Logo`}
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative">
+              <Image
+                src="/assets/logo.png"
+                alt={`${config?.store_name || 'Joyas JP'} Logo`}
+                width={40}
+                height={40}
+                className="object-contain transition-transform group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            </div>
             <div>
-              <h1 className="text-xl font-bold">{config?.store_name || 'Joyas JP'}</h1>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                {config?.store_name || 'Joyas JP'}
+              </h1>
               <p className="text-xs text-muted-foreground">Admin Panel</p>
             </div>
           </Link>
@@ -68,19 +73,24 @@ export function AdminSidebar() {
                       <Link
                         href={item.href}
                         className={cn(
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors',
+                          'group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-medium transition-all duration-200 relative overflow-hidden',
                           isActive
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-gray-700 hover:text-primary hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                            ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg transform scale-[1.02]'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 hover:transform hover:scale-[1.01]'
                         )}
                       >
+                        {isActive && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/70 opacity-90" />
+                        )}
                         <item.icon
                           className={cn(
-                            'h-6 w-6 shrink-0',
-                            isActive ? 'text-primary-foreground' : 'text-gray-400 group-hover:text-primary'
+                            'h-5 w-5 shrink-0 transition-all duration-200 relative z-10',
+                            isActive 
+                              ? 'text-primary-foreground drop-shadow-sm' 
+                              : 'text-muted-foreground group-hover:text-primary group-hover:scale-110'
                           )}
                         />
-                        {item.name}
+                        <span className="relative z-10">{item.name}</span>
                       </Link>
                     </li>
                   )
@@ -91,13 +101,13 @@ export function AdminSidebar() {
             {/* Logout */}
             <li className="mt-auto">
               <button
-                className="group -mx-2 flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-primary dark:text-gray-300 dark:hover:bg-gray-800"
+                className="group flex w-full gap-x-3 rounded-lg p-3 text-sm font-medium leading-6 transition-all duration-200 text-muted-foreground hover:text-destructive hover:bg-destructive/5 border border-transparent hover:border-destructive/20"
                 onClick={() => {
                   // Implementar logout
                   window.location.href = '/'
                 }}
               >
-                <LogOut className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-primary" />
+                <LogOut className="h-5 w-5 shrink-0 transition-all duration-200 group-hover:scale-110" />
                 Cerrar Sesión
               </button>
             </li>

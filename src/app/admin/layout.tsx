@@ -51,7 +51,7 @@ export default function AdminLayout({
 }) {
   return (
     <AdminAuthProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
         <AdminSidebar />
         <div className="lg:pl-72">
           <AdminHeader />

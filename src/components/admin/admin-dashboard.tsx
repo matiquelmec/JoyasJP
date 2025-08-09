@@ -118,14 +118,17 @@ export function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* KPIs principales */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor del Inventario</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/10" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Valor del Inventario</CardTitle>
+            <div className="p-2 rounded-full bg-green-500/10">
+              <DollarSign className="h-5 w-5 text-green-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-green-600 mb-1">
               {formatCLP(stats.totalRevenue)}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -134,39 +137,48 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Productos Totales</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Productos Totales</CardTitle>
+            <div className="p-2 rounded-full bg-primary/10">
+              <Package className="h-5 w-5 text-primary" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProducts}</div>
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-primary mb-1">{stats.totalProducts}</div>
             <p className="text-xs text-muted-foreground">
               {stats.activeProducts} con stock disponible
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Stock Bajo</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-yellow-500/10" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Stock Bajo</CardTitle>
+            <div className="p-2 rounded-full bg-orange-500/10">
+              <AlertTriangle className="h-5 w-5 text-orange-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.lowStockProducts}</div>
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-orange-600 mb-1">{stats.lowStockProducts}</div>
             <p className="text-xs text-muted-foreground">
               Productos con ≤5 unidades
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sin Stock</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/10" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground">Sin Stock</CardTitle>
+            <div className="p-2 rounded-full bg-red-500/10">
+              <Package className="h-5 w-5 text-red-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.outOfStockProducts}</div>
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-red-600 mb-1">{stats.outOfStockProducts}</div>
             <p className="text-xs text-muted-foreground">
               Productos agotados
             </p>
