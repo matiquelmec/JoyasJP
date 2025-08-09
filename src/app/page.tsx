@@ -11,7 +11,7 @@ import type { Product } from '@/lib/types'
 
 // Dynamic import del VideoHero para mejorar performance inicial
 const VideoHero = dynamic(() => import('@/components/layout/video-hero').then(mod => ({ default: mod.VideoHero })), {
-  ssr: true, // Mantenemos SSR para SEO
+  ssr: false, // No SSR para mejor LCP
   loading: () => (
     <section className="relative h-screen w-screen overflow-hidden bg-gradient-to-br from-zinc-900 via-black to-zinc-900">
       {/* Simulated video background */}

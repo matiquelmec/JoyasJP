@@ -141,6 +141,7 @@ const ProductCard = memo(function ProductCard({
               alt={`${product.name} - Joya urbana premium`}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              loading={priority ? "eager" : "lazy"}
               className={cn(
                 'object-cover product-image-hover transition-all duration-500',
                 imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100'
@@ -148,9 +149,7 @@ const ProductCard = memo(function ProductCard({
               onLoad={handleImageLoad}
               onError={handleImageError}
               priority={priority}
-              loading={priority ? 'eager' : 'lazy'}
               quality={priority ? 90 : 75}
-              placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             />
           ) : (
