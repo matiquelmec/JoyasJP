@@ -6,9 +6,6 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_ENV = "production"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
 # Configuración para optimizar assets estáticos
 [[headers]]
   for = "/assets/*"
