@@ -37,15 +37,15 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Estilo unificado para todos los enlaces de navegación
+  // Estilo unificado para todos los enlaces de navegación - letras blancas
   const linkClassName =
-    'text-sm font-medium text-muted-foreground link-hover'
+    'text-sm font-medium text-foreground link-hover'
 
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm',
-        hasScrolled ? 'shadow-lg' : 'shadow-none'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-black/40 backdrop-blur-md border-b border-white/10',
+        hasScrolled ? 'bg-black/60 shadow-lg' : 'bg-black/40 shadow-none'
       )}
     >
       <div className="container mx-auto flex h-20 sm:h-24 md:h-32 lg:h-40 items-center justify-between px-4 sm:px-6 lg:px-8">
