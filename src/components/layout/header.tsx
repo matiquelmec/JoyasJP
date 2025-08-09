@@ -37,9 +37,9 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Estilo unificado para todos los enlaces de navegación - letras blancas
+  // Estilo unificado para todos los enlaces de navegación - sin efectos blancos
   const linkClassName =
-    'text-sm font-medium text-foreground link-hover'
+    'text-sm font-medium text-white hover:text-gray-200 transition-colors duration-200'
 
   return (
     <header
