@@ -55,7 +55,7 @@ export default function AdminLayout({
         <AdminSidebar />
         <div className="lg:pl-72">
           <AdminHeader />
-          <main className="p-4 lg:p-8">
+          <main className="p-4 lg:p-8 pb-20 lg:pb-8">
             <div className="mx-auto max-w-7xl">
               {children}
             </div>

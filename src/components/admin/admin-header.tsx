@@ -25,9 +25,10 @@ export function AdminHeader() {
 
       {/* Page title or breadcrumb could go here */}
       <div className="flex flex-1 items-center">
-        <div className="hidden sm:block">
-          <h2 className="text-lg font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Panel de Administración
+        <div className="block">
+          <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="hidden sm:inline">Panel de Administración</span>
+            <span className="sm:hidden">Admin</span>
           </h2>
         </div>
       </div>

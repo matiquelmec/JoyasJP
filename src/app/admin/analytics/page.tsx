@@ -6,13 +6,16 @@ import Link from 'next/link'
 export default function AnalyticsPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Analytics
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Métricas detalladas y análisis de rendimiento
-        </p>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl -z-10" />
+        <div className="p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent">
+            Analytics
+          </h1>
+          <p className="mt-3 text-muted-foreground text-lg">
+            Métricas detalladas y análisis de rendimiento
+          </p>
+        </div>
       </div>
 
       {/* Estado actual - sin datos */}

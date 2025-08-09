@@ -35,7 +35,9 @@ export function AdminSidebar() {
   const { config } = useSiteConfig()
 
   return (
-    <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-background to-card border-r border-border px-6 pb-4 shadow-lg">
         {/* Logo */}
         <div className="flex h-16 shrink-0 items-center">
@@ -115,5 +117,37 @@ export function AdminSidebar() {
         </nav>
       </div>
     </div>
+
+      {/* Mobile Navigation - Bottom Tab Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-gradient-to-r from-card to-background border-t border-border shadow-2xl">
+        <div className="grid grid-cols-5 gap-1 p-2">
+          {navigation.slice(0, 5).map((item) => {
+            const isActive = pathname === item.href || 
+              (item.href !== '/admin' && pathname.startsWith(item.href))
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'flex flex-col items-center justify-center p-2 rounded-lg text-xs font-medium transition-all duration-200',
+                  isActive
+                    ? 'bg-primary text-primary-foreground shadow-lg'
+                    : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                )}
+              >
+                <item.icon
+                  className={cn(
+                    'h-5 w-5 mb-1',
+                    isActive ? 'text-primary-foreground' : 'text-current'
+                  )}
+                />
+                <span className="truncate">{item.name.split(' ')[0]}</span>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+    </>
   )
 }
