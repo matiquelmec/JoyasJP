@@ -9,7 +9,7 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Background video - blurred and fills screen */}
+      {/* Background video - darkened and blurred */}
       <div className="absolute inset-0" style={{ zIndex: 1 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
@@ -18,11 +18,11 @@ export function VideoHero() {
           muted
           playsInline
           preload="metadata"
-          className="w-full h-full object-cover blur-md scale-110"
+          className="w-full h-full object-cover blur-md scale-110 brightness-[0.3] contrast-[1.2] saturate-[0.8]"
         />
       </div>
 
-      {/* Main video - centered with proper aspect ratio */}
+      {/* Main video - centered with subtle filter */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
@@ -31,12 +31,13 @@ export function VideoHero() {
           muted
           playsInline
           preload="metadata"
-          className="w-auto h-full max-w-full object-contain shadow-2xl"
+          className="w-auto h-full max-w-full object-contain shadow-2xl brightness-[0.85] contrast-[1.1] saturate-[1.1]"
         />
       </div>
 
-      {/* Dark overlay to blend background */}
-      <div className="absolute inset-0 bg-black/30" style={{ zIndex: 1.5 }} />
+      {/* Professional gradient overlay - focuses attention to center */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-black/60" style={{ zIndex: 1.5 }} />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" style={{ zIndex: 1.6 }} />
 
       {/* Elegant gradient overlay for smooth transition */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/80" style={{ zIndex: 3 }} />
@@ -49,8 +50,10 @@ export function VideoHero() {
 
       {/* Content Container */}
       <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
-        {/* Logo */}
-        <div className="mb-8">
+        {/* Logo with enhanced visibility */}
+        <div className="mb-8 relative">
+          {/* Logo glow background */}
+          <div className="absolute inset-0 bg-white/10 rounded-full blur-3xl scale-110" />
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
@@ -58,7 +61,10 @@ export function VideoHero() {
             height={142}
             priority
             sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 450px"
-            className="h-auto w-80 md:w-96 lg:w-[450px] drop-shadow-[0_4px_20px_rgba(255,255,255,0.3)]"
+            className="relative h-auto w-80 md:w-96 lg:w-[450px] 
+                       drop-shadow-[0_0_30px_rgba(255,255,255,0.8)] 
+                       drop-shadow-[0_8px_32px_rgba(0,0,0,0.6)]
+                       brightness-110 contrast-110"
           />
         </div>
 
