@@ -22,15 +22,16 @@ export function VideoHero() {
         />
       </div>
 
-      {/* Main Video - Centered and Sharp */}
+      {/* Main Video - Immediate load for LCP optimization */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
-        <LazyVideo
+        <video
           src={getVideoUrl('mi-video1.mp4')}
           autoPlay
           loop
           muted
           playsInline
-          className="w-auto h-full max-w-full object-contain shadow-2xl"
+          preload="auto"
+          className="w-auto h-full max-w-full object-contain shadow-2xl will-change-transform"
         />
       </div>
 

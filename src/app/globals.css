@@ -13,8 +13,8 @@
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary es ahora Rojo Terciopelo */
-    --primary: 346.8 85% 45%; /* Rojo oscuro, saturado y elegante */
+    /* Primary es ahora Rojo Terciopelo - Mejorado para contraste */
+    --primary: 346.8 85% 35%; /* Rojo más oscuro para mejor contraste */
     --primary-foreground: 0 0% 98%; /* Texto claro para contraste */
 
     --secondary: 0 0% 14.9%;
@@ -44,7 +44,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 346.8 85% 45%;
+    --primary: 346.8 85% 35%;
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;

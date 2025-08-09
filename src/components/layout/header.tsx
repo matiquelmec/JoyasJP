@@ -62,7 +62,12 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-2">
           <Link href="/favoritos">
-            <Button variant="ghost" size="lg" className="relative">
+            <Button 
+              variant="ghost" 
+              size="lg" 
+              className="relative"
+              aria-label={`Ver favoritos (${wishlistItems.length} productos)`}
+            >
               <Heart className="h-7 w-7" />
               {wishlistItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 text-sm flex items-center justify-center">
@@ -76,9 +81,13 @@ export function Header() {
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="lg">
+                <Button 
+                  variant="ghost" 
+                  size="lg"
+                  aria-label="Abrir menú de navegación"
+                >
                   <Menu className="h-7 w-7" />
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">Abrir menú</span>
                 </Button>
               </SheetTrigger>
               <SheetContent
@@ -95,7 +104,11 @@ export function Header() {
                       />
                     </Link>
                     <SheetClose asChild>
-                      <Button variant="ghost" size="lg">
+                      <Button 
+                        variant="ghost" 
+                        size="lg"
+                        aria-label="Cerrar menú"
+                      >
                         <X className="h-7 w-7" />
                       </Button>
                     </SheetClose>
