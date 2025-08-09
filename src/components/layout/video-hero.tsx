@@ -9,7 +9,20 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Optimized video - autoplay with metadata preload */}
+      {/* Background video - blurred and fills screen */}
+      <div className="absolute inset-0" style={{ zIndex: 1 }}>
+        <video
+          src={getVideoUrl('mi-video1.mp4')}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover blur-md scale-110"
+        />
+      </div>
+
+      {/* Main video - centered with proper aspect ratio */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
@@ -22,8 +35,8 @@ export function VideoHero() {
         />
       </div>
 
-      {/* Static gradient background instead of duplicate video */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/40 to-background/80" style={{ zIndex: 1 }} />
+      {/* Dark overlay to blend background */}
+      <div className="absolute inset-0 bg-black/30" style={{ zIndex: 1.5 }} />
 
       {/* Elegant gradient overlay for smooth transition */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/80" style={{ zIndex: 3 }} />
