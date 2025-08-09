@@ -140,6 +140,9 @@ export default function RootLayout({
   return (
     <html lang="es-CL" className="dark scroll-smooth">
       <head>
+        {/* MUST be first - disable browser interventions */}
+        <script src="/disable-interventions.js" />
+        
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -157,6 +160,10 @@ export default function RootLayout({
           defer
         />
 
+        {/* Disable browser optimizations */}
+        <meta name="disable-features" content="LazyLoad" />
+        <meta name="loading" content="eager" />
+        
         {/* Cache busting y optimización */}
         <meta name="build-version" content={`${Date.now()}`} />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
