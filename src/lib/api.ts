@@ -21,7 +21,13 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getColors(): Promise<string[]> {
-  const { data, error } = await supabase.from('products').select('color')
+  // Obtener colores solo de productos disponibles (mismo criterio que getProducts)
+  const { data, error } = await supabase
+    .from('products')
+    .select('color')
+    .gt('stock', 0)
+    .not('color', 'is', null)
+    .neq('color', '')
 
   if (error) {
     console.error('Error fetching colors:', error)
@@ -30,19 +36,14 @@ export async function getColors(): Promise<string[]> {
 
   const colors = (data || [])
     .map((item: any) => {
-      const normalized = normalizeColor(item.color)
-      // Capitalize the first letter
-      return normalized.charAt(0).toUpperCase() + normalized.slice(1)
+      if (!item.color) return null
+      const normalized = normalizeColor(item.color.toString().trim())
+      if (!normalized || normalized === 'prueba') return null
+      // Capitalize the first letter properly
+      return normalized.charAt(0).toUpperCase() + normalized.slice(1).toLowerCase()
     })
-    .filter((value, index, self) => self.indexOf(value) === index)
-    .sort() // Sort alphabetically
-
-  // Find and remove "Mixto" if it exists, then add it to the beginning
-  const mixtoIndex = colors.indexOf('Mixto')
-  if (mixtoIndex > -1) {
-    colors.splice(mixtoIndex, 1)
-    colors.unshift('Mixto')
-  }
+    .filter(Boolean) // Remove null/undefined
+    .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
 
   return colors
 }

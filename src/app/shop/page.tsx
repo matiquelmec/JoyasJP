@@ -34,26 +34,19 @@ export default function ShopPage() {
           getColors(),
         ])
         
-        // Filtrar productos válidos (no de prueba, con datos completos)
+        // Los productos ya vienen filtrados desde getProducts() (stock > 0)
         const validProducts = fetchedProducts.filter(product => 
           product.name && 
           product.name.toLowerCase() !== 'prueba' &&
           product.price > 0 &&
-          product.stock > 0 &&
           !product.is_deleted
         );
         
         setProducts(validProducts)
         
-        // Filtrar colores válidos y ordenar
-        const validColors = fetchedColors.filter(color => 
-          color && 
-          color.toLowerCase() !== 'prueba' &&
-          color.trim() !== ''
-        );
-        
+        // Los colores ya vienen limpios desde getColors(), solo ordenar
         const colorOrder = ['dorado', 'plateado', 'mixto', 'negro'];
-        const orderedColors = validColors.sort((a, b) => {
+        const orderedColors = fetchedColors.sort((a, b) => {
           const indexA = colorOrder.indexOf(a.toLowerCase());
           const indexB = colorOrder.indexOf(b.toLowerCase());
           const finalIndexA = indexA === -1 ? 999 : indexA;
@@ -76,8 +69,16 @@ export default function ShopPage() {
     const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
     
     return products
-      .filter((p) => activeCategory === 'all' || p.category === activeCategory)
-      .filter((p) => activeColor === 'all' || p.color === activeColor)
+      .filter((p) => {
+        // Filtro por categoría
+        const categoryMatch = activeCategory === 'all' || p.category === activeCategory;
+        
+        // Filtro por color mejorado
+        const colorMatch = activeColor === 'all' || 
+          (p.color && p.color.toLowerCase() === activeColor.toLowerCase());
+        
+        return categoryMatch && colorMatch;
+      })
       .sort((a, b) => {
         // Solo ordenar por categoría cuando se muestra "Todos"
         if (activeCategory === 'all') {
