@@ -12,10 +12,7 @@ export const ASSET_VERSIONS = {
   'mi-video2.mp4': 'v3', 
   
   // Logo WebP optimizado - incrementa cuando cambies el logo
-  'logo.webp': 'v2',
-  
-  // Imágenes WebP optimizadas
-  'nosotros.webp': 'v2'
+  'logo.webp': 'v2'
 } as const
 
 export function getAssetUrl(assetPath: string): string {

@@ -1,7 +1,123 @@
-// Re-export types from feature modules for backward compatibility
-// TODO: Gradually update imports throughout the codebase to use feature-specific types
+// Core application types
 
-export type { Product, ProductFilters, ProductSearchParams } from '@/features/products'
-export type { CartItem, CartState, CartActions } from '@/features/cart'  
-export type { CheckoutFormData, Order, PaymentPreference } from '@/features/checkout'
-export type { NavLink, ApiResponse, SiteConfiguration } from '@/shared/types'
+// Navigation
+export interface NavLink {
+  href: string
+  label: string
+}
+
+// API Response  
+export interface ApiResponse<T = any> {
+  data?: T
+  error?: string
+  success: boolean
+  message?: string
+}
+
+// Site Configuration
+export interface SiteConfiguration {
+  store_name: string
+  store_description?: string
+  store_email?: string
+  shipping_cost: number
+  free_shipping_from: number
+  shipping_zones?: string[]
+  admin_email?: string
+  notify_new_orders: boolean
+  notify_low_stock: boolean
+  mercadopago_public_key?: string
+  mercadopago_access_token?: string
+}
+
+// Product
+export interface Product {
+  id: string
+  name: string
+  description: string
+  price: number
+  image_url: string
+  category: string
+  stock: number
+  is_featured: boolean
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ProductFilters {
+  category?: string
+  priceMin?: number
+  priceMax?: number
+  inStock?: boolean
+  search?: string
+}
+
+export interface ProductSearchParams extends ProductFilters {
+  page?: number
+  limit?: number
+  sortBy?: 'price' | 'name' | 'created_at'
+  sortOrder?: 'asc' | 'desc'
+}
+
+// Cart
+export interface CartItem {
+  id: string
+  name: string
+  price: number
+  image_url: string
+  quantity: number
+  category: string
+  stock: number
+}
+
+export interface CartState {
+  items: CartItem[]
+  total: number
+  itemCount: number
+}
+
+// Checkout & Orders
+export interface CheckoutFormData {
+  name: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  region: string
+  postalCode?: string
+  notes?: string
+}
+
+export interface Order {
+  id: string
+  user_name: string
+  user_email: string
+  user_phone: string
+  shipping_address: string
+  items: OrderItem[]
+  total: number
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
+  created_at: string
+  updated_at: string
+}
+
+export interface OrderItem {
+  product_id: string
+  product_name: string
+  price: number
+  quantity: number
+  image_url: string
+}
+
+// Utility types
+export interface PaginationParams {
+  page: number
+  limit: number
+  total?: number
+  totalPages?: number
+}
+
+export interface SortParams<T = string> {
+  sortBy: T
+  sortOrder: 'asc' | 'desc'
+}

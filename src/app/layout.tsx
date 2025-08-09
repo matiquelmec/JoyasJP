@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, PT_Sans } from 'next/font/google'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
-import { DeferredScripts } from '@/components/layout/script-loader'
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 
@@ -203,7 +202,6 @@ export default function RootLayout({
         <ConditionalLayout>{children}</ConditionalLayout>
 
         <Toaster />
-        <DeferredScripts />
       </body>
     </html>
   )
