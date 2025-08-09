@@ -33,26 +33,23 @@ export interface SiteConfiguration {
 export interface Product {
   id: string
   name: string
-  description?: string
+  description: string
   price: number
-  imageUrl: string // Database column is actually imageUrl (not image_url)
+  image_url: string
   category: string
   stock: number
-  created_at?: string
-  updated_at?: string
-  // Actual database fields based on schema analysis
+  is_featured: boolean
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+  // Optional legacy fields for compatibility (to be cleaned up gradually)
+  imageUrl?: string // @deprecated use image_url
   materials?: string
   dimensions?: string
   color?: string
   detail?: string
-  specifications?: string
-  gallery?: string[]
-  variants?: string[]
-  sku?: string
-  seo?: string
-  image_hint?: string
-  deleted_at?: string
-  code?: string // Optional product code used as ID
+  featured?: boolean // @deprecated use is_featured
+  code?: string
 }
 
 export interface ProductFilters {
@@ -75,10 +72,12 @@ export interface CartItem {
   id: string
   name: string
   price: number
-  imageUrl: string
+  image_url: string
   quantity: number
   category: string
   stock: number
+  // Legacy compatibility
+  imageUrl?: string // @deprecated use image_url
 }
 
 export interface CartState {
@@ -117,7 +116,7 @@ export interface OrderItem {
   product_name: string
   price: number
   quantity: number
-  imageUrl: string
+  image_url: string
 }
 
 // Utility types

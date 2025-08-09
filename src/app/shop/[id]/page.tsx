@@ -179,7 +179,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <Badge variant="secondary" className="capitalize">
                   {product.category}
                 </Badge>
-                {/* Featured badge removed as 'featured' field doesn't exist in Product interface */}
+                {product.featured && (
+                  <Badge className="bg-primary/10 text-primary">
+                    Destacado
+                  </Badge>
+                )}
               </div>
 
               <h1 className="text-3xl lg:text-4xl font-headline font-bold">
