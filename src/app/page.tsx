@@ -1,51 +1,13 @@
 import { ArrowDown, Heart, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
 import { PageTransition } from '@/components/ui/page-transition'
+import { VideoHero } from '@/components/layout/video-hero'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
-
-// Dynamic import del VideoHero para mejorar performance inicial
-const VideoHero = dynamic(() => import('@/components/layout/video-hero').then(mod => ({ default: mod.VideoHero })), {
-  ssr: true, // SSR habilitado para evitar skeleton
-  loading: () => (
-    <section className="relative h-screen w-screen overflow-hidden bg-gradient-to-br from-zinc-900 via-black to-zinc-900">
-      {/* Simulated video background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-black/60" />
-      
-      {/* Content skeleton matching VideoHero layout */}
-      <div className="relative flex flex-col items-center justify-center h-full text-center text-white p-4 pt-24 sm:pt-28 md:pt-36 lg:pt-44" style={{ zIndex: 10 }}>
-        {/* Logo skeleton without white glow */}
-        <div className="mb-8 relative">
-          <div className="relative w-80 md:w-96 lg:w-[450px] h-32 md:h-40 lg:h-48 bg-gradient-to-br from-zinc-700 to-zinc-800 animate-pulse rounded-lg shadow-2xl" />
-        </div>
-
-        {/* Slogan skeleton */}
-        <div className="h-6 bg-zinc-700 animate-pulse rounded w-48 mb-8" />
-
-        {/* Buttons skeleton */}
-        <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full mb-16">
-          <div className="flex-1 h-14 bg-primary/30 animate-pulse rounded-md" />
-          <div className="flex-1 h-14 bg-zinc-700/50 animate-pulse rounded-md border border-zinc-700" />
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-          <div className="w-8 h-8 bg-zinc-700/50 animate-bounce rounded-full" />
-        </div>
-      </div>
-
-      {/* Bottom fade matching VideoHero */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-32 bg-gradient-to-t from-background via-background/90 to-transparent" style={{ zIndex: 4 }} />
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-background" style={{ zIndex: 4 }} />
-    </section>
-  )
-})
 
 // 🎯 ESTRATEGIAS DE SELECCIÓN ALEATORIA OPTIMIZADA
 function getRandomStrategy(): 'pure_random' | 'weighted_categories' | 'stock_weighted' | 'time_based' {
