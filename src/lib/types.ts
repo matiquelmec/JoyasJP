@@ -42,6 +42,14 @@ export interface Product {
   is_deleted: boolean
   created_at: string
   updated_at: string
+  // Optional legacy fields for compatibility (to be cleaned up gradually)
+  imageUrl?: string // @deprecated use image_url
+  materials?: string
+  dimensions?: string
+  color?: string
+  detail?: string
+  featured?: boolean // @deprecated use is_featured
+  code?: string
 }
 
 export interface ProductFilters {
@@ -68,6 +76,8 @@ export interface CartItem {
   quantity: number
   category: string
   stock: number
+  // Legacy compatibility
+  imageUrl?: string // @deprecated use image_url
 }
 
 export interface CartState {

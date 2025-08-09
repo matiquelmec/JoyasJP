@@ -24,7 +24,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
   }
 
   const handleAddToCart = () => {
-    addItem({ ...product, quantity })
+    addItem(product, quantity)
     openCart()
   }
 
@@ -36,7 +36,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       <div className="grid lg:grid-cols-2 gap-12">
         <div className="relative w-full aspect-square object-cover rounded-lg overflow-hidden">
           <Image
-            src={product.imageUrl}
+            src={product.image_url}
             alt={product.name}
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
