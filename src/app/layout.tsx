@@ -167,8 +167,7 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{
           __html: `
             body{background:#0a0a0a;color:#fafafa}
-            img{background-color:#0a0a0a!important}
-            img:not([src]),img[src=""]{visibility:hidden!important}
+            img:not([src]),img[src=""]{visibility:hidden!important;background:#0a0a0a!important}
             img.lazyload,img.lazyloading{background:#0a0a0a!important;color:transparent!important}
             header *{color:#fafafa!important}
             header a,header nav a{color:#fafafa!important;text-decoration:none!important;background:transparent!important}
