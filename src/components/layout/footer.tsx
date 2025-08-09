@@ -93,12 +93,6 @@ export function Footer() {
               <TikTokIcon />
             </Link>
           </div>
-          <div className="mt-4 text-sm text-muted-foreground">
-            <p>Envío gratis desde</p>
-            <p className="font-semibold text-primary">
-              ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
-            </p>
-          </div>
         </div>
       </div>
       <div className="container mx-auto mt-8 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">

@@ -79,17 +79,6 @@ export default function ContactPage() {
               >
                 {contactPageContent.phone.number}
               </a>
-              <div className="mt-4 p-3 bg-muted/30 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  Envío gratis en compras sobre{' '}
-                  <span className="font-semibold text-primary">
-                    ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
-                  </span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Costo de envío: ${(config?.shipping_cost || 3000).toLocaleString('es-CL')}
-                </p>
-              </div>
             </CardContent>
           </Card>
 
@@ -161,11 +150,6 @@ export default function ContactPage() {
               <p className="text-muted-foreground">
                 {contactPageContent.showroom.note}
               </p>
-              <div className="mt-4 p-3 bg-muted/30 rounded-lg">
-                <p className="text-sm text-muted-foreground">
-                  Zonas de envío: {config?.shipping_zones || 'Santiago, Regiones'}
-                </p>
-              </div>
             </CardContent>
           </Card>
         </div>
