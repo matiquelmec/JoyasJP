@@ -201,18 +201,13 @@ const ProductCard = memo(function ProductCard({
 
         {/* Información atractiva en lugar de categoría */}
         <div className="text-sm flex items-center gap-1">
-          {product.stock <= 5 && product.stock > 0 ? (
-            <span className="text-orange-400 flex items-center gap-1 font-medium">
-              <Sparkles className="w-3 h-3" />
-              Solo {product.stock} unidades
-            </span>
-          ) : product.materials ? (
-            <span className="text-primary flex items-center gap-1 capitalize">
+          {product.materials ? (
+            <span className="text-primary flex items-center gap-1 capitalize font-medium">
               <Sparkles className="w-3 h-3" />
               {product.materials}
             </span>
           ) : product.color ? (
-            <span className="text-accent-foreground flex items-center gap-1 capitalize">
+            <span className="text-accent-foreground flex items-center gap-1 capitalize font-medium">
               <Sparkles className="w-3 h-3" />
               {product.color}
             </span>
@@ -221,10 +216,15 @@ const ProductCard = memo(function ProductCard({
               <Sparkles className="w-3 h-3" />
               Bestseller
             </span>
-          ) : (
-            <span className="text-muted-foreground flex items-center gap-1 capitalize">
+          ) : product.price > 50000 ? (
+            <span className="text-purple-400 flex items-center gap-1 font-medium">
               <Sparkles className="w-3 h-3" />
-              {product.category}
+              Edición Premium
+            </span>
+          ) : (
+            <span className="text-primary flex items-center gap-1 font-medium">
+              <Sparkles className="w-3 h-3" />
+              Diseño Exclusivo
             </span>
           )}
         </div>
