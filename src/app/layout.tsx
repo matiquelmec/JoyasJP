@@ -167,6 +167,9 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{
           __html: `
             body{background:#0a0a0a;color:#fafafa}
+            img{background-color:#0a0a0a!important}
+            img:not([src]),img[src=""]{visibility:hidden!important}
+            img.lazyload,img.lazyloading{background:#0a0a0a!important;color:transparent!important}
             header *{color:#fafafa!important}
             header a,header nav a{color:#fafafa!important;text-decoration:none!important;background:transparent!important}
             header .text-foreground{color:#fafafa!important}
@@ -202,6 +205,7 @@ export default function RootLayout({
           playfairDisplay.variable,
           ptSans.variable
         )}
+        data-loading="eager"
       >
         <a
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"

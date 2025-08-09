@@ -52,7 +52,10 @@ export function VideoHero() {
             alt="Joyas JP - Alta joyería para la escena urbana"
             width={320}
             height={142}
+            priority={true}
             loading="eager"
+            fetchPriority="high"
+            decoding="sync"
             sizes="(max-width: 768px) 240px, (max-width: 1024px) 320px, 384px"
             className="relative h-auto w-60 md:w-80 lg:w-96 
                        drop-shadow-[0_0_30px_rgba(255,255,255,0.8)] 
