@@ -1,9 +1,7 @@
 'use client'
 
-import { RotateCcw, Shield, Truck } from 'lucide-react'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
-import { Separator } from '@/components/ui/separator'
 import type { Product } from '@/lib/types'
 
 interface ProductPageClientProps {
@@ -70,26 +68,6 @@ export function ProductPageClient({ product }: ProductPageClientProps) {
         <AddToCartButton product={product} className="w-full" size="lg" />
       </div>
 
-      <Separator />
-
-      {/* Features */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Beneficios</h3>
-        <div className="grid gap-3">
-          <div className="flex items-center gap-3 text-sm">
-            <Truck className="w-5 h-5 text-primary" />
-            <span>Envío gratis a partir de ${freeShippingThreshold.toLocaleString('es-CL')}</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <Shield className="w-5 h-5 text-primary" />
-            <span>Garantía de autenticidad incluida</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <RotateCcw className="w-5 h-5 text-primary" />
-            <span>Devoluciones gratuitas hasta 30 días</span>
-          </div>
-        </div>
-      </div>
     </>
   )
 }
