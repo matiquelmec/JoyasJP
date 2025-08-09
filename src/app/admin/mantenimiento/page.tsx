@@ -239,7 +239,7 @@ export default function MantenimientoPage() {
   }
 
   const runTask = async (taskId: string) => {
-    setRunningTasks(prev => new Set([...prev, taskId]))
+    setRunningTasks(prev => new Set([...Array.from(prev), taskId]))
     
     // Simular ejecución de tarea
     const task = tasks.find(t => t.id === taskId)
@@ -260,7 +260,7 @@ export default function MantenimientoPage() {
         } : t
       ))
       setRunningTasks(prev => {
-        const newSet = new Set(prev)
+        const newSet = new Set(Array.from(prev))
         newSet.delete(taskId)
         return newSet
       })
