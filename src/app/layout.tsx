@@ -166,6 +166,9 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{
           __html: `
             body{background:#0a0a0a;color:#fafafa}
+            header img,header picture{background:transparent!important;opacity:0;transition:opacity 0.3s ease}
+            header img[data-loaded="true"]{opacity:1}
+            header img:not([src=""]):not([src*="data:"]) + *,header img[complete]{opacity:1}
             header button,header [role="button"]{background:transparent!important;border:0!important;color:#fafafa!important}
             header .relative{position:relative!important}
             button[data-state]{background:transparent!important}
