@@ -381,42 +381,93 @@ button.color-filter-trigger:hover svg {
 
 /* ✨ MEJORAS DE CONTRASTE PARA ADMIN PANEL */
 .admin-panel {
-  /* Asegurar buen contraste en todos los elementos */
+  /* Forzar contraste en todos los elementos del admin */
 }
 
-.admin-panel .dialog-content {
-  background: hsl(var(--background)) !important;
-  color: hsl(var(--foreground)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-}
-
+/* FORZAR CONTRASTE MÁXIMO EN TODOS LOS ELEMENTOS DE ENTRADA */
 .admin-panel input,
 .admin-panel textarea,
-.admin-panel select {
-  background: hsl(var(--background)) !important;
-  color: hsl(var(--foreground)) !important;
-  border: 1px solid hsl(var(--input)) !important;
+.admin-panel select,
+.admin-panel input[type="text"],
+.admin-panel input[type="number"],
+.admin-panel input[type="email"],
+.admin-panel input[type="password"] {
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid #d1d5db !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
 }
 
 .admin-panel input:focus,
 .admin-panel textarea:focus,
 .admin-panel select:focus {
-  border-color: hsl(var(--primary)) !important;
-  box-shadow: 0 0 0 2px hsla(var(--primary), 0.1) !important;
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  outline: none !important;
 }
 
+.admin-panel input::placeholder,
+.admin-panel textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Labels con contraste máximo */
 .admin-panel label {
-  color: hsl(var(--foreground)) !important;
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+/* Dialog content con fondo blanco */
+.admin-panel [data-radix-dialog-content] {
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid #e5e7eb !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Dialog overlay */
+.admin-panel [data-radix-dialog-overlay] {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Select específico */
+.admin-panel [data-radix-select-trigger] {
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid #d1d5db !important;
+}
+
+.admin-panel [data-radix-select-content] {
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-panel [data-radix-select-item] {
+  background: white !important;
+  color: #1a1a1a !important;
+}
+
+.admin-panel [data-radix-select-item]:hover {
+  background: #f3f4f6 !important;
+  color: #1a1a1a !important;
+}
+
+/* Botones en modales */
+.admin-panel button {
   font-weight: 500 !important;
 }
 
-/* Específico para modales y overlays */
-.admin-panel [data-radix-dialog-overlay] {
-  background-color: rgba(0, 0, 0, 0.7) !important;
-}
-
-.admin-panel [data-radix-dialog-content] {
-  background: hsl(var(--background)) !important;
-  color: hsl(var(--foreground)) !important;
-  border: 1px solid hsl(var(--border)) !important;
+/* Títulos de diálogos */
+.admin-panel [data-radix-dialog-title] {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
 }

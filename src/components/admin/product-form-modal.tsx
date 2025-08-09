@@ -157,14 +157,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent 
-        className="max-w-2xl max-h-[90vh] overflow-y-auto border-border shadow-2xl"
-        style={{
-          backgroundColor: 'hsl(var(--background))',
-          color: 'hsl(var(--foreground))',
-          border: '1px solid hsl(var(--border))'
-        }}
-      >
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Crear Nuevo Producto' : `Editar: ${product?.name || 'Producto'}`}
@@ -176,58 +169,33 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           )}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6" style={{ color: 'hsl(var(--foreground))' }}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Información básica */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label 
-                htmlFor="name"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Nombre del Producto *
-              </Label>
+              <Label htmlFor="name">Nombre del Producto *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 required
                 placeholder="Ej: Anillo de plata con diamante"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
             <div>
-              <Label 
-                htmlFor="code"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Código del Producto (opcional)
-              </Label>
+              <Label htmlFor="code">Código del Producto (opcional)</Label>
               <Input
                 id="code"
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
                 placeholder="Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label 
-                htmlFor="price"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Precio (CLP) *
-              </Label>
+              <Label htmlFor="price">Precio (CLP) *</Label>
               <Input
                 id="price"
                 type="number"
@@ -236,23 +204,13 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="99000"
                 min="0"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label 
-                htmlFor="stock"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Stock Inicial *
-              </Label>
+              <Label htmlFor="stock">Stock Inicial *</Label>
               <Input
                 id="stock"
                 type="number"
@@ -261,50 +219,22 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="10"
                 min="0"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
           </div>
 
           <div>
-            <Label 
-              htmlFor="category"
-              style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-            >
-              Categoría *
-            </Label>
+            <Label htmlFor="category">Categoría *</Label>
             <Select
               value={formData.category}
               onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
             >
-              <SelectTrigger 
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
-              >
+              <SelectTrigger>
                 <SelectValue placeholder="Selecciona una categoría" />
               </SelectTrigger>
-              <SelectContent 
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--border))'
-                }}
-              >
+              <SelectContent>
                 {categories.map(category => (
-                  <SelectItem 
-                    key={category} 
-                    value={category}
-                    style={{
-                      color: 'hsl(var(--foreground))'
-                    }}
-                  >
+                  <SelectItem key={category} value={category}>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </SelectItem>
                 ))}
@@ -321,105 +251,55 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           />
 
           <div>
-            <Label 
-              htmlFor="description"
-              style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-            >
-              Descripción
-            </Label>
+            <Label htmlFor="description">Descripción</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Describe las características principales del producto..."
               rows={3}
-              style={{
-                backgroundColor: 'hsl(var(--background))',
-                color: 'hsl(var(--foreground))',
-                border: '1px solid hsl(var(--input))'
-              }}
             />
           </div>
 
           {/* Detalles adicionales */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label 
-                htmlFor="materials"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Materiales
-              </Label>
+              <Label htmlFor="materials">Materiales</Label>
               <Input
                 id="materials"
                 value={formData.materials}
                 onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
                 placeholder="Ej: Plata 925, Oro 18k"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
             <div>
-              <Label 
-                htmlFor="color"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Color
-              </Label>
+              <Label htmlFor="color">Color</Label>
               <Input
                 id="color"
                 value={formData.color}
                 onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                 placeholder="Ej: Dorado, Plateado"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
             <div>
-              <Label 
-                htmlFor="dimensions"
-                style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-              >
-                Dimensiones
-              </Label>
+              <Label htmlFor="dimensions">Dimensiones</Label>
               <Input
                 id="dimensions"
                 value={formData.dimensions}
                 onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
                 placeholder="Ej: 2cm x 1.5cm"
-                style={{
-                  backgroundColor: 'hsl(var(--background))',
-                  color: 'hsl(var(--foreground))',
-                  border: '1px solid hsl(var(--input))'
-                }}
               />
             </div>
           </div>
 
           <div>
-            <Label 
-              htmlFor="detail"
-              style={{ color: 'hsl(var(--foreground))', fontWeight: '500' }}
-            >
-              Detalles Adicionales
-            </Label>
+            <Label htmlFor="detail">Detalles Adicionales</Label>
             <Textarea
               id="detail"
               value={formData.detail}
               onChange={(e) => setFormData(prev => ({ ...prev, detail: e.target.value }))}
               placeholder="Información adicional, cuidados, etc..."
               rows={2}
-              style={{
-                backgroundColor: 'hsl(var(--background))',
-                color: 'hsl(var(--foreground))',
-                border: '1px solid hsl(var(--input))'
-              }}
             />
           </div>
 
