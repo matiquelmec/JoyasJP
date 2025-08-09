@@ -176,6 +176,9 @@ export default function RootLayout({
             body{background:#0a0a0a;color:#fafafa}
             img:not([src]),img[src=""]{visibility:hidden!important;background:#0a0a0a!important}
             img.lazyload,img.lazyloading{background:#0a0a0a!important;color:transparent!important}
+            img[data-placeholder],img[placeholder]{background:#0a0a0a!important;opacity:0!important}
+            *[style*="placeholder"]{background:#0a0a0a!important;opacity:0!important}
+            *[class*="placeholder"]{background:#0a0a0a!important;opacity:0!important}
             header *{color:#fafafa!important}
             header a,header nav a{color:#fafafa!important;text-decoration:none!important;background:transparent!important}
             header .text-foreground{color:#fafafa!important}

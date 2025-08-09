@@ -28,12 +28,28 @@ if (typeof window !== 'undefined') {
     });
   });
 
-  // Intercept any new images added to DOM
+  // Intercept any new images and placeholders
   const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       mutation.addedNodes.forEach(function(node) {
         if (node.tagName === 'IMG') {
           node.loading = 'eager';
+          
+          // Hide any placeholder elements
+          if (node.hasAttribute('placeholder') || 
+              node.hasAttribute('data-placeholder') ||
+              node.className.includes('placeholder')) {
+            node.style.opacity = '0';
+            node.style.background = '#0a0a0a';
+          }
+        }
+        
+        // Also check for any element with placeholder in class or style
+        if (node.nodeType === 1) { // Element node
+          if (node.className && node.className.includes('placeholder')) {
+            node.style.opacity = '0';
+            node.style.background = '#0a0a0a';
+          }
         }
       });
     });
