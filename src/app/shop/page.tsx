@@ -138,8 +138,8 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="bg-background scroll-optimized">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-optimize">
+    <div className="bg-background min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 relative">
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -164,7 +164,7 @@ export default function ShopPage() {
             ))}
           </TabsList>
 
-          <div className="flex justify-end items-center mb-8">
+          <div className="flex justify-end items-center mb-8 relative z-10">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">
                 Color:
@@ -173,7 +173,7 @@ export default function ShopPage() {
                 <SelectTrigger className="w-[180px] bg-primary/10 border-primary/30 text-foreground hover:bg-primary/15 hover:border-primary/50 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 shadow-sm">
                   <SelectValue placeholder="Filtrar por color" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[60] bg-background border-border shadow-lg">
                   {colors.map((color) => (
                     <SelectItem 
                       key={color} 
