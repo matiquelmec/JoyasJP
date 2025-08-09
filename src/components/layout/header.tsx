@@ -53,11 +53,11 @@ export function Header() {
           <Image
             src="/assets/logo.webp"
             alt={`${config?.store_name || 'Joyas JP'} Logo`}
-            width={112}
-            height={112}
+            width={140}
+            height={140}
             priority
-            sizes="(max-width: 640px) 48px, (max-width: 768px) 64px, (max-width: 1024px) 80px, 112px"
-            className="h-12 sm:h-16 md:h-20 lg:h-28 w-auto transition-all duration-300"
+            sizes="(max-width: 640px) 60px, (max-width: 768px) 80px, (max-width: 1024px) 100px, 140px"
+            className="h-15 sm:h-20 md:h-25 lg:h-35 w-auto transition-all duration-300"
           />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
