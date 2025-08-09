@@ -346,13 +346,13 @@ body:has([data-radix-portal]) {
   transform: none !important;
 }
 
-/* ✨ FILTRO DE COLOR SUPER LLAMATIVO */
+/* ✨ FILTRO DE COLOR SUPER LLAMATIVO CON CONTORNO BLANCO */
 .color-filter-trigger {
   background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3)) !important;
   border: 2px solid rgba(239, 68, 68, 0.6) !important;
   color: white !important;
   font-weight: 600 !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -360,7 +360,7 @@ body:has([data-radix-portal]) {
   background: linear-gradient(90deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.4)) !important;
   border-color: rgb(239, 68, 68) !important;
   transform: scale(1.03) !important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 0 0 2px white, 0 8px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
 .color-filter-trigger svg {
