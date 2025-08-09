@@ -154,15 +154,15 @@ export default function ShopPage() {
                 Color:
               </span>
               <Select onValueChange={setActiveColor} value={activeColor}>
-                <SelectTrigger className="w-[180px] bg-gray-900/50 border-gray-700 text-gray-100 hover:bg-gray-900/70 focus:ring-primary focus:border-primary">
+                <SelectTrigger className="w-[180px] bg-primary/10 border-primary/30 text-foreground hover:bg-primary/15 hover:border-primary/50 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 shadow-sm">
                   <SelectValue placeholder="Filtrar por color" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-900/95 border-gray-700 backdrop-blur-sm">
+                <SelectContent>
                   {colors.map((color) => (
                     <SelectItem 
                       key={color} 
                       value={color}
-                      className="text-gray-100 focus:bg-primary/20 focus:text-white hover:bg-primary/10 capitalize"
+                      className="capitalize"
                     >
                       {color === 'all' ? 'Todos' : color}
                     </SelectItem>
