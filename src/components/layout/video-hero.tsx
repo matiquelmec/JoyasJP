@@ -4,36 +4,27 @@ import { ArrowDown, Heart, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LazyVideo } from '@/components/ui/lazy-video'
 import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Blurred Background Video - More visible effect */}
-      <div className="absolute inset-0" style={{ zIndex: 1 }}>
-        <LazyVideo
-          src={getVideoUrl('mi-video1.mp4')}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
-        />
-      </div>
-
-      {/* Main Video - Immediate load for LCP optimization */}
+      {/* Single optimized video with poster fallback */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
+          poster={getImageUrl('logo.webp')}
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
-          className="w-auto h-full max-w-full object-contain shadow-2xl will-change-transform"
+          preload="metadata"
+          className="w-auto h-full max-w-full object-contain shadow-2xl"
         />
       </div>
+
+      {/* Static gradient background instead of duplicate video */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/40 to-background/80" style={{ zIndex: 1 }} />
 
       {/* Elegant gradient overlay for smooth transition */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/80" style={{ zIndex: 3 }} />

@@ -178,18 +178,12 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
         
-        {/* Preloads optimizados con versionado WebP */}
+        {/* Preloads críticos solo para LCP */}
         <link
           rel="preload"
           href="/assets/logo.webp?v=2"
           as="image"
           type="image/webp"
-        />
-        <link
-          rel="preload"
-          href="/assets/mi-video1.mp4?v=2"
-          as="video"
-          type="video/mp4"
         />
       </head>
       <body

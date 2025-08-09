@@ -4,7 +4,7 @@ import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { CartPanel } from '@/components/shop/cart-panel'
+import { CartPanel } from '@/components/dynamic-imports'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -23,10 +23,17 @@ export function Header() {
   const { config } = useSiteConfig()
 
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 10)
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setHasScrolled(window.scrollY > 10)
+          ticking = false
+        })
+        ticking = true
+      }
     }
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
