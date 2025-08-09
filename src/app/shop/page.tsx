@@ -33,11 +33,27 @@ export default function ShopPage() {
           getProducts(),
           getColors(),
         ])
-        setProducts(fetchedProducts)
         
-        // Ordenar colores: dorado > plateado > mixto > negro > otros
+        // Filtrar productos válidos (no de prueba, con datos completos)
+        const validProducts = fetchedProducts.filter(product => 
+          product.name && 
+          product.name.toLowerCase() !== 'prueba' &&
+          product.price > 0 &&
+          product.stock > 0 &&
+          !product.is_deleted
+        );
+        
+        setProducts(validProducts)
+        
+        // Filtrar colores válidos y ordenar
+        const validColors = fetchedColors.filter(color => 
+          color && 
+          color.toLowerCase() !== 'prueba' &&
+          color.trim() !== ''
+        );
+        
         const colorOrder = ['dorado', 'plateado', 'mixto', 'negro'];
-        const orderedColors = fetchedColors.sort((a, b) => {
+        const orderedColors = validColors.sort((a, b) => {
           const indexA = colorOrder.indexOf(a.toLowerCase());
           const indexB = colorOrder.indexOf(b.toLowerCase());
           const finalIndexA = indexA === -1 ? 999 : indexA;
