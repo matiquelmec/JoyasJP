@@ -1,16 +1,96 @@
 // Debug script para capturar el rectángulo blanco en la parte superior central
 console.log('🔍 INICIANDO DEBUG DEL RECTÁNGULO BLANCO');
 
+// PASO 1: Capturar estado inicial antes de cualquier carga
+console.log('📸 SNAPSHOT INICIAL:', {
+  body: document.body ? 'EXISTS' : 'NULL',
+  head: document.head ? 'EXISTS' : 'NULL',
+  readyState: document.readyState,
+  timestamp: Date.now()
+});
+
 // Monitor específico para la zona superior central del header
 function monitorTopCenter() {
-  const checkInterval = 50; // Check cada 50ms
+  const checkInterval = 10; // Check cada 10ms (más frecuente)
   let checkCount = 0;
-  const maxChecks = 100; // 5 segundos total
+  const maxChecks = 500; // 5 segundos total
   
   const interval = setInterval(() => {
     checkCount++;
     
-    // Buscar elementos en la zona superior central
+    // NUEVO: Buscar CUALQUIER elemento blanco visible en TODA la página
+    const allElements = document.querySelectorAll('*');
+    let whiteElementsFound = 0;
+    
+    allElements.forEach(element => {
+      const rect = element.getBoundingClientRect();
+      const styles = window.getComputedStyle(element);
+      
+      // Solo elementos visibles
+      if (rect.width > 0 && rect.height > 0 && styles.opacity !== '0' && styles.visibility !== 'hidden') {
+        // Detectar CUALQUIER cosa blanca
+        const isWhite = 
+          styles.backgroundColor === 'white' ||
+          styles.backgroundColor === 'rgb(255, 255, 255)' ||
+          styles.backgroundColor === 'rgba(255, 255, 255, 1)' ||
+          styles.color === 'white' ||
+          styles.color === 'rgb(255, 255, 255)' ||
+          styles.borderColor === 'white' ||
+          styles.borderColor === 'rgb(255, 255, 255)' ||
+          element.tagName === 'IMG' && !element.src ||
+          element.hasAttribute('placeholder') ||
+          element.hasAttribute('data-placeholder') ||
+          (element.className && element.className.includes && element.className.includes('placeholder'));
+          
+        if (isWhite) {
+          whiteElementsFound++;
+          console.log(`🎯 ELEMENTO BLANCO #${whiteElementsFound} (check ${checkCount}):`, {
+            element: element,
+            tagName: element.tagName,
+            className: element.className,
+            id: element.id,
+            src: element.src || 'N/A',
+            textContent: element.textContent?.substring(0, 30) || '',
+            position: {
+              top: Math.round(rect.top),
+              left: Math.round(rect.left),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height)
+            },
+            styles: {
+              backgroundColor: styles.backgroundColor,
+              color: styles.color,
+              borderColor: styles.borderColor,
+              opacity: styles.opacity,
+              visibility: styles.visibility,
+              display: styles.display,
+              position: styles.position,
+              zIndex: styles.zIndex
+            },
+            attributes: Array.from(element.attributes || []).map(attr => `${attr.name}="${attr.value}"`).join(' '),
+            parentElement: element.parentElement?.tagName || 'NULL'
+          });
+          
+          // Marcar visualmente
+          element.style.outline = '5px solid red';
+          element.style.outlineOffset = '2px';
+          element.style.boxShadow = '0 0 10px red';
+          
+          setTimeout(() => {
+            if (element.style) {
+              element.style.outline = '';
+              element.style.boxShadow = '';
+            }
+          }, 2000);
+        }
+      }
+    });
+    
+    if (whiteElementsFound > 0) {
+      console.log(`📊 TOTAL ELEMENTOS BLANCOS EN CHECK ${checkCount}: ${whiteElementsFound}`);
+    }
+
+    // Buscar elementos en la zona superior central del header (código original)
     const header = document.querySelector('header');
     const nav = document.querySelector('nav');
     
