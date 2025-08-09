@@ -177,12 +177,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
         
-        {/* Preloads críticos solo para LCP */}
+        {/* Critical resources only */}
         <link
           rel="preload"
-          href="/assets/logo.webp?v=2"
+          href="/assets/logo.webp?v=v2"
           as="image"
           type="image/webp"
+          fetchPriority="high"
         />
       </head>
       <body

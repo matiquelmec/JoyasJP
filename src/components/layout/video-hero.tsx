@@ -9,17 +9,23 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 export function VideoHero() {
   return (
     <section className="relative h-screen w-screen overflow-hidden">
-      {/* Single optimized video with poster fallback */}
+      {/* Lazy loaded video - defer for LCP */}
       <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 2 }}>
         <video
           src={getVideoUrl('mi-video1.mp4')}
           poster={getImageUrl('logo.webp')}
-          autoPlay
+          autoPlay={false}
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           className="w-auto h-full max-w-full object-contain shadow-2xl"
+          onLoadedMetadata={(e) => {
+            // Start video after poster loads
+            setTimeout(() => {
+              e.currentTarget.play().catch(() => {})
+            }, 2000)
+          }}
         />
       </div>
 
