@@ -34,7 +34,18 @@ export default function ShopPage() {
           getColors(),
         ])
         setProducts(fetchedProducts)
-        setColors(['all', ...fetchedColors])
+        
+        // Ordenar colores: dorado > plateado > mixto > negro > otros
+        const colorOrder = ['dorado', 'plateado', 'mixto', 'negro'];
+        const orderedColors = fetchedColors.sort((a, b) => {
+          const indexA = colorOrder.indexOf(a.toLowerCase());
+          const indexB = colorOrder.indexOf(b.toLowerCase());
+          const finalIndexA = indexA === -1 ? 999 : indexA;
+          const finalIndexB = indexB === -1 ? 999 : indexB;
+          return finalIndexA - finalIndexB;
+        });
+        
+        setColors(['all', ...orderedColors])
       } catch (err) {
         setError('Failed to fetch data.')
         console.error(err)
@@ -46,9 +57,23 @@ export default function ShopPage() {
   }, [])
 
   const filteredProducts = useMemo(() => {
+    const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
+    
     return products
       .filter((p) => activeCategory === 'all' || p.category === activeCategory)
       .filter((p) => activeColor === 'all' || p.color === activeColor)
+      .sort((a, b) => {
+        // Solo ordenar por categoría cuando se muestra "Todos"
+        if (activeCategory === 'all') {
+          const indexA = categoryOrder.indexOf(a.category);
+          const indexB = categoryOrder.indexOf(b.category);
+          // Si no encuentra la categoría, la pone al final
+          const finalIndexA = indexA === -1 ? 999 : indexA;
+          const finalIndexB = indexB === -1 ? 999 : indexB;
+          return finalIndexA - finalIndexB;
+        }
+        return 0; // No ordenar si está filtrado por categoría específica
+      })
   }, [products, activeCategory, activeColor])
 
   if (loading) {
@@ -129,12 +154,16 @@ export default function ShopPage() {
                 Color:
               </span>
               <Select onValueChange={setActiveColor} value={activeColor}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-gray-900/50 border-gray-700 text-gray-100 hover:bg-gray-900/70 focus:ring-primary focus:border-primary">
                   <SelectValue placeholder="Filtrar por color" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-900/95 border-gray-700 backdrop-blur-sm">
                   {colors.map((color) => (
-                    <SelectItem key={color} value={color}>
+                    <SelectItem 
+                      key={color} 
+                      value={color}
+                      className="text-gray-100 focus:bg-primary/20 focus:text-white hover:bg-primary/10 capitalize"
+                    >
                       {color === 'all' ? 'Todos' : color}
                     </SelectItem>
                   ))}
