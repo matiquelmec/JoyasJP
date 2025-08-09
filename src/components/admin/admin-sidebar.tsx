@@ -13,7 +13,8 @@ import {
   Users,
   Settings,
   BookOpen,
-  LogOut
+  LogOut,
+  Gauge
 } from 'lucide-react'
 
 const navigation = [
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Productos', href: '/admin/productos', icon: Package },
   { name: 'Manual', href: '/admin/manual', icon: BookOpen },
   { name: 'Pedidos', href: '/admin/pedidos', icon: ShoppingCart },
+  { name: 'Performance', href: '/admin/performance', icon: Gauge },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Clientes', href: '/admin/clientes', icon: Users },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
