@@ -239,6 +239,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 }}
                 required
                 placeholder="Ej: Anillo de plata con diamante"
+                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
               />
             </div>
             <div>
@@ -248,6 +249,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
                 placeholder="Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"
+                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
               />
             </div>
           </div>
@@ -263,6 +265,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="99000"
                 min="0"
+                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
               />
             </div>
           </div>
@@ -278,6 +281,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="10"
                 min="0"
+                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
               />
             </div>
           </div>
@@ -317,6 +321,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Describe las características principales del producto..."
               rows={3}
+              style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
             />
           </div>
 
