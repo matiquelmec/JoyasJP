@@ -62,8 +62,8 @@ async function getMaintenanceTasks(client: any) {
       title: task.title,
       description: task.description,
       frequency: task.frequency,
-      lastRun: task.last_run ? new Date(task.last_run) : null,
-      nextDue: new Date(task.next_due),
+      lastRun: task.last_run ? new Date(task.last_run).toISOString() : null,
+      nextDue: new Date(task.next_due).toISOString(),
       priority: task.priority,
       status: task.status,
       category: task.category,
@@ -86,8 +86,8 @@ function getDefaultTasks() {
       title: 'Backup Base de Datos',
       description: 'Crear copia de seguridad completa de la base de datos',
       frequency: 'Diario',
-      lastRun: new Date(now.getTime() - 86400000), // Ayer
-      nextDue: new Date(now.getTime() + 3600000), // En 1 hora
+      lastRun: new Date(now.getTime() - 86400000).toISOString(), // Ayer
+      nextDue: new Date(now.getTime() + 3600000).toISOString(), // En 1 hora
       priority: 'high' as const,
       status: 'pending' as const,
       category: 'database' as const,
@@ -99,8 +99,8 @@ function getDefaultTasks() {
       title: 'Limpiar Imágenes Huérfanas',
       description: 'Eliminar imágenes no utilizadas y optimizar almacenamiento',
       frequency: 'Semanal',
-      lastRun: new Date(now.getTime() - 604800000), // Hace 1 semana
-      nextDue: new Date(now.getTime() + 86400000), // Mañana
+      lastRun: new Date(now.getTime() - 604800000).toISOString(), // Hace 1 semana
+      nextDue: new Date(now.getTime() + 86400000).toISOString(), // Mañana
       priority: 'medium' as const,
       status: 'pending' as const,
       category: 'files' as const,
@@ -112,8 +112,8 @@ function getDefaultTasks() {
       title: 'Limpiar Cache del Sistema',
       description: 'Eliminar cache obsoleto y regenerar cache crítico',
       frequency: 'Semanal',
-      lastRun: new Date(now.getTime() - 86400000 * 3), // Hace 3 días
-      nextDue: new Date(now.getTime() + 86400000 * 4), // En 4 días
+      lastRun: new Date(now.getTime() - 86400000 * 3).toISOString(), // Hace 3 días
+      nextDue: new Date(now.getTime() + 86400000 * 4).toISOString(), // En 4 días
       priority: 'medium' as const,
       status: 'pending' as const,
       category: 'performance' as const,
@@ -125,8 +125,8 @@ function getDefaultTasks() {
       title: 'Escaneo de Seguridad',
       description: 'Verificar vulnerabilidades y actualizar dependencias',
       frequency: 'Semanal',
-      lastRun: new Date(now.getTime() - 86400000 * 7), // Hace 1 semana
-      nextDue: new Date(now.getTime() + 86400000), // Mañana
+      lastRun: new Date(now.getTime() - 86400000 * 7).toISOString(), // Hace 1 semana
+      nextDue: new Date(now.getTime() + 86400000).toISOString(), // Mañana
       priority: 'high' as const,
       status: 'overdue' as const,
       category: 'security' as const,
@@ -138,8 +138,8 @@ function getDefaultTasks() {
       title: 'Actualizar Dependencias',
       description: 'Revisar y actualizar paquetes npm con parches de seguridad',
       frequency: 'Quincenal',
-      lastRun: new Date(now.getTime() - 86400000 * 10), // Hace 10 días
-      nextDue: new Date(now.getTime() + 86400000 * 5), // En 5 días
+      lastRun: new Date(now.getTime() - 86400000 * 10).toISOString(), // Hace 10 días
+      nextDue: new Date(now.getTime() + 86400000 * 5).toISOString(), // En 5 días
       priority: 'medium' as const,
       status: 'pending' as const,
       category: 'updates' as const,
@@ -151,8 +151,8 @@ function getDefaultTasks() {
       title: 'Auditoría de Performance',
       description: 'Análisis completo de rendimiento y optimizaciones',
       frequency: 'Mensual',
-      lastRun: new Date(now.getTime() - 86400000 * 15), // Hace 15 días
-      nextDue: new Date(now.getTime() + 86400000 * 15), // En 15 días
+      lastRun: new Date(now.getTime() - 86400000 * 15).toISOString(), // Hace 15 días
+      nextDue: new Date(now.getTime() + 86400000 * 15).toISOString(), // En 15 días
       priority: 'medium' as const,
       status: 'pending' as const,
       category: 'performance' as const,
@@ -164,8 +164,8 @@ function getDefaultTasks() {
       title: 'Limpiar Logs Antiguos',
       description: 'Archivar logs antiguos y mantener solo los necesarios',
       frequency: 'Mensual',
-      lastRun: new Date(now.getTime() - 86400000 * 20), // Hace 20 días
-      nextDue: new Date(now.getTime() + 86400000 * 10), // En 10 días
+      lastRun: new Date(now.getTime() - 86400000 * 20).toISOString(), // Hace 20 días
+      nextDue: new Date(now.getTime() + 86400000 * 10).toISOString(), // En 10 días
       priority: 'low' as const,
       status: 'pending' as const,
       category: 'files' as const,

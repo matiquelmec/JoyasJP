@@ -208,7 +208,15 @@ export default function MantenimientoPage() {
       ])
       
       setSystemHealth(healthData)
-      setTasks(tasksData)
+      
+      // Asegurar que las fechas sean objetos Date válidos
+      const processedTasks = tasksData.map(task => ({
+        ...task,
+        lastRun: task.lastRun ? new Date(task.lastRun) : null,
+        nextDue: new Date(task.nextDue)
+      }))
+      
+      setTasks(processedTasks)
       setLastUpdate(new Date())
       
       toast({
@@ -535,10 +543,10 @@ export default function MantenimientoPage() {
             {tasks.length > 0 && (
               <>
                 <div className="text-sm font-medium mb-1">
-                  {tasks.sort((a, b) => a.nextDue.getTime() - b.nextDue.getTime())[0].title}
+                  {tasks.sort((a, b) => new Date(a.nextDue).getTime() - new Date(b.nextDue).getTime())[0].title}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {tasks.sort((a, b) => a.nextDue.getTime() - b.nextDue.getTime())[0].nextDue.toLocaleDateString()}
+                  {new Date(tasks.sort((a, b) => new Date(a.nextDue).getTime() - new Date(b.nextDue).getTime())[0].nextDue).toLocaleDateString()}
                 </div>
               </>
             )}
@@ -580,7 +588,7 @@ export default function MantenimientoPage() {
                 <div className="text-xs text-muted-foreground">
                   <div>Tamaño: {systemHealth.database.size}</div>
                   <div>Conexiones: {systemHealth.database.connections}</div>
-                  <div>Último backup: {systemHealth.database.lastBackup.toLocaleDateString()}</div>
+                  <div>Último backup: {new Date(systemHealth.database.lastBackup).toLocaleDateString()}</div>
                 </div>
               </div>
             </CardContent>
@@ -643,7 +651,7 @@ export default function MantenimientoPage() {
                 <div className="text-xs text-muted-foreground">
                   <div>Vulnerabilidades: {systemHealth.security.vulnerabilities}</div>
                   <div>SSL: {systemHealth.security.sslStatus === 'valid' ? 'Válido' : 'Advertencia'}</div>
-                  <div>Último scan: {systemHealth.security.lastSecurityScan.toLocaleDateString()}</div>
+                  <div>Último scan: {new Date(systemHealth.security.lastSecurityScan).toLocaleDateString()}</div>
                 </div>
               </div>
             </CardContent>
@@ -709,9 +717,9 @@ export default function MantenimientoPage() {
                         <div>Frecuencia: {task.frequency} • Duración estimada: {task.estimatedTime} min</div>
                         <div>
                           {task.lastRun 
-                            ? `Última ejecución: ${task.lastRun.toLocaleDateString()}`
+                            ? `Última ejecución: ${new Date(task.lastRun).toLocaleDateString()}`
                             : 'Nunca ejecutada'
-                          } • Próxima: {task.nextDue.toLocaleDateString()}
+                          } • Próxima: {new Date(task.nextDue).toLocaleDateString()}
                         </div>
                       </div>
                     </div>

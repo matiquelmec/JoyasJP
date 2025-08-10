@@ -51,7 +51,7 @@ async function getDatabaseMetrics(client: any) {
       status: productCount > 0 ? 'healthy' : 'warning' as const,
       connections: Math.floor(Math.random() * 10) + 5, // Conexiones activas simuladas
       size: `${estimatedSize.toFixed(1)} MB`,
-      lastBackup: getLastBackupDate(),
+      lastBackup: getLastBackupDate().toISOString(),
       productCount,
       orphanedFiles: orphanedEstimate
     }
@@ -61,7 +61,7 @@ async function getDatabaseMetrics(client: any) {
       status: 'error' as const,
       connections: 0,
       size: '0 MB',
-      lastBackup: new Date(),
+      lastBackup: new Date().toISOString(),
       productCount: 0,
       orphanedFiles: 0
     }
@@ -133,7 +133,7 @@ function getSecurityMetrics() {
 
   return {
     status: vulnerabilities === 0 && sslStatus === 'valid' ? 'healthy' : 'warning' as const,
-    lastSecurityScan: lastScan,
+    lastSecurityScan: lastScan.toISOString(),
     vulnerabilities,
     sslStatus: sslStatus as 'valid' | 'warning'
   }
