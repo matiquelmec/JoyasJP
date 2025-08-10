@@ -213,7 +213,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl" style={{ zIndex: 9999 }}>
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Crear Nuevo Producto' : `Editar: ${product?.name || 'Producto'}`}
@@ -226,6 +226,26 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* TEST INPUT - Campo de prueba fuera del grid */}
+          <div style={{ padding: '10px', backgroundColor: '#f0f0f0', border: '2px solid red' }}>
+            <label style={{ display: 'block', marginBottom: '5px', color: 'black' }}>
+              CAMPO DE PRUEBA:
+            </label>
+            <input
+              type="text"
+              placeholder="Escribe aquí para probar"
+              style={{ 
+                width: '100%', 
+                padding: '8px', 
+                backgroundColor: 'white', 
+                color: 'black', 
+                border: '2px solid blue',
+                fontSize: '16px'
+              }}
+              onChange={(e) => console.log('TEST INPUT:', e.target.value)}
+            />
+          </div>
+
           {/* Información básica */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
