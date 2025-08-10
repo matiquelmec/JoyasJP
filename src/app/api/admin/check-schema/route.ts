@@ -1,0 +1,105 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+// Verificar contraseña de admin
+function verifyAdminAuth(request: NextRequest) {
+  const authHeader = request.headers.get('authorization')
+  const expectedPassword = 'joyasjp2024'
+  
+  if (!authHeader || authHeader !== `Bearer ${expectedPassword}`) {
+    return false
+  }
+  return true
+}
+
+export async function GET(request: NextRequest) {
+  console.log('🔍 Schema check endpoint called')
+  
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return NextResponse.json({ 
+      error: 'Missing environment variables',
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseServiceKey
+    }, { status: 500 })
+  }
+
+  try {
+    const client = createClient(supabaseUrl, supabaseServiceKey)
+    
+    // 1. Obtener información de la tabla
+    const { data: tableInfo, error: tableError } = await client
+      .from('products')
+      .select('*')
+      .limit(1)
+
+    if (tableError) {
+      console.error('Table error:', tableError)
+    }
+
+    // 2. Intentar insertar un producto de prueba para ver el error exacto
+    const testProduct = {
+      id: 'test-' + Date.now(),
+      name: 'Test Product',
+      price: 1000,
+      category: 'cadenas',
+      stock: 10,
+      imageUrl: 'https://example.com/test.jpg',
+      description: 'Test description'
+    }
+
+    const { data: insertTest, error: insertError } = await client
+      .from('products')
+      .insert([testProduct])
+      .select()
+
+    // Si el test funcionó, borrarlo
+    if (insertTest && insertTest[0]) {
+      await client
+        .from('products')
+        .delete()
+        .eq('id', testProduct.id)
+    }
+
+    // 3. Obtener un producto existente para ver su estructura
+    const { data: existingProduct, error: existingError } = await client
+      .from('products')
+      .select('*')
+      .limit(1)
+
+    return NextResponse.json({
+      success: true,
+      tableColumns: tableInfo ? Object.keys(tableInfo[0] || {}) : [],
+      sampleProduct: existingProduct?.[0] || null,
+      testInsertResult: {
+        success: !insertError,
+        error: insertError ? {
+          message: insertError.message,
+          code: insertError.code,
+          details: insertError.details,
+          hint: insertError.hint
+        } : null,
+        insertedData: insertTest?.[0] || null
+      },
+      testProductSent: testProduct,
+      environment: {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseServiceKey,
+        url: supabaseUrl?.substring(0, 30) + '...'
+      }
+    })
+  } catch (error: any) {
+    console.error('Schema check error:', error)
+    return NextResponse.json({ 
+      error: 'Failed to check schema',
+      details: error?.message || 'Unknown error',
+      stack: error?.stack?.substring(0, 500)
+    }, { status: 500 })
+  }
+}

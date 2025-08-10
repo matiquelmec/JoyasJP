@@ -83,12 +83,26 @@ export async function POST(request: NextRequest) {
     
     // Add the ID and remove fields that don't exist in database
     const { is_featured, is_deleted, ...validProductData } = productDataWithoutCode
-    const productWithId = {
-      id: productId,
-      ...validProductData
+    
+    // Map imageUrl to image_url if needed (check what column name the DB expects)
+    const mappedData = {
+      ...validProductData,
+      image_url: validProductData.imageUrl || validProductData.image_url,
+      imageUrl: undefined // Remove imageUrl if DB expects image_url
     }
     
-    console.log('💾 Inserting product:', productWithId)
+    // Remove undefined fields
+    const cleanedData = Object.fromEntries(
+      Object.entries(mappedData).filter(([_, v]) => v !== undefined && v !== '')
+    )
+    
+    const productWithId = {
+      id: productId,
+      ...cleanedData
+    }
+    
+    console.log('💾 Inserting product:', JSON.stringify(productWithId, null, 2))
+    console.log('🔑 Product keys:', Object.keys(productWithId))
     
     const { data, error } = await client
       .from('products')
