@@ -68,7 +68,7 @@ export function AdminHeader() {
         hasScrolled ? 'bg-slate-900/90 shadow-xl' : 'bg-slate-900/80 shadow-lg'
       )}
     >
-      <div className="flex h-16 sm:h-18 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo - Redirige al dashboard */}
         <Link href="/admin" className="flex items-center h-full py-2 group">
           <div className="relative mr-3">
