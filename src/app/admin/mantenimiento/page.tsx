@@ -21,6 +21,8 @@ import {
   Settings,
   Activity
 } from 'lucide-react'
+import { maintenanceAPI } from '@/lib/maintenance-api'
+import { toast } from '@/hooks/use-toast'
 
 interface MaintenanceTask {
   id: string
@@ -68,6 +70,8 @@ export default function MantenimientoPage() {
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null)
   const [runningTasks, setRunningTasks] = useState<Set<string>>(new Set())
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // 🔧 Tareas de mantenimiento predefinidas
   const defaultTasks: MaintenanceTask[] = [
@@ -192,15 +196,50 @@ export default function MantenimientoPage() {
     }
   })
 
-  useEffect(() => {
-    setTasks(defaultTasks)
-    setSystemHealth(generateSystemHealth())
-    
-    // Actualizar datos cada 30 segundos
-    const interval = setInterval(() => {
-      setSystemHealth(generateSystemHealth())
+  // Cargar datos iniciales
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const [healthData, tasksData] = await Promise.all([
+        maintenanceAPI.getSystemHealth(),
+        maintenanceAPI.getMaintenanceTasks()
+      ])
+      
+      setSystemHealth(healthData)
+      setTasks(tasksData)
       setLastUpdate(new Date())
-    }, 30000)
+      
+      toast({
+        title: "Datos actualizados",
+        description: "Información del sistema cargada correctamente",
+      })
+    } catch (error) {
+      console.error('Error loading maintenance data:', error)
+      setError('Error al cargar datos del sistema')
+      
+      // Usar datos por defecto en caso de error
+      setTasks(defaultTasks)
+      setSystemHealth(generateSystemHealth())
+      
+      toast({
+        title: "Error de conexión",
+        description: "Usando datos de ejemplo. Algunos datos pueden no estar actualizados.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+    
+    // Actualizar datos cada 2 minutos
+    const interval = setInterval(() => {
+      loadData()
+    }, 120000)
     
     return () => clearInterval(interval)
   }, [])
@@ -239,35 +278,68 @@ export default function MantenimientoPage() {
   }
 
   const runTask = async (taskId: string) => {
-    setRunningTasks(prev => new Set([...Array.from(prev), taskId]))
-    
-    // Simular ejecución de tarea
     const task = tasks.find(t => t.id === taskId)
     if (!task) return
+
+    setRunningTasks(prev => new Set([...Array.from(prev), taskId]))
     
     setTasks(prev => prev.map(t => 
       t.id === taskId ? { ...t, status: 'running' } : t
     ))
+
+    toast({
+      title: "Ejecutando tarea",
+      description: `Iniciando: ${task.title}`,
+    })
     
-    // Simular tiempo de ejecución
-    setTimeout(() => {
+    try {
+      // Ejecutar tarea real usando la API
+      const result = await maintenanceAPI.runTask(taskId)
+      
+      if (result.success) {
+        // Actualizar estado de la tarea
+        const nextDue = new Date(Date.now() + getDaysForFrequency(task.frequency) * 86400000)
+        
+        setTasks(prev => prev.map(t => 
+          t.id === taskId ? { 
+            ...t, 
+            status: 'completed', 
+            lastRun: new Date(),
+            nextDue
+          } : t
+        ))
+
+        toast({
+          title: "Tarea completada",
+          description: result.message || `${task.title} ejecutada exitosamente`,
+        })
+
+        // Recargar datos del sistema
+        setTimeout(() => {
+          loadData()
+        }, 1000)
+      } else {
+        throw new Error(result.message || 'Error desconocido')
+      }
+    } catch (error) {
+      console.error('Error executing task:', error)
+      
       setTasks(prev => prev.map(t => 
-        t.id === taskId ? { 
-          ...t, 
-          status: 'completed', 
-          lastRun: new Date(),
-          nextDue: new Date(Date.now() + getDaysForFrequency(t.frequency) * 86400000)
-        } : t
+        t.id === taskId ? { ...t, status: 'pending' } : t
       ))
+
+      toast({
+        title: "Error en tarea",
+        description: `Error ejecutando ${task.title}: ${error.message}`,
+        variant: "destructive"
+      })
+    } finally {
       setRunningTasks(prev => {
         const newSet = new Set(Array.from(prev))
         newSet.delete(taskId)
         return newSet
       })
-      
-      // Actualizar salud del sistema
-      setSystemHealth(generateSystemHealth())
-    }, task.estimatedTime * 100) // Simular (100ms por "minuto")
+    }
   }
 
   const getDaysForFrequency = (frequency: string): number => {
@@ -282,10 +354,30 @@ export default function MantenimientoPage() {
 
   const runAllPendingTasks = async () => {
     const pendingTasks = tasks.filter(t => t.status === 'pending' || t.status === 'overdue')
-    for (const task of pendingTasks) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      runTask(task.id)
+    
+    if (pendingTasks.length === 0) {
+      toast({
+        title: "No hay tareas pendientes",
+        description: "Todas las tareas están al día",
+      })
+      return
     }
+
+    toast({
+      title: "Ejecutando todas las tareas",
+      description: `Iniciando ${pendingTasks.length} tareas pendientes`,
+    })
+
+    for (const task of pendingTasks) {
+      await runTask(task.id)
+      // Esperar un poco entre tareas para evitar sobrecarga
+      await new Promise(resolve => setTimeout(resolve, 2000))
+    }
+
+    toast({
+      title: "Todas las tareas completadas",
+      description: `Se ejecutaron ${pendingTasks.length} tareas exitosamente`,
+    })
   }
 
   const getHealthScore = (): number => {
@@ -306,17 +398,86 @@ export default function MantenimientoPage() {
     return Math.round(score / total)
   }
 
+  // Acciones rápidas
+  const handleQuickAction = async (action: 'backup' | 'cache' | 'security' | 'update') => {
+    try {
+      let result
+      let actionName = ''
+      
+      switch (action) {
+        case 'backup':
+          actionName = 'Backup Manual'
+          result = await maintenanceAPI.quickBackup()
+          break
+        case 'cache':
+          actionName = 'Limpiar Cache'
+          result = await maintenanceAPI.quickCacheClear()
+          break
+        case 'security':
+          actionName = 'Escaneo de Seguridad'
+          result = await maintenanceAPI.quickSecurityScan()
+          break
+        case 'update':
+          actionName = 'Actualizar Todo'
+          result = await maintenanceAPI.quickUpdateAll()
+          break
+      }
+
+      if (result.success) {
+        toast({
+          title: `${actionName} completado`,
+          description: result.message,
+        })
+        // Recargar datos
+        setTimeout(() => loadData(), 1000)
+      } else {
+        throw new Error(result.message || 'Error desconocido')
+      }
+    } catch (error) {
+      console.error('Error in quick action:', error)
+      toast({
+        title: "Error en acción rápida",
+        description: error.message,
+        variant: "destructive"
+      })
+    }
+  }
+
   const overdueTasks = tasks.filter(t => t.status === 'overdue').length
   const pendingTasks = tasks.filter(t => t.status === 'pending').length
   const healthScore = getHealthScore()
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Centro de Mantenimiento</h1>
+          <p className="text-muted-foreground">Cargando datos del sistema...</p>
+        </div>
+        <div className="flex justify-center">
+          <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold mb-2">Centro de Mantenimiento</h1>
         <p className="text-muted-foreground">
-          Mantenimiento automático y salud del sistema
+          Mantenimiento automático y salud del sistema • {error && (
+            <span className="text-red-500">Modo offline</span>
+          )}
         </p>
+        {error && (
+          <Alert className="mt-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              {error} - Mostrando datos de ejemplo. Verifica tu conexión.
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       {/* Health Overview */}
@@ -498,8 +659,22 @@ export default function MantenimientoPage() {
               <Settings className="w-5 h-5" />
               Tareas de Mantenimiento
             </span>
-            <div className="text-sm text-muted-foreground">
-              Última actualización: {lastUpdate.toLocaleTimeString()}
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-muted-foreground">
+                Última actualización: {lastUpdate.toLocaleTimeString()}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => loadData()}
+                disabled={loading}
+              >
+                {loading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4" />
+                )}
+              </Button>
             </div>
           </CardTitle>
         </CardHeader>
@@ -577,19 +752,39 @@ export default function MantenimientoPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => handleQuickAction('backup')}
+              disabled={runningTasks.size > 0}
+            >
               <Download className="w-6 h-6" />
               <span className="text-sm">Backup Manual</span>
             </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => handleQuickAction('cache')}
+              disabled={runningTasks.size > 0}
+            >
               <Trash2 className="w-6 h-6" />
               <span className="text-sm">Limpiar Cache</span>
             </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => handleQuickAction('update')}
+              disabled={runningTasks.size > 0}
+            >
               <RefreshCw className="w-6 h-6" />
               <span className="text-sm">Actualizar Todo</span>
             </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => handleQuickAction('security')}
+              disabled={runningTasks.size > 0}
+            >
               <Shield className="w-6 h-6" />
               <span className="text-sm">Scan Seguridad</span>
             </Button>
