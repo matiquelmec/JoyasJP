@@ -68,32 +68,60 @@ export async function POST(request: NextRequest) {
     }
 
     const productData = await request.json()
+    console.log('📦 Product data received:', JSON.stringify(productData, null, 2))
     
     // Use provided code as ID if available, otherwise generate UUID
     const productId = productData.code || crypto.randomUUID()
+    console.log('🆔 Product ID:', productId)
     
     // Remove code from productData since it's not a database column
-    const { code, ...productDataWithoutCode } = productData
+    const { code, is_featured, is_deleted, ...productDataWithoutCode } = productData
+    
+    // Map imageUrl to image_url if needed (try both)
+    const mappedData = {
+      ...productDataWithoutCode,
+      image_url: productDataWithoutCode.imageUrl || productDataWithoutCode.image_url,
+      imageUrl: undefined // Remove imageUrl, use image_url
+    }
+    
+    // Remove undefined/empty fields
+    const cleanedData = Object.fromEntries(
+      Object.entries(mappedData).filter(([_, v]) => v !== undefined && v !== '' && v !== null)
+    )
     
     // Add the ID
     const productWithId = {
       id: productId,
-      ...productDataWithoutCode
+      ...cleanedData
     }
+    
+    console.log('💾 Final product object:', JSON.stringify(productWithId, null, 2))
+    console.log('🔑 Fields being sent:', Object.keys(productWithId))
     
     const { data, error } = await client
       .from('products')
       .insert([productWithId])
       .select()
 
-    if (error) throw error
+    if (error) {
+      console.error('❌ Database error details:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      })
+      throw error
+    }
 
+    console.log('✅ Product created successfully:', data[0])
     return NextResponse.json({ product: data[0] }, { status: 201 })
-  } catch (error) {
-    console.error('Error creating product:', error)
+  } catch (error: any) {
+    console.error('💥 Full error creating product:', error)
     return NextResponse.json({ 
       error: 'Failed to create product',
-      details: error.message 
+      details: error?.message || 'Unknown error',
+      code: error?.code,
+      hint: error?.hint
     }, { status: 500 })
   }
 }

@@ -27,8 +27,8 @@ class AdminAPI {
   async createProduct(productData: any) {
     console.log('🚀 AdminAPI: Creating product with data:', productData)
     
-    // Use the fixed endpoint that works independently 
-    const response = await fetch('/api/admin/products-fixed', {
+    // Use the regular products endpoint
+    const response = await fetch('/api/admin/products', {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(productData)
