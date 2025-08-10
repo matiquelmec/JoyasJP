@@ -64,7 +64,7 @@ export function AdminHeader() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 transition-all duration-300 ease-in-out bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md border-b border-slate-700',
+        'fixed top-0 left-0 right-0 lg:left-72 z-50 transition-all duration-300 ease-in-out bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md border-b border-slate-700',
         hasScrolled ? 'bg-slate-900/90 shadow-xl' : 'bg-slate-900/80 shadow-lg'
       )}
     >
