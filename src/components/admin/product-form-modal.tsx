@@ -310,21 +310,25 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
           <div>
             <Label htmlFor="category">Categoría *</Label>
-            <Select
+            <select
+              id="category"
               value={formData.category}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+              required
+              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+              style={{ 
+                backgroundColor: 'white', 
+                color: 'black', 
+                border: '1px solid #d1d5db'
+              }}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona una categoría" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <option value="">Selecciona una categoría</option>
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <ImageUpload
