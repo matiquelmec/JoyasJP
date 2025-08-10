@@ -75,18 +75,17 @@ export async function POST(request: NextRequest) {
     console.log('🆔 Product ID:', productId)
     
     // Remove code from productData since it's not a database column
-    const { code, is_featured, is_deleted, ...productDataWithoutCode } = productData
+    const { code, is_featured, is_deleted, image_url, ...productDataWithoutCode } = productData
     
-    // Map imageUrl to image_url if needed (try both)
+    // Database uses imageUrl (not image_url) based on test results
     const mappedData = {
       ...productDataWithoutCode,
-      image_url: productDataWithoutCode.imageUrl || productDataWithoutCode.image_url,
-      imageUrl: undefined // Remove imageUrl, use image_url
+      imageUrl: productDataWithoutCode.imageUrl || image_url || null
     }
     
-    // Remove undefined/empty fields
+    // Remove undefined/empty fields BUT keep null for optional fields
     const cleanedData = Object.fromEntries(
-      Object.entries(mappedData).filter(([_, v]) => v !== undefined && v !== '' && v !== null)
+      Object.entries(mappedData).filter(([_, v]) => v !== undefined && v !== '')
     )
     
     // Add the ID
