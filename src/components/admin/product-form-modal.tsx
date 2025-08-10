@@ -59,7 +59,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
   })
 
   useEffect(() => {
+    console.log('🔧 Modal useEffect triggered:', { mode, hasProduct: !!product, open })
     if (product && mode === 'edit') {
+      console.log('📝 Setting form data for edit mode:', product)
       setFormData({
         name: product.name || '',
         code: product.code || '',
@@ -75,6 +77,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       })
     } else {
       // Reset form for create mode
+      console.log('🆕 Resetting form for create mode')
       setFormData({
         name: '',
         code: '',
@@ -230,7 +233,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => {
+                  console.log('🔄 Name field changed:', e.target.value)
+                  setFormData(prev => ({ ...prev, name: e.target.value }))
+                }}
                 required
                 placeholder="Ej: Anillo de plata con diamante"
               />
