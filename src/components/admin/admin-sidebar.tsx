@@ -41,7 +41,7 @@ export function AdminSidebar() {
       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-background to-card border-r border-border px-6 pb-4 shadow-lg">
         {/* Logo */}
         <div className="flex h-16 shrink-0 items-center">
-          <Link href="/" className="flex items-center space-x-3 group">
+          <Link href="/admin" className="flex items-center space-x-3 group">
             <div className="relative">
               <Image
                 src="/assets/logo.webp"
