@@ -111,7 +111,7 @@ const jsonLd = {
   description:
     'Alta joyería para la escena urbana con diseños únicos y calidad premium',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.webp`,
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+56-9-1234-5678',

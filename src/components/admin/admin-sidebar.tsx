@@ -44,7 +44,7 @@ export function AdminSidebar() {
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt={`${config?.store_name || 'Joyas JP'} Logo`}
                 width={40}
                 height={40}

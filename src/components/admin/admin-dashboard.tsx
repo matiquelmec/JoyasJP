@@ -235,7 +235,7 @@ export function AdminDashboard() {
               {stats.topProducts.map((product) => (
                 <div key={product.id} className="flex items-center space-x-4">
                   <img
-                    src={product.imageUrl || '/assets/logo.png'}
+                    src={product.imageUrl || '/assets/logo.webp'}
                     alt={product.name}
                     className="h-10 w-10 rounded-lg object-cover"
                   />

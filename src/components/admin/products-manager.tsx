@@ -370,7 +370,7 @@ export function ProductsManager() {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <img
-                          src={product.imageUrl || '/assets/logo.png'}
+                          src={product.imageUrl || '/assets/logo.webp'}
                           alt={product.name}
                           className="h-10 w-10 rounded-lg object-cover"
                         />

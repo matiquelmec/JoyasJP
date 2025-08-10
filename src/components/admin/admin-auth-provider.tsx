@@ -54,7 +54,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo.webp"
                 alt={`${config?.store_name || 'Joyas JP'} Logo`}
                 width={80}
                 height={80}

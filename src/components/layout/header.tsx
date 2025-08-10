@@ -105,7 +105,7 @@ export function Header() {
                   <div className="flex justify-between items-center mb-8">
                     <Link href="/" className="flex items-center h-16">
                       <img
-                        src="/assets/logo.png"
+                        src="/assets/logo.webp"
                         alt="Joyas JP Logo"
                         className="h-12 w-auto"
                       />
