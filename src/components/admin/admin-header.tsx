@@ -71,24 +71,17 @@ export function AdminHeader() {
       <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo - Redirige al dashboard */}
         <Link href="/admin" className="flex items-center h-full py-2 group">
-          <div className="relative mr-3">
+          <div className="relative">
             <Image
               src="/assets/logo.webp"
               alt={`${config?.store_name || 'Joyas JP'} Admin`}
-              width={48}
-              height={48}
+              width={120}
+              height={120}
               priority
-              className="h-10 w-auto transition-all duration-300 group-hover:scale-110"
+              sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 120px"
+              className="h-12 sm:h-14 md:h-16 w-auto transition-all duration-300 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-primary/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm -z-10"></div>
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-lg font-bold text-white group-hover:text-primary transition-colors duration-300">
-              {config?.store_name || 'Joyas JP'}
-            </h1>
-            <p className="text-xs text-slate-300 group-hover:text-slate-100 transition-colors duration-300">
-              Panel de Administración
-            </p>
           </div>
         </Link>
 
