@@ -2,10 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export async function GET(request: NextRequest) {
-  // Check auth
+  // Check auth - try multiple methods
   const authHeader = request.headers.get('authorization')
-  if (!authHeader || authHeader !== 'Bearer joyasjp2024') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const searchParams = request.nextUrl.searchParams
+  const queryAuth = searchParams.get('auth')
+  
+  // Accept auth from header or query param for testing
+  const isAuthorized = authHeader === 'Bearer joyasjp2024' || 
+                       queryAuth === 'joyasjp2024'
+  
+  if (!isAuthorized) {
+    return NextResponse.json({ 
+      error: 'Unauthorized',
+      hint: 'Use ?auth=joyasjp2024 in URL or Authorization header',
+      receivedHeader: authHeader ? 'Present but incorrect' : 'Missing',
+      receivedQuery: queryAuth ? 'Present but incorrect' : 'Missing'
+    }, { status: 401 })
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
