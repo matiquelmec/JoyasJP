@@ -226,32 +226,13 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* TEST INPUT - Campo de prueba fuera del grid */}
-          <div style={{ padding: '10px', backgroundColor: '#f0f0f0', border: '2px solid red' }}>
-            <label style={{ display: 'block', marginBottom: '5px', color: 'black' }}>
-              CAMPO DE PRUEBA:
-            </label>
-            <input
-              type="text"
-              placeholder="Escribe aquí para probar"
-              style={{ 
-                width: '100%', 
-                padding: '8px', 
-                backgroundColor: 'white', 
-                color: 'black', 
-                border: '2px solid blue',
-                fontSize: '16px'
-              }}
-              onChange={(e) => console.log('TEST INPUT:', e.target.value)}
-            />
-          </div>
-
           {/* Información básica */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Nombre del Producto *</Label>
-              <Input
+              <input
                 id="name"
+                type="text"
                 value={formData.name}
                 onChange={(e) => {
                   console.log('🔄 Name field changed:', e.target.value)
@@ -259,17 +240,28 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 }}
                 required
                 placeholder="Ej: Anillo de plata con diamante"
-                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
             <div>
               <Label htmlFor="code">Código del Producto (opcional)</Label>
-              <Input
+              <input
                 id="code"
+                type="text"
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
                 placeholder="Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"
-                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
           </div>
@@ -277,7 +269,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="price">Precio (CLP) *</Label>
-              <Input
+              <input
                 id="price"
                 type="number"
                 value={formData.price}
@@ -285,7 +277,12 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="99000"
                 min="0"
-                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
           </div>
@@ -293,7 +290,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="stock">Stock Inicial *</Label>
-              <Input
+              <input
                 id="stock"
                 type="number"
                 value={formData.stock}
@@ -301,7 +298,12 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="10"
                 min="0"
-                style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
           </div>
@@ -335,13 +337,19 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
           <div>
             <Label htmlFor="description">Descripción</Label>
-            <Textarea
+            <textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Describe las características principales del producto..."
               rows={3}
-              style={{ backgroundColor: 'white', color: 'black', border: '1px solid #ccc' }}
+              className="flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm"
+              style={{ 
+                backgroundColor: 'white', 
+                color: 'black', 
+                border: '1px solid #d1d5db',
+                resize: 'vertical'
+              }}
             />
           </div>
 
@@ -349,41 +357,69 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="materials">Materiales</Label>
-              <Input
+              <input
                 id="materials"
+                type="text"
                 value={formData.materials}
                 onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
                 placeholder="Ej: Plata 925, Oro 18k"
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
             <div>
               <Label htmlFor="color">Color</Label>
-              <Input
+              <input
                 id="color"
+                type="text"
                 value={formData.color}
                 onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                 placeholder="Ej: Dorado, Plateado"
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
             <div>
               <Label htmlFor="dimensions">Dimensiones</Label>
-              <Input
+              <input
                 id="dimensions"
+                type="text"
                 value={formData.dimensions}
                 onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
                 placeholder="Ej: 2cm x 1.5cm"
+                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+                style={{ 
+                  backgroundColor: 'white', 
+                  color: 'black', 
+                  border: '1px solid #d1d5db'
+                }}
               />
             </div>
           </div>
 
           <div>
             <Label htmlFor="detail">Detalles Adicionales</Label>
-            <Textarea
+            <textarea
               id="detail"
               value={formData.detail}
               onChange={(e) => setFormData(prev => ({ ...prev, detail: e.target.value }))}
               placeholder="Información adicional, cuidados, etc..."
               rows={2}
+              className="flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm"
+              style={{ 
+                backgroundColor: 'white', 
+                color: 'black', 
+                border: '1px solid #d1d5db',
+                resize: 'vertical'
+              }}
             />
           </div>
 
