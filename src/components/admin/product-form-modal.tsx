@@ -62,9 +62,12 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     console.log('🔧 Modal useEffect triggered:', { mode, hasProduct: !!product, open })
     if (product && mode === 'edit') {
       console.log('📝 Setting form data for edit mode:', product)
+      // En modo edición, el código es el ID del producto si parece un código personalizado
+      const productCode = product.id?.startsWith('P') ? product.id : ''
+      
       setFormData({
         name: product.name || '',
-        code: product.code || '',
+        code: productCode, // Usar el ID como código si es un código personalizado
         price: product.price?.toString() || '',
         category: product.category || '',
         description: product.description || '',
@@ -75,6 +78,8 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         color: product.color || '',
         detail: product.detail || ''
       })
+      
+      console.log('📝 Product ID as code:', productCode)
     } else {
       // Reset form for create mode
       console.log('🆕 Resetting form for create mode')
@@ -249,19 +254,24 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               />
             </div>
             <div>
-              <Label htmlFor="code">Código del Producto (opcional)</Label>
+              <Label htmlFor="code">
+                Código del Producto {mode === 'edit' ? '(no editable)' : '(opcional)'}
+              </Label>
               <input
                 id="code"
                 type="text"
                 value={formData.code}
-                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                placeholder="Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"
+                onChange={(e) => mode === 'create' && setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
+                placeholder={mode === 'edit' ? 'El código no se puede cambiar' : "Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"}
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
                 style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
-                  border: '1px solid #d1d5db'
+                  backgroundColor: mode === 'edit' ? '#f3f4f6' : 'white', 
+                  color: mode === 'edit' ? '#6b7280' : 'black', 
+                  border: '1px solid #d1d5db',
+                  cursor: mode === 'edit' ? 'not-allowed' : 'text'
                 }}
+                readOnly={mode === 'edit'}
+                disabled={mode === 'edit'}
               />
             </div>
           </div>
