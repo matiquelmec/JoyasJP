@@ -186,7 +186,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <video
-          src={getVideoUrl('video-1.mp4')}
+          src={getVideoUrl('mi-video.mp4')}
           autoPlay
           loop
           muted
