@@ -182,7 +182,7 @@ async function FeaturedProducts() {
 
 export default function Home() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" style={{ marginTop: 0, paddingTop: 0 }}>
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <video
@@ -191,10 +191,11 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          style={{ marginTop: 0, paddingTop: 0, top: 0 }}
           aria-label="Video promocional de Joyas JP"
         />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
+        <div className="absolute inset-0 w-full h-full bg-black/60 z-10" />
 
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
           <Image
