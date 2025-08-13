@@ -1,11 +1,10 @@
-import { ArrowDown, Heart, Trophy } from 'lucide-react'
+import { ArrowDown, Heart, Sparkles, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import { Button } from '@/components/ui/button'
-import { PageTransition } from '@/components/ui/page-transition'
-import { VideoHero } from '@/components/layout/video-hero'
+import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 
@@ -183,40 +182,91 @@ async function FeaturedProducts() {
 
 export default function Home() {
   return (
-    <PageTransition>
-      <div className="flex flex-col -mt-36 md:-mt-40">
-        {/* Video Hero Section */}
-        <VideoHero />
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative h-screen w-full overflow-hidden">
+        <video
+          src={getVideoUrl('video-1.mp4')}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          aria-label="Video promocional de Joyas JP"
+        />
+        <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
 
-        {/* Featured Products Section */}
-        <section className="pt-8 pb-20 md:pt-16 md:pb-28 bg-background">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4 animate-fadeInUp">
-                Piezas Destacadas
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fadeInUp [animation-delay:200ms]">
-                Descubre nuestra selección de joyas únicas, diseñadas para
-                expresar tu personalidad y estilo.
-              </p>
-            </div>
+        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
+          <Image
+            src={getImageUrl('logo.webp')}
+            alt="Joyas JP - Alta joyería para la escena urbana"
+            width={500}
+            height={500}
+            priority
+            className="h-auto w-80 md:w-96 lg:w-[450px] mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
+          />
 
-            <div className="animate-fadeInUp [animation-delay:400ms]">
-              <FeaturedProductsSection />
-            </div>
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
+            <span className="inline-flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Atrévete a brillar con estilo único
+            </span>
+          </p>
 
-            <div className="text-center mt-12 animate-fadeInUp [animation-delay:600ms]">
-              <Link href="/shop">
-                <Button size="lg" className="font-semibold px-8">
-                  Ver Todos los Productos
-                  <ArrowDown className="w-4 h-4 ml-2 rotate-[-90deg]" />
-                </Button>
-              </Link>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
+            <Link href="/shop" className="flex-1">
+              <Button
+                size="lg"
+                className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+              >
+                <Trophy className="w-5 h-5 mr-2" />
+                Ver Colección
+              </Button>
+            </Link>
+            <Link href="/services" className="flex-1">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                Servicios
+              </Button>
+            </Link>
           </div>
-        </section>
+        </div>
 
-      </div>
-    </PageTransition>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+          <ArrowDown className="w-8 h-8 text-white/70" />
+          <span className="sr-only">Desplázate para ver más</span>
+        </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="py-20 md:py-28 bg-background">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">
+              Piezas Destacadas
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Descubre nuestra selección de joyas únicas, diseñadas para
+              expresar tu personalidad y estilo.
+            </p>
+          </div>
+
+          <FeaturedProductsSection />
+
+          <div className="text-center mt-12">
+            <Link href="/shop">
+              <Button size="lg" className="font-semibold px-8">
+                Ver Toda la Colección
+                <ArrowDown className="w-4 h-4 ml-2 rotate-[-90deg]" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }
