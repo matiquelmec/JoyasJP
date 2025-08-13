@@ -8,6 +8,7 @@ const BUILD_ID = process.env.NEXT_BUILD_ID || Date.now().toString()
 
 export const ASSET_VERSIONS = {
   // Videos principales - incrementa cuando cambies el contenido
+  'video-1.mp4': 'v1',
   'mi-video1.mp4': 'v2',
   'mi-video2.mp4': 'v3', 
   

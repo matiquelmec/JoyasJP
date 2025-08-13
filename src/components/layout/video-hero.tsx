@@ -10,7 +10,7 @@ export function VideoHero() {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <video
-        src={getVideoUrl('mi-video1.mp4')}
+        src={getVideoUrl('video-1.mp4')}
         autoPlay
         loop
         muted
@@ -18,7 +18,7 @@ export function VideoHero() {
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de Joyas JP"
       />
-      <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
+      <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-10" />
 
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
         <Image
