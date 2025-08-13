@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { getImageUrl } from '@/lib/asset-version'
 
 const aboutPageContent = {
   title: 'El Manifiesto Urbano',
@@ -16,7 +17,7 @@ export default function AboutPage() {
     <div className="bg-background text-foreground">
       <div className="relative h-[60vh] flex items-center justify-center text-center bg-black">
         <Image
-          src="/assets/nosotros.jpg"
+          src={getImageUrl('nosotros.webp')}
           alt="Equipo de JoyasJP"
           fill={true}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
