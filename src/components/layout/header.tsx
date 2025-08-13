@@ -23,41 +23,30 @@ export function Header() {
   const { config } = useSiteConfig()
 
   useEffect(() => {
-    let ticking = false
     const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          setHasScrolled(window.scrollY > 10)
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      setHasScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // Estilo unificado para todos los enlaces de navegación - con hover rojo elegante
-  const linkClassName =
-    'text-sm font-medium text-white hover:text-primary transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full'
+  // Estilo unificado para todos los enlaces de navegación
+  const linkClassName = "text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-black/40 backdrop-blur-md border-b border-gray-800',
-        hasScrolled ? 'bg-black/60 shadow-lg' : 'bg-black/40 shadow-none'
-      )}
-    >
-      <div className="container mx-auto flex h-20 sm:h-24 md:h-32 lg:h-40 items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
+      hasScrolled ? "shadow-lg" : "shadow-none"
+    )}>
+      <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center h-full py-2">
           <Image
             src="/assets/logo.webp"
-            alt={`${config?.store_name || 'Joyas JP'} Logo`}
-            width={180}
-            height={180}
+            alt="Joyas JP Logo"
+            width={160}
+            height={160}
             priority
-            sizes="(max-width: 640px) 80px, (max-width: 768px) 120px, (max-width: 1024px) 140px, 180px"
-            className="h-16 sm:h-20 md:h-28 lg:h-36 w-auto transition-all duration-300"
+            className="h-full w-auto"
           />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
@@ -103,12 +92,14 @@ export function Header() {
               >
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                    <Link href="/" className="flex items-center h-16">
-                      <img
-                        src="/assets/logo.webp"
-                        alt="Joyas JP Logo"
-                        className="h-12 w-auto"
-                      />
+                     <Link href="/" className="flex items-center h-20">
+                       <Image
+                         src="/assets/logo.webp"
+                         alt="Joyas JP Logo"
+                         width={160}
+                         height={160}
+                         className="h-full w-auto"
+                       />
                     </Link>
                     <SheetClose asChild>
                       <Button 
