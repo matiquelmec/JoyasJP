@@ -184,20 +184,19 @@ export default function Home() {
   return (
     <div className="flex flex-col" style={{ marginTop: 0, paddingTop: 0 }}>
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
         <video
           src={getVideoUrl('mi-video.mp4')}
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ marginTop: 0, paddingTop: 0, top: 0 }}
+          className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         />
-        <div className="absolute inset-0 w-full h-full bg-black/60 z-10" />
+        <div className="absolute top-0 left-0 w-full h-full bg-black/60" />
 
-        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white p-4">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-4">
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
@@ -243,8 +242,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Spacer for fixed video */}
+      <div className="h-screen"></div>
+
       {/* Featured Products Section */}
-      <section className="py-20 md:py-28 bg-background">
+      <section className="py-20 md:py-28 bg-background relative z-10">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">
