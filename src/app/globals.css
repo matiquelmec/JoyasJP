@@ -326,7 +326,7 @@ html {
   }
 }
 
-/* ✨ FIX PARA HEADER ESTABLE CON DROPDOWNS */
+/* ✨ FIX PARA HEADER ESTABLE */
 header {
   position: fixed !important;
   top: 0 !important;
@@ -336,74 +336,72 @@ header {
   will-change: auto !important;
 }
 
-/* Prevenir que los dropdowns muevan el layout */
-[data-radix-portal] {
+/* ✨ NUEVO FILTRO DE COLOR - BOTONES CON INDICADORES VISUALES */
+.color-filter-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.color-filter-button::before {
+  content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  z-index: 9999;
-  transform: none;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
 }
 
-/* Asegurar que el body no se mueva */
-body:has([data-radix-portal]) {
-  transform: none !important;
+.color-filter-button:hover::before {
+  left: 100%;
 }
 
-/* ✨ FILTRO DE COLOR - SELECTOR VISIBLE CON GRADIENTE ROJO */
-.color-filter-trigger-fixed {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.95)) !important;
-  background-color: rgba(239, 68, 68, 0.9) !important;
-  background-image: linear-gradient(90deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.95)) !important;
-  border: 2px solid rgba(239, 68, 68, 1) !important;
-  color: white !important;
-  font-weight: 600 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  display: flex !important;
+/* Animación de gradiente para colores metálicos */
+.color-gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
 
-/* SUPER ESPECIFICIDAD - Override bg-background de Tailwind */
-button.color-filter-trigger-fixed.bg-background,
-.color-filter-trigger-fixed.bg-background,
-[role="combobox"].color-filter-trigger-fixed,
-[data-state].color-filter-trigger-fixed,
-[data-radix-select-trigger].color-filter-trigger-fixed {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
-  background-color: rgba(239, 68, 68, 0.85) !important;
-  background-image: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.color-filter-trigger-fixed:hover {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 1)) !important;
-  border-color: rgb(239, 68, 68) !important;
-  transform: scale(1.02) !important;
-  box-shadow: 0 0 0 2px white, 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+/* Efecto de brillo para el filtro activo */
+.color-filter-active {
+  position: relative;
 }
 
-.color-filter-trigger-fixed:focus-visible {
-  outline: 3px solid rgba(59, 130, 246, 0.8) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(59, 130, 246, 0.3) !important;
+.color-filter-active::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, hsl(var(--primary)), transparent, hsl(var(--primary)));
+  border-radius: inherit;
+  z-index: -1;
+  animation: border-glow 2s ease-in-out infinite alternate;
 }
 
-.color-filter-trigger-fixed [data-radix-select-value] {
-  color: white !important;
-  font-weight: 600 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+@keyframes border-glow {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
-.color-filter-trigger-fixed svg {
-  color: white !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) !important;
-  transition: all 0.2s ease !important;
-}
-
-.color-filter-trigger-fixed:hover svg {
-  transform: scale(1.1) !important;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) !important;
+/* Responsive design para el filtro */
+@media (max-width: 640px) {
+  .color-filter-container {
+    justify-content: center;
+  }
+  
+  .color-filter-button {
+    min-width: 80px;
+    text-align: center;
+  }
 }
 
 /* ✨ MEJORAS DE CONTRASTE PARA ADMIN PANEL */

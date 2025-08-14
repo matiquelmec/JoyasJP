@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { ColorFilter } from '@/components/shop/color-filter'
 import { Separator } from '@/components/ui/separator'
 import { SkeletonGrid } from '@/components/ui/skeleton-card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -64,14 +58,6 @@ export default function ShopPage() {
     }
     fetchInitialData()
   }, [])
-
-  // Optimización: Memoizar la transformación de valor del color
-  const displayColorValue = useMemo(() => {
-    if (!activeColor || activeColor === 'all') {
-      return 'Todos los colores';
-    }
-    return activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
-  }, [activeColor]);
 
   // Optimización: Callback memoizado para el cambio de color
   const handleColorChange = useCallback((value: string) => {
@@ -178,37 +164,13 @@ export default function ShopPage() {
             ))}
           </TabsList>
 
-          <div className="flex justify-end items-center mb-8">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                Color:
-              </span>
-              <Select onValueChange={handleColorChange} value={activeColor}>
-                <SelectTrigger 
-                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] color-filter-trigger-fixed"
-                  aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
-                >
-                  <SelectValue placeholder="Todos los colores" />
-                </SelectTrigger>
-                <SelectContent 
-                  className="z-[9999] bg-background border-border shadow-xl"
-                  position="popper" 
-                  side="bottom" 
-                  align="end"
-                  sideOffset={5}
-                >
-                  {colors.map((color) => (
-                    <SelectItem 
-                      key={color} 
-                      value={color}
-                      className="capitalize"
-                    >
-                      {color === 'all' ? 'Todos los colores' : color.charAt(0).toUpperCase() + color.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex justify-center md:justify-end mb-8">
+            <ColorFilter 
+              colors={colors}
+              activeColor={activeColor}
+              onColorChange={handleColorChange}
+              className="max-w-full"
+            />
           </div>
 
           <Separator className="mb-12" />
