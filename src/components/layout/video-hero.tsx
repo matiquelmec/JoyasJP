@@ -15,6 +15,7 @@ export function VideoHero() {
         loop
         muted
         playsInline
+        preload="metadata"
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de Joyas JP"
       />

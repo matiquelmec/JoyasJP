@@ -3,6 +3,7 @@ import { Playfair_Display, PT_Sans } from 'next/font/google'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/toaster'
+import { PreloaderProvider } from '@/components/providers/preloader-provider'
 import { cn } from '@/lib/utils'
 
 const playfairDisplay = Playfair_Display({
@@ -147,6 +148,9 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin=""
         />
+        {/* Preconnect para Supabase */}
+        <link rel="preconnect" href="https://lrsmmfpsbawznjpnllwr.supabase.co" />
+        <link rel="dns-prefetch" href="https://lrsmmfpsbawznjpnllwr.supabase.co" />
 
         <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
         <link rel="shortcut icon" href="/favicon.ico?v=2" />
@@ -202,16 +206,18 @@ export default function RootLayout({
         )}
         data-loading="eager"
       >
-        <a
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
-          href="#main-content"
-        >
-          Saltar al contenido principal
-        </a>
+        <PreloaderProvider>
+          <a
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
+            href="#main-content"
+          >
+            Saltar al contenido principal
+          </a>
 
-        <ConditionalLayout>{children}</ConditionalLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
 
-        <Toaster />
+          <Toaster />
+        </PreloaderProvider>
       </body>
     </html>
   )
