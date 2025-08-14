@@ -38,7 +38,7 @@ export async function GET() {
     })
 
   } catch (error) {
-    console.error('Error testing MercadoPago:', error)
+    // console.error('Error testing MercadoPago:', error)
     return NextResponse.json({
       success: false,
       error: 'Error al probar configuración de MercadoPago',

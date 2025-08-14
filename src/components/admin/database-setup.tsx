@@ -50,7 +50,7 @@ export function DatabaseSetup() {
       }
     } catch (error) {
       setSetupStatus('error')
-      console.error('Setup error:', error)
+    // console.error('Setup error:', error)
       toast({
         title: 'Error',
         description: 'No se pudo conectar con el servidor',

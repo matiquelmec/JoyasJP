@@ -19,13 +19,13 @@ function initializeSupabaseAdmin() {
           persistSession: false
         }
       })
-      console.log('✅ Supabase admin client initialized on demand')
+    // console.log('✅ Supabase admin client initialized on demand')
     } catch (error) {
-      console.error('❌ Failed to initialize Supabase admin client:', error)
+    // console.error('❌ Failed to initialize Supabase admin client:', error)
       supabaseAdminClient = undefined
     }
   } else {
-    console.warn('Supabase URL or Service Role Key are missing. Admin operations will not be available.')
+    // console.warn('Supabase URL or Service Role Key are missing. Admin operations will not be available.')
   }
 
   adminClientInitialized = true

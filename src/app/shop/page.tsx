@@ -51,7 +51,7 @@ export default function ShopPage() {
         setColors(['all', ...orderedColors])
       } catch (err) {
         setError('Failed to fetch data.')
-        console.error(err)
+    // console.error(err)
       } finally {
         setLoading(false)
       }

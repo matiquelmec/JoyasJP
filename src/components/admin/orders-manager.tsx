@@ -62,11 +62,11 @@ export function OrdersManager() {
         const data = await response.json()
         setOrders(data.orders || [])
       } else {
-        console.error('Error fetching orders:', response.statusText)
+    // console.error('Error fetching orders:', response.statusText)
         setOrders([])
       }
     } catch (error) {
-      console.error('Error fetching orders:', error)
+    // console.error('Error fetching orders:', error)
       setOrders([])
     } finally {
       setLoading(false)
@@ -114,10 +114,10 @@ export function OrdersManager() {
         // Refresh orders after update
         fetchOrders()
       } else {
-        console.error('Error updating order status:', response.statusText)
+    // console.error('Error updating order status:', response.statusText)
       }
     } catch (error) {
-      console.error('Error updating order status:', error)
+    // console.error('Error updating order status:', error)
     }
   }
 

@@ -82,7 +82,6 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    console.log('Setting up maintenance_tasks table...')
 
     // Ejecutar SQL para crear la tabla y datos iniciales
     const { data, error } = await client.rpc('exec_sql', {
@@ -91,7 +90,6 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       // Si RPC no está disponible, intentar crear tabla manualmente
-      console.warn('RPC not available, attempting manual table creation')
       
       try {
         // Intentar insertar datos de prueba para verificar si la tabla existe
@@ -119,7 +117,6 @@ export async function POST(request: NextRequest) {
         }
         
       } catch (tableError) {
-        console.error('Table creation failed:', tableError)
         return NextResponse.json({ 
           error: 'Could not create maintenance_tasks table. Please create it manually in Supabase.',
           suggestion: 'Run the provided SQL in the Supabase SQL editor',
@@ -128,7 +125,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log('Maintenance tasks table setup completed')
 
     return NextResponse.json({ 
       success: true,
@@ -137,7 +133,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error setting up maintenance system:', error)
     return NextResponse.json({ 
       error: 'Failed to setup maintenance system',
       details: error.message,
@@ -180,7 +175,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error checking maintenance system:', error)
     return NextResponse.json({ 
       ready: false,
       error: 'Failed to check maintenance system',

@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     const { data: products, error, count } = await query
 
     if (error) {
-      console.error('Database error:', error)
+    // console.error('Database error:', error)
       return NextResponse.json(
         { error: 'Failed to fetch products' },
         { status: 500 }
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
       { headers: cacheHeaders }
     )
   } catch (error) {
-    console.error('API error:', error)
+    // console.error('API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

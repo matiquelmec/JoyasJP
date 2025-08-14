@@ -25,9 +25,6 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
 
 async function getFeaturedProducts(): Promise<Product[]> {
   if (!supabase) {
-    console.warn(
-      'Supabase client is not initialized, cannot fetch featured products.'
-    )
     return []
   }
 
@@ -39,7 +36,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
       .gt('stock', 0)) as { data: Product[] | null; error: any }
 
     if (error) {
-      console.error('Error fetching products:', error)
+    // console.error('Error fetching products:', error)
       return []
     }
 
@@ -103,7 +100,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
     return fisherYatesShuffle(selectedProducts)
 
   } catch (error) {
-    console.error('Error in getFeaturedProducts:', error)
+    // console.error('Error in getFeaturedProducts:', error)
     return []
   }
 }

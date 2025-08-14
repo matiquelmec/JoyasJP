@@ -94,7 +94,7 @@ export function ProductsManager() {
       
       setProducts(mappedProducts)
     } catch (error) {
-      console.error('Error loading products:', error)
+    // console.error('Error loading products:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar los productos. Verifica tu conexión.',
@@ -116,7 +116,7 @@ export function ProductsManager() {
         )
       )
     } catch (error) {
-      console.error('Error updating stock:', error)
+    // console.error('Error updating stock:', error)
       toast({
         title: 'Error',
         description: 'No se pudo actualizar el stock.',
@@ -148,7 +148,7 @@ export function ProductsManager() {
         duration: 5000,
       })
     } catch (error) {
-      console.error('Error deleting product:', error)
+    // console.error('Error deleting product:', error)
       toast({
         title: 'Error',
         description: 'No se pudo eliminar el producto. Intenta nuevamente.',
@@ -180,7 +180,7 @@ export function ProductsManager() {
         description: `${recentlyDeleted.product.name} ha sido restaurado exitosamente.`,
       })
     } catch (error) {
-      console.error('Error restoring product:', error)
+    // console.error('Error restoring product:', error)
       toast({
         title: 'Error',
         description: 'No se pudo restaurar el producto.',

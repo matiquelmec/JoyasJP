@@ -36,7 +36,7 @@ export async function GET(
 
     return NextResponse.json(product, { headers: productCacheHeaders })
   } catch (error) {
-    console.error('API error:', error)
+    // console.error('API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

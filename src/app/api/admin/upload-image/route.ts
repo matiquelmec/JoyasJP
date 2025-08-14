@@ -19,7 +19,7 @@ function getSupabaseClient() {
     return { client: supabaseAdmin, isAdmin: true }
   }
   
-  console.warn('Admin client not available, falling back to regular client')
+  // Using regular client as fallback
   return { client: supabase, isAdmin: false }
 }
 
@@ -39,11 +39,8 @@ function generateFileName(originalName: string, productCode?: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('📸 Upload image endpoint called')
-  
   // Verificar autenticación
   if (!verifyAdminAuth(request)) {
-    console.log('❌ Unauthorized upload attempt')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -51,7 +48,6 @@ export async function POST(request: NextRequest) {
     const { client, isAdmin } = getSupabaseClient()
     
     if (!client) {
-      console.error('❌ Database client not available')
       return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
     }
 
@@ -62,22 +58,13 @@ export async function POST(request: NextRequest) {
     const productCode = formData.get('productCode') as string | null
 
     if (!file) {
-      console.log('❌ No file provided')
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    console.log('📁 File details:', {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      category,
-      productCode
-    })
 
     // Validar tipo de archivo
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!validTypes.includes(file.type)) {
-      console.log('❌ Invalid file type:', file.type)
       return NextResponse.json({ 
         error: 'Invalid file type. Only JPEG, PNG and WebP are allowed.' 
       }, { status: 400 })
@@ -86,7 +73,6 @@ export async function POST(request: NextRequest) {
     // Validar tamaño (max 5MB)
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
-      console.log('❌ File too large:', file.size)
       return NextResponse.json({ 
         error: 'File too large. Maximum size is 5MB.' 
       }, { status: 400 })
@@ -100,7 +86,6 @@ export async function POST(request: NextRequest) {
     const fileName = generateFileName(file.name, productCode || undefined)
     const filePath = `${category}/${fileName}`
 
-    console.log('📤 Uploading to path:', filePath)
 
     // Subir a Supabase Storage
     const { data: uploadData, error: uploadError } = await client.storage
@@ -112,14 +97,10 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      console.error('❌ Upload error:', uploadError)
-      
       // Si el archivo ya existe, intentar con un nombre diferente
       if (uploadError.message?.includes('already exists')) {
         const altFileName = generateFileName(file.name)
         const altFilePath = `${category}/${altFileName}`
-        
-        console.log('🔄 Retrying with alternative name:', altFilePath)
         
         const { data: retryData, error: retryError } = await client.storage
           .from('joyas-jp-ecommerce')
@@ -138,7 +119,6 @@ export async function POST(request: NextRequest) {
           .from('joyas-jp-ecommerce')
           .getPublicUrl(altFilePath)
 
-        console.log('✅ Image uploaded successfully (retry):', publicUrlData.publicUrl)
 
         return NextResponse.json({
           success: true,
@@ -157,7 +137,6 @@ export async function POST(request: NextRequest) {
       .from('joyas-jp-ecommerce')
       .getPublicUrl(filePath)
 
-    console.log('✅ Image uploaded successfully:', publicUrlData.publicUrl)
 
     return NextResponse.json({
       success: true,
@@ -168,7 +147,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('💥 Upload error:', error)
+    // console.error('💥 Upload error:', error)
     return NextResponse.json({ 
       error: 'Failed to upload image',
       details: error instanceof Error ? error.message : 'Unknown error'

@@ -51,13 +51,12 @@ async function performDatabaseBackup(client: any) {
           backupInfo.totalRecords += count || 0
         }
       } catch (tableError) {
-        console.warn(`Could not backup table ${table}:`, tableError)
+        // Could not backup table
         backupInfo.tables[table] = 'error'
       }
     }
 
     // En producción, aquí se ejecutaría el backup real
-    console.log('Database backup completed:', backupInfo)
     
     return {
       success: true,
@@ -65,7 +64,6 @@ async function performDatabaseBackup(client: any) {
       details: backupInfo
     }
   } catch (error) {
-    console.error('Database backup error:', error)
     return {
       success: false,
       message: 'Error en backup de base de datos',
@@ -91,7 +89,7 @@ async function cleanupOrphanedImages(client: any) {
     const orphanedFiles = Math.floor(Math.random() * 5) // 0-4 archivos huérfanos
     const cleanedSize = orphanedFiles * 1.5 // MB liberados
     
-    console.log(`Cleaned ${orphanedFiles} orphaned files, freed ${cleanedSize.toFixed(1)}MB`)
+    // console.log(`Cleaned ${orphanedFiles} orphaned files, freed ${cleanedSize.toFixed(1)}MB`)
     
     return {
       success: true,
@@ -103,7 +101,7 @@ async function cleanupOrphanedImages(client: any) {
       }
     }
   } catch (error) {
-    console.error('Image cleanup error:', error)
+    // console.error('Image cleanup error:', error)
     return {
       success: false,
       message: 'Error en limpieza de imágenes',
@@ -120,7 +118,7 @@ async function clearSystemCache() {
     const clearedSizes = cacheTypes.map(() => Math.random() * 20 + 5) // 5-25MB cada uno
     const totalCleared = clearedSizes.reduce((sum, size) => sum + size, 0)
     
-    console.log(`Cache cleared: ${totalCleared.toFixed(1)}MB freed`)
+    // console.log(`Cache cleared: ${totalCleared.toFixed(1)}MB freed`)
     
     return {
       success: true,
@@ -134,7 +132,7 @@ async function clearSystemCache() {
       }
     }
   } catch (error) {
-    console.error('Cache cleanup error:', error)
+    // console.error('Cache cleanup error:', error)
     return {
       success: false,
       message: 'Error en limpieza de cache',
@@ -165,7 +163,7 @@ async function performSecurityScan(client: any) {
       scanResults.recommendations.push('Implementar rate limiting en APIs públicas')
     }
 
-    console.log('Security scan completed:', scanResults)
+    // console.log('Security scan completed:', scanResults)
     
     return {
       success: true,
@@ -173,7 +171,7 @@ async function performSecurityScan(client: any) {
       details: scanResults
     }
   } catch (error) {
-    console.error('Security scan error:', error)
+    // console.error('Security scan error:', error)
     return {
       success: false,
       message: 'Error en escaneo de seguridad',
@@ -206,7 +204,7 @@ async function updateDependencies() {
       .sort(() => Math.random() - 0.5)
       .slice(0, updateResults.packagesUpdated)
 
-    console.log('Dependencies updated:', updateResults)
+    // console.log('Dependencies updated:', updateResults)
     
     return {
       success: true,
@@ -214,7 +212,7 @@ async function updateDependencies() {
       details: updateResults
     }
   } catch (error) {
-    console.error('Dependencies update error:', error)
+    // console.error('Dependencies update error:', error)
     return {
       success: false,
       message: 'Error actualizando dependencias',
@@ -254,7 +252,7 @@ async function performanceAudit(client: any) {
       auditResults.recommendations.push('Mejorar estrategia de cache')
     }
 
-    console.log('Performance audit completed:', auditResults)
+    // console.log('Performance audit completed:', auditResults)
     
     return {
       success: true,
@@ -262,7 +260,7 @@ async function performanceAudit(client: any) {
       details: auditResults
     }
   } catch (error) {
-    console.error('Performance audit error:', error)
+    // console.error('Performance audit error:', error)
     return {
       success: false,
       message: 'Error en auditoría de performance',
@@ -282,7 +280,7 @@ async function cleanupLogs() {
       oldestLogKept: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 días atrás
     }
 
-    console.log('Logs cleaned up:', cleanupResults)
+    // console.log('Logs cleaned up:', cleanupResults)
     
     return {
       success: true,
@@ -290,7 +288,7 @@ async function cleanupLogs() {
       details: cleanupResults
     }
   } catch (error) {
-    console.error('Log cleanup error:', error)
+    // console.error('Log cleanup error:', error)
     return {
       success: false,
       message: 'Error en limpieza de logs',
@@ -362,7 +360,7 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', taskId)
       } catch (updateError) {
-        console.warn('Could not update task status:', updateError)
+        // console.warn('Could not update task status:', updateError)
       }
     }
 
@@ -373,7 +371,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error executing maintenance action:', error)
+    // console.error('Error executing maintenance action:', error)
     return NextResponse.json({ 
       success: false,
       error: 'Failed to execute maintenance action',

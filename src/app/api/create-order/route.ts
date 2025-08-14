@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     if (!supabase) {
-      console.error('Supabase client is not initialized.')
+    // console.error('Supabase client is not initialized.')
       return NextResponse.json(
         { error: 'Database connection error.' },
         { status: 500 }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     )
 
     if (error) {
-      console.error('Supabase function error:', error)
+    // console.error('Supabase function error:', error)
       // El error puede ser por falta de stock, lo cual es un error funcional esperado
       if (error.message.includes('Insufficient stock')) {
         return NextResponse.json(
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error processing request:', error)
+    // console.error('Error processing request:', error)
     return NextResponse.json(
       { error: 'Invalid request body.' },
       { status: 400 }

@@ -185,7 +185,7 @@ export class PerformanceMonitor {
    */
   static async sendAlert(alert: PerformanceAlert) {
     // En desarrollo, solo log
-    console.warn(`🚨 Performance Alert: ${alert.message}`)
+    // console.warn(`🚨 Performance Alert: ${alert.message}`)
     
     // En producción, aquí enviarías:
     // - Email al equipo
@@ -200,7 +200,7 @@ export class PerformanceMonitor {
     // Simular notificación
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log(`📧 Mock notification sent for ${alert.metric}`)
+    // console.log(`📧 Mock notification sent for ${alert.metric}`)
         resolve(true)
       }, 1000)
     })

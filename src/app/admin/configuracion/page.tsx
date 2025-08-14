@@ -40,7 +40,7 @@ export default function ConfiguracionPage() {
       const data = await adminAPI.getConfiguration()
       setConfig(data)
     } catch (error) {
-      console.error('Error loading configuration:', error)
+    // console.error('Error loading configuration:', error)
       toast({
         title: 'Error',
         description: 'No se pudo cargar la configuración',
@@ -64,7 +64,7 @@ export default function ConfiguracionPage() {
         description: `La ${section} se ha actualizado correctamente.`
       })
     } catch (error) {
-      console.error('Error saving configuration:', error)
+    // console.error('Error saving configuration:', error)
       toast({
         title: 'Error',
         description: 'No se pudo guardar la configuración',

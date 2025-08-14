@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (orderError) {
-        console.error('Error saving order to database:', orderError)
+    // console.error('Error saving order to database:', orderError)
         // No fallar el checkout si no se puede guardar la orden
         // El usuario aún puede continuar con el pago
       } else {
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
       }
 
     } catch (dbError) {
-      console.error('Database error when saving order:', dbError)
+    // console.error('Database error when saving order:', dbError)
       // Continue with checkout even if DB save fails
     }
 
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       orderId: preference.id
     })
   } catch (error: any) {
-    console.error('Error creating preference:', JSON.stringify(error, null, 2))
+    // console.error('Error creating preference:', JSON.stringify(error, null, 2))
 
     let errorMessage = 'An unknown error occurred.'
     if (error.cause) {

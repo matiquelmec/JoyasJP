@@ -110,7 +110,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       })
 
     } catch (error) {
-      console.error('Upload error:', error)
+    // console.error('Upload error:', error)
       toast({
         title: 'Error al subir imagen',
         description: error.message || 'Intenta nuevamente',
@@ -183,7 +183,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
                 alt="Preview"
                 className="w-24 h-24 object-cover rounded-lg border"
                 onError={(e) => {
-                  console.error('Image preview error')
+    // console.error('Image preview error')
                   setPreview(null)
                 }}
               />

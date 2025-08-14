@@ -56,7 +56,7 @@ async function getDatabaseMetrics(client: any) {
       orphanedFiles: orphanedEstimate
     }
   } catch (error) {
-    console.error('Error getting database metrics:', error)
+    // console.error('Error getting database metrics:', error)
     return {
       status: 'error' as const,
       connections: 0,
@@ -98,7 +98,7 @@ async function getFilesMetrics(client: any) {
       fileCount
     }
   } catch (error) {
-    console.error('Error getting files metrics:', error)
+    // console.error('Error getting files metrics:', error)
     return {
       status: 'warning' as const,
       totalSize: 'Unknown',
@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error getting system health:', error)
+    // console.error('Error getting system health:', error)
     return NextResponse.json({ 
       error: 'Failed to get system health',
       details: error.message 

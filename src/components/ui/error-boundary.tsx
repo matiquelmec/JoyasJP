@@ -28,12 +28,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
+    // console.error('ErrorBoundary caught an error:', error, errorInfo)
 
     // Log to external service in production
     if (process.env.NODE_ENV === 'production') {
       // Here you could send to Sentry, LogRocket, etc.
-      console.error('Production error:', { error, errorInfo })
+    // console.error('Production error:', { error, errorInfo })
     }
 
     // Call optional error handler
@@ -141,7 +141,7 @@ export function ShopErrorBoundary({ children }: { children: ReactNode }) {
       }
       onError={(error, errorInfo) => {
         // Log specific shop errors
-        console.error('Shop component error:', { error, errorInfo })
+    // console.error('Shop component error:', { error, errorInfo })
       }}
     >
       {children}
@@ -186,11 +186,6 @@ export function AdminErrorBoundary({ children }: { children: ReactNode }) {
       }
       onError={(error, errorInfo) => {
         // Log admin errors with higher priority
-        console.error('ADMIN ERROR:', {
-          error,
-          errorInfo,
-          timestamp: new Date().toISOString(),
-        })
       }}
     >
       {children}

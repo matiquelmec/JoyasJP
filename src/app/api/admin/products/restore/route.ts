@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ product: data[0] })
   } catch (error) {
-    console.error('Error restoring product:', error)
+    // console.error('Error restoring product:', error)
     return NextResponse.json({ 
       error: 'Failed to restore product',
       details: error.message 
@@ -70,7 +70,7 @@ function getSupabaseClient() {
     return { client: supabaseAdmin, isAdmin: true }
   }
   
-  console.warn('Admin client not available, falling back to regular client')
+    // console.warn('Admin client not available, falling back to regular client')
   return { client: require('@/lib/supabase-client').supabase, isAdmin: false }
 }
 }

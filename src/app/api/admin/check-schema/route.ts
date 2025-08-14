@@ -13,8 +13,6 @@ function verifyAdminAuth(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  console.log('🔍 Schema check endpoint called')
-  
   if (!verifyAdminAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -39,9 +37,6 @@ export async function GET(request: NextRequest) {
       .select('*')
       .limit(1)
 
-    if (tableError) {
-      console.error('Table error:', tableError)
-    }
 
     // 2. Intentar insertar un producto de prueba para ver el error exacto
     const testProduct = {
@@ -95,11 +90,9 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('Schema check error:', error)
     return NextResponse.json({ 
       error: 'Failed to check schema',
-      details: error?.message || 'Unknown error',
-      stack: error?.stack?.substring(0, 500)
+      details: error?.message || 'Unknown error'
     }, { status: 500 })
   }
 }

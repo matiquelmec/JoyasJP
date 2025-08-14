@@ -176,7 +176,7 @@ export default function CheckoutPage() {
         description: errorMessage,
         variant: 'destructive'
       })
-      console.error('Error al procesar checkout:', error)
+    // console.error('Error al procesar checkout:', error)
     } finally {
       setIsLoading(false)
     }

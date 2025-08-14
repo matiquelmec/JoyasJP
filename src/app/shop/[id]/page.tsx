@@ -47,7 +47,7 @@ async function getProduct(id: string): Promise<Product | null> {
 
     return data as unknown as Product
   } catch (error) {
-    console.error('Error fetching product:', error)
+    // console.error('Error fetching product:', error)
     return null
   }
 }
@@ -117,7 +117,7 @@ export async function generateStaticParams() {
       .select('id')
 
     if (error || !products) {
-      console.error('Error fetching product IDs for static generation:', error)
+    // console.error('Error fetching product IDs for static generation:', error)
       return []
     }
 
@@ -125,7 +125,7 @@ export async function generateStaticParams() {
       id: product.id,
     }))
   } catch (error) {
-    console.error('Error in generateStaticParams:', error)
+    // console.error('Error in generateStaticParams:', error)
     return []
   }
 }

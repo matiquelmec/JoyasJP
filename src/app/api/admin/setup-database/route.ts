@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       message: 'Database configured successfully - deleted_at column added' 
     })
   } catch (error) {
-    console.error('Error setting up database:', error)
+    // console.error('Error setting up database:', error)
     return NextResponse.json({ 
       error: 'Failed to setup database',
       details: error.message,

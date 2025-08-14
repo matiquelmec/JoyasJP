@@ -23,11 +23,6 @@ export async function GET(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  console.log('🔍 Environment check:', {
-    hasUrl: !!supabaseUrl,
-    hasKey: !!supabaseServiceKey,
-    url: supabaseUrl?.substring(0, 30) + '...'
-  })
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ 
@@ -40,7 +35,6 @@ export async function GET(request: NextRequest) {
   try {
     // Create client
     const client = createClient(supabaseUrl, supabaseServiceKey)
-    console.log('✅ Supabase client created')
 
     // Test 1: Get existing products
     const { data: existingProducts, error: selectError } = await client
@@ -48,16 +42,6 @@ export async function GET(request: NextRequest) {
       .select('*')
       .limit(3)
 
-    console.log('📋 Select test result:', { 
-      success: !selectError, 
-      error: selectError?.message,
-      count: existingProducts?.length || 0 
-    })
-
-    if (existingProducts && existingProducts.length > 0) {
-      console.log('📦 Sample product structure:', Object.keys(existingProducts[0]))
-      console.log('📦 Sample product data:', existingProducts[0])
-    }
 
     // Test 2: Try inserting a minimal product
     const testProduct = {
@@ -68,20 +52,12 @@ export async function GET(request: NextRequest) {
       stock: 1
     }
 
-    console.log('🧪 Testing insert with minimal data:', testProduct)
 
     const { data: insertData, error: insertError } = await client
       .from('products')
       .insert([testProduct])
       .select()
 
-    console.log('💾 Insert test result:', {
-      success: !insertError,
-      error: insertError?.message,
-      code: insertError?.code,
-      details: insertError?.details,
-      hint: insertError?.hint
-    })
 
     // Clean up test product if it was created
     if (insertData && insertData[0]) {
@@ -89,7 +65,6 @@ export async function GET(request: NextRequest) {
         .from('products')
         .delete()
         .eq('id', testProduct.id)
-      console.log('🗑️ Test product cleaned up')
     }
 
     return NextResponse.json({
@@ -118,11 +93,9 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('💥 Test error:', error)
     return NextResponse.json({ 
       error: 'Test failed',
-      details: error?.message || 'Unknown error',
-      stack: error?.stack?.substring(0, 500)
+      details: error?.message || 'Unknown error'
     }, { status: 500 })
   }
 }

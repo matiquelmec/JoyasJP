@@ -120,9 +120,9 @@ export default function PerformancePage() {
       // Mostrar notificación del resultado
       const improvement = metrics.length > 0 ? newMetric.score - metrics[0].score : 0
       if (improvement > 2) {
-        console.log(`🎉 Performance improved by +${improvement.toFixed(1)} points!`)
+    // console.log(`🎉 Performance improved by +${improvement.toFixed(1)} points!`)
       } else if (improvement < -2) {
-        console.warn(`⚠️ Performance declined by ${improvement.toFixed(1)} points`)
+    // console.warn(`⚠️ Performance declined by ${improvement.toFixed(1)} points`)
       }
     }, 3000)
   }

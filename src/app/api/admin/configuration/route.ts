@@ -20,7 +20,7 @@ function getSupabaseClient() {
     return { client: supabaseAdmin, isAdmin: true }
   }
   
-  console.warn('Admin client not available, falling back to regular client')
+    // console.warn('Admin client not available, falling back to regular client')
   return { client: supabase, isAdmin: false }
 }
 
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ configuration: data })
   } catch (error) {
-    console.error('Error fetching configuration:', error)
+    // console.error('Error fetching configuration:', error)
     return NextResponse.json({ 
       error: 'Failed to fetch configuration',
       details: error.message 
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ configuration: result.data[0] })
   } catch (error) {
-    console.error('Error updating configuration:', error)
+    // console.error('Error updating configuration:', error)
     return NextResponse.json({ 
       error: 'Failed to update configuration',
       details: error.message 

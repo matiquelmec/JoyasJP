@@ -14,13 +14,13 @@ function initializeSupabase() {
   if (supabaseUrl && supabaseAnonKey) {
     try {
       supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
-      console.log('✅ Supabase client initialized on demand')
+    // console.log('✅ Supabase client initialized on demand')
     } catch (error) {
-      console.error('❌ Failed to initialize Supabase client:', error)
+    // console.error('❌ Failed to initialize Supabase client:', error)
       supabaseClient = undefined
     }
   } else {
-    console.warn('Supabase URL or Anon Key are missing. Supabase client will not be initialized.')
+    // console.warn('Supabase URL or Anon Key are missing. Supabase client will not be initialized.')
   }
 
   clientInitialized = true

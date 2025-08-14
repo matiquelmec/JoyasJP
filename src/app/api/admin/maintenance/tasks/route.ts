@@ -35,10 +35,10 @@ async function ensureMaintenanceTable(client: any) {
     // Intentar crear la tabla
     const { error } = await client.rpc('create_maintenance_tasks_table', {})
     if (error && !error.message.includes('already exists')) {
-      console.warn('Could not create maintenance_tasks table:', error)
+      // console.warn('Could not create maintenance_tasks table:', error)
     }
   } catch (error) {
-    console.warn('Could not ensure maintenance_tasks table:', error)
+    // console.warn('Could not ensure maintenance_tasks table:', error)
   }
 }
 
@@ -71,7 +71,7 @@ async function getMaintenanceTasks(client: any) {
       estimatedTime: task.estimated_time
     }))
   } catch (error) {
-    console.error('Error getting maintenance tasks:', error)
+    // console.error('Error getting maintenance tasks:', error)
     return getDefaultTasks()
   }
 }
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error getting maintenance tasks:', error)
+    // console.error('Error getting maintenance tasks:', error)
     return NextResponse.json({ 
       error: 'Failed to get maintenance tasks',
       details: error.message,
@@ -244,10 +244,10 @@ export async function POST(request: NextRequest) {
         .eq('id', taskId)
 
       if (error) {
-        console.warn('Could not update task in database:', error)
+        // console.warn('Could not update task in database:', error)
       }
     } catch (dbError) {
-      console.warn('Database update failed:', dbError)
+      // console.warn('Database update failed:', dbError)
     }
 
     return NextResponse.json({ 
@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error updating maintenance task:', error)
+    // console.error('Error updating maintenance task:', error)
     return NextResponse.json({ 
       error: 'Failed to update maintenance task',
       details: error.message 

@@ -13,7 +13,7 @@ export async function getProducts(): Promise<Product[]> {
     .gt('stock', 0)
 
   if (error) {
-    console.error('Error fetching products:', error)
+    // console.error('Error fetching products:', error)
     throw error
   }
 
@@ -30,7 +30,7 @@ export async function getColors(): Promise<string[]> {
     .neq('color', '')
 
   if (error) {
-    console.error('Error fetching colors:', error)
+    // console.error('Error fetching colors:', error)
     throw error
   }
 
@@ -78,7 +78,7 @@ export async function getProductById(id: string): Promise<Product | null> {
     .single()
 
   if (error) {
-    console.error('Error fetching product by ID:', error)
+    // console.error('Error fetching product by ID:', error)
     return null
   }
 
@@ -99,7 +99,7 @@ export async function getRelatedProducts(
     .limit(limit || 4) // Usa el límite proporcionado o 4 por defecto
 
   if (error) {
-    console.error('Error fetching related products:', error)
+    // console.error('Error fetching related products:', error)
     return []
   }
 

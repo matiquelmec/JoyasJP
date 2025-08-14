@@ -224,7 +224,7 @@ export default function MantenimientoPage() {
         description: "Información del sistema cargada correctamente",
       })
     } catch (error) {
-      console.error('Error loading maintenance data:', error)
+    // console.error('Error loading maintenance data:', error)
       setError('Error al cargar datos del sistema')
       
       // Usar datos por defecto en caso de error
@@ -330,7 +330,7 @@ export default function MantenimientoPage() {
         throw new Error(result.message || 'Error desconocido')
       }
     } catch (error) {
-      console.error('Error executing task:', error)
+    // console.error('Error executing task:', error)
       
       setTasks(prev => prev.map(t => 
         t.id === taskId ? { ...t, status: 'pending' } : t
@@ -442,7 +442,7 @@ export default function MantenimientoPage() {
         throw new Error(result.message || 'Error desconocido')
       }
     } catch (error) {
-      console.error('Error in quick action:', error)
+    // console.error('Error in quick action:', error)
       toast({
         title: "Error en acción rápida",
         description: error.message,

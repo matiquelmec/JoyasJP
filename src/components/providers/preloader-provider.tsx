@@ -24,18 +24,26 @@ export function PreloaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   useEffect(() => {
-    // Mostrar preloader cada vez que cambia la ruta
-    setShowPreloader(true)
-    setIsLoading(true)
+    // Solo mostrar preloader en homepage ("/")
+    const isHomepage = pathname === '/'
     
-    // Ocultar después de 3.6 segundos (3s de animación + 0.6s de fade out)
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      setShowPreloader(false)
-    }, 3600)
+    if (isHomepage) {
+      setShowPreloader(true)
+      setIsLoading(true)
+      
+      // 3 segundos para homepage + 0.6s de fade out
+      const timer = setTimeout(() => {
+        setIsLoading(false)
+        setShowPreloader(false)
+      }, 3600)
 
-    return () => clearTimeout(timer)
-  }, [pathname]) // Se ejecuta cada vez que cambia la ruta
+      return () => clearTimeout(timer)
+    } else {
+      // Para todas las demás páginas, carga instantánea
+      setShowPreloader(false)
+      setIsLoading(false)
+    }
+  }, [pathname])
 
   return (
     <PreloaderContext.Provider value={{ isLoading, setIsLoading }}>

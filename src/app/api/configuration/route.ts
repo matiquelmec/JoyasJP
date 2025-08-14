@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ configuration: publicConfig })
   } catch (error) {
-    console.error('Error fetching configuration:', error)
+    // console.error('Error fetching configuration:', error)
     // En caso de error, devolver configuración por defecto
     return NextResponse.json({ 
       configuration: {

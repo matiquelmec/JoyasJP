@@ -20,7 +20,7 @@ function getSupabaseClient() {
     return { client: supabaseAdmin, isAdmin: true }
   }
   
-  console.warn('Admin client not available, falling back to regular client')
+  // console.warn('Admin client not available, falling back to regular client')
   return { client: supabase, isAdmin: false }
 }
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ products: data })
   } catch (error) {
-    console.error('Error fetching products:', error)
+    // console.error('Error fetching products:', error)
     return NextResponse.json({ 
       error: 'Failed to fetch products',
       details: error.message 
@@ -68,11 +68,11 @@ export async function POST(request: NextRequest) {
     }
 
     const productData = await request.json()
-    console.log('📦 Product data received:', JSON.stringify(productData, null, 2))
+    // console.log('📦 Product data received:', JSON.stringify(productData, null, 2))
     
     // Use provided code as ID if available, otherwise generate UUID
     const productId = productData.code || crypto.randomUUID()
-    console.log('🆔 Product ID:', productId)
+    // console.log('🆔 Product ID:', productId)
     
     // Remove code from productData since it's not a database column
     const { code, ...productDataWithoutCode } = productData
@@ -94,8 +94,8 @@ export async function POST(request: NextRequest) {
       ...cleanedData
     }
     
-    console.log('💾 Final product object:', JSON.stringify(productWithId, null, 2))
-    console.log('🔑 Fields being sent:', Object.keys(productWithId))
+    // console.log('💾 Final product object:', JSON.stringify(productWithId, null, 2))
+    // console.log('🔑 Fields being sent:', Object.keys(productWithId))
     
     const { data, error } = await client
       .from('products')
@@ -103,16 +103,10 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('❌ Database error details:', {
-        message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
-      })
       throw error
     }
 
-    console.log('✅ Product created successfully:', data[0])
+    // console.log('✅ Product created successfully:', data[0])
     
     // Revalidar páginas después de crear nuevo producto
     try {
@@ -120,12 +114,12 @@ export async function POST(request: NextRequest) {
       revalidatePath('/shop')
       revalidatePath(`/shop/${productId}`)
     } catch (revalidateError) {
-      console.log('Revalidation triggered for new product:', productId)
+      // console.log('Revalidation triggered for new product:', productId)
     }
     
     return NextResponse.json({ product: data[0] }, { status: 201 })
   } catch (error: any) {
-    console.error('💥 Full error creating product:', error)
+    // console.error('💥 Full error creating product:', error)
     return NextResponse.json({ 
       error: 'Failed to create product',
       details: error?.message || 'Unknown error',
@@ -164,12 +158,12 @@ export async function PUT(request: NextRequest) {
       revalidatePath(`/shop/${id}`)
       revalidatePath('/shop')
     } catch (revalidateError) {
-      console.log('Revalidation triggered for product:', id)
+      // console.log('Revalidation triggered for product:', id)
     }
 
     return NextResponse.json({ product: data[0] })
   } catch (error) {
-    console.error('Error updating product:', error)
+    // console.error('Error updating product:', error)
     return NextResponse.json({ 
       error: 'Failed to update product',
       details: error.message 
@@ -238,7 +232,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting product:', error)
+    // console.error('Error deleting product:', error)
     return NextResponse.json({ 
       error: 'Failed to delete product',
       details: error.message 

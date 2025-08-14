@@ -19,7 +19,7 @@ function getSupabaseClient() {
     return { client: supabaseAdmin, isAdmin: true }
   }
   
-  console.warn('Admin client not available, falling back to regular client')
+  // console.warn('Admin client not available, falling back to regular client')
   return { client: supabase, isAdmin: false }
 }
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching orders:', error)
+      // console.error('Error fetching orders:', error)
       return NextResponse.json({ 
         error: 'Failed to fetch orders',
         details: error.message 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ orders: orders || [] })
   } catch (error) {
-    console.error('Error fetching orders:', error)
+    // console.error('Error fetching orders:', error)
     return NextResponse.json({ 
       error: 'Failed to fetch orders',
       details: error.message 
@@ -100,7 +100,7 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error updating order:', error)
+      // console.error('Error updating order:', error)
       return NextResponse.json({ 
         error: 'Failed to update order',
         details: error.message 
@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ order: data })
   } catch (error) {
-    console.error('Error updating order:', error)
+    // console.error('Error updating order:', error)
     return NextResponse.json({ 
       error: 'Failed to update order',
       details: error.message 

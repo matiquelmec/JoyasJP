@@ -59,7 +59,7 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
         setConfig(data.configuration)
       }
     } catch (error) {
-      console.error('Error loading site configuration:', error)
+    // console.error('Error loading site configuration:', error)
     } finally {
       setLoading(false)
     }

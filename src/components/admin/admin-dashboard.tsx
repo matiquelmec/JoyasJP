@@ -89,7 +89,7 @@ export function AdminDashboard() {
 
       setStats(dashboardStats)
     } catch (error) {
-      console.error('Error loading dashboard stats:', error)
+    // console.error('Error loading dashboard stats:', error)
     } finally {
       setLoading(false)
     }

@@ -24,7 +24,7 @@ class MaintenanceAPI {
       const data = await response.json()
       return data.systemHealth
     } catch (error) {
-      console.error('Error fetching system health:', error)
+      // console.error('Error fetching system health:', error)
       throw error
     }
   }
@@ -43,7 +43,7 @@ class MaintenanceAPI {
       const data = await response.json()
       return data.tasks
     } catch (error) {
-      console.error('Error fetching maintenance tasks:', error)
+      // console.error('Error fetching maintenance tasks:', error)
       throw error
     }
   }
@@ -65,7 +65,7 @@ class MaintenanceAPI {
       const result = await response.json()
       return result
     } catch (error) {
-      console.error('Error executing maintenance action:', error)
+      // console.error('Error executing maintenance action:', error)
       throw error
     }
   }
@@ -91,7 +91,7 @@ class MaintenanceAPI {
       const result = await response.json()
       return result
     } catch (error) {
-      console.error('Error updating task status:', error)
+      // console.error('Error updating task status:', error)
       throw error
     }
   }
