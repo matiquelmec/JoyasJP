@@ -67,14 +67,17 @@ export default function ShopPage() {
 
   // Optimización: Memoizar la transformación de valor del color
   const displayColorValue = useMemo(() => {
-    return activeColor === 'all' ? 'Todos los colores' : 
+    const value = activeColor === 'all' ? 'Todos los colores' : 
            activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
+    console.log('🎨 Color Display Value:', { activeColor, displayColorValue: value });
+    return value;
   }, [activeColor]);
 
   // Optimización: Callback memoizado para el cambio de color
   const handleColorChange = useCallback((value: string) => {
+    console.log('🔄 Color Change:', { from: activeColor, to: value });
     setActiveColor(value);
-  }, []);
+  }, [activeColor]);
 
   const filteredProducts = useMemo(() => {
     const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
@@ -184,6 +187,13 @@ export default function ShopPage() {
               <Select onValueChange={handleColorChange} value={activeColor}>
                 <SelectTrigger 
                   className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] color-filter-trigger-fixed"
+                  style={{
+                    background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9))',
+                    border: '2px solid rgba(239, 68, 68, 0.9)',
+                    color: 'white',
+                    fontWeight: '600',
+                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15)'
+                  }}
                   aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
                   role="combobox"
                   aria-expanded="false"
@@ -193,7 +203,9 @@ export default function ShopPage() {
                     placeholder="Filtrar por color"
                     className="text-white font-semibold"
                   >
-                    {displayColorValue}
+                    <span style={{ color: 'white', fontWeight: '600' }}>
+                      {displayColorValue}
+                    </span>
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent 
