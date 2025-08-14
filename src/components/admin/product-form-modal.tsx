@@ -59,9 +59,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
   })
 
   useEffect(() => {
-    console.log('🔧 Modal useEffect triggered:', { mode, hasProduct: !!product, open })
     if (product && mode === 'edit') {
-      console.log('📝 Setting form data for edit mode:', product)
       // En modo edición, el código es el ID del producto si parece un código personalizado
       const productCode = product.id?.startsWith('P') ? product.id : ''
       
@@ -79,10 +77,8 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         detail: product.detail || ''
       })
       
-      console.log('📝 Product ID as code:', productCode)
     } else {
       // Reset form for create mode
-      console.log('🆕 Resetting form for create mode')
       setFormData({
         name: '',
         code: '',
@@ -160,17 +156,11 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         // Removed is_featured and is_deleted as they don't exist in database
       }
 
-      console.log('📦 Enviando datos del producto (FIXED VERSION):', productData)
-      
       let createdProduct = null
       if (mode === 'create') {
-        console.log('🚀 Creando producto...')
         createdProduct = await adminAPI.createProduct(productData)
-        console.log('✅ Producto creado:', createdProduct)
       } else {
-        console.log('🔄 Actualizando producto...', product?.id)
         await adminAPI.updateProduct(product?.id || '', productData)
-        console.log('✅ Producto actualizado')
       }
 
       toast({
@@ -190,11 +180,8 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       setOpen(false)
       onSave()
     } catch (error) {
-      console.error('💥 Error saving product:', error)
-      
       // Mensaje de error más específico
       const errorMessage = error.message || 'Error desconocido'
-      console.error('💥 Error details:', errorMessage)
       
       toast({
         title: 'Error',
@@ -240,7 +227,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 type="text"
                 value={formData.name}
                 onChange={(e) => {
-                  console.log('🔄 Name field changed:', e.target.value)
                   setFormData(prev => ({ ...prev, name: e.target.value }))
                 }}
                 required

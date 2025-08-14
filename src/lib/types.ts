@@ -53,11 +53,6 @@ export interface Product {
   image_hint?: string
   deleted_at?: string
   code?: string // Optional product code used as ID
-  // Legacy compatibility
-  image_url?: string // @deprecated use imageUrl
-  is_featured?: boolean // @deprecated
-  is_deleted?: boolean // @deprecated
-  featured?: boolean // @deprecated
 }
 
 export interface ProductFilters {
@@ -84,8 +79,6 @@ export interface CartItem {
   quantity: number
   category: string
   stock: number
-  // Legacy compatibility
-  image_url?: string // @deprecated use imageUrl
 }
 
 export interface CartState {

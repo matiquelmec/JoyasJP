@@ -17,7 +17,7 @@ export function Preloader() {
 
     // Precargar recursos críticos
     if (typeof window !== 'undefined') {
-      const preloadResources = async () => {
+      const preloadResources = () => {
         const logoImg = new window.Image()
         logoImg.src = '/assets/logo.webp'
         
@@ -32,7 +32,7 @@ export function Preloader() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Efecto de seguimiento del mouse para interactividad
+  // Efecto magnetismo del mouse
   useEffect(() => {
     if (typeof window === 'undefined') return
     
@@ -58,114 +58,184 @@ export function Preloader() {
           initial={{ opacity: 1 }}
           exit={{ 
             opacity: 0,
-            scale: 1.1,
+            scale: 1.05,
             filter: 'blur(10px)',
           }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden cursor-none"
         >
-          {/* Fondo con gradiente dinámico */}
+          {/* Fondo con gradiente sutil */}
           <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-black" />
           
-          {/* Grid futurista de fondo */}
-          <div className="absolute inset-0 opacity-10">
-            <div 
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                                  linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-                backgroundSize: '50px 50px',
-                transform: `perspective(800px) rotateX(60deg) translateZ(0)`,
-                transformOrigin: 'center center',
-              }}
-            />
+          {/* Campo gravitacional que sigue el mouse */}
+          <motion.div
+            className="absolute w-96 h-96 rounded-full pointer-events-none"
+            animate={{
+              x: mousePosition.x * 200,
+              y: mousePosition.y * 200,
+            }}
+            transition={{ type: 'spring', damping: 25, stiffness: 150 }}
+            style={{
+              background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 40%, transparent 70%)',
+              filter: 'blur(20px)',
+            }}
+          />
+
+          {/* Partículas magnéticas que siguen el cursor */}
+          <div className="absolute inset-0">
+            {[...Array(15)].map((_, i) => {
+              const baseX = (i % 5) * (typeof window !== 'undefined' ? window.innerWidth / 5 : 400)
+              const baseY = Math.floor(i / 5) * (typeof window !== 'undefined' ? window.innerHeight / 3 : 300)
+              
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute w-1.5 h-1.5 bg-white/60 rounded-full"
+                  initial={{
+                    x: baseX,
+                    y: baseY,
+                  }}
+                  animate={{
+                    x: baseX + (mousePosition.x * 80 * (1 - i * 0.05)),
+                    y: baseY + (mousePosition.y * 80 * (1 - i * 0.05)),
+                    scale: [1, 1.2, 1],
+                    opacity: [0.6, 0.9, 0.6],
+                  }}
+                  transition={{
+                    x: { type: 'spring', damping: 20 + i * 2, stiffness: 100 },
+                    y: { type: 'spring', damping: 20 + i * 2, stiffness: 100 },
+                    scale: { duration: 2 + i * 0.3, repeat: Infinity, ease: 'easeInOut' },
+                    opacity: { duration: 2 + i * 0.3, repeat: Infinity, ease: 'easeInOut' },
+                  }}
+                  style={{
+                    filter: 'blur(0.5px)',
+                    boxShadow: '0 0 8px rgba(255,255,255,0.4)',
+                  }}
+                />
+              )
+            })}
           </div>
 
-          {/* Partículas flotantes interactivas */}
-          <div className="absolute inset-0">
-            {[...Array(20)].map((_, i) => (
+          {/* Ondas gravitacionales desde el cursor */}
+          <motion.div
+            className="absolute pointer-events-none"
+            animate={{
+              x: mousePosition.x * 300,
+              y: mousePosition.y * 300,
+            }}
+            transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+          >
+            {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="absolute w-1 h-1 bg-white/20 rounded-full"
-                initial={{
-                  x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1920,
-                  y: typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 1080,
-                }}
+                className="absolute border border-white/15 rounded-full"
                 animate={{
-                  x: [
-                    typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1920,
-                    typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1920,
-                    typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1920,
-                  ],
-                  y: [
-                    typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 1080,
-                    typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 1080,
-                    typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 1080,
-                  ],
+                  scale: [0, 3, 6],
+                  opacity: [0.5, 0.2, 0],
                 }}
                 transition={{
-                  duration: 10 + Math.random() * 10,
+                  duration: 2,
                   repeat: Infinity,
-                  ease: 'linear',
+                  delay: i * 0.4,
+                  ease: 'easeOut',
                 }}
                 style={{
-                  filter: 'blur(0.5px)',
-                  boxShadow: '0 0 4px rgba(255,255,255,0.5)',
+                  width: '100px',
+                  height: '100px',
+                  left: '-50px',
+                  top: '-50px',
                 }}
               />
             ))}
-          </div>
+          </motion.div>
 
-          {/* Efecto de luz que sigue el mouse */}
-          <motion.div
-            className="absolute w-96 h-96 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-              filter: 'blur(40px)',
-              x: mousePosition.x * 100,
-              y: mousePosition.y * 100,
-            }}
-            animate={{
-              x: mousePosition.x * 100,
-              y: mousePosition.y * 100,
-            }}
-            transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-          />
-
-          {/* Contenedor principal con efecto 3D */}
+          {/* Contenedor principal con atracción magnética */}
           <motion.div 
             className="relative flex flex-col items-center justify-center"
+            animate={{
+              rotateY: mousePosition.x * 15,
+              rotateX: -mousePosition.y * 10,
+              x: mousePosition.x * 30,
+              y: mousePosition.y * 20,
+            }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             style={{
-              transform: `perspective(1000px) rotateY(${mousePosition.x * 10}deg) rotateX(${-mousePosition.y * 10}deg)`,
+              transformStyle: 'preserve-3d',
             }}
           >
-            {/* Logo con efecto holográfico */}
+            {/* Logo con inclinación magnética */}
             <motion.div
-              initial={{ 
-                scale: 0,
-                rotateY: 180,
-                opacity: 0,
-              }}
-              animate={{ 
-                scale: 1,
-                rotateY: 0,
-                opacity: 1,
-              }}
-              transition={{ 
-                duration: 1.2,
-                ease: [0.34, 1.56, 0.64, 1],
-              }}
               className="relative"
+              animate={{
+                scale: [1, 1.02, 1],
+                rotateZ: mousePosition.x * 5,
+              }}
+              transition={{
+                scale: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
+                rotateZ: { type: 'spring', damping: 30, stiffness: 200 },
+              }}
             >
-              {/* Efecto de anillos orbitales */}
+              {/* Aura magnética que se intensifica con el mouse */}
+              <motion.div
+                className="absolute inset-0 bg-white rounded-full"
+                animate={{
+                  scale: [1, 1.3 + Math.abs(mousePosition.x) * 0.2, 1],
+                  opacity: [0, 0.2 + Math.abs(mousePosition.x) * 0.1, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                style={{
+                  filter: 'blur(30px)',
+                }}
+              />
+
+              {/* Anillos orbitales que se distorsionan con el mouse */}
               <motion.div
                 className="absolute inset-0 flex items-center justify-center"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                animate={{ 
+                  rotate: 360,
+                  scale: 1 + Math.abs(mousePosition.x) * 0.1,
+                }}
+                transition={{ 
+                  rotate: { duration: 15, repeat: Infinity, ease: 'linear' },
+                  scale: { type: 'spring', damping: 25, stiffness: 200 },
+                }}
               >
-                <div className="absolute w-72 h-72 border border-white/10 rounded-full" />
-                <div className="absolute w-80 h-80 border border-white/5 rounded-full" />
-                <div className="absolute w-96 h-96 border border-white/[0.02] rounded-full" />
+                <motion.div 
+                  className="absolute w-72 h-72 border border-white/20 rounded-full"
+                  animate={{
+                    scale: [1, 1.05, 1],
+                    opacity: [0.2, 0.3 + Math.abs(mousePosition.y) * 0.2, 0.2],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                  style={{
+                    boxShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
+                    transform: `skewX(${mousePosition.x * 5}deg)`,
+                  }} 
+                />
+                <motion.div 
+                  className="absolute w-80 h-80 border border-white/15 rounded-full"
+                  animate={{
+                    scale: [1, 1.03, 1],
+                    opacity: [0.15, 0.25, 0.15],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                  style={{
+                    boxShadow: '0 0 15px rgba(255, 255, 255, 0.2)',
+                    transform: `skewY(${mousePosition.y * 3}deg)`,
+                  }} 
+                />
               </motion.div>
 
               <Image
@@ -177,44 +247,56 @@ export function Preloader() {
                 className="w-56 md:w-72 lg:w-80 h-auto relative z-10"
                 style={{
                   filter: `
-                    drop-shadow(0 0 30px rgba(255,255,255,0.4))
-                    drop-shadow(0 0 60px rgba(255,255,255,0.2))
-                    drop-shadow(0 0 120px rgba(255,255,255,0.1))
-                    brightness(1.2)
+                    drop-shadow(0 0 30px rgba(255,255,255,${0.3 + Math.abs(mousePosition.x) * 0.2}))
+                    drop-shadow(0 0 60px rgba(255,255,255,${0.2 + Math.abs(mousePosition.y) * 0.1}))
+                    brightness(${1.1 + Math.abs(mousePosition.x) * 0.1})
                     contrast(1.1)
                   `,
                 }}
               />
-              
-              {/* Efecto de escaneo vertical */}
+
+              {/* Destello reactivo al mouse */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"
+                className="absolute inset-0 bg-white"
                 animate={{
-                  y: ['-100%', '100%'],
+                  opacity: [0, Math.abs(mousePosition.x) * 0.3 + Math.abs(mousePosition.y) * 0.2, 0],
+                  scale: [1, 1.1, 1],
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 1,
                   repeat: Infinity,
-                  ease: 'linear',
+                  ease: 'easeInOut',
                 }}
-                style={{ mixBlendMode: 'overlay' }}
+                style={{
+                  background: 'radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 60%)',
+                  mixBlendMode: 'screen',
+                }}
               />
             </motion.div>
 
-            {/* Texto con efecto de glitch */}
+            {/* Texto que se inclina con el mouse */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.8 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                rotateX: mousePosition.y * 10,
+              }}
+              transition={{ 
+                opacity: { delay: 1, duration: 0.8 },
+                y: { delay: 1, duration: 0.8 },
+                rotateX: { type: 'spring', damping: 25, stiffness: 200 },
+              }}
               className="mt-12 relative"
             >
               <motion.p
                 className="text-white/90 text-lg md:text-xl font-light tracking-[0.4em] uppercase"
                 animate={{
+                  opacity: [0.9, 1, 0.9],
                   textShadow: [
-                    '0 0 10px rgba(255,255,255,0.5)',
-                    '0 0 20px rgba(255,255,255,0.8), -2px 0 0 rgba(0,255,255,0.5), 2px 0 0 rgba(255,0,255,0.5)',
-                    '0 0 10px rgba(255,255,255,0.5)',
+                    '0 0 10px rgba(255,255,255,0.3)',
+                    `0 0 15px rgba(255,255,255,${0.4 + Math.abs(mousePosition.x) * 0.2})`,
+                    '0 0 10px rgba(255,255,255,0.3)',
                   ],
                 }}
                 transition={{
@@ -225,83 +307,54 @@ export function Preloader() {
               >
                 ¿Listo para jugar?
               </motion.p>
-              
-              {/* Efecto de glitch ocasional */}
-              <motion.p
-                className="absolute inset-0 text-white/90 text-lg md:text-xl font-light tracking-[0.4em] uppercase"
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: [0, 0, 0, 1, 0],
-                  x: [0, -2, 2, -1, 0],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  times: [0, 0.7, 0.8, 0.9, 1],
-                }}
-                style={{
-                  color: 'cyan',
-                  mixBlendMode: 'screen',
-                }}
-              >
-                ¿Listo para jugar?
-              </motion.p>
             </motion.div>
 
-            {/* Indicador de carga futurista */}
+            {/* Indicadores que siguen el mouse */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5 }}
-              className="mt-8 flex items-center gap-4"
+              className="mt-8 flex items-center gap-3"
             >
               {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
-                  className="relative"
-                >
-                  <motion.div
-                    className="w-3 h-3 bg-white/80 rounded-full"
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.3, 1, 0.3],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.3,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                  <motion.div
-                    className="absolute inset-0 w-3 h-3 bg-white rounded-full"
-                    animate={{
-                      scale: [1, 2, 1],
-                      opacity: [0.5, 0, 0.5],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.3,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                </motion.div>
+                  className="w-2 h-2 bg-white/70 rounded-full"
+                  animate={{
+                    scale: [1, 1.3 + Math.abs(mousePosition.x) * 0.3, 1],
+                    opacity: [0.7, 1, 0.7],
+                    x: mousePosition.x * (5 + i * 2),
+                    y: mousePosition.y * (3 + i),
+                  }}
+                  transition={{
+                    scale: { duration: 1.5, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' },
+                    opacity: { duration: 1.5, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' },
+                    x: { type: 'spring', damping: 20, stiffness: 150 },
+                    y: { type: 'spring', damping: 20, stiffness: 150 },
+                  }}
+                />
               ))}
             </motion.div>
           </motion.div>
 
-          {/* Cursor personalizado */}
-          {typeof window !== 'undefined' && (
-            <motion.div
-              className="absolute w-6 h-6 border-2 border-white/50 rounded-full pointer-events-none mix-blend-difference"
-              animate={{
-                x: mousePosition.x * window.innerWidth / 2,
-                y: mousePosition.y * window.innerHeight / 2,
+          {/* Cursor magnético personalizado */}
+          <motion.div
+            className="absolute w-8 h-8 border-2 border-white/60 rounded-full pointer-events-none"
+            animate={{
+              x: mousePosition.x * (typeof window !== 'undefined' ? window.innerWidth / 2 : 400),
+              y: mousePosition.y * (typeof window !== 'undefined' ? window.innerHeight / 2 : 300),
+              scale: [1, 1.2, 1],
+            }}
+              transition={{ 
+                x: { type: 'spring', damping: 25, stiffness: 200 },
+                y: { type: 'spring', damping: 25, stiffness: 200 },
+                scale: { duration: 1, repeat: Infinity, ease: 'easeInOut' },
               }}
-              transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-            />
-          )}
+            style={{
+              boxShadow: '0 0 15px rgba(255,255,255,0.5)',
+              background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
