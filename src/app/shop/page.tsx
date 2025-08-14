@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import {
   Select,
@@ -64,6 +64,17 @@ export default function ShopPage() {
     }
     fetchInitialData()
   }, [])
+
+  // Optimización: Memoizar la transformación de valor del color
+  const displayColorValue = useMemo(() => {
+    return activeColor === 'all' ? 'Todos los colores' : 
+           activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
+  }, [activeColor]);
+
+  // Optimización: Callback memoizado para el cambio de color
+  const handleColorChange = useCallback((value: string) => {
+    setActiveColor(value);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
@@ -170,18 +181,20 @@ export default function ShopPage() {
               <span className="text-sm font-medium text-muted-foreground">
                 Color:
               </span>
-              <Select onValueChange={setActiveColor} value={activeColor}>
+              <Select onValueChange={handleColorChange} value={activeColor}>
                 <SelectTrigger 
-                  className="w-[180px] color-filter-trigger"
-                  style={{
-                    background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3))',
-                    border: '2px solid rgba(239, 68, 68, 0.6)',
-                    color: 'white',
-                    fontWeight: '600',
-                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.1)',
-                  }}
+                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] color-filter-trigger-fixed"
+                  aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
                 >
-                  <SelectValue placeholder="Filtrar por color" />
+                  <SelectValue 
+                    placeholder="Filtrar por color"
+                    className="text-white font-semibold"
+                  >
+                    {displayColorValue}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent 
                   className="z-[9999] bg-background border-border shadow-xl"

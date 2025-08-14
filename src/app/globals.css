@@ -350,37 +350,45 @@ body:has([data-radix-portal]) {
   transform: none !important;
 }
 
-/* ✨ FILTRO DE COLOR SUPER LLAMATIVO CON CONTORNO BLANCO */
-/* Usar mayor especificidad para sobrescribir Tailwind */
-button.color-filter-trigger.color-filter-trigger {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3)) !important;
-  background-color: transparent !important;
-  border: 2px solid rgba(239, 68, 68, 0.6) !important;
+/* ✨ FILTRO DE COLOR MEJORADO - WCAG AA COMPLIANT */
+/* Contraste mejorado y accesibilidad optimizada */
+.color-filter-trigger-fixed {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
+  border: 2px solid rgba(239, 68, 68, 0.9) !important;
   color: white !important;
   font-weight: 600 !important;
-  box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-button.color-filter-trigger.color-filter-trigger:hover {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.4)) !important;
-  background-color: transparent !important;
+.color-filter-trigger-fixed:hover {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 1)) !important;
   border-color: rgb(239, 68, 68) !important;
-  transform: scale(1.03) !important;
-  box-shadow: 0 0 0 2px white, 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 0 0 2px white, 0 8px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
-button.color-filter-trigger svg {
+.color-filter-trigger-fixed:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.8) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(59, 130, 246, 0.3) !important;
+}
+
+.color-filter-trigger-fixed [data-radix-select-value] {
   color: white !important;
-  width: 20px !important;
-  height: 20px !important;
-  opacity: 0.9 !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
 
-button.color-filter-trigger:hover svg {
-  opacity: 1 !important;
-  transform: scale(1.25) !important;
+.color-filter-trigger-fixed svg {
+  color: white !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) !important;
+  transition: all 0.2s ease !important;
+}
+
+.color-filter-trigger-fixed:hover svg {
+  transform: scale(1.1) !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) !important;
 }
 
 /* ✨ MEJORAS DE CONTRASTE PARA ADMIN PANEL */
