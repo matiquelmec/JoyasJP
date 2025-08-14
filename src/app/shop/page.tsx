@@ -1,9 +1,5 @@
 'use client'
 
-// Forzar renderizado dinámico
-export const dynamic = 'force-dynamic'
-export const revalidate = false
-
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import {
@@ -74,16 +70,13 @@ export default function ShopPage() {
     if (!activeColor || activeColor === 'all') {
       return 'Todos los colores';
     }
-    const value = activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
-    console.log('🎨 Color Display Value:', { activeColor, displayColorValue: value });
-    return value;
+    return activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
   }, [activeColor]);
 
   // Optimización: Callback memoizado para el cambio de color
   const handleColorChange = useCallback((value: string) => {
-    console.log('🔄 Color Change:', { from: activeColor, to: value });
     setActiveColor(value);
-  }, [activeColor]);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
@@ -187,7 +180,6 @@ export default function ShopPage() {
 
           <div className="flex justify-end items-center mb-8">
             <div className="flex items-center gap-2">
-              {/* 🔥 DEPLOYMENT TEST - If you see this comment, the deployment is working */}
               <span className="text-sm font-medium text-muted-foreground">
                 Color:
               </span>
@@ -207,15 +199,7 @@ export default function ShopPage() {
                   }}
                   aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
                 >
-                  <span style={{ 
-                    color: 'white !important', 
-                    fontWeight: '600', 
-                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-                    fontSize: '14px',
-                    display: 'block'
-                  }}>
-                    {displayColorValue || 'Todos los colores'}
-                  </span>
+                  <SelectValue placeholder="Todos los colores" />
                 </SelectTrigger>
                 <SelectContent 
                   className="z-[9999] bg-background border-border shadow-xl"
@@ -230,7 +214,7 @@ export default function ShopPage() {
                       value={color}
                       className="capitalize"
                     >
-                      {color === 'all' ? 'Todos' : color}
+                      {color === 'all' ? 'Todos los colores' : color.charAt(0).toUpperCase() + color.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>
