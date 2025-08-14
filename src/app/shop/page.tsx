@@ -67,8 +67,10 @@ export default function ShopPage() {
 
   // Optimización: Memoizar la transformación de valor del color
   const displayColorValue = useMemo(() => {
-    const value = activeColor === 'all' ? 'Todos los colores' : 
-           activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
+    if (!activeColor || activeColor === 'all') {
+      return 'Todos los colores';
+    }
+    const value = activeColor.charAt(0).toUpperCase() + activeColor.slice(1);
     console.log('🎨 Color Display Value:', { activeColor, displayColorValue: value });
     return value;
   }, [activeColor]);
@@ -186,27 +188,28 @@ export default function ShopPage() {
               </span>
               <Select onValueChange={handleColorChange} value={activeColor}>
                 <SelectTrigger 
-                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] color-filter-trigger-fixed"
+                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
                   style={{
                     background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9))',
                     border: '2px solid rgba(239, 68, 68, 0.9)',
                     color: 'white',
                     fontWeight: '600',
-                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15)'
+                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px'
                   }}
                   aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
-                  role="combobox"
-                  aria-expanded="false"
-                  aria-haspopup="listbox"
                 >
-                  <SelectValue 
-                    placeholder="Filtrar por color"
-                    className="text-white font-semibold"
-                  >
-                    <span style={{ color: 'white', fontWeight: '600' }}>
-                      {displayColorValue}
-                    </span>
-                  </SelectValue>
+                  <span style={{ 
+                    color: 'white', 
+                    fontWeight: '600', 
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    fontSize: '14px'
+                  }}>
+                    {displayColorValue}
+                  </span>
                 </SelectTrigger>
                 <SelectContent 
                   className="z-[9999] bg-background border-border shadow-xl"

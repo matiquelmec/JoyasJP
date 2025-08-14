@@ -140,8 +140,6 @@ export default function RootLayout({
   return (
     <html lang="es-CL" className="dark scroll-smooth">
       <head>
-        {/* MUST be first - disable browser interventions */}
-        <script src="/disable-interventions.js" async />
         
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -160,10 +158,6 @@ export default function RootLayout({
           defer
         />
 
-        {/* Disable browser optimizations */}
-        <meta name="disable-features" content="LazyLoad" />
-        <meta name="loading" content="eager" />
-        
         {/* Cache busting y optimización */}
         <meta name="build-version" content={`${Date.now()}`} />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -199,14 +193,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
         
-        {/* Critical resources only */}
-        <link
-          rel="preload"
-          href="/assets/logo.webp?v=v2"
-          as="image"
-          type="image/webp"
-          fetchPriority="high"
-        />
       </head>
       <body
         className={cn(
