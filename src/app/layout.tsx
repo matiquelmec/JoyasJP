@@ -141,7 +141,7 @@ export default function RootLayout({
     <html lang="es-CL" className="dark scroll-smooth">
       <head>
         {/* MUST be first - disable browser interventions */}
-        <script src="/disable-interventions.js" />
+        <script src="/disable-interventions.js" async />
         
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
