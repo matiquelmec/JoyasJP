@@ -336,29 +336,53 @@ header {
   will-change: auto !important;
 }
 
-/* ✨ NUEVO FILTRO DE COLOR - BOTONES CON INDICADORES VISUALES */
-.color-filter-button {
+/* ✨ DROPDOWN DE COLOR - SELECTOR DESPLEGABLE FUNCIONAL */
+.color-dropdown-trigger {
   position: relative;
   overflow: hidden;
 }
 
-.color-filter-button::before {
+.color-dropdown-trigger::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.4s ease;
 }
 
-.color-filter-button:hover::before {
+.color-dropdown-trigger:hover::before {
   left: 100%;
 }
 
-/* Animación de gradiente para colores metálicos */
-.color-gradient-animate {
+/* Animaciones para dropdown */
+@keyframes fade-in-0 {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in-95 {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+
+.fade-in-0 {
+  animation-name: fade-in-0;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in-95;
+}
+
+/* Estilos para indicadores de color en dropdown */
+.color-dropdown-trigger [class*="bg-gradient"] {
   background-size: 200% 200%;
   animation: gradient-shift 3s ease infinite;
 }
@@ -369,38 +393,11 @@ header {
   100% { background-position: 0% 50%; }
 }
 
-/* Efecto de brillo para el filtro activo */
-.color-filter-active {
-  position: relative;
-}
-
-.color-filter-active::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, hsl(var(--primary)), transparent, hsl(var(--primary)));
-  border-radius: inherit;
-  z-index: -1;
-  animation: border-glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes border-glow {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-
-/* Responsive design para el filtro */
+/* Responsive design para dropdown */
 @media (max-width: 640px) {
-  .color-filter-container {
-    justify-content: center;
-  }
-  
-  .color-filter-button {
-    min-width: 80px;
-    text-align: center;
+  .color-dropdown-trigger {
+    width: 100%;
+    max-width: 200px;
   }
 }
 
