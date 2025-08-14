@@ -183,6 +183,7 @@ export default function ShopPage() {
 
           <div className="flex justify-end items-center mb-8">
             <div className="flex items-center gap-2">
+              {/* 🔥 DEPLOYMENT TEST - If you see this comment, the deployment is working */}
               <span className="text-sm font-medium text-muted-foreground">
                 Color:
               </span>
@@ -203,12 +204,13 @@ export default function ShopPage() {
                   aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
                 >
                   <span style={{ 
-                    color: 'white', 
+                    color: 'white !important', 
                     fontWeight: '600', 
                     textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    display: 'block'
                   }}>
-                    {displayColorValue}
+                    {displayColorValue || 'Todos los colores'}
                   </span>
                 </SelectTrigger>
                 <SelectContent 
