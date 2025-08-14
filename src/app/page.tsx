@@ -184,7 +184,7 @@ export default function Home() {
   return (
     <div className="flex flex-col" style={{ marginTop: 0, paddingTop: 0 }}>
       {/* Hero Section */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
         <video
           src={getVideoUrl('mi-video.mp4')}
           autoPlay
@@ -242,8 +242,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Spacer for fixed video */}
+      <div className="h-screen"></div>
+
       {/* Featured Products Section */}
-      <section className="py-20 md:py-28 bg-background">
+      <section className="py-20 md:py-28 bg-background relative z-10">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">

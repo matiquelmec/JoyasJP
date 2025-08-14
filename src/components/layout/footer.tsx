@@ -23,7 +23,7 @@ export function Footer() {
     'text-sm text-muted-foreground transition-colors hover:text-primary'
 
   return (
-    <footer className="bg-background border-t border-border/50 py-12">
+    <footer className="bg-background border-t border-border/50 py-12 relative z-20">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8 text-center md:text-left">
         {/* Columna 1: Marca */}
         <div className="flex flex-col items-center md:items-start">
