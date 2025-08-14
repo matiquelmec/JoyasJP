@@ -350,15 +350,28 @@ body:has([data-radix-portal]) {
   transform: none !important;
 }
 
-/* ✨ FILTRO DE COLOR MEJORADO - WCAG AA COMPLIANT */
-/* Contraste mejorado y accesibilidad optimizada */
+/* ✨ FILTRO DE COLOR - OVERRIDE MÁXIMO ABSOLUTO */
+/* ELIMINA bg-background y fuerza gradiente rojo */
 .color-filter-trigger-fixed {
   background: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
+  background-color: rgba(239, 68, 68, 0.85) !important;
+  background-image: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
   border: 2px solid rgba(239, 68, 68, 0.9) !important;
   color: white !important;
   font-weight: 600 !important;
   box-shadow: 0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* SUPER ESPECIFICIDAD - Override bg-background de Tailwind */
+button.color-filter-trigger-fixed.bg-background,
+.color-filter-trigger-fixed.bg-background,
+[role="combobox"].color-filter-trigger-fixed,
+[data-state].color-filter-trigger-fixed,
+[data-radix-select-trigger].color-filter-trigger-fixed {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
+  background-color: rgba(239, 68, 68, 0.85) !important;
+  background-image: linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9)) !important;
 }
 
 .color-filter-trigger-fixed:hover {

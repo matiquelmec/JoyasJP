@@ -185,18 +185,7 @@ export default function ShopPage() {
               </span>
               <Select onValueChange={handleColorChange} value={activeColor}>
                 <SelectTrigger 
-                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
-                  style={{
-                    background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.9))',
-                    border: '2px solid rgba(239, 68, 68, 0.9)',
-                    color: 'white',
-                    fontWeight: '600',
-                    boxShadow: '0 0 0 2px white, 0 4px 8px rgba(0, 0, 0, 0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '8px 12px'
-                  }}
+                  className="w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] color-filter-trigger-fixed"
                   aria-label={`Filtro de color, actualmente: ${displayColorValue}`}
                 >
                   <SelectValue placeholder="Todos los colores" />
