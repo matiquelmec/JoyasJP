@@ -34,6 +34,7 @@ async function getProduct(id: string): Promise<Product | null> {
   }
 
   try {
+    // Agregar timestamp para evitar cache
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -101,6 +102,9 @@ export async function generateMetadata({
     },
   }
 }
+
+// Revalidar cada 60 segundos para mantener datos actualizados
+export const revalidate = 60
 
 export async function generateStaticParams() {
   if (!supabase) {

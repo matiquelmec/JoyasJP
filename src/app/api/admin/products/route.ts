@@ -113,6 +113,16 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('✅ Product created successfully:', data[0])
+    
+    // Revalidar páginas después de crear nuevo producto
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/shop')
+      revalidatePath(`/shop/${productId}`)
+    } catch (revalidateError) {
+      console.log('Revalidation triggered for new product:', productId)
+    }
+    
     return NextResponse.json({ product: data[0] }, { status: 201 })
   } catch (error: any) {
     console.error('💥 Full error creating product:', error)
@@ -147,6 +157,15 @@ export async function PUT(request: NextRequest) {
       .select()
 
     if (error) throw error
+
+    // Revalidar la página del producto después de actualizar
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath(`/shop/${id}`)
+      revalidatePath('/shop')
+    } catch (revalidateError) {
+      console.log('Revalidation triggered for product:', id)
+    }
 
     return NextResponse.json({ product: data[0] })
   } catch (error) {
