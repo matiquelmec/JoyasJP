@@ -217,10 +217,6 @@ const ProductCard = memo(function ProductCard({
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 font-semibold uppercase border border-amber-500/20">
               {product.code}
             </span>
-          ) : product.is_featured ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 text-orange-600 font-semibold border border-orange-500/20">
-              Bestseller
-            </span>
           ) : (
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-500/10 text-gray-600 font-medium capitalize border border-gray-500/20">
               {product.category}

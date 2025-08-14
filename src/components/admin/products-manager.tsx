@@ -50,7 +50,6 @@ import { toast } from '@/hooks/use-toast'
 // Tipo para los datos que vienen de Supabase
 interface SupabaseProduct {
   [key: string]: any
-  image_url?: string
   imageUrl?: string
 }
 
@@ -90,7 +89,7 @@ export function ProductsManager() {
       // Mapear los datos al formato esperado
       const mappedProducts = activeProducts.map((product: SupabaseProduct) => ({
         ...product,
-        imageUrl: product.imageUrl || product.image_url, // Asegurar consistencia
+        imageUrl: product.imageUrl, // Database column is imageUrl
       })) as Product[]
       
       setProducts(mappedProducts)

@@ -117,7 +117,7 @@ export interface OrderItem {
   product_name: string
   price: number
   quantity: number
-  image_url: string
+  imageUrl: string
 }
 
 // Utility types

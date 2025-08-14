@@ -32,8 +32,8 @@ export default function ShopPage() {
         const validProducts = fetchedProducts.filter(product => 
           product.name && 
           product.name.toLowerCase() !== 'prueba' &&
-          product.price > 0 &&
-          !product.is_deleted
+          product.price > 0
+          // is_deleted field removed from Product type
         );
         
         setProducts(validProducts)
