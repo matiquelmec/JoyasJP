@@ -43,10 +43,10 @@ export function Header() {
           <Image
             src="/assets/logo.webp"
             alt="Joyas JP Logo"
-            width={120}
-            height={120}
+            width={140}
+            height={140}
             priority
-            className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 object-contain"
+            className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 lg:h-36 lg:w-36 object-contain"
             style={{ aspectRatio: '1/1' }}
           />
         </Link>
@@ -97,9 +97,9 @@ export function Header() {
                        <Image
                          src="/assets/logo.webp"
                          alt="Joyas JP Logo"
-                         width={80}
-                         height={80}
-                         className="h-16 w-16 object-contain"
+                         width={100}
+                         height={100}
+                         className="h-20 w-20 object-contain"
                          style={{ aspectRatio: '1/1' }}
                        />
                     </Link>
