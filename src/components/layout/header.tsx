@@ -39,14 +39,15 @@ export function Header() {
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center h-full py-2">
+        <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/assets/logo.webp"
             alt="Joyas JP Logo"
-            width={160}
-            height={160}
+            width={120}
+            height={120}
             priority
-            className="h-full w-auto"
+            className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 object-contain"
+            style={{ aspectRatio: '1/1' }}
           />
         </Link>
         <nav className="hidden md:flex items-center gap-8">
@@ -92,13 +93,14 @@ export function Header() {
               >
                 <div className="flex flex-col h-full p-6">
                   <div className="flex justify-between items-center mb-8">
-                     <Link href="/" className="flex items-center h-20">
+                     <Link href="/" className="flex items-center shrink-0">
                        <Image
                          src="/assets/logo.webp"
                          alt="Joyas JP Logo"
-                         width={160}
-                         height={160}
-                         className="h-full w-auto"
+                         width={80}
+                         height={80}
+                         className="h-16 w-16 object-contain"
+                         style={{ aspectRatio: '1/1' }}
                        />
                     </Link>
                     <SheetClose asChild>
