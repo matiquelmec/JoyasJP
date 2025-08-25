@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      spacing: {
+        '30': '7.5rem', // 120px
+      },
       fontFamily: {
         headline: ['var(--font-headline)'],
         body: ['var(--font-body)'],

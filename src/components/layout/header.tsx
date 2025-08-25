@@ -46,7 +46,7 @@ export function Header() {
             width={160}
             height={160}
             priority
-            className="h-28 w-28 sm:h-32 sm:w-32 md:h-36 md:w-36 lg:h-40 lg:w-40 xl:h-44 xl:w-44 object-contain"
+            className="h-30 w-30 sm:h-32 sm:w-32 md:h-36 md:w-36 lg:h-40 lg:w-40 xl:h-44 xl:w-44 object-contain"
             style={{ aspectRatio: '1/1' }}
           />
         </Link>
