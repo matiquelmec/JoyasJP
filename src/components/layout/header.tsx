@@ -39,14 +39,14 @@ export function Header() {
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
       <div className="container mx-auto flex h-36 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center shrink-0">
+        <Link href="/" className="flex items-center shrink-0 py-4">
           <Image
             src="/assets/logo.webp"
             alt="Joyas JP Logo"
             width={160}
             height={160}
             priority
-            className="h-30 w-30 sm:h-32 sm:w-32 md:h-32 md:w-32 lg:h-32 lg:w-32 xl:h-32 xl:w-32 object-contain"
+            className="h-30 w-30 sm:h-32 sm:w-32 md:h-28 md:w-28 lg:h-28 lg:w-28 xl:h-28 xl:w-28 object-contain"
             style={{ aspectRatio: '1/1' }}
           />
         </Link>
