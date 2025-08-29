@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { track } from '@vercel/analytics'
 import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -138,6 +139,14 @@ export default function CheckoutPage() {
     setIsLoading(true)
 
     try {
+      // Analytics tracking - inicio checkout
+      track('begin_checkout', {
+        currency: 'CLP',
+        value: total,
+        item_count: cartStats.totalItems,
+        product_names: items.map(item => item.name).join(', ')
+      })
+      
       // Preparar datos para crear la orden
       // Proceder con el pago en MercadoPago y guardar orden
       const checkoutResponse = await fetch('/api/checkout', {

@@ -3,6 +3,7 @@
 import { CheckCircle2, Heart, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { track } from '@vercel/analytics'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
 import { useSiteConfig } from '@/hooks/use-site-config'
@@ -12,6 +13,12 @@ export default function SuccessPage() {
   const { config } = useSiteConfig()
 
   useEffect(() => {
+    // Analytics tracking - compra completada
+    track('purchase_completed', {
+      success: true,
+      timestamp: new Date().toISOString()
+    })
+    
     // Limpiar carrito después de compra exitosa
     clearCart()
   }, [clearCart])

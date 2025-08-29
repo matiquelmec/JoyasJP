@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
@@ -178,9 +179,11 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
         <div className="relative">
           <div className="border rounded-lg p-4 bg-gray-50">
             <div className="flex items-start gap-4">
-              <img
+              <Image
                 src={preview}
                 alt="Preview"
+                width={96}
+                height={96}
                 className="w-24 h-24 object-cover rounded-lg border"
                 onError={(e) => {
     // console.error('Image preview error')

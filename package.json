@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -12,7 +12,8 @@
     "lint:biome": "biome lint .",
     "check": "biome check .",
     "fix": "biome check --write .",
-    "clean": "npm run fix && npm run format"
+    "clean": "npm run fix && npm run format",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@mercadopago/sdk-react": "^1.0.3",
@@ -36,6 +37,8 @@
     "@types/node": "^24.1.0",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -44,6 +47,7 @@
     "lucide-react": "^0.475.0",
     "mercadopago": "^2.8.0",
     "next": "^14.2.3",
+    "next-sitemap": "^4.2.3",
     "postcss": "^8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -234,9 +235,11 @@ export function AdminDashboard() {
             <div className="space-y-4">
               {stats.topProducts.map((product) => (
                 <div key={product.id} className="flex items-center space-x-4">
-                  <img
+                  <Image
                     src={product.imageUrl || '/assets/logo.webp'}
                     alt={product.name}
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-lg object-cover"
                   />
                   <div className="flex-1 min-w-0">

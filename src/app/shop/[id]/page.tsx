@@ -21,6 +21,7 @@ import { Separator } from '@/components/ui/separator'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 import { ProductPageClient } from '@/components/shop/product-page-client'
+import { ProductSchema } from '@/components/seo/ProductSchema'
 
 interface ProductPageProps {
   params: {
@@ -65,40 +66,90 @@ export async function generateMetadata({
 
   const productDescription = product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`
 
+  const categoryNames = {
+    cadenas: 'cadenas de oro',
+    dijes: 'dijes premium',
+    pulseras: 'pulseras elegantes',
+    aros: 'aros de diseño',
+  }
+  
+  const categoryName = categoryNames[product.category as keyof typeof categoryNames] || product.category
+  const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(product.price)
+
   return {
-    title: `${product.name} | Joyas JP`,
-    description: productDescription,
+    title: `${product.name} - ${priceFormatted} | Joyas JP`,
+    description: `${productDescription}. ${categoryName} de alta calidad con diseño exclusivo. Precio: ${priceFormatted}. Envío gratis en compras sobre $50.000.`,
     keywords: [
       product.name,
       product.category,
-      'joyas urbanas',
-      'joyería premium Chile',
-      'alta joyería',
-      'Joyas JP',
-      product.category === 'rings' ? 'anillos' : product.category === 'necklaces' ? 'collares' : product.category,
+      categoryName,
+      'joyas urbanas Chile',
+      'joyería premium Santiago',
+      'alta joyería artesanal',
+      'Joyas JP tienda online',
+      'joyas exclusivas',
+      'diseño urbano premium',
+      priceFormatted.replace(/\s/g, ''),
     ],
+    authors: [{ name: 'Joyas JP' }],
+    creator: 'Joyas JP',
+    publisher: 'Joyas JP',
+    category: 'shopping',
     openGraph: {
       type: 'website',
       title: `${product.name} | Joyas JP`,
-      description: productDescription,
+      description: `${productDescription}. ${categoryName} premium - ${priceFormatted}`,
       images: [
         {
-          url: product.imageUrl,
+          url: product.imageUrl || '/assets/logo.webp',
+          width: 1200,
+          height: 630,
+          alt: `${product.name} - ${categoryName} | Joyas JP`,
+          type: 'image/webp',
+        },
+        {
+          url: product.imageUrl || '/assets/logo.webp',
           width: 800,
           height: 800,
           alt: product.name,
+          type: 'image/webp',
         },
       ],
       siteName: 'Joyas JP',
+      locale: 'es_CL',
+      url: `/shop/${product.id}`,
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@joyasjp',
+      creator: '@joyasjp',
       title: `${product.name} | Joyas JP`,
-      description: productDescription,
-      images: [product.imageUrl],
+      description: `${productDescription.slice(0, 140)}...`,
+      images: [
+        {
+          url: product.imageUrl || '/assets/logo.webp',
+          alt: `${product.name} - ${categoryName}`,
+        },
+      ],
     },
     alternates: {
       canonical: `/shop/${product.id}`,
+      languages: {
+        'es-CL': `/shop/${product.id}`,
+      },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   }
 }
@@ -137,8 +188,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
+  const availability = (product.stock && product.stock > 0) ? 'InStock' : 'OutOfStock'
+
   return (
     <div className="min-h-screen bg-background">
+      <ProductSchema product={product} availability={availability} />
+      
       {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Breadcrumb Navigation */}

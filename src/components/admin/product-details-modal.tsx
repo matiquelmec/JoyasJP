@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -76,12 +77,13 @@ export function ProductDetailsModal({ product, onSave, trigger }: ProductDetails
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           {/* Imagen del Producto */}
           <div className="space-y-4">
-            <div className="aspect-square rounded-lg border-2 border-dashed border-gray-200 overflow-hidden bg-gray-50">
+            <div className="aspect-square rounded-lg border-2 border-dashed border-gray-200 overflow-hidden bg-gray-50 relative">
               {product.imageUrl ? (
-                <img
+                <Image
                   src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">
