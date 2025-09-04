@@ -195,17 +195,38 @@ export default function Home() {
     <div className="flex flex-col" style={{ marginTop: 0, paddingTop: 0 }}>
       {/* Hero Section */}
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
-        <video
-          src={getVideoUrl('mi-video.mp4')}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          aria-label="Video promocional de Joyas JP"
-        />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60" />
+        <div className="relative w-full h-full">
+          <video
+            src={getVideoUrl('mi-video.mp4')}
+            poster={getImageUrl('logo.webp')}
+            autoPlay={false}
+            loop
+            muted
+            playsInline
+            preload="none"
+            controls
+            className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
+            aria-label="Video promocional de Joyas JP - Click para reproducir"
+            onClick={(e) => {
+              const video = e.target as HTMLVideoElement
+              if (video.paused) {
+                video.play()
+              } else {
+                video.pause()
+              }
+            }}
+          />
+          
+          {/* Elegant play overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/10 transition-colors group pointer-events-none">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-6 group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+              <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
 
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-3 sm:p-4 pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52">
           <Image
