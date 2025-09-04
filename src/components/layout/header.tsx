@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
+import { Heart, Menu, ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -92,18 +92,7 @@ export function Header() {
                 className="bg-background/95 border-l-border/50 w-[280px]"
               >
                 <div className="flex flex-col h-full p-6">
-                  <div className="flex justify-end items-center mb-8">
-                    <SheetClose asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="lg"
-                        aria-label="Cerrar menú"
-                      >
-                        <X className="h-7 w-7" />
-                      </Button>
-                    </SheetClose>
-                  </div>
-                  <nav className="flex flex-col gap-6 text-center">
+                  <nav className="flex flex-col gap-6 text-center mt-12">
                     {navLinks.map((link) => (
                       <SheetClose asChild key={link.href}>
                         <Link href={link.href} className={linkClassName}>
