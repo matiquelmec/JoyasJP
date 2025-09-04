@@ -34,7 +34,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
       .from('products')
       .select('*')
       .gt('stock', 0)
-      .limit(15)) as { data: Product[] | null; error: any }
+      .limit(25)) as { data: Product[] | null; error: any }
 
     if (error) {
     // console.error('Error fetching products:', error)
@@ -97,8 +97,16 @@ async function getFeaturedProducts(): Promise<Product[]> {
         break
     }
 
-    // 🔄 Fallback shuffle final para máxima aleatoriedad
-    return fisherYatesShuffle(selectedProducts)
+    // 🔄 Fallback: asegurar que siempre haya exactamente 6 productos
+    if (selectedProducts.length < 6 && allProducts.length >= 6) {
+      // Si no hay suficientes productos de la estrategia, completar con aleatorios
+      const remaining = allProducts.filter(p => !selectedProducts.includes(p))
+      const additionalProducts = fisherYatesShuffle(remaining).slice(0, 6 - selectedProducts.length)
+      selectedProducts = [...selectedProducts, ...additionalProducts]
+    }
+
+    // Fallback shuffle final para máxima aleatoriedad
+    return fisherYatesShuffle(selectedProducts.slice(0, 6))
 
   } catch (error) {
     // console.error('Error in getFeaturedProducts:', error)
