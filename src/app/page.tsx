@@ -198,7 +198,7 @@ export default function Home() {
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black/60" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-3 sm:p-4 pt-32 sm:pt-36 md:pt-40 lg:pt-44 xl:pt-48">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-3 sm:p-4 pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52">
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"

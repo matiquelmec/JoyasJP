@@ -38,7 +38,7 @@ export function Header() {
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
-      <div className="container mx-auto flex h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8">
+      <div className="container mx-auto flex h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8">
         <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/assets/logo.webp"
@@ -46,7 +46,7 @@ export function Header() {
             width={208}
             height={208}
             priority
-            className="h-28 w-28 xs:h-32 xs:w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:h-44 lg:w-44 xl:h-48 xl:w-48 object-contain"
+            className="h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:h-44 lg:w-44 xl:h-48 xl:w-48 object-contain"
             style={{ aspectRatio: '1/1' }}
           />
         </Link>
