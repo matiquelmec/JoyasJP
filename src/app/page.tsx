@@ -33,7 +33,8 @@ async function getFeaturedProducts(): Promise<Product[]> {
     const { data: allProducts, error } = (await supabase
       .from('products')
       .select('*')
-      .gt('stock', 0)) as { data: Product[] | null; error: any }
+      .gt('stock', 0)
+      .limit(15)) as { data: Product[] | null; error: any }
 
     if (error) {
     // console.error('Error fetching products:', error)
