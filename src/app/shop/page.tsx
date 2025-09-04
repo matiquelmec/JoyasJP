@@ -9,7 +9,6 @@ import { SkeletonGrid } from '@/components/ui/skeleton-card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getColors, getProducts } from '@/lib/api'
 import type { Product } from '@/lib/types'
-import { CategoryColorDebug } from '@/components/debug/category-color-debug'
 
 const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros']
 
@@ -137,7 +136,6 @@ export default function ShopPage() {
 
   return (
     <div className="bg-background min-h-screen overflow-x-hidden">
-      <CategoryColorDebug />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
