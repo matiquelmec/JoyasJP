@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, PT_Sans } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/toaster'
@@ -219,8 +217,6 @@ export default function RootLayout({
           <ConditionalLayout>{children}</ConditionalLayout>
 
           <Toaster />
-          <Analytics />
-          <SpeedInsights />
         </PreloaderProvider>
       </body>
     </html>
