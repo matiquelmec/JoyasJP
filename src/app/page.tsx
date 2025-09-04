@@ -203,12 +203,11 @@ export default function Home() {
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
         <video
           src={getVideoUrl('mi-video.mp4')}
-          poster={getImageUrl('logo.webp')}
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         />
