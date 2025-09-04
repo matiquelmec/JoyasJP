@@ -13,7 +13,7 @@ export function useIntersectionObserver({
 }: UseIntersectionObserverProps = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false)
   const [hasIntersected, setHasIntersected] = useState(false)
-  const ref = useRef<HTMLElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const element = ref.current
