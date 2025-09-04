@@ -1,4 +1,4 @@
-import { Trophy, ChevronRight } from 'lucide-react'
+import { Trophy, ChevronRight, ShoppingBag, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -197,6 +197,7 @@ export default function Home() {
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
         <video
           src={getVideoUrl('mi-video.mp4')}
+          poster={getImageUrl('logo.webp')}
           autoPlay
           loop
           muted
@@ -214,19 +215,22 @@ export default function Home() {
             width={400}
             height={400}
             priority
-            className="h-auto w-64 sm:w-72 md:w-80 lg:w-96 mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)]"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+            className="h-auto w-64 sm:w-72 md:w-80 lg:w-96 mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)] animate-fadeInScale"
           />
 
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8">
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8 animate-fadeInUp" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
             Atrévete a jugar
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
             <Link href="/shop" className="flex-1">
               <Button
                 size="lg"
                 className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
               >
+                <ShoppingBag className="w-5 h-5 mr-2" />
                 Ver Colección
               </Button>
             </Link>
@@ -236,6 +240,7 @@ export default function Home() {
                 variant="outline"
                 className="w-full font-bold text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
               >
+                <Settings className="w-5 h-5 mr-2" />
                 Servicios
               </Button>
             </Link>
