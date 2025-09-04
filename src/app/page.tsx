@@ -207,7 +207,7 @@ export default function Home() {
         />
         <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-3 sm:p-4 pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-3 sm:px-4 py-20 sm:py-24 md:py-28 lg:py-32">
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
@@ -242,8 +242,8 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-          <ArrowDown className="w-8 h-8 text-white/70" />
+        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-1/2 -translate-x-1/2 z-30 animate-bounce">
+          <ArrowDown className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white/70 drop-shadow-lg" />
           <span className="sr-only">Desplázate para ver más</span>
         </div>
       </section>
