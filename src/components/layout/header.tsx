@@ -38,15 +38,15 @@ export function Header() {
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
       hasScrolled ? "shadow-lg" : "shadow-none"
     )}>
-      <div className="container mx-auto flex h-20 md:h-24 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto flex h-24 md:h-28 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/assets/logo.webp"
             alt="Joyas JP Logo"
-            width={80}
-            height={80}
+            width={120}
+            height={120}
             priority
-            className="h-16 w-16 sm:h-18 sm:w-18 md:h-20 md:w-20 object-contain"
+            className="h-20 w-20 sm:h-22 sm:w-22 md:h-24 md:w-24 object-contain"
             style={{ aspectRatio: '1/1' }}
           />
         </Link>
