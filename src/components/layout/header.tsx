@@ -92,17 +92,7 @@ export function Header() {
                 className="bg-background/95 border-l-border/50 w-[280px]"
               >
                 <div className="flex flex-col h-full p-6">
-                  <div className="flex justify-between items-center mb-8">
-                     <Link href="/" className="flex items-center shrink-0">
-                       <Image
-                         src="/assets/logo.webp"
-                         alt="Joyas JP Logo"
-                         width={120}
-                         height={120}
-                         className="h-24 w-24 object-contain"
-                         style={{ aspectRatio: '1/1' }}
-                       />
-                    </Link>
+                  <div className="flex justify-end items-center mb-8">
                     <SheetClose asChild>
                       <Button 
                         variant="ghost" 
