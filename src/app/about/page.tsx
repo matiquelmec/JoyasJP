@@ -6,10 +6,10 @@ const aboutPageContent = {
   subtitle: 'Capítulo I: El Estilo.',
   paragraphs: [
     'El flow no es exclusivo de los escenarios; está en la calle, en tu forma de caminar, en la confianza con la que te mueves. En JoyasJP, entendemos ese lenguaje a la perfección. No creamos las joyas, hacemos algo más difícil: las descubrimos. Somos curadores de estilo, obsesionados con encontrar las piezas que definen la estética urbana.',
-    'Nuestra misión es sencilla: poner a tu alcance una colección que hable por ti. Cada pieza que seleccionamos ha sido elegida por su carácter, su peso y su capacidad de transformar un look en una declaración de principios.',
+    'Nuestra misión es sencilla: poner a tu alcance una colección que hable por ti. Cada pieza que seleccionamos ha sido elegida por su carácter, su peso y su capacidad de transformar un look en una obra de arte.',
   ],
   closingStatement:
-    'El respeto no se pide, se proyecta. Nosotros nos encargamos del brillo.',
+    'Cada pieza cuenta una historia. La tuya está esperando.',
 }
 
 export default function AboutPage() {
