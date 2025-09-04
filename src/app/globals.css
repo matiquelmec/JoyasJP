@@ -125,7 +125,7 @@
   }
 }
 
-/* Clases de utilidad personalizadas */
+/* ⚡ ANIMACIONES OPTIMIZADAS PARA GPU */
 .animate-shimmer {
   animation: shimmer 1.5s ease-in-out infinite;
   background: linear-gradient(90deg, 
@@ -134,6 +134,8 @@
     rgba(39, 39, 42, 0.8) 75%
   );
   background-size: 200% 100%;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Animaciones con delay específicos - optimizadas */
@@ -175,22 +177,25 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Premium hover effects para product cards */
+/* ⚡ OPTIMIZED HOVER EFFECTS PARA PRODUCT CARDS */
 .product-card-hover {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .product-card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translate3d(0, -8px, 0) scale(1.02);
   box-shadow: 0 25px 50px rgba(346.8, 85%, 45%, 0.1);
 }
 
 .product-image-hover {
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .product-image-hover:hover {
-  transform: scale(1.1) rotate(1deg);
+  transform: scale3d(1.1, 1.1, 1) rotate(1deg);
 }
 
 /* Link hover effects premium */
@@ -441,95 +446,20 @@ header {
   }
 }
 
-/* ✨ MEJORAS DE CONTRASTE PARA ADMIN PANEL */
-.admin-panel {
-  /* Forzar contraste en todos los elementos del admin */
-}
-
-/* FORZAR CONTRASTE MÁXIMO EN TODOS LOS ELEMENTOS DE ENTRADA */
-.admin-panel input,
-.admin-panel textarea,
-.admin-panel select,
-.admin-panel input[type="text"],
-.admin-panel input[type="number"],
-.admin-panel input[type="email"],
-.admin-panel input[type="password"] {
-  background: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid #d1d5db !important;
-  font-size: 14px !important;
-  font-weight: 400 !important;
-}
-
-.admin-panel input:focus,
-.admin-panel textarea:focus,
-.admin-panel select:focus {
-  background: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid hsl(var(--primary)) !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-  outline: none !important;
-}
-
-.admin-panel input::placeholder,
-.admin-panel textarea::placeholder {
-  color: #6b7280 !important;
-  opacity: 1 !important;
-}
-
-/* Labels con contraste máximo */
-.admin-panel label {
-  color: #1f2937 !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  margin-bottom: 6px !important;
-  display: block !important;
-}
-
-/* Dialog content con fondo blanco */
-.admin-panel [data-radix-dialog-content] {
-  background: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid #e5e7eb !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-}
-
-/* Dialog overlay */
-.admin-panel [data-radix-dialog-overlay] {
-  background-color: rgba(0, 0, 0, 0.75) !important;
-}
-
-/* Select específico */
-.admin-panel [data-radix-select-trigger] {
-  background: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid #d1d5db !important;
-}
-
-.admin-panel [data-radix-select-content] {
-  background: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid #d1d5db !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-}
-
-.admin-panel [data-radix-select-item] {
-  background: white !important;
-  color: #1a1a1a !important;
-}
-
-.admin-panel [data-radix-select-item]:hover {
-  background: #f3f4f6 !important;
-  color: #1a1a1a !important;
-}
-
-/* Botones en modales */
-.admin-panel button {
-  font-weight: 500 !important;
-}
-
-/* Títulos de diálogos */
-.admin-panel [data-radix-dialog-title] {
-  color: #1f2937 !important;
-  font-weight: 700 !important;
+/* ✨ ADMIN PANEL - LAZY LOADED */
+@supports (loading-lazy) {
+  .admin-panel input,
+  .admin-panel textarea,
+  .admin-panel select {
+    background: white !important;
+    color: #1a1a1a !important;
+    border: 2px solid #d1d5db !important;
+  }
+  
+  .admin-panel input:focus,
+  .admin-panel textarea:focus,
+  .admin-panel select:focus {
+    border: 2px solid hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
 }

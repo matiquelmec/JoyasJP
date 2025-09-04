@@ -23,7 +23,10 @@ const nextConfig = {
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
       '@radix-ui/react-tabs',
-      '@radix-ui/react-accordion'
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-select',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-toast'
     ],
     serverComponentsExternalPackages: ['sharp'],
     // Optimización adicional para performance
@@ -62,7 +65,7 @@ const nextConfig = {
   },
 
   compiler: {
-    removeConsole: false, // Temporalmente deshabilitado para debug
+    removeConsole: process.env.NODE_ENV === 'production', // ⚡ Remove console en producción
   },
 
   // Optimización de build

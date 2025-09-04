@@ -2,11 +2,17 @@ import { ChevronRight, ShoppingBag, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import LazyProductCard from '@/components/shop/lazy-product-card'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
+
+// ⚡ DYNAMIC IMPORT para componente pesado
+const LazyProductCard = dynamic(() => import('@/components/shop/lazy-product-card'), {
+  loading: () => <ProductSkeleton />,
+  ssr: true
+})
 
 // 🎯 ESTRATEGIAS DE SELECCIÓN ALEATORIA OPTIMIZADA
 function getRandomStrategy(): 'pure_random' | 'weighted_categories' | 'stock_weighted' | 'time_based' {
@@ -212,12 +218,13 @@ export default function Home() {
           <Image
             src={getImageUrl('logo.webp')}
             alt="Joyas JP - Alta joyería para la escena urbana"
-            width={400}
-            height={400}
+            width={320}
+            height={320}
             priority
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             className="h-auto w-64 sm:w-72 md:w-80 lg:w-96 mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)] animate-fadeInScale"
+            sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
           />
 
           <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8 animate-fadeInUp-delayed-02">

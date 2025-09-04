@@ -168,27 +168,36 @@ export default function RootLayout({
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
         
-        {/* Critical CSS inline */}
+        {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
+        <link 
+          rel="preload" 
+          href="/assets/logo.webp" 
+          as="image" 
+          type="image/webp"
+          fetchPriority="high"
+        />
+        <link 
+          rel="preload" 
+          href="/assets/mi-video.mp4" 
+          as="video" 
+          type="video/mp4"
+        />
+        
+        {/* ⚡ Critical CSS optimizado */}
         <style dangerouslySetInnerHTML={{
           __html: `
-            body{background:#0a0a0a;color:#fafafa}
+            body{background:#0a0a0a;color:#fafafa;font-display:swap}
             img:not([src]),img[src=""]{visibility:hidden!important;background:#0a0a0a!important}
             img.lazyload,img.lazyloading{background:#0a0a0a!important;color:transparent!important}
             img[data-placeholder],img[placeholder]{background:#0a0a0a!important;opacity:0!important}
-            *[style*="placeholder"]{background:#0a0a0a!important;opacity:0!important}
-            *[class*="placeholder"]{background:#0a0a0a!important;opacity:0!important}
             header *{color:#fafafa!important}
             header a,header nav a{color:#fafafa!important;text-decoration:none!important;background:transparent!important}
             header .text-foreground{color:#fafafa!important}
-            header img,header picture{background:transparent!important;opacity:1!important;transition:opacity 0.3s ease}
+            header img,header picture{background:transparent!important;opacity:1!important}
             header button,header [role="button"]{background:transparent!important;border:0!important;color:#fafafa!important}
-            header .relative{position:relative!important}
-            button[data-state]{background:transparent!important}
             .sr-only{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-            .sr-only:focus{position:absolute!important;left:1rem!important;top:1rem!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;white-space:normal!important}
             .animate-shimmer{animation:shimmer 1.5s infinite;background:linear-gradient(90deg,rgba(39,39,42,0.8) 25%,rgba(63,63,70,0.6) 50%,rgba(39,39,42,0.8) 75%);background-size:200% 100%}
             @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-            .transition-all{transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
           `
         }} />
 
