@@ -1,4 +1,4 @@
-import { Trophy, ChevronRight, ShoppingBag, Settings } from 'lucide-react'
+import { ChevronRight, ShoppingBag, Settings } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -192,7 +192,7 @@ async function FeaturedProducts() {
 
 export default function Home() {
   return (
-    <div className="flex flex-col" style={{ marginTop: 0, paddingTop: 0 }}>
+    <div className="flex flex-col">
       {/* Hero Section */}
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
         <video
@@ -220,11 +220,11 @@ export default function Home() {
             className="h-auto w-64 sm:w-72 md:w-80 lg:w-96 mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)] animate-fadeInScale"
           />
 
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8 animate-fadeInUp" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8 animate-fadeInUp-delayed-02">
             Atrévete a jugar
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp-delayed-04">
             <Link href="/shop" className="flex-1">
               <Button
                 size="lg"
