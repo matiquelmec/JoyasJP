@@ -9,7 +9,7 @@ import { useCart } from '@/hooks/use-cart'
 import { toast } from '@/hooks/use-toast'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, normalizeColor } from '@/lib/utils'
 
 interface ProductCardProps {
   product: Product
@@ -207,7 +207,7 @@ const ProductCard = memo(function ProductCard({
             </span>
           ) : product.color ? (
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 font-semibold capitalize border border-purple-500/20">
-              {product.color}
+              {normalizeColor(product.color) || product.color}
             </span>
           ) : product.dimensions ? (
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 font-semibold border border-blue-500/20">

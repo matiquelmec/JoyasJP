@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { Product } from '@/lib/types'
+import { normalizeColor } from '@/lib/utils'
 
 interface UseMemoizedProductsProps {
   products: Product[]
@@ -21,10 +22,10 @@ export function useMemoizedProducts({
         category === 'all' || 
         product.category?.toLowerCase() === category.toLowerCase()
 
-      // Filtro por color
+      // Filtro por color - comparación exacta después de normalización
       const matchesColor = 
         color === 'all' || 
-        product.color?.toLowerCase().includes(color.toLowerCase())
+        normalizeColor(product.color)?.toLowerCase() === color.toLowerCase()
 
       // Filtro por búsqueda
       const matchesSearch = 

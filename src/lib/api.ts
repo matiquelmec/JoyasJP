@@ -17,7 +17,13 @@ export async function getProducts(): Promise<Product[]> {
     throw error
   }
 
-  return (data || []) as unknown as Product[]
+  // Normalizar colores en los productos
+  const normalizedProducts = (data || []).map(product => ({
+    ...product,
+    color: product.color ? normalizeColor(product.color) : product.color
+  }))
+
+  return normalizedProducts as unknown as Product[]
 }
 
 export async function getColors(): Promise<string[]> {
@@ -82,6 +88,11 @@ export async function getProductById(id: string): Promise<Product | null> {
     return null
   }
 
+  // Normalizar color del producto
+  if (data && data.color) {
+    data.color = normalizeColor(data.color)
+  }
+
   return data as unknown as Product
 }
 
@@ -103,7 +114,13 @@ export async function getRelatedProducts(
     return []
   }
 
-  return (data || []) as unknown as Product[]
+  // Normalizar colores en productos relacionados
+  const normalizedProducts = (data || []).map(product => ({
+    ...product,
+    color: product.color ? normalizeColor(product.color) : product.color
+  }))
+
+  return normalizedProducts as unknown as Product[]
 }
 
 // You can add more API functions here, e.g., getProductById, createProduct, etc.
