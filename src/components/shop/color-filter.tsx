@@ -48,6 +48,19 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
     setIsOpen(false)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent, color?: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (color) {
+        handleColorSelect(color)
+      } else {
+        setIsOpen(!isOpen)
+      }
+    } else if (e.key === 'Escape' && isOpen) {
+      setIsOpen(false)
+    }
+  }
+
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
       <span className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -57,6 +70,7 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={(e) => handleKeyDown(e)}
         className={cn(
           "w-[180px] flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg",
           "border-2 border-border bg-background text-foreground",
@@ -102,6 +116,7 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
               <button
                 key={color}
                 onClick={() => handleColorSelect(color)}
+                onKeyDown={(e) => handleKeyDown(e, color)}
                 className={cn(
                   "w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm",
                   "hover:bg-primary/10 hover:text-foreground",
@@ -111,6 +126,7 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
                 )}
                 role="option"
                 aria-selected={activeColor === color}
+                tabIndex={isOpen ? 0 : -1}
               >
                 {color !== 'all' && (
                   <div 

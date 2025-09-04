@@ -241,6 +241,33 @@ html {
   @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
 }
 
+/* Grid responsivo para productos */
+.product-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.responsive-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
 /* Utility classes para optimizaciones */
 .will-change-transform {
   will-change: transform;
