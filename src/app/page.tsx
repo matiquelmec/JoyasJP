@@ -1,4 +1,4 @@
-import { Trophy } from 'lucide-react'
+import { Trophy, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -266,7 +266,7 @@ export default function Home() {
             <Link href="/shop">
               <Button size="lg" className="font-semibold px-8">
                 Ver Toda la Colección
-                <ArrowDown className="w-4 h-4 ml-2 rotate-[-90deg]" />
+                <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>

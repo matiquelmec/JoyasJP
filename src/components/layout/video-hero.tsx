@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowDown, Heart, Sparkles, Trophy } from 'lucide-react'
+import { Heart, Sparkles, Trophy } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -61,10 +61,6 @@ export function VideoHero() {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-        <ArrowDown className="w-8 h-8 text-white/70" />
-        <span className="sr-only">Desplázate para ver más</span>
-      </div>
     </section>
   )
 }
