@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Página Principal -->
+  <url>
+    <loc>https://joyasjp.cl/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://joyasjp.cl/assets/logo.webp</image:loc>
+      <image:title>Joyas JP - Alta Joyería Urbana</image:title>
+    </image:image>
+  </url>
+  
+  <!-- Catálogo de Productos -->
+  <url>
+    <loc>https://joyasjp.cl/catalogo</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Categorías principales -->
+  <url>
+    <loc>https://joyasjp.cl/categoria/anillos</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/categoria/collares</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/categoria/pulseras</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/categoria/aros</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Páginas informativas -->
+  <url>
+    <loc>https://joyasjp.cl/nosotros</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/contacto</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/terminos</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/privacidad</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Carrito y Checkout -->
+  <url>
+    <loc>https://joyasjp.cl/carrito</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://joyasjp.cl/checkout</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
