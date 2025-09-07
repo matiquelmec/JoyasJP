@@ -21,8 +21,20 @@ export default function ServicesPage() {
   const storeName = config?.store_name || 'Joyas JP'
   
   return (
-    <div className="bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+    <div className="relative min-h-screen">
+      {/* Video Background */}
+      <video
+        src={getVideoUrl('mi-video2.mp4')}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed top-0 left-0 w-full h-full object-cover z-0"
+      />
+      <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />
+      
+      <div className="relative z-10 bg-background/80">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-headline font-bold">
             {servicesPageContent.title.line1}
@@ -89,6 +101,7 @@ export default function ServicesPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )
