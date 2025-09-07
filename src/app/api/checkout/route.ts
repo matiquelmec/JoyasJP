@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       body: preferenceBody,
     })
 
-    // Guardar orden en la base de datos
+    // Guardar orden en la base de datos - solo productos (shipping por pagar)
     const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     
     try {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
           imageUrl: item.imageUrl
         }))),
         total_amount: totalAmount,
-        shipping_cost: customerInfo?.shippingCost || 0,
+        shipping_cost: 0, // Shipping is paid separately
         status: 'pending',
         payment_id: preference.id,
         payment_status: 'pending',

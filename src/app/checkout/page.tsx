@@ -63,8 +63,8 @@ export default function CheckoutPage() {
     totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
     subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }), [items])
-  const shippingCost = cartStats.subtotal >= (config?.free_shipping_from || 50000) ? 0 : (config?.shipping_cost || 3000)
-  const total = cartStats.subtotal + shippingCost
+  // Shipping will be paid separately - not included in online payment
+  const total = cartStats.subtotal
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -155,7 +155,7 @@ export default function CheckoutPage() {
             address: formData.address,
             city: formData.city,
             commune: formData.region,
-            shippingCost: shippingCost
+            shippingCost: 0
           }
         })
       })
@@ -364,17 +364,11 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Envío</span>
-                      {shippingCost === 0 ? (
-                        <span className="text-green-600">Gratis</span>
-                      ) : (
-                        <span>${shippingCost.toLocaleString('es-CL')}</span>
-                      )}
+                      <span className="text-orange-600">Por pagar</span>
                     </div>
-                    {cartStats.subtotal < (config?.free_shipping_from || 50000) && (
-                      <div className="text-xs text-muted-foreground">
-                        Envío gratis en compras sobre ${(config?.free_shipping_from || 50000).toLocaleString('es-CL')}
-                      </div>
-                    )}
+                    <div className="text-xs text-muted-foreground">
+                      El envío se coordina y paga por separado
+                    </div>
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
