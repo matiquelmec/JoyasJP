@@ -22,17 +22,19 @@ export default function ServicesPage() {
   
   return (
     <div className="relative min-h-screen">
-      {/* Subtle Video Background */}
+      {/* Crisp Video Background */}
       <video
         src={getVideoUrl('mi-video2.mp4')}
         autoPlay
         loop
         muted
         playsInline
-        className="fixed top-0 left-0 w-full h-full object-cover z-0 blur-sm opacity-30"
+        preload="auto"
+        className="fixed top-0 left-0 w-full h-full object-cover z-0"
+        aria-label="Video promocional de servicios para artistas"
       />
-      {/* Strong Dark Overlay */}
-      <div className="fixed top-0 left-0 w-full h-full bg-black/70 z-0" />
+      {/* Overlay like homepage */}
+      <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />
       
       <div className="relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
@@ -79,28 +81,6 @@ export default function ServicesPage() {
                 </Button>
               </Link>
             </div>
-          <div className="mt-12 relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl shadow-primary/10 bg-black">
-            {/* Blurred Background Video */}
-            <video
-              src={getVideoUrl('mi-video2.mp4')}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover scale-150 blur-xl opacity-80 brightness-75"
-            />
-            {/* Main Video - Centered and Sharp */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <video
-                src={getVideoUrl('mi-video2.mp4')}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-auto h-full max-w-full object-contain shadow-2xl"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </div>
