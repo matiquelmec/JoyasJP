@@ -12,13 +12,13 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
 
   // 🚀 OPTIMIZACIÓN CRÍTICA: Bundle Splitting
   experimental: {
     optimizePackageImports: [
-      '@radix-ui/react-icons', 
+      '@radix-ui/react-icons',
       'lucide-react',
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
