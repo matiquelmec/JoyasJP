@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     // Obtener el FormData
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const category = formData.get('category') as string || 'otros'
+    const rawCategory = formData.get('category') as string || 'otros'
+    const category = rawCategory.toLowerCase().trim() // 🛡️ Normalizar a minúsculas
     const productCode = formData.get('productCode') as string | null
 
     if (!file) {
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // Generar nombre único para el archivo
     const fileName = generateFileName(file.name, productCode || undefined)
-    const filePath = `${category}/${fileName}`
+    const filePath = `${category}/${fileName}` // category ya está en minúsculas
 
 
     // Subir a Supabase Storage
