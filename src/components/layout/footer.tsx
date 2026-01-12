@@ -18,88 +18,108 @@ const TikTokIcon = () => (
 
 export function Footer() {
   const { config } = useSiteConfig()
-  
+
   const linkClassName =
-    'text-sm text-muted-foreground transition-colors hover:text-primary'
+    'text-sm text-muted-foreground transition-all duration-300 hover:text-primary hover:pl-1'
 
   return (
-    <footer className="bg-background border-t border-border/50 py-12 relative z-20">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8 text-center md:text-left">
-        {/* Columna 1: Marca */}
-        <div className="flex flex-col items-center md:items-start">
-          <h3 className="text-xl font-bold font-headline">
-            {config?.store_name || siteConfig.name}
-          </h3>
-          <p className="mt-2 text-sm text-primary">
-            {config?.store_description || siteConfig.description}
+    <footer className="bg-zinc-950/50 border-t border-primary/20 pt-20 pb-10 relative z-20 backdrop-blur-md">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center md:text-left">
+          {/* Columna 1: Marca con Estilo Premium */}
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <div className="relative">
+              <h3 className="text-3xl font-black font-headline tracking-tighter text-white uppercase group cursor-default">
+                {config?.store_name || siteConfig.name}
+                <span className="block h-1 w-12 bg-primary mt-1 transition-all duration-500 group-hover:w-full" />
+              </h3>
+            </div>
+            <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-light">
+              {config?.store_description || siteConfig.description}
+            </p>
+          </div>
+
+          {/* Columna 2: Navegación Elegante */}
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Colección
+            </h4>
+            <ul className="space-y-3">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className={linkClassName}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Columna 3: Contacto Directo */}
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Atención Personal
+            </h4>
+            <div className="space-y-4 text-sm text-zinc-400">
+              <a
+                href={`mailto:${config?.store_email || siteConfig.business.contact.email}`}
+                className="flex items-center justify-center md:justify-start gap-3 group transition-colors hover:text-white"
+              >
+                <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-primary/20 transition-colors">
+                  <Mail className="h-4 w-4 text-primary" />
+                </div>
+                <span>{config?.store_email || siteConfig.business.contact.email}</span>
+              </a>
+              <a
+                href={`tel:${siteConfig.business.contact.phone.replace(/\s/g, '')}`}
+                className="flex items-center justify-center md:justify-start gap-3 group transition-colors hover:text-white"
+              >
+                <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-primary/20 transition-colors">
+                  <Phone className="h-4 w-4 text-primary" />
+                </div>
+                <span>{siteConfig.business.contact.phone}</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Columna 4: Presencia Social */}
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Comunidad
+            </h4>
+            <div className="flex space-x-4">
+              <Link
+                href={siteConfig.links.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
+                aria-label="Instagram"
+              >
+                <Instagram className="h-6 w-6" />
+              </Link>
+              <Link
+                href={siteConfig.links.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
+                aria-label="TikTok"
+              >
+                <TikTokIcon />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright y Créditos */}
+        <div className="mt-20 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-zinc-600">
+          <p>
+            &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author} &bull; Joyería de Autor
           </p>
-        </div>
-
-        {/* Columna 2: Navegación */}
-        <div className="flex flex-col items-center md:items-start">
-          <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
-            Navegación
-          </h4>
-          <ul className="mt-4 space-y-2 text-sm">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className={linkClassName}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Columna 3: Contacto */}
-        <div className="flex flex-col items-center md:items-start">
-          <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
-            Contacto
-          </h4>
-          <div className="mt-4 space-y-2 text-sm">
-            <div className="flex items-center justify-center md:justify-start gap-2">
-              <Mail className="h-4 w-4" />
-              <span>{config?.store_email || siteConfig.business.contact.email}</span>
-            </div>
-            <div className="flex items-center justify-center md:justify-start gap-2">
-              <Phone className="h-4 w-4" />
-              <span>{siteConfig.business.contact.phone}</span>
-            </div>
+          <div className="flex gap-6">
+            <Link href="/politicas" className="hover:text-primary transition-colors">Privacidad</Link>
+            <Link href="/terminos" className="hover:text-primary transition-colors">Términos</Link>
           </div>
         </div>
-
-        {/* Columna 4: Redes Sociales */}
-        <div className="flex flex-col items-center md:items-start">
-          <h4 className="font-semibold uppercase tracking-wider text-foreground/90">
-            Síguenos
-          </h4>
-          <div className="mt-4 flex space-x-4 justify-center md:justify-start">
-            <Link
-              href={siteConfig.links.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="text-muted-foreground hover:text-accent transition-colors"
-            >
-              <Instagram className="h-6 w-6" />
-            </Link>
-            <Link
-              href={siteConfig.links.tiktok}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-              className="text-muted-foreground hover:text-accent transition-colors"
-            >
-              <TikTokIcon />
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="container mx-auto mt-8 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
-        <p>
-          &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author}. Todos los
-          derechos reservados.
-        </p>
       </div>
     </footer>
   )
