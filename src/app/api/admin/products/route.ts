@@ -31,19 +31,14 @@ export async function GET(request: NextRequest) {
       .select('*')
       .order('id', { ascending: false })
 
-    if (error) {
-      return NextResponse.json({
-        error: 'Failed to fetch products',
-        details: error.message,
-        code: error.code
-      }, { status: 500 })
-    }
+    if (error) throw error
 
-    return NextResponse.json({ products: data || [] })
-  } catch (error: any) {
+    return NextResponse.json({ products: data })
+  } catch (error) {
+    // console.error('Error fetching products:', error)
     return NextResponse.json({
       error: 'Failed to fetch products',
-      details: error?.message || 'Unknown error'
+      details: error.message
     }, { status: 500 })
   }
 }

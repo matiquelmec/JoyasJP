@@ -1,14 +1,12 @@
 // Utilities for calling admin API endpoints with proper authentication
 
+const ADMIN_PASSWORD = 'joyasjp2024'
+
 class AdminAPI {
   private getHeaders() {
-    // 🛡️ Seguridad Senior: Obtener la contraseña ingresada por el usuario en el login
-    // En lugar de tenerla quemada en el código.
-    const authPassword = typeof window !== 'undefined' ? localStorage.getItem('joyasjp-admin-password') : 'joyasjp2024'
-
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authPassword || 'joyasjp2024'}`
+      'Authorization': `Bearer ${ADMIN_PASSWORD}`
     }
   }
 
@@ -16,14 +14,14 @@ class AdminAPI {
     const response = await fetch('/api/admin/products', {
       headers: this.getHeaders()
     })
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
-
+    
     const data = await response.json()
-    return data.products || []
+    return data.products
   }
 
   async createProduct(productData: any) {
@@ -33,17 +31,17 @@ class AdminAPI {
       headers: this.getHeaders(),
       body: JSON.stringify(productData)
     })
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-
+      
       // Handle duplicate product error specifically
       if (response.status === 409) {
         throw new Error(errorData.message || 'Producto duplicado')
       }
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
-
+    
     const data = await response.json()
     return data.product
   }
@@ -54,11 +52,11 @@ class AdminAPI {
       headers: this.getHeaders(),
       body: JSON.stringify({ id, ...productData })
     })
-
+    
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
-
+    
     const data = await response.json()
     return data.product
   }
@@ -72,12 +70,12 @@ class AdminAPI {
       method: 'DELETE',
       headers: this.getHeaders()
     })
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
-
+    
     return response.json()
   }
 
@@ -87,11 +85,11 @@ class AdminAPI {
       headers: this.getHeaders(),
       body: JSON.stringify({ productId, originalStock })
     })
-
+    
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
-
+    
     const data = await response.json()
     return data.product
   }
@@ -104,12 +102,12 @@ class AdminAPI {
     const response = await fetch('/api/admin/configuration', {
       headers: this.getHeaders()
     })
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
-
+    
     const data = await response.json()
     return data.configuration
   }
@@ -120,12 +118,12 @@ class AdminAPI {
       headers: this.getHeaders(),
       body: JSON.stringify(configData)
     })
-
+    
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
-
+    
     const data = await response.json()
     return data.configuration
   }
