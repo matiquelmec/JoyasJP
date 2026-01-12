@@ -182,8 +182,8 @@ export function ProductsManager() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter">Inventario Maestro</h1>
-          <p className="text-muted-foreground">Gestión total de piezas, stock y precios.</p>
+          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter text-slate-900">Inventario Maestro</h1>
+          <p className="text-slate-600 font-medium">Gestión total de piezas, stock y precios.</p>
         </div>
         <ProductFormModal mode="create" onSave={loadProducts} />
       </div>
