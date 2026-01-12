@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
                 payment_detail: status_detail,
                 updated_at: new Date().toISOString()
             })
-            .eq('payment_id', payment.preference_id) // MP usa preference_id para mapear
+            .eq('id', (payment as any).order?.id || (payment as any).preference_id)
 
         if (updateError) {
             console.error('❌ Error al actualizar la orden en DB:', updateError)
