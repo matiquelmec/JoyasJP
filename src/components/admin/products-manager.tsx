@@ -300,8 +300,8 @@ export function ProductsManager() {
                     <TableCell className="text-right pr-6">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant={"ghost" as any} size={"icon" as any} className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant={"outline" as any} size={"icon" as any} className="h-8 w-8 border-slate-300 bg-white hover:bg-slate-50 shadow-sm">
+                            <MoreHorizontal className="h-4 w-4 text-slate-700" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 p-2">
