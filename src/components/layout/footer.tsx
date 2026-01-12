@@ -34,8 +34,8 @@ export function Footer() {
                 <span className="block h-1 w-12 bg-primary mt-1 transition-all duration-500 group-hover:w-full" />
               </h3>
             </div>
-            <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-light">
-              {config?.store_description || siteConfig.description}
+            <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-headline font-medium uppercase tracking-widest">
+              Atrévete a jugar
             </p>
           </div>
 
