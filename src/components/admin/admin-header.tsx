@@ -26,10 +26,9 @@ import { usePathname } from 'next/navigation'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Productos', href: '/admin/productos', icon: Package },
-  { name: 'Pedidos', href: '/admin/pedidos', icon: ShoppingCart },
-  { name: 'Mantenimiento', href: '/admin/mantenimiento', icon: Wrench },
-  { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
+  { name: 'Catálogo de Joyas', href: '/admin/productos', icon: Package },
+  { name: 'Pedidos y Ventas', href: '/admin/pedidos', icon: ShoppingCart },
+  { name: 'Ajustes del Sitio', href: '/admin/configuracion', icon: Settings },
 ]
 
 export function AdminHeader() {
@@ -64,8 +63,8 @@ export function AdminHeader() {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 lg:left-72 z-50 transition-all duration-300 ease-in-out bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md border-b border-slate-700',
-        hasScrolled ? 'bg-slate-900/90 shadow-xl' : 'bg-slate-900/80 shadow-lg'
+        'fixed top-0 left-0 right-0 lg:left-72 z-50 transition-all duration-300 ease-in-out bg-slate-950/80 backdrop-blur-md border-b border-white/5',
+        hasScrolled ? 'shadow-xl' : 'shadow-lg'
       )}
     >
       <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -88,13 +87,13 @@ export function AdminHeader() {
         {/* Navegación Desktop */}
         <nav className="hidden lg:flex items-center gap-2">
           {navigation.map((link) => {
-            const isActive = pathname === link.href || 
+            const isActive = pathname === link.href ||
               (link.href !== '/admin' && pathname.startsWith(link.href))
-            
+
             return (
-              <Link 
-                key={link.href} 
-                href={link.href} 
+              <Link
+                key={link.href}
+                href={link.href}
                 className={cn(
                   linkClassName,
                   isActive && 'text-primary bg-primary/10 rounded-lg'
@@ -110,15 +109,15 @@ export function AdminHeader() {
         {/* Acciones */}
         <div className="flex items-center gap-2">
           {/* Notificaciones */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant={"ghost" as any}
+            size={"sm" as any}
             className="relative text-white hover:text-primary hover:bg-white/10"
             aria-label="Notificaciones"
           >
             <Bell className="h-5 w-5" />
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant={"destructive" as any}
               className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-xs animate-pulse"
             >
               •
@@ -128,9 +127,9 @@ export function AdminHeader() {
           {/* Menú de usuario */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant={"ghost" as any}
+                size={"sm" as any}
                 className="text-white hover:text-primary hover:bg-white/10 flex items-center gap-2"
               >
                 <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-accent p-[1px]">
@@ -157,7 +156,7 @@ export function AdminHeader() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={handleLogout}
                 className="text-destructive focus:text-destructive"
               >
@@ -171,9 +170,9 @@ export function AdminHeader() {
           <div className="lg:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
+                <Button
+                  variant={"ghost" as any}
+                  size={"sm" as any}
                   className="text-white hover:text-primary hover:bg-white/10"
                   aria-label="Abrir menú de navegación"
                 >
@@ -200,16 +199,16 @@ export function AdminHeader() {
                       <p className="text-xs text-slate-300">Admin Panel</p>
                     </div>
                   </div>
-                  
+
                   <nav className="flex flex-col gap-2">
                     {navigation.map((link) => {
-                      const isActive = pathname === link.href || 
+                      const isActive = pathname === link.href ||
                         (link.href !== '/admin' && pathname.startsWith(link.href))
-                      
+
                       return (
                         <SheetClose asChild key={link.href}>
-                          <Link 
-                            href={link.href} 
+                          <Link
+                            href={link.href}
                             className={cn(
                               'flex items-center gap-3 px-4 py-3 rounded-lg text-white hover:bg-white/10 transition-all duration-200',
                               isActive && 'bg-primary/20 text-primary'
@@ -224,8 +223,8 @@ export function AdminHeader() {
                   </nav>
 
                   <div className="mt-auto pt-6 border-t border-slate-700">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant={"ghost" as any}
                       className="w-full justify-start text-white hover:text-destructive hover:bg-destructive/10"
                       onClick={handleLogout}
                     >

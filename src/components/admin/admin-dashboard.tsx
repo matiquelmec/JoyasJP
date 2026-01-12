@@ -56,17 +56,17 @@ export function AdminDashboard() {
     try {
       // Obtener productos reales
       const products = await adminAPI.getProducts()
-      
+
       // Calcular estadísticas de productos
       const activeProducts = products.filter(p => p.stock > 0)
       const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 5)
       const outOfStockProducts = products.filter(p => p.stock === 0)
-      
+
       // Top 5 productos por precio (como ejemplo de "más valiosos")
       const topProducts = [...activeProducts]
         .sort((a, b) => b.price - a.price)
         .slice(0, 5)
-      
+
       // Productos con stock bajo
       const lowStockItems = lowStockProducts
         .sort((a, b) => a.stock - b.stock)
@@ -90,7 +90,7 @@ export function AdminDashboard() {
 
       setStats(dashboardStats)
     } catch (error) {
-    // console.error('Error loading dashboard stats:', error)
+      // console.error('Error loading dashboard stats:', error)
     } finally {
       setLoading(false)
     }
@@ -120,67 +120,67 @@ export function AdminDashboard() {
     <div className="space-y-8">
       {/* KPIs principales */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/10" />
+        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Valor del Inventario</CardTitle>
-            <div className="p-2 rounded-full bg-green-500/10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Valor del Inventario</CardTitle>
+            <div className="p-2 rounded-xl bg-green-500/10">
               <DollarSign className="h-5 w-5 text-green-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-green-600 mb-1">
+            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">
               {formatCLP(stats.totalRevenue)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Valor total de productos en stock
+            <p className="text-xs text-muted-foreground font-medium">
+              Valor total de piezas en stock
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10" />
+        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Productos Totales</CardTitle>
-            <div className="p-2 rounded-full bg-primary/10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Productos Totales</CardTitle>
+            <div className="p-2 rounded-xl bg-primary/10">
               <Package className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-primary mb-1">{stats.totalProducts}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.totalProducts}</div>
+            <p className="text-xs text-muted-foreground font-medium">
               {stats.activeProducts} con stock disponible
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-yellow-500/10" />
+        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-yellow-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Stock Bajo</CardTitle>
-            <div className="p-2 rounded-full bg-orange-500/10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Stock Bajo</CardTitle>
+            <div className="p-2 rounded-xl bg-orange-500/10">
               <AlertTriangle className="h-5 w-5 text-orange-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-orange-600 mb-1">{stats.lowStockProducts}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.lowStockProducts}</div>
+            <p className="text-xs text-muted-foreground font-medium">
               Productos con ≤5 unidades
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/10" />
+        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Sin Stock</CardTitle>
-            <div className="p-2 rounded-full bg-red-500/10">
+            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sin Stock</CardTitle>
+            <div className="p-2 rounded-xl bg-red-500/10">
               <Package className="h-5 w-5 text-red-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-bold text-red-600 mb-1">{stats.outOfStockProducts}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.outOfStockProducts}</div>
+            <p className="text-xs text-muted-foreground font-medium">
               Productos agotados
             </p>
           </CardContent>
@@ -207,14 +207,14 @@ export function AdminDashboard() {
                     <span className="font-medium">{item.name}</span>
                     <span className="text-sm text-muted-foreground ml-2">({item.category})</span>
                   </div>
-                  <Badge variant="destructive">
+                  <Badge variant={"destructive" as any}>
                     {item.stock} unidades
                   </Badge>
                 </div>
               ))}
             </div>
             <Link href="/admin/productos">
-              <Button variant="outline" className="mt-4" size="sm">
+              <Button variant={"outline" as any} className="mt-4" size={"sm" as any}>
                 Ver todos los productos
               </Button>
             </Link>
@@ -272,9 +272,9 @@ export function AdminDashboard() {
                 <span>Productos Activos</span>
                 <span className="font-bold">{stats.activeProducts}/{stats.totalProducts}</span>
               </div>
-              <Progress 
-                value={(stats.activeProducts / stats.totalProducts) * 100} 
-                className="mt-2" 
+              <Progress
+                value={(stats.activeProducts / stats.totalProducts) * 100}
+                className="mt-2"
               />
             </div>
             <div>
@@ -282,9 +282,9 @@ export function AdminDashboard() {
                 <span>Estado del Stock</span>
                 <span>{Math.round(((stats.totalProducts - stats.lowStockProducts - stats.outOfStockProducts) / stats.totalProducts) * 100)}% Óptimo</span>
               </div>
-              <Progress 
-                value={((stats.totalProducts - stats.lowStockProducts - stats.outOfStockProducts) / stats.totalProducts) * 100} 
-                className="mt-2" 
+              <Progress
+                value={((stats.totalProducts - stats.lowStockProducts - stats.outOfStockProducts) / stats.totalProducts) * 100}
+                className="mt-2"
               />
             </div>
             <div className="pt-2 border-t">

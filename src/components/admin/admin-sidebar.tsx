@@ -33,7 +33,7 @@ export function AdminSidebar() {
     <>
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-background to-card border-r border-border px-6 pb-4 shadow-lg">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-950/90 backdrop-blur-md border-r border-white/5 px-6 pb-4 shadow-2xl">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/admin" className="flex items-center space-x-3 group">
@@ -114,7 +114,7 @@ export function AdminSidebar() {
       </div>
 
       {/* Mobile Navigation - Bottom Tab Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-gradient-to-r from-card to-background border-t border-border shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-slate-950/95 backdrop-blur-xl border-t border-white/10 shadow-2xl">
         <div className="grid grid-cols-5 gap-1 p-2">
           {navigation.slice(0, 5).map((item) => {
             const isActive = pathname === item.href ||
