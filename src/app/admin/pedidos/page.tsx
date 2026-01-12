@@ -5,10 +5,10 @@ export default function OrdersPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-slate-900">
           Gestión de Pedidos
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-slate-600 font-medium">
           Administra pedidos, envíos y seguimiento de órdenes
         </p>
       </div>
