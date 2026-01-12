@@ -19,16 +19,19 @@ export async function POST(req: NextRequest) {
         const paymentId = data.id
 
         // 🛡️ Consultar el estado real del pago en MercadoPago
-        const payment = await new Payment(client).get({ id: paymentId })
+        const payment = await new Payment(client).get({ id: paymentId }) as any
 
         if (!payment) {
             console.error(`❌ Pago no encontrado en MP: ${paymentId}`)
             return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
         }
 
-        const { status, status_detail, external_reference, id } = payment
+        const { status, status_detail, id } = payment
 
-        console.log(`🔔 Webhook recibido: Pago ${id} - Estado: ${status} (${status_detail})`)
+        // MP usa preference_id o order.id para mapear según la versión
+        const orderId = payment.order?.id || payment.preference_id
+
+        console.log(`🔔 Webhook recibido: Pago ${id} - Estado: ${status} (${status_detail}) - Orden: ${orderId}`)
 
         if (!supabaseAdmin) {
             console.error('❌ Cliente administrativo de Supabase no disponible')
@@ -44,7 +47,7 @@ export async function POST(req: NextRequest) {
                 payment_detail: status_detail,
                 updated_at: new Date().toISOString()
             })
-            .eq('id', (payment as any).order?.id || (payment as any).preference_id)
+            .eq('id', orderId)
 
         if (updateError) {
             console.error('❌ Error al actualizar la orden en DB:', updateError)
