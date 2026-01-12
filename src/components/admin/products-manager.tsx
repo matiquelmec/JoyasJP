@@ -279,7 +279,7 @@ export function ProductsManager() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={"outline" as any} className="text-[10px] uppercase font-bold tracking-widest border-zinc-300">
+                      <Badge variant={"outline" as any} className="bg-slate-100 text-slate-800 border-slate-300 text-[10px] uppercase font-bold tracking-widest">
                         {p.category}
                       </Badge>
                     </TableCell>
