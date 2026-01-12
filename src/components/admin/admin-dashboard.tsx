@@ -123,7 +123,7 @@ export function AdminDashboard() {
         <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Valor del Inventario</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Valor del Inventario</CardTitle>
             <div className="p-2 rounded-xl bg-green-500/10">
               <DollarSign className="h-5 w-5 text-green-600" />
             </div>
@@ -132,7 +132,7 @@ export function AdminDashboard() {
             <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">
               {formatCLP(stats.totalRevenue)}
             </div>
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs text-slate-500 font-bold">
               Valor total de piezas en stock
             </p>
           </CardContent>
@@ -141,14 +141,14 @@ export function AdminDashboard() {
         <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Productos Totales</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Productos Totales</CardTitle>
             <div className="p-2 rounded-xl bg-primary/10">
               <Package className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.totalProducts}</div>
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs text-slate-500 font-bold">
               {stats.activeProducts} con stock disponible
             </p>
           </CardContent>
@@ -157,14 +157,14 @@ export function AdminDashboard() {
         <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-yellow-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Stock Bajo</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Stock Bajo</CardTitle>
             <div className="p-2 rounded-xl bg-orange-500/10">
               <AlertTriangle className="h-5 w-5 text-orange-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.lowStockProducts}</div>
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs text-slate-500 font-bold">
               Productos con ≤5 unidades
             </p>
           </CardContent>
@@ -173,14 +173,14 @@ export function AdminDashboard() {
         <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Sin Stock</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Sin Stock</CardTitle>
             <div className="p-2 rounded-xl bg-red-500/10">
               <Package className="h-5 w-5 text-red-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
             <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.outOfStockProducts}</div>
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs text-slate-500 font-bold">
               Productos agotados
             </p>
           </CardContent>
@@ -246,7 +246,7 @@ export function AdminDashboard() {
                     <p className="text-sm font-medium truncate">
                       {product.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-slate-500 font-medium">
                       Stock: {product.stock} | {product.category}
                     </p>
                   </div>
@@ -291,7 +291,7 @@ export function AdminDashboard() {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
                   <p className="text-2xl font-bold text-green-600">{stats.activeProducts - stats.lowStockProducts}</p>
-                  <p className="text-xs text-muted-foreground">Stock OK</p>
+                  <p className="text-xs text-slate-600 font-medium">Sin Stock</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-orange-600">{stats.lowStockProducts}</p>
