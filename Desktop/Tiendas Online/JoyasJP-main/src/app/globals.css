@@ -1,0 +1,465 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary es ahora Rojo Terciopelo */
+    --primary: 346.8 85% 45%; /* Rojo oscuro, saturado y elegante */
+    --primary-foreground: 0 0% 98%; /* Texto claro para contraste */
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    /* Accent es ahora Plata Líquida */
+    --accent: 210 40% 96.1%; /* Plateado claro y brillante */
+    --accent-foreground: 240 5.9% 10%; /* Texto oscuro para el acento */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 346.8 85% 45%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 346.8 85% 45%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 346.8 85% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ✨ Animaciones personalizadas para mejor UX */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* ⚡ ANIMACIONES OPTIMIZADAS PARA GPU */
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, 
+    rgba(39, 39, 42, 0.8) 25%, 
+    rgba(63, 63, 70, 0.6) 50%, 
+    rgba(39, 39, 42, 0.8) 75%
+  );
+  background-size: 200% 100%;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Animaciones con delay específicos - optimizadas */
+.animate-fadeInUp-delayed-02 {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.animate-fadeInUp-delayed-04 {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.4s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 1s ease-in-out infinite;
+}
+
+/* Transiciones suaves para hover states premium */
+.transition-hover {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ⚡ OPTIMIZED HOVER EFFECTS PARA PRODUCT CARDS */
+.product-card-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.product-card-hover:hover {
+  transform: translate3d(0, -8px, 0) scale(1.02);
+  box-shadow: 0 25px 50px rgba(346.8, 85%, 45%, 0.1);
+}
+
+.product-image-hover {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.product-image-hover:hover {
+  transform: scale3d(1.1, 1.1, 1) rotate(1deg);
+}
+
+/* Link hover effects premium */
+.link-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 50%;
+  background: hsl(var(--primary));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+.link-hover:hover {
+  transform: scale(1.05);
+  color: hsl(var(--primary));
+}
+
+/* Scroll behavior mejorado */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading states */
+.loading-dots::after {
+  content: "";
+  animation: loading-dots 1.5s linear infinite;
+}
+
+@keyframes loading-dots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+
+/* Focus states mejorados */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+}
+
+/* Grid responsivo para productos */
+.product-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.responsive-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* Utility classes para optimizaciones */
+.will-change-transform {
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ⚡ OPTIMIZACIONES CRÍTICAS PARA PERFORMANCE */
+
+/* Optimizar contenido above-the-fold */
+.hero-section {
+  contain: layout style paint;
+  will-change: opacity, transform;
+}
+
+/* Lazy loading optimizado para imágenes */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Reducir paint y layout shifts */
+.product-grid {
+  contain: layout style;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Optimizar scroll performance */
+.scroll-optimized {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* Preload crítico para fonts */
+@font-face {
+  font-family: 'System';
+  src: local('BlinkMacSystemFont'), local('Segoe UI'), local('Roboto'), local('Arial');
+  font-display: swap;
+}
+
+/* Micro-optimizaciones para animaciones */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimizar rendering de texto */
+.text-optimize {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container queries para responsive más eficiente */
+.responsive-container {
+  container-type: inline-size;
+}
+
+@container (min-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ✨ FIX PARA HEADER ESTABLE */
+header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* ✨ DROPDOWN DE COLOR - SELECTOR DESPLEGABLE FUNCIONAL */
+.color-dropdown-trigger {
+  position: relative;
+  overflow: hidden;
+}
+
+.color-dropdown-trigger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.4s ease;
+}
+
+.color-dropdown-trigger:hover::before {
+  left: 100%;
+}
+
+/* Animaciones para dropdown */
+@keyframes fade-in-0 {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in-95 {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+
+.fade-in-0 {
+  animation-name: fade-in-0;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in-95;
+}
+
+/* Estilos para indicadores de color en dropdown */
+.color-dropdown-trigger [class*="bg-gradient"] {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive design para dropdown */
+@media (max-width: 640px) {
+  .color-dropdown-trigger {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* ✨ ADMIN PANEL - LAZY LOADED */
+@supports (loading-lazy) {
+  .admin-panel input,
+  .admin-panel textarea,
+  .admin-panel select {
+    background: white !important;
+    color: #1a1a1a !important;
+    border: 2px solid #d1d5db !important;
+  }
+  
+  .admin-panel input:focus,
+  .admin-panel textarea:focus,
+  .admin-panel select:focus {
+    border: 2px solid hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
+}

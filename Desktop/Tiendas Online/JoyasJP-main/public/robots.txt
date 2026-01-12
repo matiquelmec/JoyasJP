@@ -1,0 +1,25 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /_next
+Disallow: /shop/success
+Disallow: /shop/failure
+Disallow: /shop/pending
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /_next
+Disallow: /shop/success
+Disallow: /shop/failure
+Disallow: /shop/pending
+
+# Host
+Host: https://joyasjp.netlify.app
+
+# Sitemaps
+Sitemap: https://joyasjp.netlify.app/sitemap.xml

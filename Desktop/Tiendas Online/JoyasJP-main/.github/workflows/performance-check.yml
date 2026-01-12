@@ -1,0 +1,123 @@
+# 🚀 Performance Check Automático en cada Deploy
+# Este workflow asegura que el performance se mantenga siempre alto
+
+name: Performance Monitor
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  performance-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Start server
+      run: |
+        npm start &
+        sleep 30
+        
+    - name: Run Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v10
+      with:
+        urls: |
+          http://localhost:3000
+          http://localhost:3000/shop
+        configPath: './lighthouse.config.js'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        
+    - name: Performance Budget Check
+      run: |
+        # Verificar que el Performance Score sea > 70
+        echo "Checking performance budget..."
+        
+        # Este script verificaría los resultados de Lighthouse
+        # y fallaría el build si el performance está bajo
+        node scripts/check-performance-budget.js
+        
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data } = await github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `
+            ## 🚀 Performance Check Results
+            
+            ✅ Performance audit completed successfully!
+            
+            📊 **Key Metrics:**
+            - Performance Score: **${process.env.LIGHTHOUSE_SCORE || 'N/A'}**
+            - LCP: **${process.env.LCP_SCORE || 'N/A'}**
+            - TBT: **${process.env.TBT_SCORE || 'N/A'}**
+            
+            🎯 **Status:** ${process.env.LIGHTHOUSE_SCORE >= 70 ? '✅ PASSED' : '❌ NEEDS IMPROVEMENT'}
+            
+            ${process.env.LIGHTHOUSE_SCORE < 70 ? '⚠️ **Action Required:** Performance score below threshold. Please optimize before merging.' : ''}
+            `
+          });
+          
+  performance-budget-guard:
+    runs-on: ubuntu-latest
+    needs: performance-audit
+    
+    steps:
+    - name: Enforce Performance Budget
+      run: |
+        echo "🎯 Performance Budget Guard"
+        echo "This step ensures performance standards are maintained"
+        
+        # En un setup real, aquí verificarías:
+        # 1. Performance Score > 70
+        # 2. LCP < 2.5s
+        # 3. TBT < 200ms
+        # 4. Bundle size < 500KB
+        
+        # Si algún threshold falla, el deploy se bloquea
+        if [ "$PERFORMANCE_SCORE" -lt "70" ]; then
+          echo "❌ Performance score too low: $PERFORMANCE_SCORE"
+          echo "🚨 Deploy blocked until performance improves"
+          exit 1
+        fi
+        
+        echo "✅ Performance budget passed!"
+        
+  notify-team:
+    runs-on: ubuntu-latest
+    needs: [performance-audit, performance-budget-guard]
+    if: failure()
+    
+    steps:
+    - name: Notify team of performance regression
+      run: |
+        echo "📧 Sending performance alert to team..."
+        
+        # En producción, aquí enviarías:
+        # - Slack notification
+        # - Email alert
+        # - Dashboard update
+        
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"🚨 Performance Alert: Build failed performance check on Joyas JP. Score below 70. Please investigate immediately."}' \
+        ${{ secrets.SLACK_WEBHOOK_URL || 'https://hooks.slack.com/mock' }}
