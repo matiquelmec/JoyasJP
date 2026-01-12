@@ -8,7 +8,8 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import Image from 'next/image'
 
-const ADMIN_PASSWORD = 'joyasjp2024' // En producción esto debe estar en variables de entorno
+// 🛡️ Seguridad Senior: La contraseña ya no está en el cliente. 
+// Se valida en el servidor mediante /api/admin/login
 
 export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -27,15 +28,31 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
-      localStorage.setItem('joyasjp-admin-auth', 'authenticated')
-      setError('')
-    } else {
-      setError('Contraseña incorrecta')
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setIsAuthenticated(true)
+        localStorage.setItem('joyasjp-admin-auth', 'authenticated')
+        localStorage.setItem('joyasjp-admin-password', password) // 🛡️ Guardar para las peticiones de API
+      } else {
+        setError(data.error || 'Contraseña incorrecta')
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -84,19 +101,19 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-              
+
               {error && (
                 <p className="text-sm text-red-600">{error}</p>
               )}
-              
+
               <Button type="submit" className="w-full">
                 Ingresar
               </Button>
             </form>
-            
+
             <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
               <p className="text-xs text-blue-600 dark:text-blue-300">
-                <strong>Demo:</strong> Contraseña: joyasjp2024
+                <strong>Seguridad:</strong> El acceso está protegido por el servidor.
               </p>
             </div>
           </CardContent>
