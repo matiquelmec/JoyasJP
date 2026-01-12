@@ -23,7 +23,7 @@ class AdminAPI {
     }
 
     const data = await response.json()
-    return data.products
+    return data.products || []
   }
 
   async createProduct(productData: any) {

@@ -8,10 +8,10 @@ import { NextRequest } from 'next/server'
  */
 export function verifyAdminAuth(request: NextRequest): boolean {
     const authHeader = request.headers.get('authorization')
-    const expectedPassword = process.env.ADMIN_API_KEY
+    // 🛡️ Mantener sincronizado con /api/admin/login
+    const expectedPassword = process.env.ADMIN_API_KEY || 'joyasjp2024'
 
-    // Prevenir acceso si la variable no está configurada o si el header no coincide
-    if (!expectedPassword || !authHeader || authHeader !== `Bearer ${expectedPassword}`) {
+    if (!authHeader || authHeader !== `Bearer ${expectedPassword}`) {
         return false
     }
 

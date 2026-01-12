@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -83,22 +81,21 @@ export function ProductsManager() {
   const loadProducts = async () => {
     try {
       const data = await adminAPI.getProducts()
-      
+
       // Filtrar productos no eliminados para la vista normal del admin
       const activeProducts = data.filter((product: any) => !product.deleted_at)
-      
+
       // Mapear los datos al formato esperado
       const mappedProducts = activeProducts.map((product: SupabaseProduct) => ({
         ...product,
         imageUrl: product.imageUrl, // Database column is imageUrl
       })) as Product[]
-      
+
       setProducts(mappedProducts)
-    } catch (error) {
-    // console.error('Error loading products:', error)
+    } catch (error: any) {
       toast({
-        title: 'Error',
-        description: 'No se pudieron cargar los productos. Verifica tu conexión.',
+        title: 'Error de carga',
+        description: error.message || 'No se pudieron cargar los productos. Por favor, reintenta ingresando nuevamente.',
         variant: 'destructive'
       })
     } finally {
@@ -111,13 +108,13 @@ export function ProductsManager() {
       await adminAPI.updateStock(productId, newStock)
 
       // Actualizar el estado local
-      setProducts(prev => 
-        prev.map(p => 
+      setProducts(prev =>
+        prev.map(p =>
           p.id === productId ? { ...p, stock: newStock } : p
         )
       )
     } catch (error) {
-    // console.error('Error updating stock:', error)
+      // console.error('Error updating stock:', error)
       toast({
         title: 'Error',
         description: 'No se pudo actualizar el stock.',
@@ -141,7 +138,7 @@ export function ProductsManager() {
 
       // Remove from UI
       setProducts(prev => prev.filter(p => p.id !== deleteProduct.id))
-      
+
       // Show success toast
       toast({
         title: 'Producto eliminado',
@@ -149,7 +146,7 @@ export function ProductsManager() {
         duration: 5000,
       })
     } catch (error) {
-    // console.error('Error deleting product:', error)
+      // console.error('Error deleting product:', error)
       toast({
         title: 'Error',
         description: 'No se pudo eliminar el producto. Intenta nuevamente.',
@@ -166,13 +163,13 @@ export function ProductsManager() {
 
     try {
       await adminAPI.restoreProduct(
-        recentlyDeleted.product.id, 
+        recentlyDeleted.product.id,
         recentlyDeleted.product.stock || 0
       )
 
       // Add back to UI
       setProducts(prev => [...prev, recentlyDeleted.product])
-      
+
       // Clear the recently deleted state
       setRecentlyDeleted(null)
 
@@ -181,7 +178,7 @@ export function ProductsManager() {
         description: `${recentlyDeleted.product.name} ha sido restaurado exitosamente.`,
       })
     } catch (error) {
-    // console.error('Error restoring product:', error)
+      // console.error('Error restoring product:', error)
       toast({
         title: 'Error',
         description: 'No se pudo restaurar el producto.',
@@ -440,7 +437,7 @@ export function ProductsManager() {
                               </DropdownMenuItem>
                             }
                           />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             className="text-red-600"
                             onClick={() => setDeleteProduct(product)}
                           >
