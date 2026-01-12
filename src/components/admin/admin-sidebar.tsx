@@ -73,7 +73,7 @@ export function AdminSidebar() {
                             'group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-medium transition-all duration-200 relative overflow-hidden',
                             isActive
                               ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg transform scale-[1.02]'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 hover:transform hover:scale-[1.01]'
+                              : 'text-slate-400 hover:text-white hover:bg-white/5 hover:transform hover:scale-[1.01]'
                           )}
                         >
                           {isActive && (
@@ -84,7 +84,7 @@ export function AdminSidebar() {
                               'h-5 w-5 shrink-0 transition-all duration-200 relative z-10',
                               isActive
                                 ? 'text-primary-foreground drop-shadow-sm'
-                                : 'text-muted-foreground group-hover:text-primary group-hover:scale-110'
+                                : 'text-slate-400 group-hover:text-white group-hover:scale-110'
                             )}
                           />
                           <span className="relative z-10">{item.name}</span>
@@ -98,7 +98,7 @@ export function AdminSidebar() {
               {/* Logout */}
               <li className="mt-auto">
                 <button
-                  className="group flex w-full gap-x-3 rounded-lg p-3 text-sm font-medium leading-6 transition-all duration-200 text-muted-foreground hover:text-destructive hover:bg-destructive/5 border border-transparent hover:border-destructive/20"
+                  className="group flex w-full gap-x-3 rounded-lg p-3 text-sm font-medium leading-6 transition-all duration-200 text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20"
                   onClick={() => {
                     // Implementar logout
                     window.location.href = '/'
