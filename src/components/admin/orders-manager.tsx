@@ -62,11 +62,11 @@ export function OrdersManager() {
         const data = await response.json()
         setOrders(data.orders || [])
       } else {
-    // console.error('Error fetching orders:', response.statusText)
+        // console.error('Error fetching orders:', response.statusText)
         setOrders([])
       }
     } catch (error) {
-    // console.error('Error fetching orders:', error)
+      // console.error('Error fetching orders:', error)
       setOrders([])
     } finally {
       setLoading(false)
@@ -114,10 +114,10 @@ export function OrdersManager() {
         // Refresh orders after update
         fetchOrders()
       } else {
-    // console.error('Error updating order status:', response.statusText)
+        // console.error('Error updating order status:', response.statusText)
       }
     } catch (error) {
-    // console.error('Error updating order status:', error)
+      // console.error('Error updating order status:', error)
     }
   }
 
@@ -200,9 +200,9 @@ export function OrdersManager() {
             <div className="flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
               <ShoppingBag className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">No hay pedidos aún</h3>
-            <p className="text-muted-foreground text-center max-w-md mb-6">
-              Los pedidos aparecerán aquí cuando los clientes realicen compras en tu tienda. 
+            <h3 className="text-lg font-bold text-slate-900 mb-2">No hay pedidos aún</h3>
+            <p className="text-slate-600 font-medium text-center max-w-md mb-6">
+              Los pedidos aparecerán aquí cuando los clientes realicen compras en tu tienda.
               Mientras tanto, asegúrate de tener productos disponibles.
             </p>
             <div className="flex gap-3">
@@ -245,7 +245,7 @@ export function OrdersManager() {
                 {orders.map((order) => {
                   const orderItems = JSON.parse(order.items)
                   const itemCount = orderItems.reduce((sum: number, item: any) => sum + item.quantity, 0)
-                  
+
                   return (
                     <TableRow key={order.id}>
                       <TableCell className="font-mono text-xs">
@@ -254,7 +254,7 @@ export function OrdersManager() {
                       <TableCell>
                         <div>
                           <p className="font-medium">{order.customer_name}</p>
-                          <p className="text-xs text-muted-foreground">{order.customer_email}</p>
+                          <p className="text-xs text-slate-500 font-medium">{order.customer_email}</p>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -263,16 +263,16 @@ export function OrdersManager() {
                       <TableCell>
                         <div>
                           <p className="font-medium">{formatCLP(order.total_amount)}</p>
-                          <p className="text-xs text-muted-foreground">{itemCount} items</p>
+                          <p className="text-xs text-slate-500 font-medium">{itemCount} items</p>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={
                             order.status === 'delivered' ? 'default' :
-                            order.status === 'cancelled' ? 'destructive' :
-                            order.status === 'processing' ? 'secondary' :
-                            'outline'
+                              order.status === 'cancelled' ? 'destructive' :
+                                order.status === 'processing' ? 'secondary' :
+                                  'outline'
                           }
                         >
                           {order.status === 'pending' && 'Pendiente'}
@@ -285,8 +285,8 @@ export function OrdersManager() {
                       <TableCell>
                         <div className="flex gap-2">
                           {order.status === 'pending' && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => updateOrderStatus(order.id, 'processing')}
                             >
@@ -295,8 +295,8 @@ export function OrdersManager() {
                             </Button>
                           )}
                           {order.status === 'processing' && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => updateOrderStatus(order.id, 'shipped')}
                             >
@@ -305,8 +305,8 @@ export function OrdersManager() {
                             </Button>
                           )}
                           {order.status === 'shipped' && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
                               onClick={() => updateOrderStatus(order.id, 'delivered')}
                             >
