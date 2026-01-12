@@ -18,7 +18,9 @@ export interface ApiResponse<T = any> {
 export interface SiteConfiguration {
   store_name: string
   store_description?: string
+  store_slogan?: string
   store_email?: string
+  whatsapp_number?: string
   shipping_cost: number
   free_shipping_from: number
   shipping_zones?: string[]

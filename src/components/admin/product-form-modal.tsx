@@ -36,7 +36,7 @@ interface ProductFormModalProps {
 
 const categories = [
   'cadenas',
-  'dijes', 
+  'dijes',
   'pulseras',
   'aros'
 ]
@@ -55,14 +55,16 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     materials: '',
     dimensions: '',
     color: '',
-    detail: ''
+    detail: '',
+    specifications: '',
+    seo: ''
   })
 
   useEffect(() => {
     if (product && mode === 'edit') {
       // En modo edición, el código es el ID del producto si parece un código personalizado
       const productCode = product.id?.startsWith('P') ? product.id : ''
-      
+
       setFormData({
         name: product.name || '',
         code: productCode, // Usar el ID como código si es un código personalizado
@@ -74,9 +76,11 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         materials: product.materials || '',
         dimensions: product.dimensions || '',
         color: product.color || '',
-        detail: product.detail || ''
+        detail: product.detail || '',
+        specifications: product.specifications || '',
+        seo: product.seo || ''
       })
-      
+
     } else {
       // Reset form for create mode
       setFormData({
@@ -90,7 +94,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         materials: '',
         dimensions: '',
         color: '',
-        detail: ''
+        detail: '',
+        specifications: '',
+        seo: ''
       })
     }
   }, [product, mode, open])
@@ -113,7 +119,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
       if (!formData.price || parseFloat(formData.price) <= 0) {
         toast({
-          title: 'Error de validación', 
+          title: 'Error de validación',
           description: 'El precio debe ser mayor a 0.',
           variant: 'destructive'
         })
@@ -152,7 +158,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
         color: formData.color || null,
-        detail: formData.detail || null
+        detail: formData.detail || null,
+        specifications: formData.specifications || null,
+        seo: formData.seo || null
         // Removed is_featured and is_deleted as they don't exist in database
       }
 
@@ -182,7 +190,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     } catch (error) {
       // Mensaje de error más específico
       const errorMessage = error.message || 'Error desconocido'
-      
+
       toast({
         title: 'Error',
         description: `No se pudo ${mode === 'create' ? 'crear' : 'actualizar'} el producto: ${errorMessage}`,
@@ -232,9 +240,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="Ej: Anillo de plata con diamante"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -250,9 +258,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 onChange={(e) => mode === 'create' && setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
                 placeholder={mode === 'edit' ? 'El código no se puede cambiar' : "Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"}
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: mode === 'edit' ? '#f3f4f6' : 'white', 
-                  color: mode === 'edit' ? '#6b7280' : 'black', 
+                style={{
+                  backgroundColor: mode === 'edit' ? '#f3f4f6' : 'white',
+                  color: mode === 'edit' ? '#6b7280' : 'black',
                   border: '1px solid #d1d5db',
                   cursor: mode === 'edit' ? 'not-allowed' : 'text'
                 }}
@@ -274,9 +282,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 placeholder="99000"
                 min="0"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -295,9 +303,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 placeholder="10"
                 min="0"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -312,9 +320,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
               required
               className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-              style={{ 
-                backgroundColor: 'white', 
-                color: 'black', 
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
                 border: '1px solid #d1d5db'
               }}
             >
@@ -344,9 +352,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               placeholder="Describe las características principales del producto..."
               rows={3}
               className="flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm"
-              style={{ 
-                backgroundColor: 'white', 
-                color: 'black', 
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
                 border: '1px solid #d1d5db',
                 resize: 'vertical'
               }}
@@ -364,9 +372,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
                 placeholder="Ej: Plata 925, Oro 18k"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -380,9 +388,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                 placeholder="Ej: Dorado, Plateado"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -396,9 +404,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
                 placeholder="Ej: 2cm x 1.5cm"
                 className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{ 
-                  backgroundColor: 'white', 
-                  color: 'black', 
+                style={{
+                  backgroundColor: 'white',
+                  color: 'black',
                   border: '1px solid #d1d5db'
                 }}
               />
@@ -406,7 +414,42 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           </div>
 
           <div>
-            <Label htmlFor="detail">Detalles Adicionales</Label>
+            <Label htmlFor="specifications" className="text-primary font-bold">Especificaciones Técnicas (Oro, Quilates, etc)</Label>
+            <textarea
+              id="specifications"
+              value={formData.specifications}
+              onChange={(e) => setFormData(prev => ({ ...prev, specifications: e.target.value }))}
+              placeholder="Ej: Oro de 18k garantizado, Peso: 5g..."
+              rows={2}
+              className="flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
+                border: '1px solid #d1d5db',
+                resize: 'vertical'
+              }}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="seo">Palabras Clave SEO (Búsqueda)</Label>
+            <input
+              id="seo"
+              type="text"
+              value={formData.seo}
+              onChange={(e) => setFormData(prev => ({ ...prev, seo: e.target.value }))}
+              placeholder="Ej: anillo diamante, plata 925, joyas urbanas"
+              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
+                border: '1px solid #d1d5db'
+              }}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="detail">Cuidados y Detalles Adicionales</Label>
             <textarea
               id="detail"
               value={formData.detail}
@@ -414,9 +457,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               placeholder="Información adicional, cuidados, etc..."
               rows={2}
               className="flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm"
-              style={{ 
-                backgroundColor: 'white', 
-                color: 'black', 
+              style={{
+                backgroundColor: 'white',
+                color: 'black',
                 border: '1px solid #d1d5db',
                 resize: 'vertical'
               }}
@@ -427,17 +470,17 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button
               type="button"
-              variant="outline"
+              variant={"outline" as any}
               onClick={() => setOpen(false)}
             >
               <X className="w-4 h-4 mr-2" />
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="bg-primary hover:bg-primary/90 text-white font-bold">
               <Save className="w-4 h-4 mr-2" />
-              {loading 
-                ? (mode === 'create' ? 'Creando...' : 'Guardando...') 
-                : (mode === 'create' ? 'Crear Producto' : 'Guardar Cambios')
+              {loading
+                ? (mode === 'create' ? 'Creando...' : 'Guardando...')
+                : (mode === 'create' ? 'Confirmar y Publicar' : 'Guardar Cambios')
               }
             </Button>
           </div>

@@ -20,6 +20,8 @@ export default function ConfiguracionPage() {
     store_name: '',
     store_email: '',
     store_description: '',
+    store_slogan: '',
+    whatsapp_number: '',
     shipping_cost: 3000,
     free_shipping_from: 50000,
     shipping_zones: '',
@@ -40,7 +42,7 @@ export default function ConfiguracionPage() {
       const data = await adminAPI.getConfiguration()
       setConfig(data)
     } catch (error) {
-    // console.error('Error loading configuration:', error)
+      // console.error('Error loading configuration:', error)
       toast({
         title: 'Error',
         description: 'No se pudo cargar la configuración',
@@ -55,16 +57,16 @@ export default function ConfiguracionPage() {
     setSaving(true)
     try {
       await adminAPI.updateConfiguration(config)
-      
+
       // Refrescar la configuración en toda la aplicación
       await refreshConfig()
-      
+
       toast({
         title: 'Configuración guardada',
         description: `La ${section} se ha actualizado correctamente.`
       })
     } catch (error) {
-    // console.error('Error saving configuration:', error)
+      // console.error('Error saving configuration:', error)
       toast({
         title: 'Error',
         description: 'No se pudo guardar la configuración',
@@ -110,34 +112,53 @@ export default function ConfiguracionPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="store-name">Nombre de la Tienda</Label>
-                <Input 
-                  id="store-name" 
+                <Input
+                  id="store-name"
                   value={config.store_name}
-                  onChange={(e) => setConfig({...config, store_name: e.target.value})}
+                  onChange={(e) => setConfig({ ...config, store_name: e.target.value })}
                 />
               </div>
               <div>
                 <Label htmlFor="store-email">Email de Contacto</Label>
-                <Input 
-                  id="store-email" 
-                  type="email" 
+                <Input
+                  id="store-email"
+                  type="email"
                   value={config.store_email}
-                  onChange={(e) => setConfig({...config, store_email: e.target.value})}
+                  onChange={(e) => setConfig({ ...config, store_email: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="store-slogan">Slogan de Marca</Label>
+                <Input
+                  id="store-slogan"
+                  value={config.store_slogan || ''}
+                  onChange={(e) => setConfig({ ...config, store_slogan: e.target.value })}
+                  placeholder="Ej: Atrévete a jugar"
+                />
+              </div>
+              <div>
+                <Label htmlFor="whatsapp-number">WhatsApp (con prefijo, ej: +569...)</Label>
+                <Input
+                  id="whatsapp-number"
+                  value={config.whatsapp_number || ''}
+                  onChange={(e) => setConfig({ ...config, whatsapp_number: e.target.value })}
+                  placeholder="+56912345678"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="store-description">Descripción</Label>
-              <Textarea 
-                id="store-description" 
+              <Label htmlFor="store-description">Descripción del Sitio</Label>
+              <Textarea
+                id="store-description"
                 value={config.store_description}
-                onChange={(e) => setConfig({...config, store_description: e.target.value})}
+                onChange={(e) => setConfig({ ...config, store_description: e.target.value })}
                 rows={3}
               />
             </div>
-            <Button 
+            <Button
               onClick={() => handleSave('información de la tienda')}
               disabled={saving}
+              className="bg-primary hover:bg-primary/90 text-white"
             >
               {saving ? (
                 <>
@@ -165,25 +186,25 @@ export default function ConfiguracionPage() {
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="mercadopago-key">Clave Pública MercadoPago</Label>
-              <Input 
-                id="mercadopago-key" 
-                type="password" 
+              <Input
+                id="mercadopago-key"
+                type="password"
                 placeholder="TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                 value={config.mercadopago_public_key}
-                onChange={(e) => setConfig({...config, mercadopago_public_key: e.target.value})}
+                onChange={(e) => setConfig({ ...config, mercadopago_public_key: e.target.value })}
               />
             </div>
             <div>
               <Label htmlFor="mercadopago-secret">Access Token MercadoPago</Label>
-              <Input 
-                id="mercadopago-secret" 
-                type="password" 
+              <Input
+                id="mercadopago-secret"
+                type="password"
                 placeholder="TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                 value={config.mercadopago_access_token}
-                onChange={(e) => setConfig({...config, mercadopago_access_token: e.target.value})}
+                onChange={(e) => setConfig({ ...config, mercadopago_access_token: e.target.value })}
               />
             </div>
-            <Button 
+            <Button
               onClick={() => handleSave('configuración de pagos')}
               disabled={saving}
             >
@@ -214,33 +235,33 @@ export default function ConfiguracionPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="shipping-cost">Costo de Envío (CLP)</Label>
-                <Input 
-                  id="shipping-cost" 
-                  type="number" 
+                <Input
+                  id="shipping-cost"
+                  type="number"
                   value={config.shipping_cost}
-                  onChange={(e) => setConfig({...config, shipping_cost: parseInt(e.target.value) || 0})}
+                  onChange={(e) => setConfig({ ...config, shipping_cost: parseInt(e.target.value) || 0 })}
                 />
               </div>
               <div>
                 <Label htmlFor="free-shipping">Envío Gratis Desde (CLP)</Label>
-                <Input 
-                  id="free-shipping" 
-                  type="number" 
+                <Input
+                  id="free-shipping"
+                  type="number"
                   value={config.free_shipping_from}
-                  onChange={(e) => setConfig({...config, free_shipping_from: parseInt(e.target.value) || 0})}
+                  onChange={(e) => setConfig({ ...config, free_shipping_from: parseInt(e.target.value) || 0 })}
                 />
               </div>
             </div>
             <div>
               <Label htmlFor="shipping-zones">Zonas de Envío</Label>
-              <Textarea 
-                id="shipping-zones" 
+              <Textarea
+                id="shipping-zones"
                 value={config.shipping_zones}
-                onChange={(e) => setConfig({...config, shipping_zones: e.target.value})}
+                onChange={(e) => setConfig({ ...config, shipping_zones: e.target.value })}
                 rows={2}
               />
             </div>
-            <Button 
+            <Button
               onClick={() => handleSave('configuración de envíos')}
               disabled={saving}
             >
@@ -270,11 +291,11 @@ export default function ConfiguracionPage() {
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="admin-email">Email del Administrador</Label>
-              <Input 
-                id="admin-email" 
-                type="email" 
+              <Input
+                id="admin-email"
+                type="email"
                 value={config.admin_email}
-                onChange={(e) => setConfig({...config, admin_email: e.target.value})}
+                onChange={(e) => setConfig({ ...config, admin_email: e.target.value })}
               />
             </div>
             <div className="space-y-2">
@@ -283,8 +304,8 @@ export default function ConfiguracionPage() {
                 <label className="flex items-center space-x-2">
                   <Checkbox
                     checked={config.notify_new_orders}
-                    onCheckedChange={(checked) => 
-                      setConfig({...config, notify_new_orders: checked as boolean})
+                    onCheckedChange={(checked) =>
+                      setConfig({ ...config, notify_new_orders: checked as boolean })
                     }
                   />
                   <span className="text-sm">Nuevos pedidos</span>
@@ -292,8 +313,8 @@ export default function ConfiguracionPage() {
                 <label className="flex items-center space-x-2">
                   <Checkbox
                     checked={config.notify_low_stock}
-                    onCheckedChange={(checked) => 
-                      setConfig({...config, notify_low_stock: checked as boolean})
+                    onCheckedChange={(checked) =>
+                      setConfig({ ...config, notify_low_stock: checked as boolean })
                     }
                   />
                   <span className="text-sm">Stock bajo</span>
@@ -301,15 +322,15 @@ export default function ConfiguracionPage() {
                 <label className="flex items-center space-x-2">
                   <Checkbox
                     checked={config.notify_new_customers}
-                    onCheckedChange={(checked) => 
-                      setConfig({...config, notify_new_customers: checked as boolean})
+                    onCheckedChange={(checked) =>
+                      setConfig({ ...config, notify_new_customers: checked as boolean })
                     }
                   />
                   <span className="text-sm">Nuevos clientes</span>
                 </label>
               </div>
             </div>
-            <Button 
+            <Button
               onClick={() => handleSave('configuración de notificaciones')}
               disabled={saving}
             >
