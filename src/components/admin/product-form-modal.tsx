@@ -239,12 +239,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 }}
                 required
                 placeholder="Ej: Anillo de plata con diamante"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
             <div>
@@ -257,13 +252,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 value={formData.code}
                 onChange={(e) => mode === 'create' && setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
                 placeholder={mode === 'edit' ? 'El código no se puede cambiar' : "Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"}
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: mode === 'edit' ? '#f3f4f6' : 'white',
-                  color: mode === 'edit' ? '#6b7280' : 'black',
-                  border: '1px solid #d1d5db',
-                  cursor: mode === 'edit' ? 'not-allowed' : 'text'
-                }}
+                className={`flex h-10 w-full rounded-md border px-3 py-2 text-sm ${mode === 'edit' ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-300'}`}
                 readOnly={mode === 'edit'}
                 disabled={mode === 'edit'}
               />
@@ -281,12 +270,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="99000"
                 min="0"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
           </div>
@@ -302,12 +286,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 required
                 placeholder="10"
                 min="0"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
           </div>
@@ -319,12 +298,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               value={formData.category}
               onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
               required
-              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-              style={{
-                backgroundColor: 'white',
-                color: 'black',
-                border: '1px solid #d1d5db'
-              }}
+              className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
             >
               <option value="">Selecciona una categoría</option>
               {categories.map(category => (
@@ -351,13 +325,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Describe las características principales del producto..."
               rows={3}
-              className="flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm"
-              style={{
-                backgroundColor: 'white',
-                color: 'black',
-                border: '1px solid #d1d5db',
-                resize: 'vertical'
-              }}
+              className="flex min-h-[80px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 resize-y"
             />
           </div>
 
@@ -371,12 +339,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 value={formData.materials}
                 onChange={(e) => setFormData(prev => ({ ...prev, materials: e.target.value }))}
                 placeholder="Ej: Plata 925, Oro 18k"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
             <div>
@@ -387,12 +350,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 value={formData.color}
                 onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                 placeholder="Ej: Dorado, Plateado"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
             <div>
@@ -403,12 +361,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 value={formData.dimensions}
                 onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
                 placeholder="Ej: 2cm x 1.5cm"
-                className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-                style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  border: '1px solid #d1d5db'
-                }}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
           </div>
@@ -421,13 +374,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               onChange={(e) => setFormData(prev => ({ ...prev, specifications: e.target.value }))}
               placeholder="Ej: Oro de 18k garantizado, Peso: 5g..."
               rows={2}
-              className="flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
-              style={{
-                backgroundColor: 'white',
-                color: 'black',
-                border: '1px solid #d1d5db',
-                resize: 'vertical'
-              }}
+              className="flex min-h-[60px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary resize-y"
             />
           </div>
 
@@ -439,12 +386,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               value={formData.seo}
               onChange={(e) => setFormData(prev => ({ ...prev, seo: e.target.value }))}
               placeholder="Ej: anillo diamante, plata 925, joyas urbanas"
-              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
-              style={{
-                backgroundColor: 'white',
-                color: 'black',
-                border: '1px solid #d1d5db'
-              }}
+              className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
             />
           </div>
 
@@ -456,13 +398,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               onChange={(e) => setFormData(prev => ({ ...prev, detail: e.target.value }))}
               placeholder="Información adicional, cuidados, etc..."
               rows={2}
-              className="flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm"
-              style={{
-                backgroundColor: 'white',
-                color: 'black',
-                border: '1px solid #d1d5db',
-                resize: 'vertical'
-              }}
+              className="flex min-h-[60px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 resize-y"
             />
           </div>
 
