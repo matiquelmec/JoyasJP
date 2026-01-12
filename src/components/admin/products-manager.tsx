@@ -213,25 +213,28 @@ export function ProductsManager() {
 
       <div className="grid gap-6 md:grid-cols-4">
         {[
-          { label: 'Productos', value: products.length, icon: Package, color: 'text-zinc-500' },
-          { label: 'Stock Bajo', value: lowStockProducts.length, icon: AlertTriangle, color: 'text-orange-600' },
-          { label: 'Valor Total', value: formatCLP(products.reduce((t, p) => t + (p.price * p.stock), 0)), icon: DollarSign, color: 'text-green-600' },
-          { label: 'Agotados', value: products.filter(p => p.stock === 0).length, icon: Package, color: 'text-red-600' }
+          { label: 'Productos', value: products.length, icon: Package, color: 'text-slate-600', bg: 'bg-slate-100' },
+          { label: 'Stock Bajo', value: lowStockProducts.length, icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100' },
+          { label: 'Valor Total', value: formatCLP(products.reduce((t, p) => t + (p.price * p.stock), 0)), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+          { label: 'Agotados', value: products.filter(p => p.stock === 0).length, icon: Package, color: 'text-rose-600', bg: 'bg-rose-100' }
         ].map((stat, i) => (
-          <Card key={i} className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+          <Card key={i} className="border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
-                <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">{stat.label}</p>
+                <p className={`text-3xl font-black ${stat.color}`}>{stat.value}</p>
               </div>
-              <stat.icon className={`h-8 w-8 ${stat.color} opacity-20`} />
+              <div className={`p-3 rounded-xl ${stat.bg}`}>
+                <stat.icon className={`h-6 w-6 ${stat.color}`} />
+              </div>
             </CardContent>
           </Card>
-        ))}
+        ))
+        }
       </div>
 
-      <Card className="border-border/50 shadow-2xl overflow-hidden border-none bg-white">
-        <CardHeader className="bg-zinc-950 text-white p-6">
+      <Card className="border-slate-200 shadow-xl overflow-hidden bg-white">
+        <CardHeader className="bg-slate-950 text-white p-6 border-b border-slate-900">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <CardTitle className="text-xl font-black uppercase tracking-widest">Joyas en Catálogo</CardTitle>
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -252,18 +255,18 @@ export function ProductsManager() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-zinc-50">
-                <TableRow>
-                  <TableHead className="font-bold uppercase text-[10px] tracking-widest py-4 pl-6 text-zinc-500">Producto</TableHead>
-                  <TableHead className="font-bold uppercase text-[10px] tracking-widest py-4 text-zinc-500">Categoría</TableHead>
-                  <TableHead className="font-bold uppercase text-[10px] tracking-widest py-4 text-zinc-500">Precio</TableHead>
-                  <TableHead className="font-bold uppercase text-[10px] tracking-widest py-4 text-zinc-500">Stock</TableHead>
-                  <TableHead className="font-bold uppercase text-[10px] tracking-widest py-4 text-zinc-500 text-right pr-6">Acciones</TableHead>
+              <TableHeader className="bg-slate-100 border-b border-slate-200">
+                <TableRow className="hover:bg-slate-100">
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 pl-6 text-slate-700">Producto</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Categoría</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Precio</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Stock</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700 text-right pr-6">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredProducts.map((p) => (
-                  <TableRow key={p.id} className="hover:bg-zinc-50/50 transition-colors border-zinc-100">
+                  <TableRow key={p.id} className="hover:bg-slate-50 transition-colors border-slate-100 group">
                     <TableCell className="py-4 pl-6">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-lg bg-zinc-100 border border-zinc-200 overflow-hidden relative shadow-inner">
