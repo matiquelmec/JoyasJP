@@ -39,7 +39,7 @@ export function VideoHero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full">
-          <Link href="/shop" className="flex-1">
+          <Link href="/productos" className="flex-1">
             <Button
               size="lg"
               className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
@@ -48,7 +48,7 @@ export function VideoHero() {
               Ver Colección
             </Button>
           </Link>
-          <Link href="/services" className="flex-1">
+          <Link href="/servicios" className="flex-1">
             <Button
               size="lg"
               variant="outline"

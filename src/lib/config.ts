@@ -95,19 +95,19 @@ export const siteConfig = {
 
 export const navLinks: NavLink[] = [
   {
-    href: '/shop',
+    href: '/productos',
     label: 'Productos',
   },
   {
-    href: '/services',
+    href: '/servicios',
     label: 'Servicio para artistas',
   },
   {
-    href: '/about',
+    href: '/nosotros',
     label: 'Nosotros',
   },
   {
-    href: '/contact',
+    href: '/contacto',
     label: 'Contacto',
   },
 ]

@@ -24,7 +24,7 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
   return shuffled
 }
@@ -43,7 +43,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
       .limit(25)) as { data: Product[] | null; error: any }
 
     if (error) {
-    // console.error('Error fetching products:', error)
+      // console.error('Error fetching products:', error)
       return []
     }
 
@@ -64,7 +64,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
         // 🏷️ Selección balanceada por categorías
         const categories = Array.from(new Set(allProducts.map(p => p.category)))
         const productsPerCategory = Math.ceil(6 / categories.length)
-        
+
         selectedProducts = categories.flatMap(category => {
           const categoryProducts = allProducts.filter(p => p.category === category)
           return fisherYatesShuffle(categoryProducts).slice(0, productsPerCategory)
@@ -77,9 +77,9 @@ async function getFeaturedProducts(): Promise<Product[]> {
           product,
           weight: Math.log(product.stock + 1) * Math.random()
         }))
-        .sort((a, b) => b.weight - a.weight)
-        .map(({ product }) => product)
-        
+          .sort((a, b) => b.weight - a.weight)
+          .map(({ product }) => product)
+
         selectedProducts = weightedProducts.slice(0, 6)
         break
 
@@ -90,15 +90,15 @@ async function getFeaturedProducts(): Promise<Product[]> {
           const x = Math.sin(seed) * 10000
           return x - Math.floor(x)
         }
-        
+
         const timeShuffled = allProducts
-          .map((product, index) => ({ 
-            product, 
+          .map((product, index) => ({
+            product,
             sort: seededRandom(hourSeed + index)
           }))
           .sort((a, b) => a.sort - b.sort)
           .map(({ product }) => product)
-        
+
         selectedProducts = timeShuffled.slice(0, 6)
         break
     }
@@ -127,17 +127,17 @@ function ProductSkeleton() {
       <div className="aspect-square bg-gradient-to-br from-zinc-800 to-zinc-700 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-600/30 to-transparent animate-shimmer" />
       </div>
-      
+
       <div className="p-6">
         {/* Title skeleton */}
         <div className="h-5 bg-gradient-to-r from-zinc-700 to-zinc-600 rounded-lg mb-3 animate-pulse" />
-        
+
         {/* Description skeleton */}
         <div className="space-y-2 mb-4">
           <div className="h-3 bg-zinc-700/80 rounded w-3/4 animate-pulse" />
           <div className="h-3 bg-zinc-700/60 rounded w-1/2 animate-pulse" />
         </div>
-        
+
         {/* Price skeleton */}
         <div className="flex items-center justify-between">
           <div className="h-6 bg-gradient-to-r from-primary/30 to-primary/20 rounded-lg w-24 animate-pulse" />
@@ -174,7 +174,7 @@ async function FeaturedProducts() {
         <p className="text-muted-foreground">
           Estamos preparando nuestra increíble colección para ti.
         </p>
-        <Link href="/contact">
+        <Link href="/contacto">
           <Button className="mt-4" variant="outline">
             Contáctanos para más información
           </Button>
@@ -186,9 +186,9 @@ async function FeaturedProducts() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {featuredProducts.map((product, index) => (
-        <LazyProductCard 
-          key={product.id} 
-          product={product} 
+        <LazyProductCard
+          key={product.id}
+          product={product}
           priority={index < 3} // Los primeros 3 productos se cargan inmediatamente
         />
       ))}
@@ -231,7 +231,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp-delayed-04">
-            <Link href="/shop" className="flex-1">
+            <Link href="/productos" className="flex-1">
               <Button
                 size="lg"
                 className="w-full font-bold text-lg px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
@@ -239,7 +239,7 @@ export default function Home() {
                 Ver Colección
               </Button>
             </Link>
-            <Link href="/services" className="flex-1">
+            <Link href="/servicios" className="flex-1">
               <Button
                 size="lg"
                 variant="outline"
@@ -272,7 +272,7 @@ export default function Home() {
           <FeaturedProductsSection />
 
           <div className="text-center mt-12">
-            <Link href="/shop">
+            <Link href="/productos">
               <Button size="lg" className="font-semibold px-8">
                 Ver Toda la Colección
                 <ChevronRight className="w-4 h-4 ml-2" />

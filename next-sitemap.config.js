@@ -18,12 +18,12 @@ module.exports = {
       changefreq = 'daily'
     }
     // Páginas de productos - alta prioridad
-    else if (path.includes('/shop/') && !path.includes('/shop/success') && !path.includes('/shop/failure')) {
+    else if (path.includes('/productos/') && !path.includes('/productos/success') && !path.includes('/productos/failure')) {
       priority = 0.9
       changefreq = 'weekly'
     }
     // Páginas principales
-    else if (['/shop', '/about', '/contact', '/services'].includes(path)) {
+    else if (['/productos', '/nosotros', '/contacto', '/servicios'].includes(path)) {
       priority = 0.8
       changefreq = 'weekly'
     }

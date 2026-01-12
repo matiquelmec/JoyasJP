@@ -100,8 +100,8 @@ export async function POST(request: NextRequest) {
     // Revalidar páginas después de crear nuevo producto
     try {
       const { revalidatePath } = await import('next/cache')
-      revalidatePath('/shop')
-      revalidatePath(`/shop/${productId}`)
+      revalidatePath('/productos')
+      revalidatePath(`/productos/${productId}`)
     } catch (revalidateError) {
       // console.log('Revalidation triggered for new product:', productId)
     }
@@ -144,8 +144,8 @@ export async function PUT(request: NextRequest) {
     // Revalidar la página del producto después de actualizar
     try {
       const { revalidatePath } = await import('next/cache')
-      revalidatePath(`/shop/${id}`)
-      revalidatePath('/shop')
+      revalidatePath(`/productos/${id}`)
+      revalidatePath('/productos')
     } catch (revalidateError) {
       // console.log('Revalidation triggered for product:', id)
     }
