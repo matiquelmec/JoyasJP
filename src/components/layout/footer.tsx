@@ -116,7 +116,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author} &bull; Joyería de Autor
           </p>
           <div className="flex gap-6">
-            <Link href="/politicas" className="hover:text-primary transition-colors">Privacidad</Link>
+            <Link href="/privacidad" className="hover:text-primary transition-colors">Privacidad</Link>
             <Link href="/terminos" className="hover:text-primary transition-colors">Términos</Link>
           </div>
         </div>
