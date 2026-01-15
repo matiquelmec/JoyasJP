@@ -41,19 +41,15 @@ export default function ShopPage() {
 
         setProducts(validProducts)
 
-        // Los colores ya vienen limpios desde getColors(), solo ordenar
-        // Usamos la configuración central para el orden
-        const colorOrder = productConfig.colors.map(c => c.toLowerCase());
+        // Usamos siempre los colores de la configuración central
+        const allConfigColors = productConfig.colors;
 
-        const orderedColors = fetchedColors.sort((a, b) => {
-          const indexA = colorOrder.indexOf(a.toLowerCase());
-          const indexB = colorOrder.indexOf(b.toLowerCase());
-          const finalIndexA = indexA === -1 ? 999 : indexA;
-          const finalIndexB = indexB === -1 ? 999 : indexB;
-          return finalIndexA - finalIndexB;
-        });
+        // Opcional: Si quisieras filtrar solo los que tienen productos, descomenta esto:
+        // const availableColors = fetchedColors.filter(c => allConfigColors.includes(c));
 
-        setColors(['all', ...orderedColors])
+        setColors(['all', ...allConfigColors])
+
+
       } catch (err) {
         setError('Failed to fetch data.')
         // console.error(err)
