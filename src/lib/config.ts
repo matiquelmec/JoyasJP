@@ -142,7 +142,7 @@ export const productConfig = {
     'Titanio',
     'Plata Bañada en Oro',
   ],
-  colors: ['Dorado', 'Plateado', 'Negro', 'Rose Gold', 'Multicolor'],
+  colors: ['Dorado', 'Plateado', 'Mixto', 'Negro', 'Rose Gold'],
   priceRanges: [
     { label: 'Hasta $25.000', min: 0, max: 25000 },
     { label: '$25.000 - $50.000', min: 25000, max: 50000 },

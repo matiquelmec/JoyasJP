@@ -34,12 +34,10 @@ interface ProductFormModalProps {
   trigger?: React.ReactNode
 }
 
-const categories = [
-  'cadenas',
-  'dijes',
-  'pulseras',
-  'aros'
-]
+import { productConfig } from '@/lib/config'
+
+// Categories are now derived from productConfig
+
 
 export function ProductFormModal({ mode, product, onSave, trigger }: ProductFormModalProps) {
   const [open, setOpen] = useState(false)
@@ -301,9 +299,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
             >
               <option value="">Selecciona una categoría</option>
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+              {productConfig.categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -344,14 +342,19 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
             <div>
               <Label htmlFor="color">Color</Label>
-              <input
+              <select
                 id="color"
-                type="text"
                 value={formData.color}
                 onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                placeholder="Ej: Dorado, Plateado"
-                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-              />
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+              >
+                <option value="">Selecciona un color</option>
+                {productConfig.colors.map(color => (
+                  <option key={color} value={color}>
+                    {color}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <Label htmlFor="dimensions">Dimensiones</Label>

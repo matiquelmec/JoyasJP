@@ -10,7 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getColors, getProducts } from '@/lib/api'
 import type { Product } from '@/lib/types'
 
-const allCategories = ['all', 'cadenas', 'dijes', 'pulseras', 'aros']
+import { productConfig } from '@/lib/config'
+
+const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all')
@@ -28,19 +30,21 @@ export default function ShopPage() {
           getProducts(),
           getColors(),
         ])
-        
+
         // Los productos ya vienen filtrados desde getProducts() (stock > 0)
-        const validProducts = fetchedProducts.filter(product => 
-          product.name && 
+        const validProducts = fetchedProducts.filter(product =>
+          product.name &&
           product.name.toLowerCase() !== 'prueba' &&
           product.price > 0
           // is_deleted field removed from Product type
         );
-        
+
         setProducts(validProducts)
-        
+
         // Los colores ya vienen limpios desde getColors(), solo ordenar
-        const colorOrder = ['dorado', 'plateado', 'mixto', 'negro'];
+        // Usamos la configuración central para el orden
+        const colorOrder = productConfig.colors.map(c => c.toLowerCase());
+
         const orderedColors = fetchedColors.sort((a, b) => {
           const indexA = colorOrder.indexOf(a.toLowerCase());
           const indexB = colorOrder.indexOf(b.toLowerCase());
@@ -48,11 +52,11 @@ export default function ShopPage() {
           const finalIndexB = indexB === -1 ? 999 : indexB;
           return finalIndexA - finalIndexB;
         });
-        
+
         setColors(['all', ...orderedColors])
       } catch (err) {
         setError('Failed to fetch data.')
-    // console.error(err)
+        // console.error(err)
       } finally {
         setLoading(false)
       }
@@ -74,18 +78,19 @@ export default function ShopPage() {
 
   // Ordenamiento memoizado por categoría
   const filteredProducts = useMemo(() => {
-    const categoryOrder = ['cadenas', 'dijes', 'pulseras', 'aros'];
-    
+    // Usamos el orden de categorías de la configuración central
+    const categoryOrder = productConfig.categories.map(c => c.id);
+
     if (activeCategory === 'all') {
       return baseFilteredProducts.sort((a, b) => {
-        const indexA = categoryOrder.indexOf(a.category);
-        const indexB = categoryOrder.indexOf(b.category);
+        const indexA = categoryOrder.indexOf(a.category as any);
+        const indexB = categoryOrder.indexOf(b.category as any);
         const finalIndexA = indexA === -1 ? 999 : indexA;
         const finalIndexB = indexB === -1 ? 999 : indexB;
         return finalIndexA - finalIndexB;
       })
     }
-    
+
     return baseFilteredProducts;
   }, [baseFilteredProducts, activeCategory])
 
@@ -99,7 +104,7 @@ export default function ShopPage() {
               Define tu flow con cada pieza.
             </p>
           </div>
-          
+
           {/* Premium Loading skeleton */}
           <div className="mb-8">
             <div className="grid grid-cols-5 gap-2 mb-4">
@@ -111,9 +116,9 @@ export default function ShopPage() {
               <div className="w-48 h-10 bg-zinc-800 rounded-md animate-pulse" />
             </div>
           </div>
-          
+
           <Separator className="mb-12" />
-          
+
           <SkeletonGrid count={8} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" />
         </div>
       </div>
@@ -162,7 +167,7 @@ export default function ShopPage() {
           </TabsList>
 
           <div className="flex justify-center md:justify-end mb-8">
-            <ColorFilter 
+            <ColorFilter
               colors={colors}
               activeColor={activeColor}
               onColorChange={handleColorChange}
@@ -175,9 +180,9 @@ export default function ShopPage() {
           {filteredProducts.length > 0 ? (
             <div className="product-grid responsive-container responsive-grid gap-8">
               {filteredProducts.map((product, index) => (
-                <LazyProductCard 
-                  key={product.id} 
-                  product={product} 
+                <LazyProductCard
+                  key={product.id}
+                  product={product}
                   priority={index < 6} // Los primeros 6 productos se cargan inmediatamente
                 />
               ))}
