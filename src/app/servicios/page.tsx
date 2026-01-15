@@ -19,7 +19,7 @@ const servicesPageContent = {
 export default function ServicesPage() {
   const { config } = useSiteConfig()
   const storeName = config?.store_name || 'Joyas JP'
-  
+
   return (
     <div className="relative min-h-screen">
       {/* Crisp Video Background */}
@@ -35,7 +35,7 @@ export default function ServicesPage() {
       />
       {/* Overlay like homepage */}
       <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />
-      
+
       <div className="relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
           <div className="max-w-3xl mx-auto text-center">
@@ -56,7 +56,7 @@ export default function ServicesPage() {
             ))}
             <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
               <Link
-                href="https://wa.me/56982990513"
+                href="https://wa.me/56974662174"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -81,9 +81,9 @@ export default function ServicesPage() {
                 </Button>
               </Link>
             </div>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   )
 }
