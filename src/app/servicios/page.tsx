@@ -24,7 +24,7 @@ export default function ServicesPage() {
     <div className="relative min-h-screen">
       {/* Crisp Video Background */}
       <video
-        src="/assets/mi-video2.mp4"
+        src={getVideoUrl('mi-video2.mp4')}
         autoPlay
         loop
         muted
@@ -33,7 +33,7 @@ export default function ServicesPage() {
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de servicios para artistas"
       />
-      {/* Overlay like homepage - Reverted per user request */}
+      {/* Overlay like homepage */}
       <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />
 
       <div className="relative z-10">

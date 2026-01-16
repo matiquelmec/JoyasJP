@@ -178,7 +178,12 @@ export default function RootLayout({
           type="image/webp"
           fetchPriority="high"
         />
-
+        <link
+          rel="preload"
+          href="/assets/mi-video.mp4"
+          as="video"
+          type="video/mp4"
+        />
 
         {/* ⚡ Critical CSS optimizado */}
         <style dangerouslySetInnerHTML={{
