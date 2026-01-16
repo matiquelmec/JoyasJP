@@ -32,7 +32,7 @@ export default function AboutPage() {
       </div>
 
       <div className="container relative z-10 px-4 py-24 md:py-32">
-        <div className="max-w-3xl mx-auto text-center space-y-8 p-8 md:p-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp">
+        <div className="max-w-3xl mx-auto text-center space-y-8 p-4 md:p-0 animate-fadeInUp">
 
           <div className="space-y-2">
             <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-lg">
