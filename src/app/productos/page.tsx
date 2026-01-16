@@ -7,7 +7,7 @@ import { ColorFilter } from '@/components/shop/color-filter'
 import { Separator } from '@/components/ui/separator'
 import { SkeletonGrid } from '@/components/ui/skeleton-card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getColors, getProducts } from '@/lib/api'
+import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 
 import { productConfig } from '@/lib/config'
@@ -27,8 +27,8 @@ export default function ShopPage() {
       try {
         setLoading(true)
         const [fetchedProducts, fetchedColors] = await Promise.all([
-          getProducts(),
-          getColors(),
+          ProductService.getAllProducts(),
+          ProductService.getAvailableColors(),
         ])
 
         // Los productos ya vienen filtrados desde getProducts() (stock > 0)

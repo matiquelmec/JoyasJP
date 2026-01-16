@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
-import { supabase } from '@/lib/supabase-client'
+import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 
 // ⚡ DYNAMIC IMPORT para componente pesado
@@ -30,22 +30,11 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
 }
 
 async function getFeaturedProducts(): Promise<Product[]> {
-  if (!supabase) {
-    return []
-  }
-
   try {
-    // Obtener productos con stock disponible únicamente
-    const { data: allProducts, error } = (await supabase
-      .from('products')
-      .select('*')
-      .gt('stock', 0)
-      .limit(25)) as { data: Product[] | null; error: any }
-
-    if (error) {
-      // console.error('Error fetching products:', error)
-      return []
-    }
+    // ⚡ Logic moved to centralized service
+    // This maintains exact same business logic (stock > 0, limit 25, shuffle)
+    // but ensures types are safe via the service adapter
+    const allProducts = await ProductService.getFeaturedProducts()
 
     if (!allProducts || allProducts.length === 0) {
       return []

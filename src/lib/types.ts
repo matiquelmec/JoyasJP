@@ -37,12 +37,12 @@ export interface Product {
   name: string
   description?: string
   price: number
-  imageUrl: string // Database column is actually imageUrl (not image_url)
+  imageUrl: string // Frontend property (camelCase)
   category: string
   stock: number
   created_at?: string
   updated_at?: string
-  // Actual database fields based on schema analysis
+  // Optional DB fields
   materials?: string
   dimensions?: string
   color?: string
@@ -54,7 +54,35 @@ export interface Product {
   seo?: string
   image_hint?: string
   deleted_at?: string
-  code?: string // Optional product code used as ID
+  code?: string
+}
+
+// 🛡️ DATABASE TYPE DEFINITION
+// Refleja exactamente lo que viene de Supabase (snake_case)
+export interface DatabaseProduct {
+  id: string
+  name: string
+  description?: string
+  price: number
+  image_url?: string // DB column usually snake_case
+  imageUrl?: string  // Some legacies might use this
+  category: string
+  stock: number
+  created_at?: string
+  updated_at?: string
+  materials?: string
+  dimensions?: string
+  color?: string
+  detail?: string
+  specifications?: string
+  gallery?: string[]
+  variants?: string[]
+  sku?: string
+  seo?: string
+  image_hint?: string
+  deleted_at?: string
+  code?: string
+
 }
 
 export interface ProductFilters {
