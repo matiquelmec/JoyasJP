@@ -24,7 +24,7 @@ export default function ServicesPage() {
     <div className="relative min-h-screen">
       {/* Crisp Video Background */}
       <video
-        src={getVideoUrl('mi-video2.mp4')}
+        src="/assets/mi-video2.mp4"
         autoPlay
         loop
         muted
