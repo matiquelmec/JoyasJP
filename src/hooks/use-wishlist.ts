@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
 
 interface WishlistState {
@@ -21,24 +21,18 @@ export const useWishlist = create<WishlistState>()(
         const existingItem = currentItems.find((i) => i.id === item.id)
 
         if (existingItem) {
-          return toast({
-            title: 'Producto ya en favoritos',
-            variant: 'default',
-          })
+          return toast('Producto ya en favoritos')
         }
 
         set({ items: [...currentItems, item] })
-        toast({
-          title: 'Añadido a favoritos',
+        toast.success('Añadido a favoritos', {
           description: `${item.name} ha sido añadido a tu lista de deseos.`,
         })
       },
       removeItem: (itemId) => {
         set({ items: get().items.filter((item) => item.id !== itemId) })
-        toast({
-          title: 'Eliminado de favoritos',
+        toast.info('Eliminado de favoritos', {
           description: 'El producto ha sido eliminado de tu lista de deseos.',
-          variant: 'destructive',
         })
       },
       isItemInWishlist: (itemId) => {

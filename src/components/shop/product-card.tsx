@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
 import { cn, normalizeColor } from '@/lib/utils'
@@ -50,22 +50,33 @@ const ProductCard = memo(function ProductCard({
 
       try {
         addItem(product)
-        toast({
-          title: '¡Producto añadido! 🎉',
+        toast('¡Producto añadido! 🎉', {
           description: `${product.name} se ha agregado a tu carrito.`,
-          duration: 3000,
+          action: {
+            label: 'Ver Carrito',
+            onClick: () => window.location.href = '/checkout',
+          },
+          icon: (
+            <div className="relative w-10 h-10 rounded-md overflow-hidden border border-zinc-200 shadow-sm">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ),
+          duration: 4000,
         })
       } catch (error) {
-        toast({
-          title: 'Error',
+        toast.error('Error', {
           description: 'No se pudo agregar el producto. Intenta nuevamente.',
-          variant: 'destructive',
         })
       } finally {
         setIsAddingToCart(false)
       }
     },
-    [addItem, product, isAddingToCart, toast]
+    [addItem, product, isAddingToCart]
   )
 
   const handleWishlistClick = useCallback(
@@ -76,26 +87,22 @@ const ProductCard = memo(function ProductCard({
       try {
         if (isInWishlist) {
           removeFromWishlist(product.id)
-          toast({
-            title: 'Eliminado de favoritos',
+          toast.info('Eliminado de favoritos', {
             description: `${product.name} se eliminó de tus favoritos.`,
           })
         } else {
           addToWishlist(product)
-          toast({
-            title: '¡Añadido a favoritos! ❤️',
+          toast.success('¡Añadido a favoritos! ❤️', {
             description: `${product.name} se agregó a tus favoritos.`,
           })
         }
       } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'No se pudo actualizar favoritos. Intenta nuevamente.',
-          variant: 'destructive',
+        toast.error('Error', {
+          description: 'No se pudo actualizar favoritos.',
         })
       }
     },
-    [isInWishlist, removeFromWishlist, addToWishlist, product, toast]
+    [isInWishlist, removeFromWishlist, addToWishlist, product]
   )
 
   const handleImageLoad = useCallback(() => {

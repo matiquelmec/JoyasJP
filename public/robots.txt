@@ -19,7 +19,7 @@ Disallow: /shop/failure
 Disallow: /shop/pending
 
 # Host
-Host: https://joyasjp.netlify.app
+Host: https://joyasjp.cl
 
 # Sitemaps
-Sitemap: https://joyasjp.netlify.app/sitemap.xml
+Sitemap: https://joyasjp.cl/sitemap.xml

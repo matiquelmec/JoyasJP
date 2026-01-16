@@ -41,7 +41,7 @@ import {
 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { ProductFormModal } from './product-form-modal'
 
 // Tipo para los datos que vienen de Supabase
@@ -85,10 +85,8 @@ export function ProductsManager() {
       })) as Product[]
       setProducts(mappedProducts)
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'No se pudieron cargar los productos.',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
@@ -102,10 +100,8 @@ export function ProductsManager() {
         prev.map(p => p.id === productId ? { ...p, stock: newStock } : p)
       )
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'No se pudo actualizar el stock.',
-        variant: 'destructive'
       })
     }
   }
@@ -117,15 +113,12 @@ export function ProductsManager() {
       await adminAPI.deleteProduct(deleteProduct.id)
       setRecentlyDeleted({ product: deleteProduct, timestamp: Date.now() })
       setProducts(prev => prev.filter(p => p.id !== deleteProduct.id))
-      toast({
-        title: 'Producto eliminado',
+      toast.success('Producto eliminado', {
         description: `${deleteProduct.name} ha sido eliminado.`,
       })
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'No se pudo eliminar el producto.',
-        variant: 'destructive'
       })
     } finally {
       setDeleting(false)
@@ -139,9 +132,9 @@ export function ProductsManager() {
       await adminAPI.restoreProduct(recentlyDeleted.product.id, recentlyDeleted.product.stock || 0)
       setProducts(prev => [...prev, recentlyDeleted.product])
       setRecentlyDeleted(null)
-      toast({ title: 'Producto restaurado', description: `${recentlyDeleted.product.name} ha sido restaurado.` })
+      toast.success('Producto restaurado', { description: `${recentlyDeleted.product.name} ha sido restaurado.` })
     } catch (error) {
-      toast({ title: 'Error', description: 'No se pudo restaurar.', variant: 'destructive' })
+      toast.error('Error', { description: 'No se pudo restaurar.' })
     }
   }
 

@@ -3,7 +3,7 @@
 import { Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -46,22 +46,18 @@ export function AddToWishlistButton({
     try {
       if (isInWishlist) {
         removeItem(product.id)
-        toast({
-          title: 'Eliminado de favoritos',
+        toast.info('Eliminado de favoritos', {
           description: `${product.name} se eliminó de tus favoritos.`,
         })
       } else {
         addItem(product)
-        toast({
-          title: '¡Añadido a favoritos! ❤️',
+        toast.success('¡Añadido a favoritos! ❤️', {
           description: `${product.name} se agregó a tus favoritos.`,
         })
       }
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'No se pudo actualizar favoritos. Intenta nuevamente.',
-        variant: 'destructive',
+      toast.error('Error', {
+        description: 'No se pudo actualizar favoritos.',
       })
     }
   }

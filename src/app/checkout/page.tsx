@@ -10,7 +10,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/use-cart'
-import { useToast } from '@/hooks/use-toast'
+
+import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteConfig } from '@/hooks/use-site-config'
@@ -46,7 +47,7 @@ const chileanRegions = [
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, clearCart } = useCart()
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const { config } = useSiteConfig()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CheckoutFormData>({
@@ -74,55 +75,43 @@ export default function CheckoutPage() {
     const { customerName, email, phone, address, city, region } = formData
 
     if (!customerName.trim()) {
-      toast({
-        title: 'Campo requerido',
-        description: 'Por favor ingresa tu nombre completo',
-        variant: 'destructive'
+      toast.error('Campo requerido', {
+        description: 'Por favor ingresa tu nombre completo'
       })
       return false
     }
 
     if (!email.trim() || !email.includes('@')) {
-      toast({
-        title: 'Email inválido',
-        description: 'Por favor ingresa un email válido',
-        variant: 'destructive'
+      toast.error('Email inválido', {
+        description: 'Por favor ingresa un email válido'
       })
       return false
     }
 
     if (!phone.trim()) {
-      toast({
-        title: 'Campo requerido',
-        description: 'Por favor ingresa tu número de teléfono',
-        variant: 'destructive'
+      toast.error('Campo requerido', {
+        description: 'Por favor ingresa tu número de teléfono'
       })
       return false
     }
 
     if (!address.trim()) {
-      toast({
-        title: 'Campo requerido',
-        description: 'Por favor ingresa tu dirección completa',
-        variant: 'destructive'
+      toast.error('Campo requerido', {
+        description: 'Por favor ingresa tu dirección completa'
       })
       return false
     }
 
     if (!city.trim()) {
-      toast({
-        title: 'Campo requerido',
-        description: 'Por favor ingresa tu ciudad',
-        variant: 'destructive'
+      toast.error('Campo requerido', {
+        description: 'Por favor ingresa tu ciudad'
       })
       return false
     }
 
     if (!region) {
-      toast({
-        title: 'Campo requerido',
-        description: 'Por favor selecciona tu región',
-        variant: 'destructive'
+      toast.error('Error', {
+        description: 'Hubo un problema al procesar tu pedido. Por favor intenta nuevamente.'
       })
       return false
     }
@@ -174,10 +163,8 @@ export default function CheckoutPage() {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Ocurrió un error inesperado.'
-      toast({
-        title: 'Error al Procesar la Orden',
+      toast.error('Error al Procesar la Orden', {
         description: errorMessage,
-        variant: 'destructive'
       })
       // console.error('Error al procesar checkout:', error)
     } finally {

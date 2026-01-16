@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { generateSlug } from '@/lib/slug-utils'
 
 interface ImageUploadProps {
@@ -30,10 +30,8 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
     // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!validTypes.includes(file.type)) {
-      toast({
-        title: 'Tipo de archivo inválido',
+      toast.error('Tipo de archivo inválido', {
         description: 'Solo se permiten archivos JPEG, PNG y WebP.',
-        variant: 'destructive'
       })
       return
     }
@@ -41,10 +39,8 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024 // 5MB
     if (file.size > maxSize) {
-      toast({
-        title: 'Archivo muy grande',
+      toast.error('Archivo muy grande', {
         description: 'El tamaño máximo permitido es 5MB.',
-        variant: 'destructive'
       })
       return
     }
@@ -68,7 +64,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       const formData = new FormData()
       formData.append('file', file)
       formData.append('category', category)
-      
+
       // Add product code if available
       if (productCode) {
         formData.append('productCode', productCode)
@@ -105,25 +101,23 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       // Call parent callback with the public URL
       onImageUploaded(result.publicUrl)
 
-      toast({
-        title: 'Imagen subida exitosamente',
+      toast.success('Imagen subida exitosamente', {
         description: `${result.fileName} guardada en ${category}/ (${(result.fileSize / 1024).toFixed(1)} KB)`,
       })
 
     } catch (error) {
-    // console.error('Upload error:', error)
-      toast({
-        title: 'Error al subir imagen',
-        description: error.message || 'Intenta nuevamente',
-        variant: 'destructive'
+      // console.error('Upload error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Intenta nuevamente'
+      toast.error('Error al subir imagen', {
+        description: errorMessage,
       })
-      
+
       // Reset preview on error
       setPreview(currentImage || null)
     } finally {
       setUploading(false)
       setUploadProgress(0)
-      
+
       // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -146,7 +140,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
   return (
     <div className="space-y-4">
       <Label>Imagen del Producto</Label>
-      
+
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -186,7 +180,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
                 height={96}
                 className="w-24 h-24 object-cover rounded-lg border"
                 onError={(e) => {
-    // console.error('Image preview error')
+                  // console.error('Image preview error')
                   setPreview(null)
                 }}
               />

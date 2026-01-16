@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Settings, Store, Mail, Globe, Shield, Save, Loader2 } from 'lucide-react'
 import { adminAPI } from '@/lib/admin-api'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useSiteConfig } from '@/hooks/use-site-config'
 
@@ -43,10 +43,8 @@ export default function ConfiguracionPage() {
       setConfig(data)
     } catch (error) {
       // console.error('Error loading configuration:', error)
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'No se pudo cargar la configuración',
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
@@ -61,16 +59,13 @@ export default function ConfiguracionPage() {
       // Refrescar la configuración en toda la aplicación
       await refreshConfig()
 
-      toast({
-        title: 'Configuración guardada',
+      toast.success('Configuración guardada', {
         description: `La ${section} se ha actualizado correctamente.`
       })
     } catch (error) {
       // console.error('Error saving configuration:', error)
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'No se pudo guardar la configuración',
-        variant: 'destructive'
       })
     } finally {
       setSaving(false)

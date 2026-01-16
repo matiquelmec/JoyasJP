@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Plus, Save, X } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
-import { toast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { ImageUpload } from './image-upload'
 
 interface ProductFormModalProps {
@@ -106,40 +106,32 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     try {
       // Validación básica
       if (!formData.name.trim()) {
-        toast({
-          title: 'Error de validación',
+        toast.error('Error de validación', {
           description: 'El nombre del producto es requerido.',
-          variant: 'destructive'
         })
         setLoading(false)
         return
       }
 
       if (!formData.price || parseFloat(formData.price) <= 0) {
-        toast({
-          title: 'Error de validación',
+        toast.error('Error de validación', {
           description: 'El precio debe ser mayor a 0.',
-          variant: 'destructive'
         })
         setLoading(false)
         return
       }
 
       if (!formData.category) {
-        toast({
-          title: 'Error de validación',
+        toast.error('Error de validación', {
           description: 'La categoría es requerida.',
-          variant: 'destructive'
         })
         setLoading(false)
         return
       }
 
       if (!formData.stock || parseInt(formData.stock) < 0) {
-        toast({
-          title: 'Error de validación',
+        toast.error('Error de validación', {
           description: 'El stock debe ser 0 o mayor.',
-          variant: 'destructive'
         })
         setLoading(false)
         return
@@ -169,15 +161,13 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         await adminAPI.updateProduct(product?.id || '', productData)
       }
 
-      toast({
-        title: mode === 'create' ? 'Producto creado' : 'Producto actualizado',
+      toast.success(mode === 'create' ? 'Producto creado' : 'Producto actualizado', {
         description: `${formData.name} se ha ${mode === 'create' ? 'creado' : 'actualizado'} exitosamente.`,
       })
 
       // Show product info to user for new products
       if (mode === 'create' && createdProduct?.id) {
-        toast({
-          title: 'Producto creado exitosamente',
+        toast.info('Producto creado exitosamente', {
           description: `ID del producto: ${createdProduct.id}`,
           duration: 5000,
         })
@@ -187,12 +177,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       onSave()
     } catch (error) {
       // Mensaje de error más específico
-      const errorMessage = error.message || 'Error desconocido'
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
 
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: `No se pudo ${mode === 'create' ? 'crear' : 'actualizar'} el producto: ${errorMessage}`,
-        variant: 'destructive'
       })
     } finally {
       setLoading(false)
