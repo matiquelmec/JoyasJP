@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { getVideoUrl } from '@/lib/asset-version'
 
@@ -68,7 +69,7 @@ export default function ServicesPage() {
                 </Button>
               </Link>
               <Link
-                href="https://instagram.com/joyasjp"
+                href={siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
               >

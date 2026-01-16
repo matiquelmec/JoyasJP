@@ -6,6 +6,7 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/toaster'
 import { PreloaderProvider } from '@/components/providers/preloader-provider'
 import { cn } from '@/lib/utils'
+import { siteConfig } from '@/lib/config'
 import '@/lib/env-validator' // 🛡️ Validador de variables de entorno
 
 const playfairDisplay = Playfair_Display({
@@ -122,7 +123,7 @@ const jsonLd = {
     areaServed: 'CL',
     availableLanguage: 'Spanish',
   },
-  sameAs: ['https://instagram.com/joyasjp', 'https://tiktok.com/@joyasjp'],
+  sameAs: [siteConfig.links.instagram, siteConfig.links.tiktok],
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'CL',

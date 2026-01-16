@@ -17,7 +17,7 @@ export const siteConfig = {
     'Santiago joyería',
   ],
   links: {
-    instagram: 'https://instagram.com/joyasjp',
+    instagram: 'https://www.instagram.com/joyasjp.cl',
     tiktok: 'https://tiktok.com/@joyasjp',
     whatsapp: 'https://wa.me/56974662174',
     email: 'contacto@joyasjp.cl',
