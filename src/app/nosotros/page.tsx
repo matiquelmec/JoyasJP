@@ -14,7 +14,7 @@ const aboutPageContent = {
 
 export default function AboutPage() {
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center overflow-hidden -mt-20 sm:-mt-24 md:-mt-32 lg:-mt-40">
+    <div className="relative min-h-[130vh] bg-black text-white flex items-center justify-center overflow-hidden -mt-20 sm:-mt-24 md:-mt-32 lg:-mt-40">
       {/* Background Image - The Chain */}
       <div className="absolute inset-0 z-0 flex items-center justify-center">
         <Image
@@ -27,6 +27,8 @@ export default function AboutPage() {
         />
         {/* Vignette effect to focus focus center */}
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
+        {/* Bottom Fade for Footer transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
       <div className="container relative z-10 px-4 py-24 md:py-32">
