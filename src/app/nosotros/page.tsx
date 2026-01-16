@@ -14,36 +14,47 @@ const aboutPageContent = {
 
 export default function AboutPage() {
   return (
-    <div className="bg-background text-foreground">
-      <div className="relative h-[60vh] flex items-center justify-center text-center bg-black">
+    <div className="relative min-h-screen bg-black text-white flex items-center justify-center overflow-hidden">
+      {/* Background Image - The Chain */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center">
         <Image
           src={getImageUrl('nosotros.webp')}
           alt="Equipo de JoyasJP"
           fill={true}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover opacity-20"
+          sizes="100vw"
+          className="object-contain opacity-60"
           priority
         />
-        <div className="relative z-10 p-4">
-          <h1 className="text-5xl md:text-7xl font-headline font-bold">
-            {aboutPageContent.title}
-          </h1>
-          <p className="mt-4 text-xl text-muted-foreground">
-            {aboutPageContent.subtitle}
-          </p>
-        </div>
+        {/* Vignette effect to focus focus center */}
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24">
-        <div className="max-w-4xl mx-auto">
-          <div className="space-y-4 text-lg text-foreground/90 leading-relaxed text-center">
+      <div className="container relative z-10 px-4 py-24 md:py-32">
+        <div className="max-w-3xl mx-auto text-center space-y-8 p-8 md:p-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp">
+
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-lg">
+              {aboutPageContent.title}
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90 font-light tracking-wide">
+              {aboutPageContent.subtitle}
+            </p>
+          </div>
+
+          <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+
+          <div className="space-y-6 text-lg md:text-xl text-white/80 leading-relaxed font-body">
             {aboutPageContent.paragraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+              <p key={index} className="drop-shadow-md">
+                {paragraph}
+              </p>
             ))}
           </div>
-          <p className="font-bold text-primary text-xl pt-12 text-center">
+
+          <p className="pt-4 text-xl md:text-2xl font-bold text-white tracking-widest uppercase drop-shadow-lg">
             {aboutPageContent.closingStatement}
           </p>
+
         </div>
       </div>
     </div>
