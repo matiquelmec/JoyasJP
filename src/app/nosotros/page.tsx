@@ -31,7 +31,7 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
-      <div className="container relative z-10 px-4 py-24 md:py-32">
+      <div className="container relative z-10 px-4 pt-48 pb-24 md:pt-40 md:pb-32">
         <div className="max-w-3xl mx-auto text-center space-y-8 p-4 md:p-0 animate-fadeInUp">
 
           <div className="space-y-2">
