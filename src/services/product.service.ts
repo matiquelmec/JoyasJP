@@ -143,4 +143,37 @@ export class ProductService {
             return []
         }
     }
+
+    /**
+     * Obtiene productos relacionados por categoría
+     */
+    static async getRelatedProducts(
+        currentProductId: string,
+        category: string,
+        limit: number = 4
+    ): Promise<Product[]> {
+        if (!supabase) return []
+
+        try {
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .eq('category', category)
+                .neq('id', currentProductId)
+                .gt('stock', 0)
+                .limit(limit)
+
+            if (error || !data) return []
+
+            return (data as unknown as DatabaseProduct[]).map(dbProduct => {
+                const product = mapDatabaseProductToProduct(dbProduct)
+                if (product.color) {
+                    product.color = normalizeColor(product.color)
+                }
+                return product
+            })
+        } catch (error) {
+            return []
+        }
+    }
 }
