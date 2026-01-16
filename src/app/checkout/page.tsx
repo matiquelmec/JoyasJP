@@ -72,7 +72,7 @@ export default function CheckoutPage() {
 
   const validateForm = () => {
     const { customerName, email, phone, address, city, region } = formData
-    
+
     if (!customerName.trim()) {
       toast({
         title: 'Campo requerido',
@@ -132,7 +132,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
     if (items.length === 0) return
 
@@ -140,7 +140,7 @@ export default function CheckoutPage() {
 
     try {
       // Analytics tracking removed (Vercel -> Netlify migration)
-      
+
       // Preparar datos para crear la orden
       // Proceder con el pago en MercadoPago y guardar orden
       const checkoutResponse = await fetch('/api/checkout', {
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
         description: errorMessage,
         variant: 'destructive'
       })
-    // console.error('Error al procesar checkout:', error)
+      // console.error('Error al procesar checkout:', error)
     } finally {
       setIsLoading(false)
     }
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
           Agrega algunos productos antes de proceder al checkout
         </p>
         <Button asChild>
-          <Link href="/shop">Ir a la Tienda</Link>
+          <Link href="/productos">Ir a la Tienda</Link>
         </Button>
       </div>
     )
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/shop">
+            <Link href="/productos">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -240,7 +240,7 @@ export default function CheckoutPage() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="email">Correo Electrónico *</Label>
                   <div className="relative">
@@ -305,7 +305,7 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="region">Región *</Label>
                     <select
@@ -354,9 +354,9 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   ))}
-                  
+
                   <Separator />
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Subtotal ({cartStats.totalItems} productos)</span>
@@ -394,7 +394,7 @@ export default function CheckoutPage() {
                     Proceder al Pago
                   </Button>
                 </form>
-                
+
                 <p className="text-xs text-muted-foreground text-center mt-4">
                   Al continuar, serás redirigido a MercadoPago para completar tu pago de forma segura.
                 </p>
