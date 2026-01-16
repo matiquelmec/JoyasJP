@@ -48,8 +48,12 @@ export default function ContactPage() {
   const { config } = useSiteConfig()
 
   return (
-    <div className="bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+    <div className="relative min-h-screen bg-black overflow-hidden flex flex-col justify-center">
+      {/* Background Ambient Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-zinc-800/20 rounded-full blur-[100px]" />
+
+      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-headline font-bold">
             {contactPageContent.title}
