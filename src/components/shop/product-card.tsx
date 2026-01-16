@@ -22,7 +22,7 @@ const ProductCard = memo(function ProductCard({
   priority = false,
   className,
 }: ProductCardProps) {
-  const { addItem } = useCart()
+  const { addItem, openCart } = useCart()
   const {
     addItem: addToWishlist,
     removeItem: removeFromWishlist,
@@ -50,14 +50,10 @@ const ProductCard = memo(function ProductCard({
 
       try {
         addItem(product)
-        toast('¡Producto añadido! 🎉', {
-          description: `${product.name} se ha agregado a tu carrito.`,
-          action: {
-            label: 'Ver Carrito',
-            onClick: () => window.location.href = '/checkout',
-          },
-          icon: (
-            <div className="relative w-10 h-10 rounded-md overflow-hidden border border-zinc-200 shadow-sm">
+
+        toast.custom((t) => (
+          <div className="flex w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg p-4 gap-4 items-center">
+            <div className="relative w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-zinc-100 shadow-sm">
               <Image
                 src={product.imageUrl}
                 alt={product.name}
@@ -65,9 +61,27 @@ const ProductCard = memo(function ProductCard({
                 className="object-cover"
               />
             </div>
-          ),
-          duration: 4000,
-        })
+            <div className="flex-1 min-w-0 grid gap-1">
+              <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-none">
+                ¡Agregado al carrito!
+              </p>
+              <p className="text-xs text-zinc-500 truncate">
+                {product.name}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              className="flex-shrink-0 text-xs h-8"
+              onClick={() => {
+                openCart()
+                toast.dismiss(t)
+              }}
+            >
+              Ver Carrito
+            </Button>
+          </div>
+        ), { duration: 4000 })
+
       } catch (error) {
         toast.error('Error', {
           description: 'No se pudo agregar el producto. Intenta nuevamente.',
@@ -76,7 +90,7 @@ const ProductCard = memo(function ProductCard({
         setIsAddingToCart(false)
       }
     },
-    [addItem, product, isAddingToCart]
+    [addItem, product, isAddingToCart, openCart]
   )
 
   const handleWishlistClick = useCallback(
