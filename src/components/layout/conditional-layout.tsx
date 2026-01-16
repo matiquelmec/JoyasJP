@@ -12,7 +12,7 @@ interface ConditionalLayoutProps {
 
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
-  
+
   if (pathname?.startsWith('/admin')) {
     return (
       <SiteConfigProvider>
@@ -29,7 +29,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
         </ErrorBoundary>
 
         {/* 🔧 SOLUCIÓN: Padding responsivo optimizado para compensar header fijo */}
-        <main id="main-content" className="flex-1 pt-20 sm:pt-24 md:pt-32 lg:pt-40">
+        <main id="main-content" className="flex-1 pt-36 sm:pt-44 md:pt-48 lg:pt-56">
           <ErrorBoundary>{children}</ErrorBoundary>
         </main>
 
