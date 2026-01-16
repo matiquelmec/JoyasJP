@@ -22,7 +22,7 @@ export default function AboutPage() {
           alt="Equipo de JoyasJP"
           fill={true}
           sizes="100vw"
-          className="object-contain opacity-60"
+          className="object-cover opacity-80"
           priority
         />
         {/* Vignette effect to focus focus center */}
