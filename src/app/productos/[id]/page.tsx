@@ -72,7 +72,7 @@ export async function generateMetadata({
     pulseras: 'pulseras elegantes',
     aros: 'aros de diseño',
   }
-  
+
   const categoryName = categoryNames[product.category as keyof typeof categoryNames] || product.category
   const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(product.price)
 
@@ -168,7 +168,7 @@ export async function generateStaticParams() {
       .select('id')
 
     if (error || !products) {
-    // console.error('Error fetching product IDs for static generation:', error)
+      // console.error('Error fetching product IDs for static generation:', error)
       return []
     }
 
@@ -193,13 +193,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="min-h-screen bg-background">
       <ProductSchema product={product} availability={availability} />
-      
+
       {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
           <Link
-            href="/shop"
+            href="/productos"
             className="flex items-center gap-2 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
