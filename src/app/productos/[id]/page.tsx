@@ -172,7 +172,7 @@ export async function generateStaticParams() {
       return []
     }
 
-    return products.map((product) => ({
+    return products.map((product: any) => ({
       id: product.id,
     }))
   } catch (error) {

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     // console.error('Error restoring product:', error)
     return NextResponse.json({
       error: 'Failed to restore product',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 

@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     // console.error('Error fetching configuration:', error)
     return NextResponse.json({
       error: 'Failed to fetch configuration',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     // console.error('Error updating configuration:', error)
     return NextResponse.json({
       error: 'Failed to update configuration',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

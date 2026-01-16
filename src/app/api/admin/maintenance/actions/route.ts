@@ -57,7 +57,7 @@ async function performDatabaseBackup(client: any) {
     return {
       success: false,
       message: 'Error en backup de base de datos',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -73,7 +73,7 @@ async function cleanupOrphanedImages(client: any) {
 
     if (productsError) throw productsError
 
-    const productImages = new Set(products?.map(p => p.imageUrl).filter(Boolean) || [])
+    const productImages = new Set(products?.map((p: any) => p.imageUrl).filter(Boolean) || [])
 
     // Simular limpieza de archivos huérfanos
     const orphanedFiles = Math.floor(Math.random() * 5) // 0-4 archivos huérfanos
@@ -95,7 +95,7 @@ async function cleanupOrphanedImages(client: any) {
     return {
       success: false,
       message: 'Error en limpieza de imágenes',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -126,7 +126,7 @@ async function clearSystemCache() {
     return {
       success: false,
       message: 'Error en limpieza de cache',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -165,7 +165,7 @@ async function performSecurityScan(client: any) {
     return {
       success: false,
       message: 'Error en escaneo de seguridad',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -206,7 +206,7 @@ async function updateDependencies() {
     return {
       success: false,
       message: 'Error actualizando dependencias',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -254,7 +254,7 @@ async function performanceAudit(client: any) {
     return {
       success: false,
       message: 'Error en auditoría de performance',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -282,7 +282,7 @@ async function cleanupLogs() {
     return {
       success: false,
       message: 'Error en limpieza de logs',
-      error: error.message
+      error: (error as Error).message || String(error)
     }
   }
 }
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: 'Failed to execute maintenance action',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

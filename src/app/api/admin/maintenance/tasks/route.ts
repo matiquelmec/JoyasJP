@@ -47,7 +47,7 @@ async function getMaintenanceTasks(client: any) {
     }
 
     // Mapear tareas de la BD al formato esperado
-    return existingTasks.map(task => ({
+    return existingTasks.map((task: any) => ({
       id: task.id,
       title: task.title,
       description: task.description,
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
     // console.error('Error getting maintenance tasks:', error)
     return NextResponse.json({
       error: 'Failed to get maintenance tasks',
-      details: error.message,
+      details: (error as Error).message || String(error),
       tasks: getDefaultTasks()
     }, { status: 500 })
   }
@@ -249,7 +249,7 @@ export async function POST(request: NextRequest) {
     // console.error('Error updating maintenance task:', error)
     return NextResponse.json({
       error: 'Failed to update maintenance task',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

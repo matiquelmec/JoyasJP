@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       // console.error('Error fetching orders:', error)
       return NextResponse.json({
         error: 'Failed to fetch orders',
-        details: error.message
+        details: (error as Error).message || String(error)
       }, { status: 500 })
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     // console.error('Error fetching orders:', error)
     return NextResponse.json({
       error: 'Failed to fetch orders',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }
@@ -93,7 +93,7 @@ export async function PUT(request: NextRequest) {
       // console.error('Error updating order:', error)
       return NextResponse.json({
         error: 'Failed to update order',
-        details: error.message
+        details: (error as Error).message || String(error)
       }, { status: 500 })
     }
 
@@ -102,7 +102,7 @@ export async function PUT(request: NextRequest) {
     // console.error('Error updating order:', error)
     return NextResponse.json({
       error: 'Failed to update order',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

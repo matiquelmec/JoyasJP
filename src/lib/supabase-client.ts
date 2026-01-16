@@ -14,9 +14,9 @@ function initializeSupabase() {
   if (supabaseUrl && supabaseAnonKey) {
     try {
       supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
-    // console.log('✅ Supabase client initialized on demand')
+      // console.log('✅ Supabase client initialized on demand')
     } catch (error) {
-    // console.error('❌ Failed to initialize Supabase client:', error)
+      // console.error('❌ Failed to initialize Supabase client:', error)
       supabaseClient = undefined
     }
   } else {
@@ -36,6 +36,7 @@ export function getSupabase() {
 export const supabase = new Proxy({} as any, {
   get(target, prop) {
     const client = initializeSupabase()
-    return client ? client[prop] : undefined
+    // @ts-ignore - Permitiendo acceso dinámico legado
+    return client ? (client as any)[prop] : undefined
   }
 })

@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json({
       error: 'Failed to setup maintenance system',
-      details: error.message,
+      details: (error as Error).message || String(error),
       sql: createMaintenanceTasksTableSQL
     }, { status: 500 })
   }
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       ready: false,
       error: 'Failed to check maintenance system',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

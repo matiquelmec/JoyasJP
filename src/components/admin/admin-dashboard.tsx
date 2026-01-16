@@ -58,22 +58,22 @@ export function AdminDashboard() {
       const products = await adminAPI.getProducts()
 
       // Calcular estadísticas de productos
-      const activeProducts = products.filter(p => p.stock > 0)
-      const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 5)
-      const outOfStockProducts = products.filter(p => p.stock === 0)
+      const activeProducts = products.filter((p: any) => p.stock > 0)
+      const lowStockProducts = products.filter((p: any) => p.stock > 0 && p.stock <= 5)
+      const outOfStockProducts = products.filter((p: any) => p.stock === 0)
 
       // Top 5 productos por precio (como ejemplo de "más valiosos")
       const topProducts = [...activeProducts]
-        .sort((a, b) => b.price - a.price)
+        .sort((a: any, b: any) => b.price - a.price)
         .slice(0, 5)
 
       // Productos con stock bajo
       const lowStockItems = lowStockProducts
-        .sort((a, b) => a.stock - b.stock)
+        .sort((a: any, b: any) => a.stock - b.stock)
         .slice(0, 5)
 
       // Calcular valor total del inventario
-      const totalInventoryValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0)
+      const totalInventoryValue = products.reduce((sum: number, p: any) => sum + (p.price * p.stock), 0)
 
       const dashboardStats: DashboardStats = {
         totalProducts: products.length,

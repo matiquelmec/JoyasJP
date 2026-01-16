@@ -34,7 +34,7 @@ async function getDatabaseMetrics(client: any) {
     const estimatedSize = Math.max(50, productCount * 0.5) // ~0.5MB por producto
 
     // Verificar imágenes huérfanas
-    const imagesWithProducts = products?.filter(p => p.imageUrl).length || 0
+    const imagesWithProducts = products?.filter((p: any) => p.imageUrl).length || 0
     const orphanedEstimate = Math.max(0, Math.floor(Math.random() * 5)) // Estimación
 
     return {
@@ -170,7 +170,7 @@ export async function GET(request: NextRequest) {
     // console.error('Error getting system health:', error)
     return NextResponse.json({
       error: 'Failed to get system health',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

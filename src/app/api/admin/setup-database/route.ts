@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     // console.error('Error setting up database:', error)
     return NextResponse.json({
       error: 'Failed to setup database',
-      details: error.message,
+      details: (error as Error).message || String(error),
       instructions: [
         'Manual setup required:',
         '1. Go to your Supabase dashboard',

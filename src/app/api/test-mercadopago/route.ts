@@ -42,7 +42,7 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       error: 'Error al probar configuración de MercadoPago',
-      details: error.message
+      details: (error as Error).message || String(error)
     }, { status: 500 })
   }
 }

@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Mapear productos reales para asegurar precios e integridad
     const validatedItems = cartItems.map((item) => {
-      const dbProduct = dbProducts.find(p => p.id === item.id)
+      const dbProduct = dbProducts.find((p: any) => p.id === item.id)
 
       if (!dbProduct) {
         throw new Error(`Producto no encontrado: ${item.name}`)

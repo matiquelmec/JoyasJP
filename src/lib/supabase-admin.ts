@@ -19,9 +19,9 @@ function initializeSupabaseAdmin() {
           persistSession: false
         }
       })
-    // console.log('✅ Supabase admin client initialized on demand')
+      // console.log('✅ Supabase admin client initialized on demand')
     } catch (error) {
-    // console.error('❌ Failed to initialize Supabase admin client:', error)
+      // console.error('❌ Failed to initialize Supabase admin client:', error)
       supabaseAdminClient = undefined
     }
   } else {
@@ -41,6 +41,7 @@ export function getSupabaseAdmin() {
 export const supabaseAdmin = new Proxy({} as any, {
   get(target, prop) {
     const client = initializeSupabaseAdmin()
-    return client ? client[prop] : undefined
+    // @ts-ignore - Permitiendo acceso dinámico legado
+    return client ? (client as any)[prop] : undefined
   }
 })
