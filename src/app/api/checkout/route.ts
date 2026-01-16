@@ -73,9 +73,9 @@ export async function POST(req: NextRequest) {
     const preferenceBody: any = {
       items: validatedItems,
       back_urls: {
-        success: `${req.nextUrl.origin}/shop/success`,
-        failure: `${req.nextUrl.origin}/shop/failure`,
-        pending: `${req.nextUrl.origin}/shop/pending`,
+        success: `${req.nextUrl.origin}/productos/success`,
+        failure: `${req.nextUrl.origin}/productos/failure`,
+        pending: `${req.nextUrl.origin}/productos/pending`,
       },
       // 🛡️ Prevenir cambios maliciosos en el checkout
       statement_descriptor: 'JOYAS JP',
