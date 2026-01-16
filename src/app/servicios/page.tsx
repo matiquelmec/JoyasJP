@@ -33,8 +33,8 @@ export default function ServicesPage() {
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de servicios para artistas"
       />
-      {/* Overlay like homepage */}
-      <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />
+      {/* Professional Dark Overlay with subtle blur for text readability */}
+      <div className="fixed top-0 left-0 w-full h-full bg-black/70 backdrop-blur-[2px] z-0" />
 
       <div className="relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
