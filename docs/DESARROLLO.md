@@ -179,6 +179,7 @@ src/
 - Despliegue exitoso en Netlify
 - Limpieza completa del código
 - TypeScript sin errores
+- **Configuración de entorno local verificada** (Supabase + MercadoPago) ✅
 
 ## Próximos Pasos Sugeridos
 1. Conectar gestión de pedidos con base de datos real
