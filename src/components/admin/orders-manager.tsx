@@ -293,14 +293,27 @@ export function OrdersManager() {
                       <TableCell>
                         <div>
                           <p className="font-medium">{formatCLP(order.total_amount)}</p>
-                          <p className="text-xs text-slate-500 font-medium">{itemCount} items</p>
-                          {/* 🚨 Alerta de Error de Stock */}
-                          {order.payment_detail?.includes('ERROR') && (
-                            <div className="mt-1 flex items-center text-[10px] font-bold text-red-600 bg-red-100 px-1 py-0.5 rounded border border-red-200">
-                              <AlertCircle className="w-3 h-3 mr-1" />
-                              ERROR STOCK
-                            </div>
-                          )}
+                          <p className="text-xs text-slate-500 font-medium mb-1">{itemCount} items</p>
+
+                          {/* Estado de Pago Persistente */}
+                          <div className="flex flex-col gap-1">
+                            {order.payment_status === 'paid' ? (
+                              <Badge variant="outline" className="w-fit bg-green-50 text-green-700 border-green-200 text-[10px] px-2 py-0 h-5 font-semibold">
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                                PAGADO
+                              </Badge>
+                            ) : order.payment_status === 'stock_error' ? (
+                              <Badge variant="outline" className="w-fit bg-red-100 text-red-700 border-red-200 text-[10px] px-2 py-0 h-5 font-bold">
+                                <AlertCircle className="w-3 h-3 mr-1" />
+                                ERROR STOCK
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="w-fit bg-slate-100 text-slate-600 border-slate-200 text-[10px] px-2 py-0 h-5">
+                                <Clock className="w-3 h-3 mr-1" />
+                                PENDIENTE
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -318,12 +331,7 @@ export function OrdersManager() {
                           {order.status === 'delivered' && 'Entregado'}
                           {order.status === 'cancelled' && 'Cancelado'}
                         </Badge>
-                        {order.status === 'pending' && order.payment_status === 'paid' && (
-                          <div className="mt-1 text-[10px] text-green-600 font-semibold flex items-center">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            PAGO CONFIRMADO
-                          </div>
-                        )}
+
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
