@@ -29,28 +29,14 @@ interface ProductPageProps {
   }
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-  if (!supabase) {
-    return null
-  }
+import { ProductService } from '@/services/product.service'
 
-  try {
-    // Agregar timestamp para evitar cache
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (error || !data) {
-      return null
-    }
-
-    return data as unknown as Product
-  } catch (error) {
-    // console.error('Error fetching product:', error)
-    return null
-  }
+/**
+ * Obtiene un producto usando el servicio centralizado que soporta ID o Slug
+ */
+async function getProduct(idOrSlug: string): Promise<Product | null> {
+  const product = await ProductService.getProductById(idOrSlug)
+  return product
 }
 
 export async function generateMetadata({
