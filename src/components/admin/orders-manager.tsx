@@ -310,7 +310,13 @@ export function OrdersManager() {
                         <div className="flex gap-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button size="sm" variant="ghost" onClick={() => setSelectedOrder(order)}>
+                              <Button size="sm" variant="outline" className="hidden md:flex" onClick={() => setSelectedOrder(order)}>
+                                <Eye className="w-4 h-4 mr-2" />
+                                Detalles
+                              </Button>
+                            </DialogTrigger>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="ghost" className="md:hidden" onClick={() => setSelectedOrder(order)}>
                                 <Eye className="w-4 h-4" />
                               </Button>
                             </DialogTrigger>
