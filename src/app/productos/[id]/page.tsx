@@ -165,16 +165,22 @@ export async function generateStaticParams() {
   try {
     const { data: products, error } = await supabase
       .from('products')
-      .select('id')
+      .select('id, slug')
 
     if (error || !products) {
       // console.error('Error fetching product IDs for static generation:', error)
       return []
     }
 
-    return products.map((product: any) => ({
-      id: product.id,
-    }))
+    // Generar params para ID y para Slug (doble entrada para compatibilidad)
+    const paths = products.flatMap((product: any) => {
+      const p = []
+      if (product.id) p.push({ id: product.id })
+      if (product.slug) p.push({ id: product.slug }) // Next.js usa 'id' porque así se llama el archivo [id]
+      return p
+    })
+
+    return paths
   } catch (error) {
     // console.error('Error in generateStaticParams:', error)
     return []

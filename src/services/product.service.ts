@@ -47,17 +47,23 @@ export class ProductService {
     }
 
     /**
-     * Obtiene un producto por ID con validación estricta
+     * Obtiene un producto por ID o Slug con validación estricta
      */
-    static async getProductById(id: string): Promise<Product | null> {
+    static async getProductById(idOrSlug: string): Promise<Product | null> {
         if (!supabase) return null
 
         try {
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .eq('id', id)
-                .single()
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
+
+            let query = supabase.from('products').select('*').single()
+
+            if (isUUID) {
+                query = query.eq('id', idOrSlug)
+            } else {
+                query = query.eq('slug', idOrSlug)
+            }
+
+            const { data, error } = await query
 
             if (error || !data) return null
 

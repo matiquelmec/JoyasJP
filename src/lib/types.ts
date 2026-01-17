@@ -38,6 +38,7 @@ export interface Product {
   description?: string
   price: number
   imageUrl: string // Frontend property (camelCase)
+  slug?: string // SEO-friendly URL
   category: string
   stock: number
   created_at?: string
@@ -66,6 +67,7 @@ export interface DatabaseProduct {
   price: number
   image_url?: string // DB column usually snake_case
   imageUrl?: string  // Some legacies might use this
+  slug?: string
   category: string
   stock: number
   created_at?: string
