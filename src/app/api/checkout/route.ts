@@ -91,6 +91,18 @@ export async function POST(req: NextRequest) {
         email: customerInfo.email,
         phone: {
           number: customerInfo.phone
+        },
+        address: {
+          street_name: customerInfo.address,
+          zip_code: '',
+          street_number: ''
+        }
+      }
+
+      if (customerInfo.rut) {
+        preferenceBody.payer.identification = {
+          type: "RUT",
+          number: customerInfo.rut
         }
       }
     }

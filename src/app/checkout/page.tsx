@@ -23,6 +23,47 @@ interface CheckoutFormData {
   address: string
   city: string
   region: string
+  rut: string
+}
+
+function formatRUT(rut: string): string {
+  // Eliminar puntos y guiones
+  let value = rut.replace(/\./g, '').replace(/-/g, '');
+
+  if (value.length > 1) {
+    // Separar dígito verificador
+    const dv = value.slice(-1);
+    let rutBody = value.slice(0, -1);
+
+    // Formatear cuerpo con puntos
+    rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    return `${rutBody}-${dv}`;
+  }
+  return value;
+}
+
+function validateRUT(rut: string): boolean {
+  if (!rut || rut.trim().length < 8) return false;
+  const cleanRut = rut.replace(/\./g, '').replace(/-/g, '');
+  const body = cleanRut.slice(0, -1);
+  const dv = cleanRut.slice(-1).toUpperCase();
+
+  if (!/^\d+$/.test(body)) return false;
+
+  let suma = 0;
+  let multiplo = 2;
+
+  for (let i = body.length - 1; i >= 0; i--) {
+    suma += parseInt(body[i]) * multiplo;
+    if (multiplo < 7) multiplo += 1;
+    else multiplo = 2;
+  }
+
+  const dvEsperado = 11 - (suma % 11);
+  const dvCalculado = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : dvEsperado.toString();
+
+  return dv === dvCalculado;
 }
 
 const chileanRegions = [
@@ -56,7 +97,8 @@ export default function CheckoutPage() {
     phone: '',
     address: '',
     city: '',
-    region: ''
+    region: '',
+    rut: ''
   })
 
   // ⚡ Memoize expensive calculations
@@ -116,6 +158,13 @@ export default function CheckoutPage() {
       return false
     }
 
+    if (!validateRUT(formData.rut)) {
+      toast.error('RUT inválido', {
+        description: 'Por favor ingresa un RUT válido (ej: 12.345.678-9)'
+      })
+      return false
+    }
+
     return true
   }
 
@@ -144,6 +193,7 @@ export default function CheckoutPage() {
             address: formData.address,
             city: formData.city,
             commune: formData.region,
+            rut: formData.rut,
             shippingCost: 0
           }
         })
@@ -259,6 +309,28 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+
+                <div>
+                  <Label htmlFor="rut">RUT *</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="rut"
+                      value={formData.rut}
+                      onChange={(e) => {
+                        const val = formatRUT(e.target.value)
+                        setFormData(prev => ({ ...prev, rut: val }))
+                      }}
+                      placeholder="12.345.678-9"
+                      className="pl-10"
+                      maxLength={12}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Requerido para la boleta/factura y validación de pago.
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -309,6 +381,8 @@ export default function CheckoutPage() {
                     </select>
                   </div>
                 </div>
+
+
               </CardContent>
             </Card>
           </div>
@@ -363,6 +437,8 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 </div>
+
+
               </CardContent>
             </Card>
 
