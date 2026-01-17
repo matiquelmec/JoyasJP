@@ -293,7 +293,7 @@ export function AdminDashboard() {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
                   <p className="text-2xl font-bold text-green-600">{stats.activeProducts - stats.lowStockProducts}</p>
-                  <p className="text-xs text-slate-600 font-medium">Sin Stock</p>
+                  <p className="text-xs text-slate-600 font-medium">En Stock</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-orange-600">{stats.lowStockProducts}</p>
