@@ -79,7 +79,8 @@ export async function POST(req: NextRequest) {
       },
       // 🛡️ Prevenir cambios maliciosos en el checkout
       statement_descriptor: 'JOYAS JP',
-      external_reference: `ORDER-${Date.now()}`
+      external_reference: `ORDER-${Date.now()}`,
+      notification_url: `${req.nextUrl.origin}/api/webhook/mercadopago`
     }
 
     // Agregar información del cliente si está disponible

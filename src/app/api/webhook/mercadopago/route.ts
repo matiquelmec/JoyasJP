@@ -38,25 +38,57 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
         }
 
-        // Actualizar la orden en la base de datos
-        const { error: updateError } = await supabaseAdmin
-            .from('orders')
-            .update({
-                status: status === 'approved' ? 'paid' : status,
-                payment_status: status,
-                payment_detail: status_detail,
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', orderId)
-
-        if (updateError) {
-            console.error('❌ Error al actualizar la orden en DB:', updateError)
-            return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
-        }
-
-        // 📦 Si el pago fue aprobado, podrías disparar aquí lógica adicional (ej: enviar mail)
+        // 📦 Si el pago fue aprobado, procesar inventario a prueba de balas (Enterprise Grade)
         if (status === 'approved') {
-            console.log(`✅ Orden confirmada para el pago ${id}`)
+            console.log(`🔒 Procesando transacción segura para Orden ${id}...`)
+
+            // Llamada RPC a función atómica en Postgres
+            const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc('process_order_payment', {
+                p_order_id: orderId,
+                p_payment_status: status,
+                p_payment_detail: status_detail || 'approved via webhook'
+            })
+
+            if (rpcError) {
+                console.error('❌ Error CRÍTICO al procesar orden atómica:', rpcError)
+                return NextResponse.json({ error: 'Atomic Transaction Failed', details: rpcError.message }, { status: 500 })
+            }
+
+            console.log('✅ Resultado Transacción:', rpcResult)
+
+            // Si el RPC retornó éxito false (ej: sin stock), loguearlo como advertencia crítica Y MARCAR EN DB
+            if (rpcResult && !rpcResult.success) {
+                const errorMessage = (rpcResult as any).message || 'Stock Error';
+                console.warn('⚠️ Orden no procesada (Business Logic Error):', errorMessage)
+
+                // 🚨 ALERTA VISUAL PARA EL ADMIN
+                // Marcamos la orden con un estado especial en los detalles para que el admin lo vea
+                const { error: alertError } = await supabaseAdmin
+                    .from('orders')
+                    .update({
+                        // No la marcamos como 'paid' para evitar envíos accidentales
+                        // La dejamos en el estado actual (pending) pero con notas alarmantes
+                        payment_status: 'stock_error',
+                        payment_detail: `⚠️ ERROR CRÍTICO: Cobrado en MP pero SIN STOCK. Motivo: ${errorMessage}`
+                    })
+                    .eq('id', orderId)
+
+                if (alertError) console.error('Error saving alert to DB:', alertError)
+            }
+
+        } else {
+            // 🔄 Para estados pendientes/fallidos, actualizamos solo el estado (lógica simple)
+            const { error: updateError } = await supabaseAdmin
+                .from('orders')
+                .update({
+                    status: status,
+                    payment_status: status,
+                    payment_detail: status_detail,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', orderId)
+
+            if (updateError) console.error('Error updating non-approved order:', updateError)
         }
 
         return NextResponse.json({ received: true })

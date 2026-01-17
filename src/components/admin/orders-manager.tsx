@@ -40,6 +40,7 @@ interface Order {
   items: string // JSON string
   payment_id?: string
   payment_status?: string
+  payment_detail?: string
 }
 
 export function OrdersManager() {
@@ -264,6 +265,13 @@ export function OrdersManager() {
                         <div>
                           <p className="font-medium">{formatCLP(order.total_amount)}</p>
                           <p className="text-xs text-slate-500 font-medium">{itemCount} items</p>
+                          {/* 🚨 Alerta de Error de Stock */}
+                          {order.payment_detail?.includes('ERROR') && (
+                            <div className="mt-1 flex items-center text-[10px] font-bold text-red-600 bg-red-100 px-1 py-0.5 rounded border border-red-200">
+                              <AlertCircle className="w-3 h-3 mr-1" />
+                              ERROR STOCK
+                            </div>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
