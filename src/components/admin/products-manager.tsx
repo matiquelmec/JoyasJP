@@ -143,7 +143,7 @@ export function ProductsManager() {
   })
 
   const categories = Array.from(new Set(products.map(p => p.category)))
-  const lowStockProducts = products.filter(p => p.stock <= 5)
+  const lowStockProducts = products.filter(p => p.stock === 1)
 
   const formatCLP = (amount: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -156,8 +156,8 @@ export function ProductsManager() {
   const getStockBadge = (stock: number) => {
     if (stock === 0) {
       return <Badge variant={"destructive" as any}>Agotado</Badge>
-    } else if (stock <= 5) {
-      return <Badge variant={"secondary" as any} className="bg-orange-500 text-white border-none">Stock Bajo</Badge>
+    } else if (stock === 1) {
+      return <Badge variant={"secondary" as any} className="bg-orange-500 text-white border-none">Última Unidad</Badge>
     } else {
       return <Badge variant={"default" as any} className="bg-green-600 text-white border-none">En Stock</Badge>
     }

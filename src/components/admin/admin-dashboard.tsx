@@ -55,11 +55,13 @@ export function AdminDashboard() {
   const loadDashboardStats = async () => {
     try {
       // Obtener productos reales
-      const products = await adminAPI.getProducts()
+      // Obtener productos reales y filtrar eliminados (Soft Delete)
+      const allProducts = await adminAPI.getProducts()
+      const products = allProducts.filter((p: any) => !p.deleted_at)
 
       // Calcular estadísticas de productos
       const activeProducts = products.filter((p: any) => p.stock > 0)
-      const lowStockProducts = products.filter((p: any) => p.stock > 0 && p.stock <= 5)
+      const lowStockProducts = products.filter((p: any) => p.stock > 0 && p.stock === 1)
       const outOfStockProducts = products.filter((p: any) => p.stock === 0)
 
       // Top 5 productos por precio (como ejemplo de "más valiosos")
@@ -165,7 +167,7 @@ export function AdminDashboard() {
           <CardContent className="relative z-10">
             <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.lowStockProducts}</div>
             <p className="text-xs text-slate-500 font-bold">
-              Productos con ≤5 unidades
+              Productos con 1 unidad restante
             </p>
           </CardContent>
         </Card>
