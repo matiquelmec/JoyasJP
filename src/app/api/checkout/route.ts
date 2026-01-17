@@ -1,5 +1,6 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
 import type { CartItem } from '@/hooks/use-cart'
 
@@ -101,9 +102,11 @@ export async function POST(req: NextRequest) {
     // Guardar orden en la base de datos - solo productos (shipping por pagar)
     const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
+    // 🔒 TRANSACTIONAL WRITE: Guardar orden con permisos de ADMIN
+    // Usamos supabaseAdmin para bypassear RLS (Row Level Security) y asegurar la escritura
     try {
       const orderData = {
-        id: preference.id, // Usar el ID de MercadoPago como referencia
+        id: preference.id, // ID de MercadoPago como Primary Key del pedido
         customer_name: customerInfo?.name || 'Cliente',
         customer_email: customerInfo?.email || '',
         customer_phone: customerInfo?.phone || '',
@@ -118,7 +121,7 @@ export async function POST(req: NextRequest) {
           imageUrl: item.imageUrl
         }))),
         total_amount: totalAmount,
-        shipping_cost: 0, // Shipping is paid separately
+        shipping_cost: 0,
         status: 'pending',
         payment_id: preference.id,
         payment_status: 'pending',
@@ -126,23 +129,22 @@ export async function POST(req: NextRequest) {
         updated_at: new Date().toISOString()
       }
 
-      const { data: savedOrder, error: orderError } = await supabase
+      const { error: orderError } = await supabaseAdmin
         .from('orders')
         .insert(orderData)
-        .select()
-        .single()
 
       if (orderError) {
-        // console.error('Error saving order to database:', orderError)
-        // No fallar el checkout si no se puede guardar la orden
-        // El usuario aún puede continuar con el pago
-      } else {
-        // Order saved successfully
+        console.error('❌ Critical Error saving order:', orderError)
+        // 🛑 STOP LOSS Pattern:
+        // Si no podemos guardar el pedido, ABORTAMOS INMEDIATAMENTE.
+        // Es preferible mostrar un error al usuario que tomar su dinero sin registrar el pedido.
+        throw new Error('No se pudo registrar su orden. Por seguridad, no se ha iniciado el cobro.')
       }
 
     } catch (dbError) {
-      // console.error('Database error when saving order:', dbError)
-      // Continue with checkout even if DB save fails
+      console.error('❌ Database Exception during checkout:', dbError)
+      // Re-throw para que el controlador principal capture y devuelva 500
+      throw dbError
     }
 
     return NextResponse.json({
