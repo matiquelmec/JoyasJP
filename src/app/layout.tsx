@@ -172,13 +172,7 @@ export default function RootLayout({
         <meta httpEquiv="Expires" content="0" />
 
         {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
-        <link
-          rel="preload"
-          href="/assets/logo.webp"
-          as="image"
-          type="image/webp"
-          fetchPriority="high"
-        />
+
 
 
         {/* ⚡ Critical CSS optimizado */}

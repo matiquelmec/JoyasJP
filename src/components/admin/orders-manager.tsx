@@ -414,20 +414,41 @@ export function OrdersManager() {
                                   <ShoppingBag className="w-4 h-4" /> Productos ({itemCount})
                                 </h4>
                                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
-                                  {JSON.parse(order.items).map((item: any, idx: number) => (
-                                    <div key={idx} className="flex items-center gap-4 bg-muted/40 p-2 rounded-lg">
-                                      <div className="relative w-12 h-12 rounded overflow-hidden bg-background border">
-                                        {item.imageUrl && (
-                                          <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
-                                        )}
+                                  {JSON.parse(order.items).map((item: any, idx: number) => {
+                                    // 🛠️ Hotfix: Supabase es Case Sensitive. Normalizar URLs a minúsculas en segmentos clave.
+                                    const fixSupabaseUrl = (url: string) => {
+                                      if (!url) return ''
+                                      // Si la URL contiene joyas-jp-ecommerce, intentar corregir segmentos comunes
+                                      if (url.includes('joyas-jp-ecommerce')) {
+                                        return url.replace('/Dijes/', '/dijes/')
+                                          .replace('/Anillos/', '/anillos/')
+                                          .replace('/Collares/', '/collares/')
+                                          .replace('/Pulseras/', '/pulseras/')
+                                          .replace('/Aros/', '/aros/')
+                                      }
+                                      return url
+                                    }
+
+                                    return (
+                                      <div key={idx} className="flex items-center gap-4 bg-muted/40 p-2 rounded-lg">
+                                        <div className="relative w-12 h-12 rounded overflow-hidden bg-background border">
+                                          {item.imageUrl && (
+                                            <Image
+                                              src={fixSupabaseUrl(item.imageUrl)}
+                                              alt={item.name}
+                                              fill
+                                              className="object-cover"
+                                            />
+                                          )}
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="font-medium text-sm">{item.name}</p>
+                                          <p className="text-xs text-muted-foreground">Cantidad: {item.quantity}</p>
+                                        </div>
+                                        <p className="font-semibold text-sm">{formatCLP(item.price * item.quantity)}</p>
                                       </div>
-                                      <div className="flex-1">
-                                        <p className="font-medium text-sm">{item.name}</p>
-                                        <p className="text-xs text-muted-foreground">Cantidad: {item.quantity}</p>
-                                      </div>
-                                      <p className="font-semibold text-sm">{formatCLP(item.price * item.quantity)}</p>
-                                    </div>
-                                  ))}
+                                    )
+                                  })}
                                 </div>
 
                                 <div className="flex justify-between items-center pt-2 border-t mt-4">
