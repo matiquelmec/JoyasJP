@@ -21,6 +21,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Clock,
   Package,
   Truck,
@@ -57,9 +64,13 @@ interface Order {
   payment_detail?: string
 }
 
+import { toast } from 'sonner'
+// ... imports
+
 export function OrdersManager() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   useEffect(() => {
@@ -111,6 +122,9 @@ export function OrdersManager() {
     .reduce((sum, order) => sum + order.total_amount, 0)
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    setUpdatingId(orderId)
+    const toastId = toast.loading('Actualizando estado...')
+
     try {
       const response = await fetch('/api/admin/orders', {
         method: 'PUT',
@@ -125,10 +139,15 @@ export function OrdersManager() {
       })
 
       if (response.ok) {
-        fetchOrders()
+        await fetchOrders()
+        toast.success(`Estado actualizado a: ${newStatus}`, { id: toastId })
+      } else {
+        toast.error('Error al actualizar estado', { id: toastId })
       }
     } catch (error) {
-      // Error handling
+      toast.error('Error de conexión', { id: toastId })
+    } finally {
+      setUpdatingId(null)
     }
   }
 
@@ -307,17 +326,50 @@ export function OrdersManager() {
                         )}
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
+                          {/* Selector de Estado Profesional */}
+                          <Select
+                            defaultValue={order.status}
+                            onValueChange={(value) => updateOrderStatus(order.id, value)}
+                            disabled={updatingId === order.id}
+                          >
+                            <SelectTrigger className="w-[130px] h-8 text-xs">
+                              <SelectValue placeholder="Estado" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">
+                                <div className="flex items-center">
+                                  <Clock className="w-3 h-3 mr-2 text-orange-600" /> Pendiente
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="processing">
+                                <div className="flex items-center">
+                                  <Package className="w-3 h-3 mr-2 text-blue-600" /> Procesando
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="shipped">
+                                <div className="flex items-center">
+                                  <Truck className="w-3 h-3 mr-2 text-purple-600" /> Enviado
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="delivered">
+                                <div className="flex items-center">
+                                  <CheckCircle className="w-3 h-3 mr-2 text-green-600" /> Entregado
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="cancelled">
+                                <div className="flex items-center">
+                                  <XCircle className="w-3 h-3 mr-2 text-red-600" /> Cancelado
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+
+                          {/* Botón Detalles */}
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button size="sm" variant="outline" className="hidden md:flex" onClick={() => setSelectedOrder(order)}>
-                                <Eye className="w-4 h-4 mr-2" />
-                                Detalles
-                              </Button>
-                            </DialogTrigger>
-                            <DialogTrigger asChild>
-                              <Button size="sm" variant="ghost" className="md:hidden" onClick={() => setSelectedOrder(order)}>
-                                <Eye className="w-4 h-4" />
+                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setSelectedOrder(order)} title="Ver Detalles">
+                                <Eye className="w-4 h-4 text-slate-500" />
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-2xl">
@@ -393,37 +445,6 @@ export function OrdersManager() {
 
                             </DialogContent>
                           </Dialog>
-
-                          {order.status === 'pending' && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateOrderStatus(order.id, 'processing')}
-                            >
-                              <Package className="w-4 h-4 mr-1" />
-                              Procesar
-                            </Button>
-                          )}
-                          {order.status === 'processing' && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateOrderStatus(order.id, 'shipped')}
-                            >
-                              <Truck className="w-4 h-4 mr-1" />
-                              Enviar
-                            </Button>
-                          )}
-                          {order.status === 'shipped' && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => updateOrderStatus(order.id, 'delivered')}
-                            >
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Entregar
-                            </Button>
-                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -457,10 +478,10 @@ export function OrdersManager() {
             </ul>
             <div className="mt-4 p-3 bg-white dark:bg-gray-900 rounded-lg border">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Estados de pedidos disponibles:
+                Gestión de Estados (Nuevo):
               </p>
               <p className="text-xs text-gray-600 dark:text-gray-400">
-                Pendiente → Procesando → Enviado → Entregado | Cancelado
+                Usa el selector para cambiar el estado libremente. Puedes revertir cambios si es necesario.
               </p>
             </div>
           </div>
