@@ -108,21 +108,8 @@ export function AdminHeader() {
 
         {/* Acciones */}
         <div className="flex items-center gap-2">
-          {/* Notificaciones */}
-          <Button
-            variant={"ghost" as any}
-            size={"sm" as any}
-            className="relative text-white hover:text-primary hover:bg-white/10"
-            aria-label="Notificaciones"
-          >
-            <Bell className="h-5 w-5" />
-            <Badge
-              variant={"destructive" as any}
-              className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-xs animate-pulse"
-            >
-              •
-            </Badge>
-          </Button>
+          {/* Notificaciones Reales */}
+          <NotificationsMenu />
 
           {/* Menú de usuario */}
           <DropdownMenu>
@@ -239,5 +226,119 @@ export function AdminHeader() {
         </div>
       </div>
     </header>
+  )
+}
+
+function NotificationsMenu() {
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchNotifications()
+    // Polling cada 60 segundos
+    const interval = setInterval(fetchNotifications, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchNotifications = async () => {
+    try {
+      // Reutilizamos el endpoint de orders para ver las pendientes
+      // Idealmente haríamos un endpoint específico ligero, pero este sirve por ahora
+      const response = await fetch('/api/admin/orders', {
+        headers: {
+          'Authorization': 'Bearer joyasjp2024' // Hardcoded por simplicidad igual que en otros lados
+        }
+      })
+      if (!response.ok) return
+
+      const data = await response.json()
+      // Filtramos las pendientes recientes
+      const pendingOrders = data.orders
+        .filter((o: any) => o.status === 'pending')
+        .slice(0, 5) // Top 5
+
+      setNotifications(pendingOrders)
+    } catch (error) {
+      console.error('Error fetching notifications', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const hasNotifications = notifications.length > 0
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={"ghost" as any}
+          size={"sm" as any}
+          className="relative text-white hover:text-primary hover:bg-white/10"
+          aria-label="Notificaciones"
+        >
+          <Bell className={cn("h-5 w-5 transition-transform duration-500", hasNotifications ? "shake-animation" : "")} />
+          {hasNotifications && (
+            <Badge
+              variant={"destructive" as any}
+              className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] animate-pulse bg-red-600 border border-slate-900"
+            >
+              {notifications.length}
+            </Badge>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-80 p-0 overflow-hidden border-slate-200 shadow-xl">
+        <div className="bg-slate-50 p-3 border-b border-slate-200 flex justify-between items-center">
+          <h3 className="font-bold text-sm text-slate-700">Notificaciones</h3>
+          {hasNotifications && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{notifications.length} Nuevas</span>}
+        </div>
+
+        <div className="max-h-[300px] overflow-y-auto">
+          {loading ? (
+            <div className="p-4 text-center text-xs text-slate-500">Cargando...</div>
+          ) : notifications.length === 0 ? (
+            <div className="p-8 text-center flex flex-col items-center">
+              <div className="p-3 bg-slate-100 rounded-full mb-2">
+                <Bell className="h-5 w-5 text-slate-400" />
+              </div>
+              <p className="text-sm font-medium text-slate-600">Estás al día</p>
+              <p className="text-xs text-slate-400">No hay pedidos pendientes recientes.</p>
+            </div>
+          ) : (
+            notifications.map((order) => (
+              <Link href="/admin/pedidos" key={order.id}>
+                <DropdownMenuItem className="p-4 cursor-pointer hover:bg-slate-50 focus:bg-slate-50 border-b border-slate-100 last:border-0 py-3">
+                  <div className="flex gap-3 w-full">
+                    <div className="h-2 w-2 mt-1.5 rounded-full bg-blue-500 shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-slate-800 mb-0.5">Nueva Venta! 🎉</p>
+                      <p className="text-sm text-slate-600 leading-tight mb-1">
+                        <span className="font-semibold">{order.customer_name}</span> ha realizado un pedido.
+                      </p>
+                      <p className="text-[10px] font-mono text-slate-400 flex justify-between">
+                        <span>#{order.id.slice(0, 8)}</span>
+                        <span className="font-bold text-green-600">
+                          {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(order.total_amount)}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+              </Link>
+            ))
+          )}
+        </div>
+
+        {hasNotifications && (
+          <div className="p-2 border-t border-slate-50 bg-slate-50">
+            <Link href="/admin/pedidos">
+              <Button variant={"ghost" as any} size={"sm" as any} className="w-full text-xs h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                Ver todos los pedidos
+              </Button>
+            </Link>
+          </div>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
