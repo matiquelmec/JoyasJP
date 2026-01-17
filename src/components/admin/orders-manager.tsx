@@ -13,6 +13,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
   Clock,
   Package,
   Truck,
@@ -20,9 +28,15 @@ import {
   XCircle,
   ShoppingBag,
   Plus,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  Phone,
+  MapPin,
+  Mail,
+  User
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Order {
   id: string
@@ -46,6 +60,7 @@ interface Order {
 export function OrdersManager() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -63,11 +78,9 @@ export function OrdersManager() {
         const data = await response.json()
         setOrders(data.orders || [])
       } else {
-        // console.error('Error fetching orders:', response.statusText)
         setOrders([])
       }
     } catch (error) {
-      // console.error('Error fetching orders:', error)
       setOrders([])
     } finally {
       setLoading(false)
@@ -112,13 +125,10 @@ export function OrdersManager() {
       })
 
       if (response.ok) {
-        // Refresh orders after update
         fetchOrders()
-      } else {
-        // console.error('Error updating order status:', response.statusText)
       }
     } catch (error) {
-      // console.error('Error updating order status:', error)
+      // Error handling
     }
   }
 
@@ -289,9 +299,95 @@ export function OrdersManager() {
                           {order.status === 'delivered' && 'Entregado'}
                           {order.status === 'cancelled' && 'Cancelado'}
                         </Badge>
+                        {order.status === 'pending' && order.payment_status === 'paid' && (
+                          <div className="mt-1 text-[10px] text-green-600 font-semibold flex items-center">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            PAGO CONFIRMADO
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="ghost" onClick={() => setSelectedOrder(order)}>
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Detalles del Pedido #{order.id.slice(0, 8)}</DialogTitle>
+                                <DialogDescription>
+                                  Creado el {new Date(order.created_at).toLocaleString('es-CL')}
+                                </DialogDescription>
+                              </DialogHeader>
+
+                              <div className="grid grid-cols-2 gap-6 py-4">
+                                <div className="space-y-4">
+                                  <h4 className="font-semibold flex items-center gap-2">
+                                    <User className="w-4 h-4" /> Datos del Cliente
+                                  </h4>
+                                  <div className="text-sm space-y-1">
+                                    <p><span className="text-muted-foreground mr-2">Nombre:</span> {order.customer_name}</p>
+                                    <p><span className="text-muted-foreground mr-2">Email:</span> {order.customer_email}</p>
+                                    <p><span className="text-muted-foreground mr-2">Teléfono:</span> {order.customer_phone || 'No registrado'}</p>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                  <h4 className="font-semibold flex items-center gap-2">
+                                    <MapPin className="w-4 h-4" /> Dirección de Envío
+                                  </h4>
+                                  <div className="text-sm space-y-1">
+                                    {order.shipping_address ? (
+                                      <>
+                                        <p>{order.shipping_address}</p>
+                                        <p>{order.shipping_commune}, {order.shipping_city}</p>
+                                      </>
+                                    ) : (
+                                      <p className="text-muted-foreground italic">No especificada</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
+                                <h4 className="font-semibold flex items-center gap-2">
+                                  <ShoppingBag className="w-4 h-4" /> Productos ({itemCount})
+                                </h4>
+                                <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+                                  {JSON.parse(order.items).map((item: any, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-4 bg-muted/40 p-2 rounded-lg">
+                                      <div className="relative w-12 h-12 rounded overflow-hidden bg-background border">
+                                        {item.imageUrl && (
+                                          <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                                        )}
+                                      </div>
+                                      <div className="flex-1">
+                                        <p className="font-medium text-sm">{item.name}</p>
+                                        <p className="text-xs text-muted-foreground">Cantidad: {item.quantity}</p>
+                                      </div>
+                                      <p className="font-semibold text-sm">{formatCLP(item.price * item.quantity)}</p>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <div className="flex justify-between items-center pt-2 border-t mt-4">
+                                  <p className="font-medium text-muted-foreground">Total Pagado</p>
+                                  <p className="text-xl font-bold font-headline">{formatCLP(order.total_amount)}</p>
+                                </div>
+
+                                {order.payment_status && (
+                                  <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-md text-xs font-mono text-blue-800 dark:text-blue-200 overflow-x-auto">
+                                    Payment ID: {order.payment_id} | Status: {order.payment_status}
+                                    {order.payment_detail && <div className="mt-1 font-bold text-red-600">{order.payment_detail}</div>}
+                                  </div>
+                                )}
+                              </div>
+
+                            </DialogContent>
+                          </Dialog>
+
                           {order.status === 'pending' && (
                             <Button
                               size="sm"
