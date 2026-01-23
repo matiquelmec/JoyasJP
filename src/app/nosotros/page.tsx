@@ -32,31 +32,34 @@ export default function AboutPage() {
       </div>
 
       <div className="container relative z-10 px-4 pt-48 pb-24 md:pt-40 md:pb-32">
-        <div className="max-w-3xl mx-auto text-center space-y-8 p-4 md:p-0 animate-fadeInUp">
-
-          <div className="space-y-2">
-            <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-lg">
-              {aboutPageContent.title}
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 font-light tracking-wide">
-              {aboutPageContent.subtitle}
-            </p>
-          </div>
-
-          <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-
-          <div className="space-y-6 text-lg md:text-xl text-white/80 leading-relaxed font-body">
-            {aboutPageContent.paragraphs.map((paragraph, index) => (
-              <p key={index} className="drop-shadow-md">
-                {paragraph}
+        {/* Glassmorphism Container */}
+        <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp">
+          
+          <div className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                {aboutPageContent.title}
+              </h1>
+              <p className="text-xl md:text-2xl text-white/90 font-light tracking-wide drop-shadow-md">
+                {aboutPageContent.subtitle}
               </p>
-            ))}
+            </div>
+
+            <div className="h-px w-32 mx-auto bg-gradient-to-r from-transparent via-amber-200/50 to-transparent" />
+
+            <div className="space-y-6 text-lg md:text-xl text-zinc-100 leading-relaxed font-body">
+              {aboutPageContent.paragraphs.map((paragraph, index) => (
+                <p key={index} className="drop-shadow-sm">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            <p className="pt-6 text-lg md:text-xl font-bold text-amber-200/90 tracking-[0.2em] uppercase drop-shadow-md border-t border-white/5 mt-8">
+              {aboutPageContent.closingStatement}
+            </p>
+
           </div>
-
-          <p className="pt-4 text-xl md:text-2xl font-bold text-white tracking-widest uppercase drop-shadow-lg">
-            {aboutPageContent.closingStatement}
-          </p>
-
         </div>
       </div>
     </div>

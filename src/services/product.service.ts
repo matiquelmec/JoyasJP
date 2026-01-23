@@ -18,30 +18,24 @@ function mapDatabaseProductToProduct(dbProduct: DatabaseProduct): Product {
 
 export class ProductService {
     /**
-     * Obtiene productos destacados utilizando la misma lógica de negocio probada en Home
-     * Replicamos la lógica: select *, stock > 0, limit 25
+     * Obtiene productos destacados utilizando RPC para máxima eficiencia
+     * Lógica optimizada: DB-side randomization
      */
-    static async getFeaturedProducts(): Promise<Product[]> {
+    static async getFeaturedProducts(limit: number = 6): Promise<Product[]> {
         if (!supabase) return []
 
         try {
-            const { data: dbProducts, error } = await supabase
-                .from('products')
-                .select('*')
-                .gt('stock', 0)
-                .limit(25)
+            const { data, error } = await supabase.rpc('get_random_products', { limit_count: limit })
 
             if (error) {
                 // console.error('Error fetching featured products:', error)
                 return []
             }
 
-            if (!dbProducts) return []
+            if (!data) return []
 
-            // Mapear y devolver
-            return (dbProducts as unknown as DatabaseProduct[]).map(mapDatabaseProductToProduct)
+            return (data as unknown as DatabaseProduct[]).map(mapDatabaseProductToProduct)
         } catch (error) {
-            // console.error('Exception in ProductService.getFeaturedProducts:', error)
             return []
         }
     }
