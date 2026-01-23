@@ -31,10 +31,10 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
-      <div className="container relative z-10 px-4 pt-48 pb-24 md:pt-40 md:pb-32">
+      <div className="container relative z-10 px-4 py-12 md:py-20">
         {/* Glassmorphism Container */}
         <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp">
-          
+
           <div className="max-w-3xl mx-auto text-center space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
