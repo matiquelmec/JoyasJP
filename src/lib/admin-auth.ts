@@ -9,7 +9,7 @@ import { NextRequest } from 'next/server'
 export function verifyAdminAuth(request: NextRequest): boolean {
     const authHeader = request.headers.get('authorization')
     // 🛡️ Seguridad: Fallback a la clave por defecto si no hay env var configurada
-    const expectedPassword = process.env.ADMIN_API_KEY || 'joyasjp2024'
+    const expectedPassword = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_KEY || 'joyasjp2024'
 
     if (!authHeader || authHeader !== `Bearer ${expectedPassword}`) {
         return false

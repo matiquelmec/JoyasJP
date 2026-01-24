@@ -1,6 +1,6 @@
 // Cliente API para funciones de mantenimiento del sistema
 
-const ADMIN_PASSWORD = 'joyasjp2024'
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_KEY || 'joyasjp2024'
 
 class MaintenanceAPI {
   private getHeaders() {
@@ -16,11 +16,11 @@ class MaintenanceAPI {
       const response = await fetch('/api/admin/maintenance/system-health', {
         headers: this.getHeaders()
       })
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`)
       }
-      
+
       const data = await response.json()
       return data.systemHealth
     } catch (error) {
@@ -35,11 +35,11 @@ class MaintenanceAPI {
       const response = await fetch('/api/admin/maintenance/tasks', {
         headers: this.getHeaders()
       })
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`)
       }
-      
+
       const data = await response.json()
       return data.tasks
     } catch (error) {
@@ -56,12 +56,12 @@ class MaintenanceAPI {
         headers: this.getHeaders(),
         body: JSON.stringify({ action, taskId })
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`)
       }
-      
+
       const result = await response.json()
       return result
     } catch (error) {
@@ -83,11 +83,11 @@ class MaintenanceAPI {
           nextDue: nextDue?.toISOString()
         })
       })
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`)
       }
-      
+
       const result = await response.json()
       return result
     } catch (error) {
