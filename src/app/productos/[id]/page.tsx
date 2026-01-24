@@ -103,7 +103,7 @@ export async function generateMetadata({
       ],
       siteName: 'Joyas JP',
       locale: 'es_CL',
-      url: `/shop/${product.id}`,
+      url: `/productos/${product.id}`,
     },
     twitter: {
       card: 'summary_large_image',
@@ -119,9 +119,9 @@ export async function generateMetadata({
       ],
     },
     alternates: {
-      canonical: `/shop/${product.id}`,
+      canonical: `/productos/${product.id}`,
       languages: {
-        'es-CL': `/shop/${product.id}`,
+        'es-CL': `/productos/${product.id}`,
       },
     },
     robots: {

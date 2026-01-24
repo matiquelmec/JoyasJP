@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/shop`,
+      url: `${baseUrl}/productos`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Get dynamic product pages
   let productPages: MetadataRoute.Sitemap = []
-  
+
   if (supabase) {
     try {
       const { data: products, error } = await supabase
@@ -50,14 +50,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       if (!error && products) {
         productPages = products.map((product: any) => ({
-          url: `${baseUrl}/shop/${product.id}`,
+          url: `${baseUrl}/productos/${product.id}`,
           lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.8,
         }))
       }
     } catch (error) {
-    // console.error('Error generating sitemap for products:', error)
+      // console.error('Error generating sitemap for products:', error)
     }
   }
 

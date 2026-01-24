@@ -24,9 +24,9 @@ export function ProductSchema({
 
   const category = categoryNames[product.category as keyof typeof categoryNames] || 'Jewelry'
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app'
-  const productUrl = `${siteUrl}/shop/${product.id}`
+  const productUrl = `${siteUrl}/productos/${product.id}`
   const imageUrl = product.imageUrl || `${siteUrl}/assets/logo.webp`
-  
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
