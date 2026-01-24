@@ -28,7 +28,6 @@ export default function ServicesPage() {
       <PreloadVideo src={getVideoUrl('mi-video2.mp4')} />
       <video
         src={getVideoUrl('mi-video2.mp4')}
-        poster={getImageUrl('nosotros.webp')}
         autoPlay
         loop
         muted
