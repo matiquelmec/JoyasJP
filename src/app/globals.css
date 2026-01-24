@@ -527,3 +527,30 @@ header {
   border: 2px solid hsl(var(--primary)) !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
+
+/* 🏷️ BADGES PREMIUM SYSTEM */
+.badge-premium {
+  @apply px-2.5 py-1 rounded-sm text-[10px] font-black tracking-widest uppercase border shadow-sm backdrop-blur-md;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge-sale {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--velvet)));
+  @apply text-white border-primary/30 shadow-red-900/10;
+}
+
+.badge-new {
+  background: linear-gradient(135deg, hsl(var(--platinum)), #ffffff);
+  color: hsl(var(--platinum-dark));
+  @apply border-zinc-200 shadow-zinc-900/5;
+}
+
+.badge-custom {
+  background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+  @apply text-white border-yellow-600/20 shadow-yellow-900/10;
+}
+
+.badge-premium:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
