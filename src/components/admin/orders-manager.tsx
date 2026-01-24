@@ -44,6 +44,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useAdminAuth } from '@/components/admin/admin-auth-provider'
 
 interface Order {
   id: string
@@ -73,15 +74,17 @@ export function OrdersManager() {
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
+  const { token } = useAdminAuth()
+
   useEffect(() => {
-    fetchOrders()
-  }, [])
+    if (token) fetchOrders()
+  }, [token])
 
   const fetchOrders = async () => {
     try {
       const response = await fetch('/api/admin/orders', {
         headers: {
-          'Authorization': 'Bearer joyasjp2024'
+          'Authorization': `Bearer ${token}`
         }
       })
 
@@ -130,7 +133,7 @@ export function OrdersManager() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer joyasjp2024'
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           orderId,

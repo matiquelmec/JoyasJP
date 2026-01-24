@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { supabase } from '@/lib/supabase-client'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

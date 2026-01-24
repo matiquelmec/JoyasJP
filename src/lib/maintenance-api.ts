@@ -1,12 +1,11 @@
 // Cliente API para funciones de mantenimiento del sistema
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_KEY || 'joyasjp2024'
-
 class MaintenanceAPI {
   private getHeaders() {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('joyasjp-admin-token') || '' : ''
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${ADMIN_PASSWORD}`
+      'Authorization': `Bearer ${token}`
     }
   }
 

@@ -23,6 +23,7 @@ import {
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
+import { useAdminAuth } from '@/components/admin/admin-auth-provider'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -35,6 +36,7 @@ export function AdminHeader() {
   const [hasScrolled, setHasScrolled] = useState(false)
   const { config } = useSiteConfig()
   const pathname = usePathname()
+  const { logout } = useAdminAuth()
 
   useEffect(() => {
     let ticking = false
@@ -52,7 +54,7 @@ export function AdminHeader() {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('joyasjp-admin-auth')
+    logout()
     window.location.href = '/'
   }
 
@@ -232,13 +234,16 @@ export function AdminHeader() {
 function NotificationsMenu() {
   const [notifications, setNotifications] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { token } = useAdminAuth()
 
   useEffect(() => {
-    fetchNotifications()
-    // Polling cada 60 segundos
-    const interval = setInterval(fetchNotifications, 60000)
-    return () => clearInterval(interval)
-  }, [])
+    if (token) {
+      fetchNotifications()
+      // Polling cada 60 segundos
+      const interval = setInterval(fetchNotifications, 60000)
+      return () => clearInterval(interval)
+    }
+  }, [token])
 
   const fetchNotifications = async () => {
     try {
@@ -246,7 +251,7 @@ function NotificationsMenu() {
       // Idealmente haríamos un endpoint específico ligero, pero este sirve por ahora
       const response = await fetch('/api/admin/orders', {
         headers: {
-          'Authorization': 'Bearer joyasjp2024' // Hardcoded por simplicidad igual que en otros lados
+          'Authorization': `Bearer ${token}`
         }
       })
       if (!response.ok) return

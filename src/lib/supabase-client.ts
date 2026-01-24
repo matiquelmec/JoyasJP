@@ -46,7 +46,9 @@ export const supabase = new Proxy({} as SupabaseClient, {
     // 🛡️ ESTRATEGIA ROBUSTA: Noop Client para Builds
     // Si no hay cliente, devolvemos funciones Noop que evitan el crash
     // y devuelven arreglos vacíos o nulos de forma segura.
-    console.warn(`[Supabase Proxy]: Accediendo a '${String(prop)}' sin cliente inicializado. Usando Noop Mock.`)
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`[Supabase Proxy]: Accediendo a '${String(prop)}' sin cliente inicializado. Usando Noop Mock.`)
+    }
 
     const noop = () => ({
       from: () => noop(),

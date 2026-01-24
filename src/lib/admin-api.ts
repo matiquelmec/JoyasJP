@@ -1,12 +1,11 @@
 // Utilities for calling admin API endpoints with proper authentication
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_KEY || 'joyasjp2024'
-
 class AdminAPI {
   private getHeaders() {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('joyasjp-admin-token') || '' : ''
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${ADMIN_PASSWORD}`
+      'Authorization': `Bearer ${token}`
     }
   }
 

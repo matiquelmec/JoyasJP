@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { generateSlug } from '@/lib/slug-utils'
+import { useAdminAuth } from '@/components/admin/admin-auth-provider'
 
 interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void
@@ -22,6 +23,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
   const [uploadProgress, setUploadProgress] = useState(0)
   const [preview, setPreview] = useState<string | null>(currentImage || null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { token } = useAdminAuth()
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -84,7 +86,7 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       const response = await fetch('/api/admin/upload-image', {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer joyasjp2024'
+          'Authorization': `Bearer ${token}`
         },
         body: formData
       })
