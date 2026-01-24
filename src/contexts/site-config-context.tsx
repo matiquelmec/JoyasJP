@@ -18,6 +18,8 @@ interface SiteConfiguration {
   mercadopago_access_token: string
   instagram_url?: string
   tiktok_url?: string
+  store_slogan?: string
+  whatsapp_number?: string
 }
 
 interface SiteConfigContextType {
@@ -43,7 +45,9 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     mercadopago_public_key: '',
     mercadopago_access_token: '',
     instagram_url: defaultConfig.links.instagram,
-    tiktok_url: defaultConfig.links.tiktok
+    tiktok_url: defaultConfig.links.tiktok,
+    store_slogan: 'Atrévete a jugar',
+    whatsapp_number: defaultConfig.business.contact.phone
   })
   const [loading, setLoading] = useState(true)
 
