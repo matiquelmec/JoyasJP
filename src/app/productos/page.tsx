@@ -17,6 +17,7 @@ const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeColor, setActiveColor] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [colors, setColors] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
@@ -69,7 +70,8 @@ export default function ShopPage() {
   const baseFilteredProducts = useMemoizedProducts({
     products,
     category: activeCategory,
-    color: activeColor
+    color: activeColor,
+    searchTerm: searchQuery
   })
 
   // Ordenamiento memoizado por categoría
@@ -150,7 +152,7 @@ export default function ShopPage() {
           className="w-full"
           onValueChange={setActiveCategory}
         >
-          <TabsList className="grid w-full grid-cols-5 mb-4">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             {allCategories.map((category) => (
               <TabsTrigger
                 key={category}
@@ -162,7 +164,18 @@ export default function ShopPage() {
             ))}
           </TabsList>
 
-          <div className="flex justify-center md:justify-end mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            {/* Search Input */}
+            <div className="w-full md:max-w-sm">
+              <input
+                type="text"
+                placeholder="Buscar joyas (Ej: Cadenas, Oro...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
             <ColorFilter
               colors={colors}
               activeColor={activeColor}

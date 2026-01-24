@@ -54,6 +54,7 @@ export function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [searchTerm, setSearchTerm] = useState('')
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [recentlyDeleted, setRecentlyDeleted] = useState<{
@@ -139,7 +140,12 @@ export function ProductsManager() {
   }
 
   const filteredProducts = products.filter(product => {
-    return filterCategory === 'all' || product.category === filterCategory
+    const matchesCategory = filterCategory === 'all' || product.category === filterCategory
+    const matchesSearch = searchTerm === '' ||
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.id.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return matchesCategory && matchesSearch
   })
 
   const categories = Array.from(new Set(products.map(p => p.category)))
@@ -231,11 +237,19 @@ export function ProductsManager() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <CardTitle className="text-xl font-black uppercase tracking-widest">Joyas en Catálogo</CardTitle>
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <span className="text-xs font-bold uppercase tracking-widest opacity-60">Filtrar:</span>
+              {/* Search Bar */}
+              <Input
+                placeholder="Buscar por nombre o ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-zinc-900 border-zinc-800 text-white text-xs h-9 w-full sm:w-64 placeholder:text-zinc-500 focus-visible:ring-primary"
+              />
+
+              <span className="text-xs font-bold uppercase tracking-widest opacity-60 ml-2">Filtrar:</span>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="bg-zinc-900 border-zinc-800 text-white text-xs p-2 rounded-md focus:ring-1 focus:ring-primary w-full"
+                className="bg-zinc-900 border-zinc-800 text-white text-xs p-2 rounded-md focus:ring-1 focus:ring-primary h-9"
               >
                 <option value="all">TODAS LAS CATEGORÍAS</option>
                 {categories.map(c => (
