@@ -10,6 +10,7 @@ import { Store, Save, Loader2, Share2 } from 'lucide-react'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
 import { useSiteConfig } from '@/hooks/use-site-config'
+import { siteConfig } from '@/lib/config'
 
 export default function ConfiguracionPage() {
   const [loading, setLoading] = useState(true)
@@ -35,9 +36,14 @@ export default function ConfiguracionPage() {
       setConfig(prev => ({
         ...prev,
         ...data,
-        // Ensure new fields exist even if DB returns null initially
-        instagram_url: data.instagram_url || '',
-        tiktok_url: data.tiktok_url || ''
+        // Ensure new fields exist and fallback to siteConfig if DB is empty
+        instagram_url: data.instagram_url || siteConfig.links.instagram,
+        tiktok_url: data.tiktok_url || siteConfig.links.tiktok,
+        whatsapp_number: data.whatsapp_number || siteConfig.business.contact.phone,
+        store_slogan: data.store_slogan || 'Atrévete a jugar',
+        store_email: data.store_email || siteConfig.business.contact.email,
+        store_name: data.store_name || siteConfig.name,
+        store_description: data.store_description || siteConfig.description
       }))
     } catch (error) {
       toast.error('Error', {
