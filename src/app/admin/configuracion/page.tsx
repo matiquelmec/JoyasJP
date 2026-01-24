@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Settings, Store, Mail, Globe, Shield, Save, Loader2 } from 'lucide-react'
+import { Store, Save, Loader2, Share2 } from 'lucide-react'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
-import { Checkbox } from '@/components/ui/checkbox'
 import { useSiteConfig } from '@/hooks/use-site-config'
 
 export default function ConfiguracionPage() {
@@ -22,15 +21,8 @@ export default function ConfiguracionPage() {
     store_description: '',
     store_slogan: '',
     whatsapp_number: '',
-    shipping_cost: 3000,
-    free_shipping_from: 50000,
-    shipping_zones: '',
-    admin_email: '',
-    notify_new_orders: true,
-    notify_low_stock: true,
-    notify_new_customers: false,
-    mercadopago_public_key: '',
-    mercadopago_access_token: ''
+    instagram_url: '',
+    tiktok_url: ''
   })
 
   useEffect(() => {
@@ -40,9 +32,14 @@ export default function ConfiguracionPage() {
   const loadConfiguration = async () => {
     try {
       const data = await adminAPI.getConfiguration()
-      setConfig(data)
+      setConfig(prev => ({
+        ...prev,
+        ...data,
+        // Ensure new fields exist even if DB returns null initially
+        instagram_url: data.instagram_url || '',
+        tiktok_url: data.tiktok_url || ''
+      }))
     } catch (error) {
-      // console.error('Error loading configuration:', error)
       toast.error('Error', {
         description: 'No se pudo cargar la configuración',
       })
@@ -51,19 +48,19 @@ export default function ConfiguracionPage() {
     }
   }
 
-  const handleSave = async (section: string) => {
+  const handleSave = async () => {
     setSaving(true)
     try {
+      // Send only the relevant fields
       await adminAPI.updateConfiguration(config)
 
       // Refrescar la configuración en toda la aplicación
       await refreshConfig()
 
       toast.success('Configuración guardada', {
-        description: `La ${section} se ha actualizado correctamente.`
+        description: `Los datos de la tienda se han actualizado correctamente.`
       })
     } catch (error) {
-      // console.error('Error saving configuration:', error)
       toast.error('Error', {
         description: 'No se pudo guardar la configuración',
       })
@@ -86,21 +83,21 @@ export default function ConfiguracionPage() {
         <div className="absolute inset-0 bg-slate-100 rounded-2xl -z-10" />
         <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
           <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">
-            Configuración
+            Identidad de la Marca
           </h1>
           <p className="mt-2 text-slate-600 font-medium text-lg">
-            Configuración general de la tienda y parámetros del sistema
+            Personaliza cómo el mundo ve a tu tienda
           </p>
         </div>
       </div>
 
       <div className="grid gap-6">
-        {/* Información de la Tienda */}
+        {/* Información Principal */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Store className="h-5 w-5" />
-              Información de la Tienda
+              Información Esencial
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -114,21 +111,21 @@ export default function ConfiguracionPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="store-email">Email de Contacto</Label>
-                <Input
-                  id="store-email"
-                  type="email"
-                  value={config.store_email}
-                  onChange={(e) => setConfig({ ...config, store_email: e.target.value })}
-                />
-              </div>
-              <div>
                 <Label htmlFor="store-slogan">Slogan de Marca</Label>
                 <Input
                   id="store-slogan"
                   value={config.store_slogan || ''}
                   onChange={(e) => setConfig({ ...config, store_slogan: e.target.value })}
                   placeholder="Ej: Atrévete a jugar"
+                />
+              </div>
+              <div>
+                <Label htmlFor="store-email">Email de Contacto</Label>
+                <Input
+                  id="store-email"
+                  type="email"
+                  value={config.store_email}
+                  onChange={(e) => setConfig({ ...config, store_email: e.target.value })}
                 />
               </div>
               <div>
@@ -142,207 +139,70 @@ export default function ConfiguracionPage() {
               </div>
             </div>
             <div>
-              <Label htmlFor="store-description">Descripción del Sitio</Label>
+              <Label htmlFor="store-description">Descripción del Sitio (SEO)</Label>
               <Textarea
                 id="store-description"
                 value={config.store_description}
                 onChange={(e) => setConfig({ ...config, store_description: e.target.value })}
                 rows={3}
+                placeholder="Breve descripción para Google y redes sociales."
               />
             </div>
-            <Button
-              onClick={() => handleSave('información de la tienda')}
-              disabled={saving}
-              className="bg-primary hover:bg-primary/90 text-white"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Información
-                </>
-              )}
-            </Button>
           </CardContent>
         </Card>
 
-        {/* Configuración de Pagos */}
+        {/* Redes Sociales */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Métodos de Pago
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="mercadopago-key">Clave Pública MercadoPago</Label>
-              <Input
-                id="mercadopago-key"
-                type="password"
-                placeholder="TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                value={config.mercadopago_public_key}
-                onChange={(e) => setConfig({ ...config, mercadopago_public_key: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="mercadopago-secret">Access Token MercadoPago</Label>
-              <Input
-                id="mercadopago-secret"
-                type="password"
-                placeholder="TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                value={config.mercadopago_access_token}
-                onChange={(e) => setConfig({ ...config, mercadopago_access_token: e.target.value })}
-              />
-            </div>
-            <Button
-              onClick={() => handleSave('configuración de pagos')}
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Actualizar Configuración de Pagos
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Configuración de Envíos */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Configuración de Envíos
+              <Share2 className="h-5 w-5" />
+              Redes Sociales
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="shipping-cost">Costo de Envío (CLP)</Label>
+                <Label htmlFor="instagram-url">Instagram URL</Label>
                 <Input
-                  id="shipping-cost"
-                  type="number"
-                  value={config.shipping_cost}
-                  onChange={(e) => setConfig({ ...config, shipping_cost: parseInt(e.target.value) || 0 })}
+                  id="instagram-url"
+                  value={config.instagram_url}
+                  onChange={(e) => setConfig({ ...config, instagram_url: e.target.value })}
+                  placeholder="https://instagram.com/..."
                 />
               </div>
               <div>
-                <Label htmlFor="free-shipping">Envío Gratis Desde (CLP)</Label>
+                <Label htmlFor="tiktok-url">TikTok URL</Label>
                 <Input
-                  id="free-shipping"
-                  type="number"
-                  value={config.free_shipping_from}
-                  onChange={(e) => setConfig({ ...config, free_shipping_from: parseInt(e.target.value) || 0 })}
+                  id="tiktok-url"
+                  value={config.tiktok_url}
+                  onChange={(e) => setConfig({ ...config, tiktok_url: e.target.value })}
+                  placeholder="https://tiktok.com/..."
                 />
               </div>
             </div>
-            <div>
-              <Label htmlFor="shipping-zones">Zonas de Envío</Label>
-              <Textarea
-                id="shipping-zones"
-                value={config.shipping_zones}
-                onChange={(e) => setConfig({ ...config, shipping_zones: e.target.value })}
-                rows={2}
-              />
-            </div>
-            <Button
-              onClick={() => handleSave('configuración de envíos')}
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Configuración de Envíos
-                </>
-              )}
-            </Button>
           </CardContent>
         </Card>
 
-        {/* Configuración de Notificaciones */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Notificaciones
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="admin-email">Email del Administrador</Label>
-              <Input
-                id="admin-email"
-                type="email"
-                value={config.admin_email}
-                onChange={(e) => setConfig({ ...config, admin_email: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Notificar por:</Label>
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={config.notify_new_orders}
-                    onCheckedChange={(checked) =>
-                      setConfig({ ...config, notify_new_orders: checked as boolean })
-                    }
-                  />
-                  <span className="text-sm">Nuevos pedidos</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={config.notify_low_stock}
-                    onCheckedChange={(checked) =>
-                      setConfig({ ...config, notify_low_stock: checked as boolean })
-                    }
-                  />
-                  <span className="text-sm">Stock bajo</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={config.notify_new_customers}
-                    onCheckedChange={(checked) =>
-                      setConfig({ ...config, notify_new_customers: checked as boolean })
-                    }
-                  />
-                  <span className="text-sm">Nuevos clientes</span>
-                </label>
-              </div>
-            </div>
-            <Button
-              onClick={() => handleSave('configuración de notificaciones')}
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Configuración
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-white font-bold"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Guardando Cambios...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Guardar Configuración
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   )

@@ -16,6 +16,8 @@ interface SiteConfiguration {
   notify_new_customers: boolean
   mercadopago_public_key: string
   mercadopago_access_token: string
+  instagram_url?: string
+  tiktok_url?: string
 }
 
 interface SiteConfigContextType {
@@ -39,7 +41,9 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     notify_low_stock: true,
     notify_new_customers: false,
     mercadopago_public_key: '',
-    mercadopago_access_token: ''
+    mercadopago_access_token: '',
+    instagram_url: defaultConfig.links.instagram,
+    tiktok_url: defaultConfig.links.tiktok
   })
   const [loading, setLoading] = useState(true)
 
@@ -59,7 +63,7 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
         setConfig(data.configuration)
       }
     } catch (error) {
-    // console.error('Error loading site configuration:', error)
+      // console.error('Error loading site configuration:', error)
     } finally {
       setLoading(false)
     }

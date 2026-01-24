@@ -89,7 +89,7 @@ export function Footer() {
             </h4>
             <div className="flex space-x-4">
               <Link
-                href={siteConfig.links.instagram}
+                href={config?.instagram_url || siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -98,7 +98,7 @@ export function Footer() {
                 <Instagram className="h-6 w-6" />
               </Link>
               <Link
-                href={siteConfig.links.tiktok}
+                href={config?.tiktok_url || siteConfig.links.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
