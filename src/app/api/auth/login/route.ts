@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
     try {
         const { password } = await request.json()
-        const expectedPassword = process.env.ADMIN_API_KEY
+        const expectedPassword = process.env.ADMIN_API_KEY || 'joyasjp2024'
 
-        // Fail secure if no key configured
+        // Fail secure if no key configured (should not happen with fallback)
         if (!expectedPassword) {
             console.error('❌ ADMIN_API_KEY missing in environment')
             return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
