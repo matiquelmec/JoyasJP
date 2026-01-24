@@ -76,12 +76,12 @@ export default function ContactPage() {
                 {contactPageContent.phone.label}
               </p>
               <a
-                href={`https://wa.me/${contactPageContent.phone.cleanNumber}`}
+                href={`https://wa.me/${(config?.whatsapp_number || contactPageContent.phone.cleanNumber).replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accent text-lg hover:underline"
               >
-                {contactPageContent.phone.number}
+                {config?.whatsapp_number || contactPageContent.phone.number}
               </a>
             </CardContent>
           </Card>
@@ -99,7 +99,7 @@ export default function ContactPage() {
               </p>
               <div className="flex items-center justify-center gap-6 mt-4">
                 <a
-                  href={siteConfig.links.instagram}
+                  href={config?.instagram_url || siteConfig.links.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-accent text-lg hover:underline"
@@ -108,7 +108,7 @@ export default function ContactPage() {
                   <span>Instagram</span>
                 </a>
                 <a
-                  href={siteConfig.links.tiktok}
+                  href={config?.tiktok_url || siteConfig.links.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-accent text-lg hover:underline"
