@@ -14,11 +14,11 @@ interface ColorFilterProps {
 const getColorIndicator = (color: string) => {
   const colorMap: { [key: string]: string } = {
     dorado: 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600',
-    plateado: 'bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500', 
+    plateado: 'bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500',
     negro: 'bg-gradient-to-r from-gray-700 via-gray-800 to-black',
     mixto: 'bg-gradient-to-r from-yellow-400 via-gray-400 to-gray-800'
   }
-  
+
   return colorMap[color.toLowerCase()] || 'bg-gradient-to-r from-gray-400 to-gray-600'
 }
 
@@ -63,10 +63,8 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
 
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
-      <span className="text-sm font-medium text-muted-foreground mb-2 block">
-        Color:
-      </span>
-      
+      {/* Label removed for better alignment with search bar */}
+
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -85,7 +83,7 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
       >
         <div className="flex items-center gap-2 flex-1">
           {activeColor !== 'all' && (
-            <div 
+            <div
               className={cn(
                 "w-4 h-4 rounded-full border border-gray-300 shadow-sm flex-shrink-0",
                 getColorIndicator(activeColor)
@@ -94,12 +92,12 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
           )}
           <span className="truncate">{getColorLabel(activeColor)}</span>
         </div>
-        
-        <ChevronDown 
+
+        <ChevronDown
           className={cn(
             "w-4 h-4 text-muted-foreground transition-transform duration-200 flex-shrink-0",
             isOpen && "rotate-180"
-          )} 
+          )}
         />
       </button>
 
@@ -129,7 +127,7 @@ export function ColorFilter({ colors, activeColor, onColorChange, className }: C
                 tabIndex={isOpen ? 0 : -1}
               >
                 {color !== 'all' && (
-                  <div 
+                  <div
                     className={cn(
                       "w-4 h-4 rounded-full border border-gray-300 shadow-sm flex-shrink-0",
                       getColorIndicator(color)
