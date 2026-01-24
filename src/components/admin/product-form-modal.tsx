@@ -55,7 +55,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     color: '',
     detail: '',
     specifications: '',
-    seo: ''
+    seo: '',
+    discount_price: '',
+    custom_label: '',
+    is_priority: false
   })
 
   useEffect(() => {
@@ -76,7 +79,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         color: product.color || '',
         detail: product.detail || '',
         specifications: product.specifications || '',
-        seo: product.seo || ''
+        seo: product.seo || '',
+        discount_price: product.discount_price?.toString() || '',
+        custom_label: product.custom_label || '',
+        is_priority: product.is_priority || false
       })
 
     } else {
@@ -94,7 +100,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         color: '',
         detail: '',
         specifications: '',
-        seo: ''
+        seo: '',
+        discount_price: '',
+        custom_label: '',
+        is_priority: false
       })
     }
   }, [product, mode, open])
@@ -150,8 +159,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         color: formData.color || null,
         detail: formData.detail || null,
         specifications: formData.specifications || null,
-        seo: formData.seo || null
-        // Removed is_featured and is_deleted as they don't exist in database
+        seo: formData.seo || null,
+        discount_price: formData.discount_price ? parseFloat(formData.discount_price) : null,
+        custom_label: formData.custom_label || null,
+        is_priority: formData.is_priority
       }
 
       let createdProduct = null
@@ -247,7 +258,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price">Precio (CLP) *</Label>
+              <Label htmlFor="price">Precio Normal (CLP) *</Label>
               <input
                 id="price"
                 type="number"
@@ -258,6 +269,19 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 min="0"
                 className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
+            </div>
+            <div>
+              <Label htmlFor="discount_price">Precio Oferta (Opcional)</Label>
+              <input
+                id="discount_price"
+                type="number"
+                value={formData.discount_price}
+                onChange={(e) => setFormData(prev => ({ ...prev, discount_price: e.target.value }))}
+                placeholder="Ej: 79000"
+                min="0"
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Si se llena, el precio original aparecerá tachado.</p>
             </div>
           </div>
 
@@ -274,6 +298,18 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 min="0"
                 className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
+            </div>
+            <div className="flex items-center gap-2 pt-6">
+              <input
+                type="checkbox"
+                id="is_priority"
+                checked={formData.is_priority}
+                onChange={(e) => setFormData(prev => ({ ...prev, is_priority: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+              />
+              <Label htmlFor="is_priority" className="font-bold text-primary cursor-pointer">
+                ⭐ DESTACAR PRIORIDAD (Aparece primero en Home)
+              </Label>
             </div>
           </div>
 
@@ -369,16 +405,29 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             />
           </div>
 
-          <div>
-            <Label htmlFor="seo">Palabras Clave SEO (Búsqueda)</Label>
-            <input
-              id="seo"
-              type="text"
-              value={formData.seo}
-              onChange={(e) => setFormData(prev => ({ ...prev, seo: e.target.value }))}
-              placeholder="Ej: anillo diamante, plata 925, joyas urbanas"
-              className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="seo">Palabras Clave SEO (Búsqueda)</Label>
+              <input
+                id="seo"
+                type="text"
+                value={formData.seo}
+                onChange={(e) => setFormData(prev => ({ ...prev, seo: e.target.value }))}
+                placeholder="Ej: anillo diamante, plata 925, joyas urbanas"
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+              />
+            </div>
+            <div>
+              <Label htmlFor="custom_label" className="text-primary font-bold">Etiqueta Personalizada (Badge)</Label>
+              <input
+                id="custom_label"
+                type="text"
+                value={formData.custom_label}
+                onChange={(e) => setFormData(prev => ({ ...prev, custom_label: e.target.value }))}
+                placeholder="Ej: HOT, EDICIÓN LIMITADA, 🔥"
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
           </div>
 
           <div>

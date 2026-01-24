@@ -56,6 +56,9 @@ export interface Product {
   image_hint?: string
   deleted_at?: string
   code?: string
+  discount_price?: number
+  custom_label?: string
+  is_priority?: boolean
 }
 
 // 🛡️ DATABASE TYPE DEFINITION
@@ -84,7 +87,9 @@ export interface DatabaseProduct {
   image_hint?: string
   deleted_at?: string
   code?: string
-
+  discount_price?: number
+  custom_label?: string
+  is_priority?: boolean
 }
 
 export interface ProductFilters {

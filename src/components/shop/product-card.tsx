@@ -128,16 +128,57 @@ const ProductCard = memo(function ProductCard({
     setImageError(true)
   }, [])
 
-  // Precio formateado memoizado
-  const formattedPrice = useMemo(
-    () =>
-      new Intl.NumberFormat('es-CL', {
-        style: 'currency',
-        currency: 'CLP',
-        minimumFractionDigits: 0,
-      }).format(product.price),
-    [product.price]
-  )
+  // ⚡ Lógica Inteligente de Etiquetas
+  const badges = useMemo(() => {
+    const list = []
+
+    // 1. Etiqueta Personalizada (Prioridad Máxima)
+    if (product.custom_label) {
+      list.push({
+        text: product.custom_label.toUpperCase(),
+        variant: 'custom',
+        className: 'bg-indigo-600 text-white border-indigo-400'
+      })
+    }
+
+    // 2. Etiqueta de Oferta (Si tiene precio_oferta)
+    if (product.discount_price && product.discount_price < product.price) {
+      const discountPercent = Math.round(((product.price - product.discount_price) / product.price) * 100);
+      list.push({
+        text: `-${discountPercent}%`,
+        variant: 'sale',
+        className: 'bg-red-600 text-white border-red-400 animate-pulse-subtle'
+      })
+    }
+
+    // 3. Etiqueta de "Nuevo" (Si tiene menos de 10 días)
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+    if (product.created_at && new Date(product.created_at) > tenDaysAgo) {
+      list.push({
+        text: 'NUEVO',
+        variant: 'new',
+        className: 'bg-zinc-900/90 text-white border-white/20 backdrop-blur-md'
+      })
+    }
+
+    return list
+  }, [product])
+
+  // Precios formateados
+  const priceDisplay = useMemo(() => {
+    const formatter = new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0,
+    })
+
+    return {
+      original: formatter.format(product.price),
+      discount: product.discount_price ? formatter.format(product.discount_price) : null,
+      hasDiscount: !!product.discount_price && product.discount_price < product.price
+    }
+  }, [product.price, product.discount_price])
 
   return (
     <article
@@ -178,6 +219,21 @@ const ProductCard = memo(function ProductCard({
               <Sparkles className="w-12 h-12 text-muted-foreground" />
             </div>
           )}
+
+          {/* Premium Badges Overlay */}
+          <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+            {badges.map((badge, idx) => (
+              <span
+                key={idx}
+                className={cn(
+                  "px-3 py-1 rounded-sm text-[10px] font-black tracking-tighter border shadow-xl",
+                  badge.className
+                )}
+              >
+                {badge.text}
+              </span>
+            ))}
+          </div>
 
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
             <Button
@@ -255,7 +311,20 @@ const ProductCard = memo(function ProductCard({
 
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
           <div className="flex flex-col">
-            <p className="text-2xl font-bold text-primary font-headline">{formattedPrice}</p>
+            {priceDisplay.hasDiscount ? (
+              <>
+                <p className="text-xs text-muted-foreground line-through decoration-red-500/50">
+                  {priceDisplay.original}
+                </p>
+                <p className="text-2xl font-black text-red-600 font-headline tracking-tighter">
+                  {priceDisplay.discount}
+                </p>
+              </>
+            ) : (
+              <p className="text-2xl font-bold text-primary font-headline tracking-tighter">
+                {priceDisplay.original}
+              </p>
+            )}
           </div>
 
           <Button

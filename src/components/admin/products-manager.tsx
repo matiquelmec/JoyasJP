@@ -280,8 +280,15 @@ export function ProductsManager() {
                           <Image src={p.imageUrl || '/assets/logo.webp'} alt={p.name} fill className="object-cover" />
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-zinc-900 leading-tight mb-1">{p.name}</p>
-                          <p className="text-[10px] font-mono text-zinc-400">ID: {p.id.slice(0, 8)}</p>
+                          <p className="font-bold text-sm text-zinc-900 leading-tight mb-1 flex items-center gap-2">
+                            {p.name}
+                            {p.is_priority && <span className="text-amber-500" title="Prioritario">⭐</span>}
+                            {p.discount_price && <Badge variant="destructive" className="h-4 text-[8px] px-1">OFERTA</Badge>}
+                          </p>
+                          <p className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
+                            ID: {p.id.slice(0, 8)}
+                            {p.custom_label && <span className="text-indigo-500 font-bold uppercase">[{p.custom_label}]</span>}
+                          </p>
                         </div>
                       </div>
                     </TableCell>
@@ -291,7 +298,14 @@ export function ProductsManager() {
                       </Badge>
                     </TableCell>
                     <TableCell className="font-black text-sm text-zinc-900">
-                      {formatCLP(p.price)}
+                      {p.discount_price ? (
+                        <div className="flex flex-col">
+                          <span className="text-red-600">{formatCLP(p.discount_price)}</span>
+                          <span className="text-[10px] text-zinc-400 line-through">{formatCLP(p.price)}</span>
+                        </div>
+                      ) : (
+                        formatCLP(p.price)
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">

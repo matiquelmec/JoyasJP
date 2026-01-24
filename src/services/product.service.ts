@@ -9,10 +9,12 @@ import { Product, DatabaseProduct } from '@/lib/types'
 function mapDatabaseProductToProduct(dbProduct: DatabaseProduct): Product {
     return {
         ...dbProduct,
-        // Garantizar compatibilidad hacia atrás: usar imageUrl (legacy) o image_url (standard DB)
         imageUrl: dbProduct.imageUrl || dbProduct.image_url || '',
-        // Asegurar que image_url también exista si se necesita
-        image_url: dbProduct.image_url || dbProduct.imageUrl || ''
+        image_url: dbProduct.image_url || dbProduct.imageUrl || '',
+        // Asegurar que los nuevos campos se mapeen correctamente
+        discount_price: dbProduct.discount_price,
+        custom_label: dbProduct.custom_label,
+        is_priority: dbProduct.is_priority || false
     } as Product
 }
 
@@ -22,20 +24,37 @@ export class ProductService {
      * Lógica optimizada: DB-side randomization
      */
     static async getFeaturedProducts(limit: number = 6): Promise<Product[]> {
-
-
         try {
-            const { data, error } = await supabase.rpc('get_random_products', { limit_count: limit })
+            // ⚡ ESTRATEGIA: Primero productos prioritarios, luego el resto aleatoriamente
+            const { data: priorityData, error: priorityError } = await supabase
+                .from('products')
+                .select('*')
+                .eq('is_priority', true)
+                .gt('stock', 0)
+                .limit(limit)
 
-            if (error) {
-                console.error('Error fetching featured products:', error)
-                return []
+            let featuredProducts: DatabaseProduct[] = (priorityData as unknown as DatabaseProduct[]) || []
+
+            // Si faltan para completar el límite, rellenamos con aleatorios
+            if (featuredProducts.length < limit) {
+                const remainingLimit = limit - featuredProducts.length
+                const priorityIds = featuredProducts.map(p => p.id)
+
+                const { data: randomData, error: randomError } = await supabase
+                    .rpc('get_random_products', { limit_count: remainingLimit * 2 })
+
+                if (!randomError && randomData) {
+                    const randomProducts = (randomData as unknown as DatabaseProduct[])
+                        .filter(p => !priorityIds.includes(p.id))
+                        .slice(0, remainingLimit)
+
+                    featuredProducts = [...featuredProducts, ...randomProducts]
+                }
             }
 
-            if (!data) return []
-
-            return (data as unknown as DatabaseProduct[]).map(mapDatabaseProductToProduct)
+            return featuredProducts.map(mapDatabaseProductToProduct)
         } catch (error) {
+            console.error('Error in getFeaturedProducts:', error)
             return []
         }
     }
