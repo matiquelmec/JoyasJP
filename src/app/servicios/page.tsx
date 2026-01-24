@@ -31,8 +31,7 @@ export default function ServicesPage() {
         loop
         muted
         playsInline
-        preload="metadata"
-        poster={getImageUrl('logo.webp')}
+        preload="none"
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de servicios para artistas"
       />
