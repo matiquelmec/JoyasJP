@@ -99,16 +99,15 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
-        {/* Force Video Preload for LCP Optimization */}
-        <PreloadVideo src={getVideoUrl('mi-video.mp4')} />
+      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0 bg-black">
         <video
           src={getVideoUrl('mi-video.mp4')}
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata" // Solo carga metadatos inicialmente para ahorrar ancho de banda
+          poster={getImageUrl('logo.webp')} // Muestra el logo (u otro frame) mientras carga
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         />

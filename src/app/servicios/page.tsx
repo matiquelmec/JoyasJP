@@ -23,16 +23,16 @@ export default function ServicesPage() {
   const storeName = config?.store_name || 'Joyas JP'
 
   return (
-    <div className="relative min-h-screen">
-      {/* Crisp Video Background */}
-      <PreloadVideo src={getVideoUrl('mi-video2.mp4')} />
+    <div className="relative min-h-screen bg-black">
+      {/* Optimized Video Background */}
       <video
         src={getVideoUrl('mi-video2.mp4')}
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
+        poster={getImageUrl('logo.webp')}
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de servicios para artistas"
       />
