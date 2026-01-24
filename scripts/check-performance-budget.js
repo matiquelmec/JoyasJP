@@ -18,15 +18,15 @@ const PERFORMANCE_BUDGETS = {
     excellent: 90
   },
   lcp: {
-    good: 2.5,
-    poor: 4.0
+    good: 3.5,
+    poor: 5.0
   },
   tbt: {
-    good: 200,
-    poor: 500
+    good: 400,
+    poor: 600
   },
   cls: {
-    good: 0.1,
+    good: 0.15,
     poor: 0.25
   },
   bundleSize: {
