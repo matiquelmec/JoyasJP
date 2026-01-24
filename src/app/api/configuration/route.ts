@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     if (error && (error.code === 'PGRST116' || error.message?.includes('relation "public.configuration" does not exist'))) {
       // Table doesn't exist or no configuration exists, return defaults from config.ts
-      return NextResponse.json({ 
+      return NextResponse.json({
         configuration: {
           store_name: siteConfig.name,
           store_email: siteConfig.business.contact.email,
@@ -29,22 +29,29 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    // Filter out sensitive data
+    // Filter out sensitive data and mix with static config for legacy fields
     const publicConfig = {
+      // Dynamic fields (from DB)
       store_name: data.store_name,
       store_email: data.store_email,
       store_description: data.store_description,
-      shipping_cost: data.shipping_cost,
-      free_shipping_from: data.free_shipping_from,
-      shipping_zones: data.shipping_zones,
-      mercadopago_public_key: data.mercadopago_public_key
+      store_slogan: data.store_slogan,
+      whatsapp_number: data.whatsapp_number,
+      instagram_url: data.instagram_url,
+      tiktok_url: data.tiktok_url,
+
+      // Static/Env fields (DB columns to be dropped/missing)
+      shipping_cost: siteConfig.ecommerce.shippingCost || 3000,
+      free_shipping_from: siteConfig.ecommerce.freeShippingFrom || 50000,
+      shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
+      mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ''
     }
 
     return NextResponse.json({ configuration: publicConfig })
   } catch (error) {
     // console.error('Error fetching configuration:', error)
     // En caso de error, devolver configuración por defecto
-    return NextResponse.json({ 
+    return NextResponse.json({
       configuration: {
         store_name: siteConfig.name,
         store_email: siteConfig.business.contact.email,
