@@ -38,6 +38,13 @@
     --input: 0 0% 14.9%;
     --ring: 346.8 85% 45%;
 
+    /* 🏆 Colores Premium para Joyería */
+    --gold: 45 80% 45%;
+    --gold-light: 45 90% 65%;
+    --platinum: 210 10% 90%;
+    --platinum-dark: 210 5% 40%;
+    --velvet: 346.8 85% 35%;
+
     --radius: 0.5rem;
   }
 

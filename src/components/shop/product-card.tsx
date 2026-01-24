@@ -128,37 +128,37 @@ const ProductCard = memo(function ProductCard({
     setImageError(true)
   }, [])
 
-  // ⚡ Lógica Inteligente de Etiquetas
+  // ⚡ Lógica Inteligente de Etiquetas Premium
   const badges = useMemo(() => {
     const list = []
 
-    // 1. Etiqueta Personalizada (Prioridad Máxima)
+    // 1. Etiqueta Personalizada (Prioridad Máxima - Oro/Custom)
     if (product.custom_label) {
       list.push({
         text: product.custom_label.toUpperCase(),
         variant: 'custom',
-        className: 'bg-indigo-600 text-white border-indigo-400'
+        className: 'badge-premium badge-custom'
       })
     }
 
-    // 2. Etiqueta de Oferta (Si tiene precio_oferta)
+    // 2. Etiqueta de Oferta (Rojo Terciopelo)
     if (product.discount_price && product.discount_price < product.price) {
       const discountPercent = Math.round(((product.price - product.discount_price) / product.price) * 100);
       list.push({
         text: `-${discountPercent}%`,
         variant: 'sale',
-        className: 'bg-red-600 text-white border-red-400 animate-pulse-subtle'
+        className: 'badge-premium badge-sale animate-pulse-subtle'
       })
     }
 
-    // 3. Etiqueta de "Nuevo" (Si tiene menos de 10 días)
+    // 3. Etiqueta de "Nuevo" (Platino)
     const tenDaysAgo = new Date();
     tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
     if (product.created_at && new Date(product.created_at) > tenDaysAgo) {
       list.push({
         text: 'NUEVO',
         variant: 'new',
-        className: 'bg-zinc-900/90 text-white border-white/20 backdrop-blur-md'
+        className: 'badge-premium badge-new'
       })
     }
 
