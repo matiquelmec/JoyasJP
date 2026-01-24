@@ -113,7 +113,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-// Static viewport export remains same
+// ⚡ DYNAMIC IMPORT para componente pesado
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#0a0a0a' },
@@ -199,8 +199,8 @@ export default async function RootLayout({
           defer
         />
 
-        {/* Cache busting y optimización */}
-        <meta name="build-version" content={`${Date.now()}`} />
+        {/* Cache busting y optimización determinística */}
+        <meta name="build-version" content="20240523" />
 
         {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
 

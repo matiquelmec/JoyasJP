@@ -505,21 +505,18 @@ header {
   }
 }
 
-/* ✨ ADMIN PANEL - LAZY LOADED */
-@supports (loading-lazy) {
+/* ✨ ADMIN PANEL - STYLES */
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  background: white !important;
+  color: #1a1a1a !important;
+  border: 2px solid #d1d5db !important;
+}
 
-  .admin-panel input,
-  .admin-panel textarea,
-  .admin-panel select {
-    background: white !important;
-    color: #1a1a1a !important;
-    border: 2px solid #d1d5db !important;
-  }
-
-  .admin-panel input:focus,
-  .admin-panel textarea:focus,
-  .admin-panel select:focus {
-    border: 2px solid hsl(var(--primary)) !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-  }
+.admin-panel input:focus,
+.admin-panel textarea:focus,
+.admin-panel select:focus {
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
