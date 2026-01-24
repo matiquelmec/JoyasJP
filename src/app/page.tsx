@@ -8,6 +8,8 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 
+import { PreloadVideo } from '@/components/ui/preload-video'
+
 // ⚡ DYNAMIC IMPORT para componente pesado
 const LazyProductCard = dynamic(() => import('@/components/shop/lazy-product-card'), {
   loading: () => <ProductSkeleton />,
@@ -24,7 +26,6 @@ function ProductSkeleton() {
       <div className="aspect-square bg-gradient-to-br from-zinc-800 to-zinc-700 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-600/30 to-transparent animate-shimmer" />
       </div>
-
       <div className="p-6">
         {/* Title skeleton */}
         <div className="h-5 bg-gradient-to-r from-zinc-700 to-zinc-600 rounded-lg mb-3 animate-pulse" />
@@ -99,6 +100,8 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0">
+        {/* Force Video Preload for LCP Optimization */}
+        <PreloadVideo src={getVideoUrl('mi-video.mp4')} />
         <video
           src={getVideoUrl('mi-video.mp4')}
           autoPlay
