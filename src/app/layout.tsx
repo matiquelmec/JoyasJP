@@ -6,6 +6,7 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/sonner'
 import { PreloaderProvider } from '@/components/providers/preloader-provider'
 import { cn } from '@/lib/utils'
+import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
 import '@/lib/env-validator' // 🛡️ Validador de variables de entorno
 
@@ -32,78 +33,89 @@ const bebasNeue = Bebas_Neue({
   preload: true,
 })
 
-export const metadata: Metadata = {
-  title: {
-    default: 'Joyas JP | Alta Joyería para la Escena Urbana',
-    template: '%s | Joyas JP',
-  },
-  description:
-    'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico. Perfecto para quienes buscan expresar su personalidad a través de piezas extraordinarias.',
-  keywords: [
-    'joyas urbanas Chile',
-    'joyería premium',
-    'diseños únicos',
-    'estilo urbano',
-    'alta joyería',
-    'accesorios premium',
-    'joyas artesanales',
-    'Chile joyería',
-  ],
-  authors: [{ name: 'Joyas JP' }],
-  creator: 'Joyas JP',
-  publisher: 'Joyas JP',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  ),
-  alternates: {
-    canonical: '/',
-    languages: {
-      'es-CL': '/',
+export async function generateMetadata(): Promise<Metadata> {
+  // Fetch dynamic config from DB
+  const { data: config } = await supabase
+    .from('configuration')
+    .select('*')
+    .single()
+
+  const storeName = config?.store_name || 'Joyas JP'
+  const description = config?.store_description || 'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico.'
+  const title = `${storeName} | Alta Joyería para la Escena Urbana`
+
+  return {
+    title: {
+      default: title,
+      template: `%s | ${storeName}`,
     },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'es_CL',
-    url: '/',
-    title: 'Joyas JP | Alta Joyería para la Escena Urbana',
-    description:
-      'Descubre nuestra exclusiva colección de joyas urbanas con diseños únicos y calidad premium.',
-    siteName: 'Joyas JP',
-    images: [
-      {
-        url: '/assets/logo.webp',
-        width: 450,
-        height: 200,
-        alt: 'Joyas JP - Alta joyería urbana',
-      },
+    description: description,
+    keywords: [
+      'joyas urbanas Chile',
+      'joyería premium',
+      'diseños únicos',
+      'estilo urbano',
+      'alta joyería',
+      'accesorios premium',
+      'joyas artesanales',
+      'Chile joyería',
     ],
-  },
-  icons: {
-    icon: '/assets/logo.webp',
-    shortcut: '/assets/logo.webp',
-    apple: '/assets/logo.webp',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
+    authors: [{ name: storeName }],
+    creator: storeName,
+    publisher: storeName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    ),
+    alternates: {
+      canonical: '/',
+      languages: {
+        'es-CL': '/',
+      },
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'es_CL',
+      url: '/',
+      title: title,
+      description: description,
+      siteName: storeName,
+      images: [
+        {
+          url: '/assets/logo.webp',
+          width: 450,
+          height: 200,
+          alt: `${storeName} - Alta joyería urbana`,
+        },
+      ],
+    },
+    icons: {
+      icon: '/assets/logo.webp',
+      shortcut: '/assets/logo.webp',
+      apple: '/assets/logo.webp',
+    },
+    robots: {
       index: true,
       follow: true,
-      noimageindex: false,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
-  },
-  category: 'shopping',
+    category: 'shopping',
+  }
 }
 
+// Static viewport export remains same
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#0a0a0a' },
@@ -115,40 +127,52 @@ export const viewport: Viewport = {
   userScalable: true,
 }
 
-// Schema.org structured data
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Joyas JP',
-  description:
-    'Alta joyería para la escena urbana con diseños únicos y calidad premium',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.webp`,
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: '+56-9-1234-5678',
-    contactType: 'customer service',
-    areaServed: 'CL',
-    availableLanguage: 'Spanish',
-  },
-  sameAs: [siteConfig.links.instagram, siteConfig.links.tiktok],
-  address: {
-    '@type': 'PostalAddress',
-    addressCountry: 'CL',
-    addressLocality: 'Santiago',
-  },
-  foundingDate: '2024',
-  founder: {
-    '@type': 'Person',
-    name: 'Joyas JP',
-  },
+// Schema.org structured data generator
+async function getJsonLd() {
+  const { data: config } = await supabase.from('configuration').select('*').single()
+  const storeName = config?.store_name || 'Joyas JP'
+  const storeEmail = config?.store_email || siteConfig.business.contact.email
+  const storePhone = config?.whatsapp_number || siteConfig.business.contact.phone
+  const description = config?.store_description || 'Alta joyería para la escena urbana'
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: storeName,
+    description: description,
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.webp`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: storePhone,
+      contactType: 'customer service',
+      areaServed: 'CL',
+      availableLanguage: 'Spanish',
+    },
+    sameAs: [
+      config?.instagram_url || siteConfig.links.instagram,
+      config?.tiktok_url || siteConfig.links.tiktok
+    ],
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'CL',
+      addressLocality: 'Santiago',
+    },
+    foundingDate: '2024',
+    founder: {
+      '@type': 'Person',
+      name: storeName,
+    },
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const jsonLd = await getJsonLd()
+
   return (
     <html lang="es-CL" className="dark scroll-smooth">
       <head>

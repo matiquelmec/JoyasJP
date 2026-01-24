@@ -35,7 +35,7 @@ export function Footer() {
               </h3>
             </div>
             <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-headline font-medium uppercase tracking-widest">
-              Atrévete a jugar
+              {config?.store_slogan || 'Atrévete a jugar'}
             </p>
           </div>
 
@@ -71,13 +71,13 @@ export function Footer() {
                 <span>{config?.store_email || siteConfig.business.contact.email}</span>
               </a>
               <a
-                href={`tel:${siteConfig.business.contact.phone.replace(/\s/g, '')}`}
+                href={`tel:${(config?.whatsapp_number || siteConfig.business.contact.phone).replace(/\s/g, '')}`}
                 className="flex items-center justify-center md:justify-start gap-3 group transition-colors hover:text-white"
               >
                 <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-primary/20 transition-colors">
                   <Phone className="h-4 w-4 text-primary" />
                 </div>
-                <span>{siteConfig.business.contact.phone}</span>
+                <span>{config?.whatsapp_number || siteConfig.business.contact.phone}</span>
               </a>
             </div>
           </div>
