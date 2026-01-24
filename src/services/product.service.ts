@@ -20,39 +20,55 @@ function mapDatabaseProductToProduct(dbProduct: DatabaseProduct): Product {
 
 export class ProductService {
     /**
-     * Obtiene productos destacados utilizando RPC para máxima eficiencia
-     * Lógica optimizada: DB-side randomization
+     * Calcula una puntuación de relevancia para el ordenamiento inteligente
+     * Prioridad: Manual ⭐ > Etiquetas Especiales > Ofertas > Novedades
+     */
+    private static calculateProductScore(p: DatabaseProduct): number {
+        let score = 0
+
+        // 1. Prioridad Manual (Máxima importancia)
+        if (p.is_priority) score += 1000000
+
+        // 2. Etiqueta Especial (Badge personalizado)
+        if (p.custom_label) score += 500000
+
+        // 3. Oferta (Precio rebajado)
+        if (p.discount_price && p.discount_price < p.price) score += 200000
+
+        // 4. Lógica de Novedad (Automática por fecha)
+        if (p.created_at) {
+            const createdDate = new Date(p.created_at).getTime()
+            const now = new Date().getTime()
+            const daysSinceCreation = (now - createdDate) / (1000 * 60 * 60 * 24)
+
+            // Si tiene menos de 15 días, escala de puntos
+            if (daysSinceCreation < 15) {
+                score += Math.max(0, (15 - daysSinceCreation) * 5000)
+            }
+        }
+
+        return score
+    }
+
+    /**
+     * Obtiene productos destacados utilizando filtrado inteligente en servidor
      */
     static async getFeaturedProducts(limit: number = 6): Promise<Product[]> {
         try {
-            // ⚡ ESTRATEGIA: Primero productos prioritarios, luego el resto aleatoriamente
-            const { data: priorityData, error: priorityError } = await supabase
+            // Traemos productos con stock
+            const { data, error } = await supabase
                 .from('products')
                 .select('*')
-                .eq('is_priority', true)
                 .gt('stock', 0)
-                .limit(limit)
 
-            let featuredProducts: DatabaseProduct[] = (priorityData as unknown as DatabaseProduct[]) || []
+            if (error || !data) return []
 
-            // Si faltan para completar el límite, rellenamos con aleatorios
-            if (featuredProducts.length < limit) {
-                const remainingLimit = limit - featuredProducts.length
-                const priorityIds = featuredProducts.map(p => p.id)
+            // Ordenamos por puntuación y limitamos
+            const sortedProducts = (data as unknown as DatabaseProduct[])
+                .sort((a, b) => this.calculateProductScore(b) - this.calculateProductScore(a))
+                .slice(0, limit)
 
-                const { data: randomData, error: randomError } = await supabase
-                    .rpc('get_random_products', { limit_count: remainingLimit * 2 })
-
-                if (!randomError && randomData) {
-                    const randomProducts = (randomData as unknown as DatabaseProduct[])
-                        .filter(p => !priorityIds.includes(p.id))
-                        .slice(0, remainingLimit)
-
-                    featuredProducts = [...featuredProducts, ...randomProducts]
-                }
-            }
-
-            return featuredProducts.map(mapDatabaseProductToProduct)
+            return sortedProducts.map(mapDatabaseProductToProduct)
         } catch (error) {
             console.error('Error in getFeaturedProducts:', error)
             return []
@@ -63,8 +79,6 @@ export class ProductService {
      * Obtiene un producto por ID o Slug con validación estricta
      */
     static async getProductById(idOrSlug: string): Promise<Product | null> {
-
-
         try {
             const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
 
@@ -107,23 +121,22 @@ export class ProductService {
     }
 
     /**
-     * Obtiene todos los productos con stock > 0
-     * Replica la lógica de getProducts en api.ts incluyendo normalización
+     * Obtiene todos los productos ordenados de forma inteligente por defecto
      */
     static async getAllProducts(): Promise<Product[]> {
-
-
         try {
             const { data, error } = await supabase
                 .from('products')
-                .select('*') // stock is included in *
+                .select('*')
                 .gt('stock', 0)
 
             if (error || !data) return []
 
-            return (data as unknown as DatabaseProduct[]).map(dbProduct => {
+            const sortedProducts = (data as unknown as DatabaseProduct[])
+                .sort((a, b) => this.calculateProductScore(b) - this.calculateProductScore(a))
+
+            return sortedProducts.map(dbProduct => {
                 const product = mapDatabaseProductToProduct(dbProduct)
-                // Normalización de color específica para evitar "Mixto" vs "Multicolor"
                 if (product.color) {
                     product.color = normalizeColor(product.color)
                 }
@@ -138,7 +151,6 @@ export class ProductService {
      * Obtiene lista de colores disponibles en productos con stock
      */
     static async getAvailableColors(): Promise<string[]> {
-
         try {
             const { data, error } = await supabase
                 .from('products')
@@ -171,8 +183,6 @@ export class ProductService {
         category: string,
         limit: number = 4
     ): Promise<Product[]> {
-
-
         try {
             const { data, error } = await supabase
                 .from('products')
