@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { getVideoUrl } from '@/lib/asset-version'
+import { PreloadVideo } from '@/components/ui/preload-video'
 
 const servicesPageContent = {
   title: {
@@ -24,6 +25,7 @@ export default function ServicesPage() {
   return (
     <div className="relative min-h-screen">
       {/* Crisp Video Background */}
+      <PreloadVideo src={getVideoUrl('mi-video2.mp4')} />
       <video
         src={getVideoUrl('mi-video2.mp4')}
         autoPlay
