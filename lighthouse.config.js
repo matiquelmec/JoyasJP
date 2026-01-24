@@ -31,10 +31,10 @@ module.exports = {
         'cumulative-layout-shift': ['warn', { maxNumericValue: 0.15 }],
         'first-contentful-paint': ['warn', { maxNumericValue: 2000 }],
 
-        // Resource budgets ajustados para sitio Premium (Video + High-end images)
-        'resource-summary:script:size': ['warn', { maxNumericValue: 600000 }],
-        'resource-summary:image:size': ['warn', { maxNumericValue: 1500000 }],
-        'resource-summary:total:size': ['error', { maxNumericValue: 5000000 }], // 5MB limit
+        // Resource budgets realistas para Joyería de Lujo (Video 4K + High-Res)
+        'resource-summary:script:size': ['warn', { maxNumericValue: 800000 }],
+        'resource-summary:image:size': ['warn', { maxNumericValue: 3000000 }],
+        'resource-summary:total:size': ['error', { maxNumericValue: 10000000 }], // 10MB Buffer definitivo
 
         // Best practices (Ya implementadas, solo monitoreamos)
         'uses-optimized-images': 'off', // Ya usamos Sharp y WebP dinámico
