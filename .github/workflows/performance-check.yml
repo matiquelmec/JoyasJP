@@ -41,8 +41,8 @@ jobs:
           http://localhost:3000
           http://localhost:3000/productos
         configPath: './lighthouse.config.js'
-        uploadArtifacts: true
-        temporaryPublicStorage: true
+        uploadArtifacts: false # Desactivado para evitar errores de nombres de contenedor
+        temporaryPublicStorage: true # Genera un link interactivo público (más eficiente y robusto)
         
     - name: Performance Budget Check
       run: |

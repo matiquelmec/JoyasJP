@@ -36,7 +36,7 @@ const PERFORMANCE_BUDGETS = {
 }
 
 class PerformanceBudgetChecker {
-  
+
   constructor() {
     this.results = {
       passed: 0,
@@ -45,14 +45,14 @@ class PerformanceBudgetChecker {
       details: []
     }
   }
-  
+
   /**
    * 📊 Leer resultados de Lighthouse CI
    */
   readLighthouseResults() {
     try {
       const resultsPath = path.join(process.cwd(), '.lighthouseci')
-      
+
       // En un setup real, leerías los resultados JSON de Lighthouse CI
       // Por ahora, simulamos datos
       return {
@@ -66,7 +66,7 @@ class PerformanceBudgetChecker {
       return null
     }
   }
-  
+
   /**
    * 📏 Verificar Performance Score
    */
@@ -89,7 +89,7 @@ class PerformanceBudgetChecker {
       return false
     }
   }
-  
+
   /**
    * 🎯 Verificar LCP (Largest Contentful Paint)
    */
@@ -108,7 +108,7 @@ class PerformanceBudgetChecker {
       return false
     }
   }
-  
+
   /**
    * ⏱️ Verificar TBT (Total Blocking Time)
    */
@@ -127,7 +127,7 @@ class PerformanceBudgetChecker {
       return false
     }
   }
-  
+
   /**
    * 📐 Verificar CLS (Cumulative Layout Shift)
    */
@@ -146,7 +146,7 @@ class PerformanceBudgetChecker {
       return false
     }
   }
-  
+
   /**
    * 📦 Verificar Bundle Size
    */
@@ -154,23 +154,23 @@ class PerformanceBudgetChecker {
     try {
       const nextBuildPath = path.join(process.cwd(), '.next')
       const buildManifest = path.join(nextBuildPath, 'build-manifest.json')
-      
+
       if (fs.existsSync(buildManifest)) {
         const manifest = JSON.parse(fs.readFileSync(buildManifest, 'utf8'))
         // Calcular tamaño aproximado del bundle
         const bundleSize = Object.keys(manifest.pages).length * 50000 // Estimación
-        
+
         if (bundleSize <= PERFORMANCE_BUDGETS.bundleSize.warning) {
           this.results.passed++
-          this.results.details.push(`✅ Bundle Size: ~${Math.round(bundleSize/1000)}KB (Good)`)
+          this.results.details.push(`✅ Bundle Size: ~${Math.round(bundleSize / 1000)}KB (Good)`)
           return true
         } else if (bundleSize <= PERFORMANCE_BUDGETS.bundleSize.critical) {
           this.results.warnings++
-          this.results.details.push(`⚠️  Bundle Size: ~${Math.round(bundleSize/1000)}KB (Large)`)
+          this.results.details.push(`⚠️  Bundle Size: ~${Math.round(bundleSize / 1000)}KB (Large)`)
           return true
         } else {
           this.results.failed++
-          this.results.details.push(`❌ Bundle Size: ~${Math.round(bundleSize/1000)}KB (Too large)`)
+          this.results.details.push(`❌ Bundle Size: ~${Math.round(bundleSize / 1000)}KB (Too large)`)
           return false
         }
       }
@@ -178,30 +178,30 @@ class PerformanceBudgetChecker {
       this.results.warnings++
       this.results.details.push(`⚠️  Bundle Size: Could not determine (${error.message})`)
     }
-    
+
     return true
   }
-  
+
   /**
    * 🚀 Ejecutar todas las verificaciones
    */
   async runChecks() {
     console.log('🎯 Running Performance Budget Checks...\n')
-    
+
     const metrics = this.readLighthouseResults()
-    
+
     if (!metrics) {
       console.error('❌ Could not read performance metrics')
       process.exit(1)
     }
-    
+
     console.log('📊 Performance Metrics:')
     console.log(`   Score: ${metrics.score}`)
     console.log(`   LCP: ${metrics.lcp.toFixed(2)}s`)
     console.log(`   TBT: ${Math.round(metrics.tbt)}ms`)
     console.log(`   CLS: ${metrics.cls.toFixed(3)}`)
     console.log('')
-    
+
     // Ejecutar todas las verificaciones
     const checks = [
       this.checkPerformanceScore(metrics.score),
@@ -210,36 +210,39 @@ class PerformanceBudgetChecker {
       this.checkCLS(metrics.cls),
       this.checkBundleSize()
     ]
-    
+
     const allPassed = checks.every(check => check)
-    
+
     // Mostrar resultados
     console.log('📋 Budget Check Results:')
     this.results.details.forEach(detail => console.log(`   ${detail}`))
     console.log('')
-    
+
     console.log(`📊 Summary: ${this.results.passed} passed, ${this.results.warnings} warnings, ${this.results.failed} failed`)
-    
+
     if (allPassed && this.results.failed === 0) {
       console.log('🎉 All performance budgets passed!')
-      
-      // Exportar métricas para GitHub Actions
-      if (process.env.GITHUB_ACTIONS) {
-        console.log(`::set-output name=performance-score::${metrics.score}`)
-        console.log(`::set-output name=lcp::${metrics.lcp.toFixed(2)}`)
-        console.log(`::set-output name=status::passed`)
+
+      // Exportar métricas para GitHub Actions usando la API moderna
+      if (process.env.GITHUB_OUTPUT) {
+        const output = [
+          `performance-score=${metrics.score}`,
+          `lcp=${metrics.lcp.toFixed(2)}`,
+          `status=passed`
+        ].join('\n')
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, output + '\n')
       }
-      
+
       process.exit(0)
     } else {
       console.log('\n❌ Performance budget failed!')
       console.log('🚨 Deploy blocked until performance improves.')
-      
-      if (process.env.GITHUB_ACTIONS) {
-        console.log(`::set-output name=status::failed`)
+
+      if (process.env.GITHUB_OUTPUT) {
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `status=failed\n`)
         console.log(`::error::Performance budget failed with ${this.results.failed} critical issues`)
       }
-      
+
       // Sugerir acciones
       console.log('\n💡 Suggested actions:')
       if (metrics.score < PERFORMANCE_BUDGETS.score.minimum) {
@@ -253,7 +256,7 @@ class PerformanceBudgetChecker {
         console.log('   • Reduce JavaScript execution time')
         console.log('   • Implement code splitting and lazy loading')
       }
-      
+
       process.exit(1)
     }
   }
