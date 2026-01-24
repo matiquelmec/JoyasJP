@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
       const { revalidatePath } = await import('next/cache')
       revalidatePath('/productos')
       revalidatePath(`/productos/${productId}`)
+      revalidatePath('/') // ⚡ Actualizar Home (Destacados)
     } catch (revalidateError) {
       // console.log('Revalidation triggered for new product:', productId)
     }
@@ -146,6 +147,7 @@ export async function PUT(request: NextRequest) {
       const { revalidatePath } = await import('next/cache')
       revalidatePath(`/productos/${id}`)
       revalidatePath('/productos')
+      revalidatePath('/') // ⚡ Actualizar Home (Destacados)
     } catch (revalidateError) {
       // console.log('Revalidation triggered for product:', id)
     }
