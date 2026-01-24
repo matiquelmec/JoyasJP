@@ -8,7 +8,7 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 
-import { PreloadVideo } from '@/components/ui/preload-video'
+
 
 // ⚡ DYNAMIC IMPORT para componente pesado
 const LazyProductCard = dynamic(() => import('@/components/shop/lazy-product-card'), {
