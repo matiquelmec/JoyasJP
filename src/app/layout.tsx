@@ -92,9 +92,9 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
     icons: {
-      icon: '/assets/logo.webp',
-      shortcut: '/assets/logo.webp',
-      apple: '/assets/logo.webp',
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
+      apple: '/favicon.png',
     },
     robots: {
       index: true,
@@ -189,9 +189,9 @@ export default async function RootLayout({
           </>
         )}
 
-        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
-        <link rel="shortcut icon" href="/favicon.ico?v=2" />
-        <link rel="apple-touch-icon" href="/favicon.ico?v=2" />
+        <link rel="icon" href="/favicon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
 
         <script
           type="application/ld+json"
