@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js'
 
-let supabaseClient: ReturnType<typeof createClient> | undefined
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+
+let supabaseClient: SupabaseClient | undefined
 let clientInitialized = false
 
-function initializeSupabase() {
+function initializeSupabase(): SupabaseClient | undefined {
   if (clientInitialized) {
     return supabaseClient
   }
@@ -14,13 +15,14 @@ function initializeSupabase() {
   if (supabaseUrl && supabaseAnonKey) {
     try {
       supabaseClient = createClient(supabaseUrl, supabaseAnonKey)
-      // console.log('✅ Supabase client initialized on demand')
     } catch (error) {
-      // console.error('❌ Failed to initialize Supabase client:', error)
+      console.error('❌ Failed to initialize Supabase client:', error)
       supabaseClient = undefined
     }
   } else {
-    // console.warn('Supabase URL or Anon Key are missing. Supabase client will not be initialized.')
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Supabase URL or Anon Key are missing. Supabase client will not be initialized.')
+    }
   }
 
   clientInitialized = true
@@ -32,11 +34,17 @@ export function getSupabase() {
   return initializeSupabase()
 }
 
-// Legacy export for backward compatibility - but uses lazy initialization
-export const supabase = new Proxy({} as any, {
+// Proxy typed as SupabaseClient to support lazy initialization with strict types
+export const supabase = new Proxy({} as SupabaseClient, {
   get(target, prop) {
     const client = initializeSupabase()
-    // @ts-ignore - Permitiendo acceso dinámico legado
-    return client ? (client as any)[prop] : undefined
+    if (!client) {
+      // If the client fails to load, we can't really do anything "safe" other than
+      // return undefined and let it crash, OR throw a clean error.
+      // Throwing a clean error is better for debugging than "cannot read prop of undefined"
+      throw new Error('Supabase client is not initialized. Check environment variables.')
+    }
+    // Reflect.get is safer and correct for Proxy forwarding
+    return Reflect.get(client, prop)
   }
 })

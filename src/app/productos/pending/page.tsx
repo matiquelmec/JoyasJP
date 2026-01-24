@@ -15,7 +15,7 @@ export default function PendingPage() {
           vez que se complete el proceso.
         </p>
         <Button asChild className="mt-8">
-          <Link href="/shop">Volver a la Tienda</Link>
+          <Link href="/productos">Volver a la Tienda</Link>
         </Button>
       </div>
     </div>

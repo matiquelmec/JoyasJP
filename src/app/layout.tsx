@@ -68,9 +68,7 @@ export async function generateMetadata(): Promise<Metadata> {
       address: false,
       telephone: false,
     },
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-    ),
+    metadataBase: new URL(siteConfig.url),
     alternates: {
       canonical: '/',
       languages: {
@@ -140,8 +138,8 @@ async function getJsonLd() {
     '@type': 'Organization',
     name: storeName,
     description: description,
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/assets/logo.webp`,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/assets/logo.webp`,
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: storePhone,
@@ -184,8 +182,12 @@ export default async function RootLayout({
           crossOrigin=""
         />
         {/* Preconnect para Supabase */}
-        <link rel="preconnect" href="https://lrsmmfpsbawznjpnllwr.supabase.co" />
-        <link rel="dns-prefetch" href="https://lrsmmfpsbawznjpnllwr.supabase.co" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
 
         <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
         <link rel="shortcut icon" href="/favicon.ico?v=2" />
@@ -199,9 +201,6 @@ export default async function RootLayout({
 
         {/* Cache busting y optimización */}
         <meta name="build-version" content={`${Date.now()}`} />
-        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta httpEquiv="Pragma" content="no-cache" />
-        <meta httpEquiv="Expires" content="0" />
 
         {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
 
@@ -226,7 +225,9 @@ export default async function RootLayout({
         {/* DNS Prefetch para mejor performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-        <link rel="dns-prefetch" href="//lrsmmfpsbawznjpnllwr.supabase.co" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+        )}
 
       </head>
       <body

@@ -30,7 +30,7 @@ export default function WishlistPage() {
             Explora nuestros productos y guarda tus favoritos para más tarde.
           </p>
           <div className="mt-6">
-            <Link href="/shop">
+            <Link href="/productos">
               <Button size="lg">Descubrir Productos</Button>
             </Link>
           </div>

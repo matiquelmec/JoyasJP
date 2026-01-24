@@ -242,7 +242,7 @@ export function OrdersManager() {
                   Ver Productos
                 </Button>
               </Link>
-              <Link href="/shop">
+              <Link href="/productos">
                 <Button variant="outline">
                   <ShoppingBag className="w-4 h-4 mr-2" />
                   Ir a la Tienda

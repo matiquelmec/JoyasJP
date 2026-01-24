@@ -121,14 +121,26 @@ export interface CartState {
 
 // Checkout & Orders
 export interface CheckoutFormData {
-  name: string
+  customerName: string
   email: string
   phone: string
   address: string
   city: string
   region: string
+  rut: string
   postalCode?: string
   notes?: string
+}
+
+export interface CustomerInfo {
+  name: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  commune: string
+  rut: string
+  shippingCost: number
 }
 
 export interface Order {

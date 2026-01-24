@@ -22,13 +22,13 @@ export class ProductService {
      * Lógica optimizada: DB-side randomization
      */
     static async getFeaturedProducts(limit: number = 6): Promise<Product[]> {
-        if (!supabase) return []
+
 
         try {
             const { data, error } = await supabase.rpc('get_random_products', { limit_count: limit })
 
             if (error) {
-                // console.error('Error fetching featured products:', error)
+                console.error('Error fetching featured products:', error)
                 return []
             }
 
@@ -44,12 +44,12 @@ export class ProductService {
      * Obtiene un producto por ID o Slug con validación estricta
      */
     static async getProductById(idOrSlug: string): Promise<Product | null> {
-        if (!supabase) return null
+
 
         try {
             const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
 
-            let query = supabase.from('products').select('*').single()
+            let query = supabase.from('products').select('*')
 
             if (isUUID) {
                 query = query.eq('id', idOrSlug)
@@ -57,7 +57,7 @@ export class ProductService {
                 query = query.eq('slug', idOrSlug)
             }
 
-            const { data, error } = await query
+            const { data, error } = await query.single()
 
             if (error || !data) return null
 
@@ -71,7 +71,7 @@ export class ProductService {
      * Obtiene productos por IDs (usado en validación de checkout)
      */
     static async getProductsByIds(ids: string[]): Promise<Product[]> {
-        if (!supabase || ids.length === 0) return []
+        if (ids.length === 0) return []
 
         try {
             const { data, error } = await supabase
@@ -92,7 +92,7 @@ export class ProductService {
      * Replica la lógica de getProducts en api.ts incluyendo normalización
      */
     static async getAllProducts(): Promise<Product[]> {
-        if (!supabase) return []
+
 
         try {
             const { data, error } = await supabase
@@ -119,7 +119,7 @@ export class ProductService {
      * Obtiene lista de colores disponibles en productos con stock
      */
     static async getAvailableColors(): Promise<string[]> {
-        if (!supabase) return []
+
         try {
             const { data, error } = await supabase
                 .from('products')
@@ -152,7 +152,7 @@ export class ProductService {
         category: string,
         limit: number = 4
     ): Promise<Product[]> {
-        if (!supabase) return []
+
 
         try {
             const { data, error } = await supabase

@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js'
 
-let supabaseAdminClient: ReturnType<typeof createClient> | undefined
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
+
+let supabaseAdminClient: SupabaseClient | undefined
 let adminClientInitialized = false
 
-function initializeSupabaseAdmin() {
+function initializeSupabaseAdmin(): SupabaseClient | undefined {
   if (adminClientInitialized) {
     return supabaseAdminClient
   }
@@ -19,13 +20,14 @@ function initializeSupabaseAdmin() {
           persistSession: false
         }
       })
-      // console.log('✅ Supabase admin client initialized on demand')
     } catch (error) {
-      // console.error('❌ Failed to initialize Supabase admin client:', error)
+      console.error('❌ Failed to initialize Supabase admin client:', error)
       supabaseAdminClient = undefined
     }
   } else {
-    // console.warn('Supabase URL or Service Role Key are missing. Admin operations will not be available.')
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Supabase URL or Service Role Key are missing. Admin operations will not be available.')
+    }
   }
 
   adminClientInitialized = true
@@ -37,11 +39,13 @@ export function getSupabaseAdmin() {
   return initializeSupabaseAdmin()
 }
 
-// Legacy export for backward compatibility - but uses lazy initialization
-export const supabaseAdmin = new Proxy({} as any, {
+// Proxy typed as SupabaseClient to support lazy initialization with strict types
+export const supabaseAdmin = new Proxy({} as SupabaseClient, {
   get(target, prop) {
     const client = initializeSupabaseAdmin()
-    // @ts-ignore - Permitiendo acceso dinámico legado
-    return client ? (client as any)[prop] : undefined
+    if (!client) {
+      throw new Error('Supabase admin client is not initialized. Check environment variables.')
+    }
+    return Reflect.get(client, prop)
   }
 })

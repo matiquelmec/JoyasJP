@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
 import type { CartItem } from '@/hooks/use-cart'
+import type { CustomerInfo, DatabaseProduct } from '@/lib/types'
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     // Puede venir como array de items (legacy) o como object con cartItems y customerInfo
     let cartItems: CartItem[]
-    let customerInfo: any = null
+    let customerInfo: CustomerInfo | null = null
 
     if (Array.isArray(requestData)) {
       cartItems = requestData
@@ -36,10 +37,12 @@ export async function POST(req: NextRequest) {
 
     // 🛡️ VALIDACIÓN DE PRECIOS EN SERVIDOR
     const productIds = cartItems.map(item => item.id)
-    const { data: dbProducts, error: dbError } = await supabase
+    const { data, error: dbError } = await supabase
       .from('products')
       .select('id, price, name, stock')
       .in('id', productIds)
+
+    const dbProducts = data as Pick<DatabaseProduct, 'id' | 'price' | 'name' | 'stock'>[] | null
 
     if (dbError || !dbProducts) {
       return NextResponse.json(
@@ -50,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     // Mapear productos reales para asegurar precios e integridad
     const validatedItems = cartItems.map((item) => {
-      const dbProduct = dbProducts.find((p: any) => p.id === item.id)
+      const dbProduct = dbProducts.find((p) => p.id === item.id)
 
       if (!dbProduct) {
         throw new Error(`Producto no encontrado: ${item.name}`)
@@ -163,21 +166,22 @@ export async function POST(req: NextRequest) {
       checkoutUrl: preference.init_point,
       orderId: preference.id
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error & { cause?: { message?: string, data?: { message?: string }, error?: string | { message?: string } } }
     // console.error('Error creating preference:', JSON.stringify(error, null, 2))
 
     let errorMessage = 'An unknown error occurred.'
-    if (error.cause) {
-      const cause = error.cause
+    if (err.cause) {
+      const cause = err.cause
       if (cause.data?.message) {
         errorMessage = cause.data.message
       } else if (typeof cause.error === 'string') {
         errorMessage = cause.error
       } else {
-        errorMessage = JSON.stringify(cause.error) || cause.message
+        errorMessage = JSON.stringify(cause.error) || cause.message || 'Unknown Mercado Pago Error'
       }
-    } else if (error.message) {
-      errorMessage = error.message
+    } else if (err.message) {
+      errorMessage = err.message
     }
 
     return new NextResponse(

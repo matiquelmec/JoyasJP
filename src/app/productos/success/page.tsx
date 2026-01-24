@@ -14,7 +14,7 @@ export default function SuccessPage() {
 
   useEffect(() => {
     // Analytics tracking removed (Vercel -> Netlify migration)
-    
+
     // Limpiar carrito después de compra exitosa
     clearCart()
   }, [clearCart])
@@ -42,7 +42,7 @@ export default function SuccessPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild>
-            <Link href="/shop" className="flex items-center gap-2">
+            <Link href="/productos" className="flex items-center gap-2">
               <ShoppingBag className="w-4 h-4" />
               Seguir Comprando
             </Link>
