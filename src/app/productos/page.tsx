@@ -180,7 +180,7 @@ export default function ShopPage() {
               colors={colors}
               activeColor={activeColor}
               onColorChange={handleColorChange}
-              className="max-w-full"
+              className="w-full md:w-auto"
             />
           </div>
 
