@@ -24,7 +24,7 @@ export default function AboutPage() {
           sizes="100vw"
           className="object-cover opacity-80"
           priority
-          fetchPriority="high"
+          quality={90} // Premium quality for hero image
         />
         {/* Vignette effect to focus focus center */}
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
