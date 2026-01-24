@@ -41,8 +41,9 @@ export async function GET(request: NextRequest) {
       tiktok_url: data.tiktok_url,
 
       // Static/Env fields (DB columns to be dropped/missing)
-      shipping_cost: siteConfig.ecommerce.shippingCost || 3000,
-      free_shipping_from: siteConfig.ecommerce.freeShippingFrom || 50000,
+      // Static/Env fields (DB columns to be dropped/missing)
+      shipping_cost: 3000,
+      free_shipping_from: 50000,
       shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
       mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ''
     }
