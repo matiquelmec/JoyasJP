@@ -143,6 +143,16 @@ export const productConfig = {
     'Plata Bañada en Oro',
   ],
   colors: ['Dorado', 'Plateado', 'Mixto', 'Negro'],
+  labels: [
+    'NUEVO',
+    'OFERTA',
+    'EXCLUSIVO',
+    'EDICIÓN LIMITADA',
+    'TENDENCIA',
+    'PRE-ORDER',
+    'HOT',
+    'ULTIMAS UNIDADES'
+  ],
   priceRanges: [
     { label: 'Hasta $25.000', min: 0, max: 25000 },
     { label: '$25.000 - $50.000', min: 25000, max: 50000 },

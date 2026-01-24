@@ -418,15 +418,19 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               />
             </div>
             <div>
-              <Label htmlFor="custom_label" className="text-primary font-bold">Etiqueta Personalizada (Badge)</Label>
-              <input
+              <Label htmlFor="custom_label" className="text-primary font-bold">Etiqueta Especial (Badge)</Label>
+              <select
                 id="custom_label"
-                type="text"
                 value={formData.custom_label}
                 onChange={(e) => setFormData(prev => ({ ...prev, custom_label: e.target.value }))}
-                placeholder="Ej: HOT, EDICIÓN LIMITADA, 🔥"
                 className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary"
-              />
+              >
+                <option value="">Sin etiqueta especial</option>
+                {productConfig.labels.map(label => (
+                  <option key={label} value={label}>{label}</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-muted-foreground mt-1">Usa esto para forzar un texto específico sobre el producto.</p>
             </div>
           </div>
 
