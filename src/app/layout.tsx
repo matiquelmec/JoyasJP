@@ -34,14 +34,22 @@ const bebasNeue = Bebas_Neue({
 })
 
 export async function generateMetadata(): Promise<Metadata> {
-  // Fetch dynamic config from DB
-  const { data: config } = await supabase
-    .from('configuration')
-    .select('*')
-    .single()
+  let storeName = 'Joyas JP'
+  let description = 'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico.'
 
-  const storeName = config?.store_name || 'Joyas JP'
-  const description = config?.store_description || 'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico.'
+  try {
+    // Fetch dynamic config from DB with built-in resilience
+    const { data: config } = await supabase
+      .from('configuration')
+      .select('*')
+      .maybeSingle()
+
+    if (config?.store_name) storeName = config.store_name
+    if (config?.store_description) description = config.store_description
+  } catch (error) {
+    console.warn('[Metadata]: Usando valores por defecto debido a error en base de datos.')
+  }
+
   const title = `${storeName} | Alta Joyería para la Escena Urbana`
 
   return {
@@ -127,11 +135,26 @@ export const viewport: Viewport = {
 
 // Schema.org structured data generator
 async function getJsonLd() {
-  const { data: config } = await supabase.from('configuration').select('*').single()
-  const storeName = config?.store_name || 'Joyas JP'
-  const storeEmail = config?.store_email || siteConfig.business.contact.email
-  const storePhone = config?.whatsapp_number || siteConfig.business.contact.phone
-  const description = config?.store_description || 'Alta joyería para la escena urbana'
+  let storeName = 'Joyas JP'
+  let storeEmail = siteConfig.business.contact.email
+  let storePhone = siteConfig.business.contact.phone
+  let description = 'Alta joyería para la escena urbana'
+  let instagram = siteConfig.links.instagram
+  let tiktok = siteConfig.links.tiktok
+
+  try {
+    const { data: config } = await supabase.from('configuration').select('*').maybeSingle()
+    if (config) {
+      if (config.store_name) storeName = config.store_name
+      if (config.store_email) storeEmail = config.store_email
+      if (config.whatsapp_number) storePhone = config.whatsapp_number
+      if (config.store_description) description = config.store_description
+      if (config.instagram_url) instagram = config.instagram_url
+      if (config.tiktok_url) tiktok = config.tiktok_url
+    }
+  } catch (error) {
+    console.warn('[JSON-LD]: Usando valores por defecto.')
+  }
 
   return {
     '@context': 'https://schema.org',
@@ -147,10 +170,7 @@ async function getJsonLd() {
       areaServed: 'CL',
       availableLanguage: 'Spanish',
     },
-    sameAs: [
-      config?.instagram_url || siteConfig.links.instagram,
-      config?.tiktok_url || siteConfig.links.tiktok
-    ],
+    sameAs: [instagram, tiktok],
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'CL',

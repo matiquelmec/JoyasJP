@@ -47,8 +47,14 @@ function ProductSkeleton() {
 }
 
 async function FeaturedProducts() {
-  // ⚡ Optimización: Usamos la nueva función RPC de base de datos
-  const featuredProducts = await ProductService.getFeaturedProducts(6)
+  let featuredProducts: Product[] = []
+
+  try {
+    // ⚡ Optimización: Usamos la nueva función RPC de base de datos
+    featuredProducts = await ProductService.getFeaturedProducts(6)
+  } catch (error) {
+    console.warn('[FeaturedProducts]: Error cargando productos, mostrando estado vacío.')
+  }
 
   if (featuredProducts.length === 0) {
     return (
