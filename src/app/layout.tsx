@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, PT_Sans } from 'next/font/google'
+import { Playfair_Display, PT_Sans, Bebas_Neue } from 'next/font/google'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/sonner'
@@ -20,6 +20,14 @@ const ptSans = PT_Sans({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-body',
+  display: 'swap',
+  preload: true,
+})
+
+const bebasNeue = Bebas_Neue({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-bebas',
   display: 'swap',
   preload: true,
 })
@@ -173,8 +181,6 @@ export default function RootLayout({
 
         {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
 
-
-
         {/* ⚡ Critical CSS optimizado */}
         <style dangerouslySetInnerHTML={{
           __html: `
@@ -203,7 +209,8 @@ export default function RootLayout({
         className={cn(
           'font-body antialiased bg-background text-foreground min-h-screen',
           playfairDisplay.variable,
-          ptSans.variable
+          ptSans.variable,
+          bebasNeue.variable
         )}
         data-loading="eager"
       >

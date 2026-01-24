@@ -29,7 +29,7 @@ export function Footer() {
           {/* Columna 1: Marca con Estilo Premium */}
           <div className="flex flex-col items-center md:items-start space-y-4">
             <div className="relative">
-              <h3 className="text-3xl font-black font-headline tracking-tighter text-white uppercase group cursor-default">
+              <h3 className="text-4xl md:text-5xl font-bebas tracking-wide text-white uppercase group cursor-default">
                 {config?.store_name || siteConfig.name}
                 <span className="block h-1 w-12 bg-primary mt-1 transition-all duration-500 group-hover:w-full" />
               </h3>

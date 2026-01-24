@@ -23,6 +23,7 @@ module.exports = {
       fontFamily: {
         headline: ['var(--font-headline)'],
         body: ['var(--font-body)'],
+        bebas: ['var(--font-bebas)'],
       },
       colors: {
         border: 'hsl(var(--border))',
