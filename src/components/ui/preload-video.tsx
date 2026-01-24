@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 
 export function PreloadVideo({ src }: { src: string }) {
-    useEffect(() => {
-        ReactDOM.preload(src, { as: 'video' })
-    }, [src])
+    // ⚡ INTELLIGENCE: Ejecutar en el cuerpo del componente (render phase)
+    // Esto permite que el preload se inyecte lo antes posible, incluso durante el SSR/Hydration
+    // en lugar de esperar al 'useEffect' (que corre después del paint).
+    ReactDOM.preload(src, { as: 'video' })
 
     return null
 }

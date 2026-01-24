@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
-import { getVideoUrl } from '@/lib/asset-version'
+import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { PreloadVideo } from '@/components/ui/preload-video'
 
 const servicesPageContent = {
@@ -28,6 +28,7 @@ export default function ServicesPage() {
       <PreloadVideo src={getVideoUrl('mi-video2.mp4')} />
       <video
         src={getVideoUrl('mi-video2.mp4')}
+        poster={getImageUrl('nosotros.webp')}
         autoPlay
         loop
         muted
