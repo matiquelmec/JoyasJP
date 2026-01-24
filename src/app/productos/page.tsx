@@ -164,9 +164,9 @@ export default function ShopPage() {
             ))}
           </TabsList>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+          <div className="flex flex-col md:flex-row justify-end items-center gap-4 mb-8">
             {/* Search Input */}
-            <div className="w-full md:max-w-sm">
+            <div className="w-full md:w-auto md:min-w-[300px]">
               <input
                 type="text"
                 placeholder="Buscar joyas (Ej: Cadenas, Oro...)"
