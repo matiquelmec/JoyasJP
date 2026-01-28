@@ -15,7 +15,7 @@ const aboutPageContent = {
 
 export default function AboutPage() {
   return (
-    <div className="relative min-h-[130vh] bg-black text-white flex items-center justify-center overflow-hidden -mt-36 sm:-mt-44 md:-mt-48 lg:-mt-56">
+    <div className="relative min-h-screen bg-black text-white flex items-center justify-center overflow-hidden">
       {/* Background Image - The Chain */}
       <div className="absolute inset-0 z-0 flex items-center justify-center">
         <Image
