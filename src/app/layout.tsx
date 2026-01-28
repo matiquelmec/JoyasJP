@@ -8,6 +8,7 @@ import { PreloaderProvider } from '@/components/providers/preloader-provider'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
+import { getSiteConfig } from '@/lib/server/get-site-config'
 import '@/lib/env-validator' // 🛡️ Validador de variables de entorno
 
 const playfairDisplay = Playfair_Display({
@@ -267,7 +268,10 @@ export default async function RootLayout({
             Saltar al contenido principal
           </a>
 
-          <ConditionalLayout>{children}</ConditionalLayout>
+          {/* Hydrate site config from server */}
+          <ConditionalLayout initialConfig={await getSiteConfig()}>
+            {children}
+          </ConditionalLayout>
 
           <Toaster />
         </PreloaderProvider>

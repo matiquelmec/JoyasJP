@@ -3,24 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { siteConfig as defaultConfig } from '@/lib/config'
 
-interface SiteConfiguration {
-  store_name: string
-  store_email: string
-  store_description: string
-  shipping_cost: number
-  free_shipping_from: number
-  shipping_zones: string
-  admin_email: string
-  notify_new_orders: boolean
-  notify_low_stock: boolean
-  notify_new_customers: boolean
-  mercadopago_public_key: string
-  mercadopago_access_token: string
-  instagram_url?: string
-  tiktok_url?: string
-  store_slogan?: string
-  whatsapp_number?: string
-}
+import { SiteConfiguration } from '@/lib/types'
 
 interface SiteConfigContextType {
   config: SiteConfiguration
@@ -30,18 +13,23 @@ interface SiteConfigContextType {
 
 const SiteConfigContext = createContext<SiteConfigContextType | undefined>(undefined)
 
-export function SiteConfigProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<SiteConfiguration>({
+export function SiteConfigProvider({
+  children,
+  initialConfig
+}: {
+  children: ReactNode
+  initialConfig?: SiteConfiguration
+}) {
+  const [config, setConfig] = useState<SiteConfiguration>(initialConfig || {
     store_name: defaultConfig.name,
     store_email: defaultConfig.business.contact.email,
     store_description: defaultConfig.description,
     shipping_cost: 3000,
     free_shipping_from: 50000,
-    shipping_zones: defaultConfig.ecommerce.shippingZones.join(', '),
+    shipping_zones: [...defaultConfig.ecommerce.shippingZones],
     admin_email: defaultConfig.business.contact.email,
     notify_new_orders: true,
     notify_low_stock: true,
-    notify_new_customers: false,
     mercadopago_public_key: '',
     mercadopago_access_token: '',
     instagram_url: defaultConfig.links.instagram,
@@ -49,11 +37,15 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     store_slogan: 'Atrévete a jugar',
     whatsapp_number: defaultConfig.business.contact.phone
   })
-  const [loading, setLoading] = useState(true)
+  // Si tenemos initialConfig, no estamos cargando
+  const [loading, setLoading] = useState(!initialConfig)
 
   const fetchConfig = async () => {
     try {
-      setLoading(true)
+      // Si ya teníamos initialConfig, quizás queremos refrescar silenciosamente
+      // pero para la primera carga, loading debe ser false si hay initialConfig
+      if (!initialConfig) setLoading(true)
+
       const res = await fetch('/api/configuration', {
         cache: 'no-store', // Evitar caché para obtener datos frescos
         headers: {
@@ -74,15 +66,18 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    fetchConfig()
+    // Si NO hay configuración inicial, buscarla inmediatamente
+    if (!initialConfig) {
+      fetchConfig()
+    }
 
-    // Verificar cambios cada 30 segundos (opcional, para auto-refresh)
+    // Verificar cambios cada 5 minutos (menos agresivo que 30s)
     const interval = setInterval(() => {
       fetchConfig()
-    }, 30000) // 30 segundos
+    }, 1000 * 60 * 5)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [initialConfig])
 
   const refreshConfig = () => {
     fetchConfig()
