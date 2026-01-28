@@ -213,6 +213,40 @@
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ⚡ PRELOADER (PURE CSS) */
+@keyframes breathing {
+
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-breathing {
+  animation: breathing 3s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
 .transition-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);

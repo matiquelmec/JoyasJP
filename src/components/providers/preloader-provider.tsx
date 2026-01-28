@@ -11,7 +11,7 @@ interface PreloaderContextType {
 
 const PreloaderContext = createContext<PreloaderContextType>({
   isLoading: true,
-  setIsLoading: () => {},
+  setIsLoading: () => { },
 })
 
 export function usePreloader() {
@@ -26,11 +26,11 @@ export function PreloaderProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Solo mostrar preloader en homepage ("/")
     const isHomepage = pathname === '/'
-    
+
     if (isHomepage) {
       setShowPreloader(true)
       setIsLoading(true)
-      
+
       // 3 segundos para homepage + 0.6s de fade out
       const timer = setTimeout(() => {
         setIsLoading(false)
