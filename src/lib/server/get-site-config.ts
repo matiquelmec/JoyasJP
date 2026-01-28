@@ -33,7 +33,6 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             admin_email: siteConfig.business.contact.email, // Legacy
             notify_new_orders: true,
             notify_low_stock: true,
-            notify_new_customers: false,
             mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || '',
             mercadopago_access_token: '', // Never expose access token
             instagram_url: data.instagram_url,
@@ -53,7 +52,6 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             admin_email: siteConfig.business.contact.email,
             notify_new_orders: true,
             notify_low_stock: true,
-            notify_new_customers: false,
             mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || '',
             mercadopago_access_token: '',
             instagram_url: siteConfig.links.instagram,

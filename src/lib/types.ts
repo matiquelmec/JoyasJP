@@ -29,6 +29,8 @@ export interface SiteConfiguration {
   notify_low_stock: boolean
   mercadopago_public_key?: string
   mercadopago_access_token?: string
+  instagram_url?: string
+  tiktok_url?: string
 }
 
 // Product
