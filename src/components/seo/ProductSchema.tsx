@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Product } from '@/lib/types'
+import { getSafeUrl } from '@/lib/safe-asset'
 
 interface ProductSchemaProps {
   product: Product
@@ -25,7 +26,7 @@ export function ProductSchema({
   const category = categoryNames[product.category as keyof typeof categoryNames] || 'Jewelry'
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app'
   const productUrl = `${siteUrl}/productos/${product.id}`
-  const imageUrl = product.imageUrl || `${siteUrl}/assets/logo.webp`
+  const imageUrl = product.imageUrl || `${siteUrl}${getSafeUrl('logo.webp')}`
 
   const schema = {
     '@context': 'https://schema.org',
@@ -37,14 +38,14 @@ export function ProductSchema({
     brand: {
       '@type': 'Brand',
       name: 'Joyas JP',
-      logo: `${siteUrl}/assets/logo.webp`,
+      logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
       url: siteUrl,
     },
     manufacturer: {
       '@type': 'Organization',
       name: 'Joyas JP',
       url: siteUrl,
-      logo: `${siteUrl}/assets/logo.webp`,
+      logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
     },
     image: [
       {
@@ -67,7 +68,7 @@ export function ProductSchema({
         '@type': 'Organization',
         name: 'Joyas JP',
         url: siteUrl,
-        logo: `${siteUrl}/assets/logo.webp`,
+        logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
       },
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',

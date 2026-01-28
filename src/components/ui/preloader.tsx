@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import { getSafeUrl } from '@/lib/safe-asset'
 
 export function Preloader() {
   const [isLoading, setIsLoading] = useState(true)
@@ -13,18 +14,17 @@ export function Preloader() {
       setIsLoading(false)
     }, 3000)
 
-    // Precargar recursos críticos
+    // Preload de video optimizado via Link tag (para no bloquear)
     if (typeof window !== 'undefined') {
-      const preloadResources = () => {
-        const logoImg = new window.Image()
-        logoImg.src = '/assets/logo.webp'
-        
-        const video = document.createElement('video')
-        video.src = '/assets/mi-video.mp4'
-        video.load()
+      const videoUrl = getSafeUrl('mi-video.mp4')
+      // Check if link already exists
+      if (!document.querySelector(`link[href="${videoUrl}"]`)) {
+        const link = document.createElement('link')
+        link.rel = 'preload'
+        link.as = 'video'
+        link.href = videoUrl
+        document.head.appendChild(link)
       }
-
-      preloadResources()
     }
 
     return () => clearTimeout(timer)
@@ -35,7 +35,7 @@ export function Preloader() {
       {isLoading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ 
+          exit={{
             opacity: 0,
             filter: 'blur(5px)',
           }}
@@ -43,28 +43,28 @@ export function Preloader() {
           className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
         >
           {/* Contenedor principal */}
-          <motion.div 
+          <motion.div
             className="relative flex flex-col items-center justify-center text-center px-4"
           >
             {/* Logo con respiración elegante */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ 
-                opacity: 1, 
+              animate={{
+                opacity: 1,
                 scale: [0.9, 1, 0.98, 1],
               }}
               transition={{
                 opacity: { duration: 0.8, ease: 'easeOut' },
-                scale: { 
-                  duration: 2.5, 
-                  repeat: Infinity, 
-                  ease: 'easeInOut' 
+                scale: {
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
                 },
               }}
               className="relative mb-8"
             >
               <Image
-                src="/assets/logo.webp"
+                src={getSafeUrl('logo.webp')}
                 alt="Joyas JP"
                 width={320}
                 height={320}
@@ -103,7 +103,7 @@ export function Preloader() {
                   </motion.span>
                 ))}
               </motion.p>
-              
+
             </motion.div>
           </motion.div>
         </motion.div>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useSiteConfig } from '@/hooks/use-site-config'
+import { getSafeUrl } from '@/lib/safe-asset'
 import {
   LayoutDashboard,
   Package,
@@ -39,7 +40,7 @@ export function AdminSidebar() {
             <Link href="/admin" className="flex items-center space-x-3 group">
               <div className="relative">
                 <Image
-                  src="/assets/logo.webp"
+                  src={getSafeUrl('logo.webp')}
                   alt={`${config?.store_name || 'Joyas JP'} Logo`}
                   width={40}
                   height={40}

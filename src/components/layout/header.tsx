@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { CartPanel } from '@/components/dynamic-imports'
 import { Button } from '@/components/ui/button'
+import { getSafeUrl } from '@/lib/safe-asset'
 import {
   Sheet,
   SheetClose,
@@ -41,7 +42,7 @@ export function Header() {
       <div className="container mx-auto flex h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8">
         <Link href="/" className="flex items-center shrink-0">
           <Image
-            src="/assets/logo.webp"
+            src={getSafeUrl('logo.webp')}
             alt="Joyas JP Logo"
             width={208}
             height={208}
@@ -59,9 +60,9 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-2">
           <Link href="/favoritos">
-            <Button 
-              variant="ghost" 
-              size="lg" 
+            <Button
+              variant="ghost"
+              size="lg"
               className="relative"
               aria-label={`Ver favoritos (${wishlistItems.length} productos)`}
             >
@@ -78,8 +79,8 @@ export function Header() {
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="lg"
                   aria-label="Abrir menú de navegación"
                 >
