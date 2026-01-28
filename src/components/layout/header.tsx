@@ -47,6 +47,7 @@ export function Header() {
             width={208}
             height={208}
             priority
+            sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, (max-width: 1024px) 160px, 192px"
             className="h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:h-44 lg:w-44 xl:h-48 xl:w-48 object-contain"
             style={{ aspectRatio: '1/1' }}
           />

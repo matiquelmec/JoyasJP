@@ -58,6 +58,7 @@ export function Preloader() {
                         width={320}
                         height={320}
                         priority
+                        sizes="(max-width: 768px) 192px, 288px"
                         className="w-48 md:w-60 lg:w-72 h-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                     />
                 </div>
