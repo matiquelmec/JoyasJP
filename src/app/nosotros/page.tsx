@@ -56,7 +56,7 @@ export default function AboutPage() {
               ))}
             </div>
 
-            <p className="pt-6 text-lg md:text-xl font-bold text-amber-200/90 tracking-[0.2em] uppercase drop-shadow-md border-t border-white/5 mt-8">
+            <p className="pt-6 text-lg md:text-xl font-bold text-primary tracking-[0.2em] uppercase drop-shadow-md border-t border-white/5 mt-8">
               {aboutPageContent.closingStatement}
             </p>
 

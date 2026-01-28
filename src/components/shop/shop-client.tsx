@@ -57,7 +57,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                 <div className="text-center mb-12">
                     <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
                     <p className="mt-4 text-lg text-muted-foreground">
-                        Define tu flow con cada pieza.
+                        Define tu flow con cada pieza
                     </p>
                 </div>
 
