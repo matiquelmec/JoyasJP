@@ -10,7 +10,7 @@ const aboutPageContent = {
     'Nuestra misión es sencilla: poner a tu alcance una colección que hable por ti. Cada pieza que seleccionamos ha sido elegida por su carácter, su peso y su capacidad de transformar un look en una obra de arte.',
   ],
   closingStatement:
-    'Cada pieza cuenta una historia. La tuya está esperando.',
+    'Cada joya cuenta una historia. La tuya está esperando.',
 }
 
 export default function AboutPage() {
