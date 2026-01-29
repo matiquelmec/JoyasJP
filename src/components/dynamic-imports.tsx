@@ -67,16 +67,6 @@ export const Toast = dynamic(() => import('@radix-ui/react-toast').then(mod => (
 })
 
 // ⚡ COMPONENTES DE PRODUCTO - Para páginas específicas
-export const ProductDetailView = dynamic(() => import('./shop/product-detail-view').then(mod => ({ default: mod.ProductDetailView })), {
-  loading: () => (
-    <div className="space-y-4">
-      <div className="h-96 bg-gray-200 rounded animate-pulse"></div>
-      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-      <div className="h-24 bg-gray-200 rounded animate-pulse"></div>
-    </div>
-  )
-})
-
 export const RelatedProducts = dynamic(() => import('./shop/related-products').then(mod => ({ default: mod.RelatedProducts })), {
   loading: () => (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

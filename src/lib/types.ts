@@ -61,6 +61,8 @@ export interface Product {
   discount_price?: number
   custom_label?: string
   is_priority?: boolean
+  hasVariants?: boolean // ⚡ Optimización para catálogo
+  minPrice?: number    // ⚡ Optimización para catálogo
 }
 
 // 🛡️ DATABASE TYPE DEFINITION
@@ -110,14 +112,8 @@ export interface ProductSearchParams extends ProductFilters {
 }
 
 // Cart
-export interface CartItem {
-  id: string
-  name: string
-  price: number
-  imageUrl: string
+export interface CartItem extends Product {
   quantity: number
-  category: string
-  stock: number
 }
 
 export interface CartState {

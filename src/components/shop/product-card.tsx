@@ -317,12 +317,12 @@ const ProductCard = memo(function ProductCard({
                   {priceDisplay.original}
                 </p>
                 <p className="text-2xl font-black text-red-600 font-headline tracking-tighter">
-                  {(product as any).hasVariants ? 'Desde ' : ''}{priceDisplay.discount}
+                  {product.hasVariants ? 'Desde ' : ''}{priceDisplay.discount}
                 </p>
               </>
             ) : (
               <p className="text-2xl font-bold text-primary font-headline tracking-tighter">
-                {(product as any).hasVariants ? 'Desde ' : ''}{priceDisplay.original}
+                {product.hasVariants ? 'Desde ' : ''}{priceDisplay.original}
               </p>
             )}
           </div>
