@@ -1,9 +1,8 @@
 'use client'
 
-import { CheckCircle2, Heart, ShoppingBag } from 'lucide-react'
+import { CheckCircle2, Heart, ShoppingBag, Phone } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
-// Removed Vercel analytics tracking
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
 import { useSiteConfig } from '@/hooks/use-site-config'
@@ -13,8 +12,6 @@ export default function SuccessPage() {
   const { config } = useSiteConfig()
 
   useEffect(() => {
-    // Analytics tracking removed (Vercel -> Netlify migration)
-
     // Limpiar carrito después de compra exitosa
     clearCart()
   }, [clearCart])
@@ -33,11 +30,29 @@ export default function SuccessPage() {
 
         <div className="bg-muted/30 rounded-lg p-6 mb-8">
           <h3 className="font-semibold mb-2">¿Qué sigue?</h3>
-          <ul className="text-sm text-muted-foreground space-y-1">
+          <ul className="text-sm text-muted-foreground space-y-1 text-left">
             <li>• Recibirás una confirmación por email</li>
-            <li>• Te contactaremos para coordinar la entrega</li>
+            <li>• Te contactaremos para coordinar la entrega (Starken)</li>
             <li>• Tu pedido estará listo en 1-2 días hábiles</li>
           </ul>
+
+          <div className="mt-6 pt-6 border-t border-border">
+            <h4 className="font-bold text-blue-600 mb-2">Coordina tu entrega en Metro</h4>
+            <p className="text-xs text-muted-foreground mb-4">
+              Si seleccionaste entrega en Metro (Santiago), haz clic en el siguiente botón para coordinar rápidamente por WhatsApp:
+            </p>
+            <Button asChild className="bg-[#25D366] hover:bg-[#128C7E] text-white border-none w-full">
+              <a
+                href={`https://wa.me/${config?.whatsapp_number?.replace(/\+/g, '') || '56912345678'}?text=Hola! Acabo de realizar una compra y me gustaría coordinar la entrega en Metro.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2"
+              >
+                <Phone className="w-4 h-4" />
+                Coordinar por WhatsApp
+              </a>
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -128,6 +128,7 @@ export async function POST(req: NextRequest) {
         shipping_address: customerInfo?.address || '',
         shipping_city: customerInfo?.city || '',
         shipping_commune: customerInfo?.commune || '',
+        shipping_method: customerInfo?.shippingMethod || 'starken',
         items: JSON.stringify(cartItems.map(item => ({
           id: item.id,
           name: item.name,

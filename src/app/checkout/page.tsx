@@ -24,6 +24,7 @@ interface CheckoutFormData {
   city: string
   region: string
   rut: string
+  shippingMethod: 'starken' | 'metro'
 }
 
 function formatRUT(rut: string): string {
@@ -98,7 +99,8 @@ export default function CheckoutPage() {
     address: '',
     city: '',
     region: '',
-    rut: ''
+    rut: '',
+    shippingMethod: 'starken'
   })
 
   // ⚡ Memoize expensive calculations
@@ -194,7 +196,8 @@ export default function CheckoutPage() {
             city: formData.city,
             commune: formData.region,
             rut: formData.rut,
-            shippingCost: 0
+            shippingCost: 0,
+            shippingMethod: formData.shippingMethod
           }
         })
       })

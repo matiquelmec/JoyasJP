@@ -148,6 +148,7 @@ export interface CustomerInfo {
   commune: string
   rut: string
   shippingCost: number
+  shippingMethod?: string
 }
 
 export interface Order {
