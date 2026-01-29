@@ -40,19 +40,24 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
         baseFilteredProducts.forEach(product => {
             const key = `${product.name.toLowerCase()}-${(product.color || '').toLowerCase()}`;
+            const effectivePrice = product.discount_price || product.price;
 
             if (!groups[key]) {
                 groups[key] = {
                     ...product,
                     hasVariants: false,
-                    minPrice: product.price
+                    minPrice: effectivePrice
                 };
             } else {
                 groups[key].hasVariants = true;
-                if (product.price < groups[key].minPrice) {
-                    groups[key].minPrice = product.price;
-                    // Opcionalmente actualizar el objeto base si queremos que el representante sea el más barato
-                    // groups[key] = { ...product, hasVariants: true, minPrice: product.price };
+                if (effectivePrice < groups[key].minPrice) {
+                    // Actualizamos el producto base para que sea el que tiene el precio más bajo
+                    const hasVariants = groups[key].hasVariants;
+                    groups[key] = {
+                        ...product,
+                        hasVariants,
+                        minPrice: effectivePrice
+                    };
                 }
             }
         });
