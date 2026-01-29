@@ -90,7 +90,6 @@ const chileanRegions = [
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, clearCart } = useCart()
-  // const { toast } = useToast()
   const { config } = useSiteConfig()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CheckoutFormData>({
@@ -232,7 +231,6 @@ export default function CheckoutPage() {
       toast.error('Error al Procesar la Orden', {
         description: errorMessage,
       })
-      // console.error('Error al procesar checkout:', error)
     } finally {
       setIsLoading(false)
     }
@@ -514,8 +512,6 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 </div>
-
-
               </CardContent>
             </Card>
 

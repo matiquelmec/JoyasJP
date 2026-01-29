@@ -169,7 +169,6 @@ export async function POST(req: NextRequest) {
     })
   } catch (error: unknown) {
     const err = error as Error & { cause?: { message?: string, data?: { message?: string }, error?: string | { message?: string } } }
-    // console.error('Error creating preference:', JSON.stringify(error, null, 2))
 
     let errorMessage = 'An unknown error occurred.'
     if (err.cause) {
