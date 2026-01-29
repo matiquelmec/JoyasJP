@@ -566,6 +566,8 @@ header {
 .badge-premium {
   @apply px-2.5 py-1 rounded-sm text-[10px] font-black tracking-widest uppercase border shadow-sm backdrop-blur-md;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: filter, transform;
+  /* ⚡ Aceleración por GPU */
 }
 
 .badge-sale {

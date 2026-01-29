@@ -163,7 +163,7 @@ export default function Home() {
       <div className="h-screen"></div>
 
       {/* Featured Products Section */}
-      <section className="py-20 md:py-28 bg-background relative z-10">
+      <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">
