@@ -113,7 +113,17 @@ export default function CheckoutPage() {
   const total = cartStats.subtotal
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData(prev => {
+      const nextData = { ...prev, [field]: value }
+
+      // Logic for senior programmer: ensure data consistency
+      // If region changes to anything other than RM, reset shipping to Starken if it was Metro
+      if (field === 'region' && value !== 'Metropolitana de Santiago' && prev.shippingMethod === 'metro') {
+        nextData.shippingMethod = 'starken'
+      }
+
+      return nextData
+    })
   }
 
   const validateForm = () => {
