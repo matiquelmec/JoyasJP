@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteConfig } from '@/hooks/use-site-config'
+import { cn } from '@/lib/utils'
 
 interface CheckoutFormData {
   customerName: string
@@ -384,8 +385,69 @@ export default function CheckoutPage() {
                     </select>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingBag className="h-5 w-5" />
+                  Método de Entrega
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all",
+                      formData.shippingMethod === 'starken' ? "border-primary bg-primary/5" : "border-muted"
+                    )}
+                    onClick={() => handleInputChange('shippingMethod', 'starken')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                        formData.shippingMethod === 'starken' ? "border-primary" : "border-muted-foreground"
+                      )}>
+                        {formData.shippingMethod === 'starken' && <div className="w-2 h-2 rounded-full bg-primary" />}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm">Starken</p>
+                        <p className="text-xs text-muted-foreground">Envío por pagar a todo Chile</p>
+                      </div>
+                    </div>
+                  </div>
 
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-lg border-2 transition-all",
+                      formData.shippingMethod === 'metro' ? "border-primary bg-primary/5" : "border-muted",
+                      formData.region !== 'Metropolitana de Santiago' ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (formData.region === 'Metropolitana de Santiago') {
+                        handleInputChange('shippingMethod', 'metro')
+                      } else {
+                        toast.info('Opción no disponible', {
+                          description: 'La entrega en Metro solo está disponible para la Región Metropolitana.'
+                        })
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                        formData.shippingMethod === 'metro' ? "border-primary" : "border-muted-foreground"
+                      )}>
+                        {formData.shippingMethod === 'metro' && <div className="w-2 h-2 rounded-full bg-primary" />}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm">Entrega en Metro</p>
+                        <p className="text-xs text-muted-foreground">Coordinar por WhatsApp (Solo Santiago)</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
