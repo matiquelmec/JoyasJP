@@ -34,12 +34,38 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         searchTerm: searchQuery
     })
 
-    // Ordenamiento memoizado por categoría
+    // ⚡ ESTRATEGIA: Agrupación de variantes (mismo nombre y color)
+    const groupedProducts = useMemo(() => {
+        const groups: Record<string, Product & { hasVariants: boolean, minPrice: number }> = {};
+
+        baseFilteredProducts.forEach(product => {
+            const key = `${product.name.toLowerCase()}-${(product.color || '').toLowerCase()}`;
+
+            if (!groups[key]) {
+                groups[key] = {
+                    ...product,
+                    hasVariants: false,
+                    minPrice: product.price
+                };
+            } else {
+                groups[key].hasVariants = true;
+                if (product.price < groups[key].minPrice) {
+                    groups[key].minPrice = product.price;
+                    // Opcionalmente actualizar el objeto base si queremos que el representante sea el más barato
+                    // groups[key] = { ...product, hasVariants: true, minPrice: product.price };
+                }
+            }
+        });
+
+        return Object.values(groups);
+    }, [baseFilteredProducts]);
+
+    // Ordenamiento memoizado por categoría (aplicado a los productos agrupados)
     const filteredProducts = useMemo(() => {
         const categoryOrder = productConfig.categories.map(c => c.id);
 
         if (activeCategory === 'all') {
-            return [...baseFilteredProducts].sort((a, b) => {
+            return [...groupedProducts].sort((a, b) => {
                 const indexA = categoryOrder.indexOf(a.category as any);
                 const indexB = categoryOrder.indexOf(b.category as any);
                 const finalIndexA = indexA === -1 ? 999 : indexA;
@@ -48,8 +74,8 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             })
         }
 
-        return baseFilteredProducts;
-    }, [baseFilteredProducts, activeCategory])
+        return groupedProducts;
+    }, [groupedProducts, activeCategory]);
 
     return (
         <div className="bg-background min-h-screen overflow-x-hidden">
@@ -83,7 +109,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                         <div className="w-full md:w-auto md:min-w-[300px]">
                             <input
                                 type="text"
-                                placeholder="Buscar joyas (Ej: Cadenas, Oro...)"
+                                placeholder="Buscar joyas"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"

@@ -238,7 +238,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Price - Now using client component for dynamic config */}
-            <ProductPageClient product={product} />
+            <ProductPageClient
+              product={product}
+              variants={await ProductService.getSiblings(product)}
+            />
 
           </div>
         </div>

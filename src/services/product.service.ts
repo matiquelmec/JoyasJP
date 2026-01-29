@@ -205,4 +205,25 @@ export class ProductService {
             return []
         }
     }
+
+    /**
+     * Obtiene variantes "hermanas" del mismo modelo (mismo nombre y color)
+     */
+    static async getSiblings(product: Product): Promise<Product[]> {
+        try {
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .eq('name', product.name)
+                .eq('color', product.color || '')
+                .gt('stock', 0)
+
+            if (error || !data) return []
+
+            return (data as unknown as DatabaseProduct[]).map(mapDatabaseProductToProduct)
+        } catch (error) {
+            console.error('Error in getSiblings:', error)
+            return []
+        }
+    }
 }

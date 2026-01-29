@@ -62,6 +62,11 @@ export default function CartSheetContent() {
                                     />
                                     <div className="flex-grow">
                                         <p className="font-semibold">{item.name}</p>
+                                        {(item as any).dimensions && (
+                                            <p className="text-xs text-muted-foreground">
+                                                Dimensión: {(item as any).dimensions}
+                                            </p>
+                                        )}
                                         <p className="text-sm text-primary">
                                             ${item.price.toLocaleString('es-CL')}
                                         </p>
