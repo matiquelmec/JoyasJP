@@ -58,7 +58,7 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
               <span className="text-4xl font-black text-red-600 tracking-tighter">
                 {priceDisplay.discount}
               </span>
-              <Badge variant="destructive" className="animate-pulse">
+              <Badge className="animate-pulse">
                 OFERTA ESPECIAL
               </Badge>
             </div>

@@ -283,19 +283,19 @@ const ProductCard = memo(function ProductCard({
               {product.materials}
             </span>
           ) : product.color ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 font-semibold capitalize border border-purple-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold capitalize border border-primary/20">
               {normalizeColor(product.color) || product.color}
             </span>
           ) : product.dimensions ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 font-semibold border border-blue-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20">
               {product.dimensions}
             </span>
           ) : product.code ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 font-semibold uppercase border border-amber-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold uppercase border border-primary/20">
               {product.code}
             </span>
           ) : (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-500/10 text-gray-600 font-medium capitalize border border-gray-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-medium capitalize border border-primary/20">
               {product.category}
             </span>
           )}

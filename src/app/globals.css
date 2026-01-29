@@ -574,14 +574,14 @@ header {
 }
 
 .badge-new {
-  background: linear-gradient(135deg, hsl(var(--platinum)), #ffffff);
-  color: hsl(var(--platinum-dark));
-  @apply border-zinc-200 shadow-zinc-900/5;
+  background: linear-gradient(135deg, hsl(var(--primary)), #ffffff);
+  color: white;
+  @apply border-primary/20 shadow-red-900/5;
 }
 
 .badge-custom {
-  background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
-  @apply text-white border-yellow-600/20 shadow-yellow-900/10;
+  background: linear-gradient(135deg, hsl(var(--velvet)), hsl(var(--primary)));
+  @apply text-white border-primary/30 shadow-red-900/10;
 }
 
 .badge-premium:hover {
