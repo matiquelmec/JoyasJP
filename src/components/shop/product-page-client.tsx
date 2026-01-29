@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { Badge } from '@/components/ui/badge'
