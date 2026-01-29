@@ -140,14 +140,16 @@ export default function CheckoutPage() {
       return false
     }
 
-    if (!address.trim()) {
+    const isMetro = formData.shippingMethod === 'metro'
+
+    if (!address.trim() && !isMetro) {
       toast.error('Campo requerido', {
         description: 'Por favor ingresa tu dirección completa'
       })
       return false
     }
 
-    if (!city.trim()) {
+    if (!city.trim() && !isMetro) {
       toast.error('Campo requerido', {
         description: 'Por favor ingresa tu ciudad'
       })
@@ -347,25 +349,25 @@ export default function CheckoutPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="address">Dirección Completa *</Label>
+                  <Label htmlFor="address">Dirección Completa {formData.shippingMethod !== 'metro' && '*'}</Label>
                   <Input
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder="Av. Providencia 1234, Depto 56"
-                    required
+                    placeholder={formData.shippingMethod === 'metro' ? "Opcional (ej: Estación Los Leones)" : "Av. Providencia 1234, Depto 56"}
+                    required={formData.shippingMethod !== 'metro'}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="city">Ciudad *</Label>
+                    <Label htmlFor="city">Ciudad {formData.shippingMethod !== 'metro' && '*'}</Label>
                     <Input
                       id="city"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       placeholder="Santiago"
-                      required
+                      required={formData.shippingMethod !== 'metro'}
                     />
                   </div>
 
