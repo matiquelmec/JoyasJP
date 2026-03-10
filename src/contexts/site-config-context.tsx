@@ -59,17 +59,16 @@ export function SiteConfigProvider({
         setConfig(data.configuration)
       }
     } catch (error) {
-      // console.error('Error loading site configuration:', error)
+      console.error('Error loading site configuration:', error)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    // Si NO hay configuración inicial, buscarla inmediatamente
-    if (!initialConfig) {
-      fetchConfig()
-    }
+    // Siempre buscar de forma silenciosa la nueva configuración al iniciar la app
+    // Esto asegura que lo estático del servidor se sincronice con Supabase si está viejo
+    fetchConfig()
 
     // Verificar cambios cada 5 minutos (menos agresivo que 30s)
     const interval = setInterval(() => {

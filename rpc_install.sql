@@ -1,22 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
-import { verifyAdminAuth } from '@/lib/admin-auth'
-
-// POST - Proporcionar SQL para la función RPC process_order_payment
-export async function POST(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Admin client not available' }, { status: 500 })
-  }
-
-  try {
-    // Este endpoint sirve para obtener el DDL necesario si se necesita reinstalar
-    return NextResponse.json({
-      message: 'SQL Function Definition',
-      sql: `
 CREATE OR REPLACE FUNCTION process_order_payment(
   p_order_id TEXT,
   p_payment_status TEXT,
@@ -81,10 +62,3 @@ EXCEPTION WHEN OTHERS THEN
   RETURN jsonb_build_object('success', false, 'message', SQLERRM);
 END;
 $$ LANGUAGE plpgsql;
-      `
-    })
-
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-}

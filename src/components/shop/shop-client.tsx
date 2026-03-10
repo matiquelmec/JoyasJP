@@ -71,8 +71,8 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
         if (activeCategory === 'all') {
             return [...groupedProducts].sort((a, b) => {
-                const indexA = categoryOrder.indexOf(a.category as any);
-                const indexB = categoryOrder.indexOf(b.category as any);
+                const indexA = categoryOrder.indexOf(a.category as typeof productConfig.categories[number]['id']);
+                const indexB = categoryOrder.indexOf(b.category as typeof productConfig.categories[number]['id']);
                 const finalIndexA = indexA === -1 ? 999 : indexA;
                 const finalIndexB = indexB === -1 ? 999 : indexB;
                 return finalIndexA - finalIndexB;

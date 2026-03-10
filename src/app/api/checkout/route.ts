@@ -120,12 +120,21 @@ export async function POST(req: NextRequest) {
     // 🔒 TRANSACTIONAL WRITE: Guardar orden con permisos de ADMIN
     // Usamos supabaseAdmin para bypassear RLS (Row Level Security) y asegurar la escritura
     try {
+      // Formatear datos para que encajen en la DB actual sin migrar esquema
+      const finalAddress = customerInfo?.department
+        ? `${customerInfo.address}, ${customerInfo.department}`
+        : customerInfo?.address || ''
+
+      const finalName = customerInfo?.instagram
+        ? `${customerInfo.name} (@${customerInfo.instagram.replace('@', '')})`
+        : customerInfo?.name || 'Cliente'
+
       const orderData = {
         id: preference.id, // ID de MercadoPago como Primary Key del pedido
-        customer_name: customerInfo?.name || 'Cliente',
+        customer_name: finalName,
         customer_email: customerInfo?.email || '',
         customer_phone: customerInfo?.phone || '',
-        shipping_address: customerInfo?.address || '',
+        shipping_address: finalAddress,
         shipping_city: customerInfo?.city || '',
         shipping_commune: customerInfo?.commune || '',
         shipping_method: customerInfo?.shippingMethod || 'starken',

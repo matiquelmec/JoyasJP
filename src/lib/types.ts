@@ -128,9 +128,11 @@ export interface CheckoutFormData {
   email: string
   phone: string
   address: string
+  department?: string
   city: string
   region: string
   rut: string
+  instagram?: string
   postalCode?: string
   notes?: string
 }
@@ -140,9 +142,11 @@ export interface CustomerInfo {
   email: string
   phone: string
   address: string
+  department?: string
   city: string
   commune: string
   rut: string
+  instagram?: string
   shippingCost: number
   shippingMethod?: string
 }

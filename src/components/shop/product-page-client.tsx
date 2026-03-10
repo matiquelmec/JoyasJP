@@ -69,15 +69,28 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
           </p>
         )}
         <p className="text-sm text-muted-foreground">
-          Precio incluye IVA. Envío gratis a partir de ${freeShippingThreshold.toLocaleString('es-CL')}
+          Precio incluye IVA. ¡Envío gratis a partir de $50.000!
         </p>
-        <div className="flex items-center gap-2 mt-4 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
-          <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-            <span className="text-blue-600 font-bold text-xs">S</span>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+          <div className="flex items-center gap-2 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
+            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+              <span className="text-blue-600 font-bold text-xs">S</span>
+            </div>
+            <div className="text-xs">
+              <p className="font-bold text-blue-700">Envío por Starken</p>
+              <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre $50.000!</span></p>
+            </div>
           </div>
-          <div className="text-xs">
-            <p className="font-bold text-blue-700">Envío por Starken (Por Pagar)</p>
-            <p className="text-blue-600/70">Coordinamos el envío una vez realizada la compra.</p>
+
+          <div className="flex items-center gap-2 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
+            <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+              <span className="text-green-600 font-bold text-xs">M</span>
+            </div>
+            <div className="text-xs">
+              <p className="font-bold text-green-700">Entrega en Metro (Gratis)</p>
+              <p className="text-green-600/70">Solo estaciones Los Leones, Quilín o Chile España.</p>
+            </div>
           </div>
         </div>
       </div>

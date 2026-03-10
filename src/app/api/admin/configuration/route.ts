@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
 import { verifyAdminAuth } from '@/lib/admin-auth'
+
+export const dynamic = 'force-dynamic'
 
 // Fallback client if admin client is not available
 function getSupabaseClient() {
@@ -104,6 +107,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (result.error) throw result.error
+
+    // Purge the static cache for the entire site to immediately show new config
+    revalidatePath('/', 'layout')
 
     return NextResponse.json({ configuration: result.data[0] })
   } catch (error) {

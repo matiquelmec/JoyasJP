@@ -235,15 +235,13 @@ const ProductCard = memo(function ProductCard({
             ))}
           </div>
 
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm"
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex flex-col items-center justify-center">
+            <span
+              className="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs opacity-0 group-hover:opacity-100 duration-300 backdrop-blur-sm"
             >
               <Eye className="w-4 h-4 mr-2" />
               Ver Detalles
-            </Button>
+            </span>
           </div>
         </div>
       </Link>

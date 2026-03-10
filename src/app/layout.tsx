@@ -134,63 +134,11 @@ export const viewport: Viewport = {
   userScalable: true,
 }
 
-// Schema.org structured data generator
-async function getJsonLd() {
-  let storeName = 'Joyas JP'
-  let storeEmail = siteConfig.business.contact.email
-  let storePhone = siteConfig.business.contact.phone
-  let description = 'Alta joyería para la escena urbana'
-  let instagram = siteConfig.links.instagram
-  let tiktok = siteConfig.links.tiktok
-
-  try {
-    const { data: config } = await supabase.from('configuration').select('*').maybeSingle()
-    if (config) {
-      if (config.store_name) storeName = config.store_name
-      if (config.store_email) storeEmail = config.store_email
-      if (config.whatsapp_number) storePhone = config.whatsapp_number
-      if (config.store_description) description = config.store_description
-      if (config.instagram_url) instagram = config.instagram_url
-      if (config.tiktok_url) tiktok = config.tiktok_url
-    }
-  } catch (error) {
-    console.warn('[JSON-LD]: Usando valores por defecto.')
-  }
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: storeName,
-    description: description,
-    url: siteConfig.url,
-    logo: `${siteConfig.url}/assets/logo.webp`,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: storePhone,
-      contactType: 'customer service',
-      areaServed: 'CL',
-      availableLanguage: 'Spanish',
-    },
-    sameAs: [instagram, tiktok],
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'CL',
-      addressLocality: 'Santiago',
-    },
-    foundingDate: '2024',
-    founder: {
-      '@type': 'Person',
-      name: storeName,
-    },
-  }
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const jsonLd = await getJsonLd()
 
   return (
     <html lang="es-CL" className="dark scroll-smooth">
@@ -214,11 +162,6 @@ export default async function RootLayout({
         <link rel="shortcut icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/favicon.png" />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          defer
-        />
 
         {/* Cache busting y optimización determinística */}
         <meta name="build-version" content="20240523" />

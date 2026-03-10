@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { siteConfig } from '@/lib/config'
 import type { SiteConfiguration } from '@/lib/types'
 
@@ -8,7 +8,7 @@ import type { SiteConfiguration } from '@/lib/types'
  */
 export async function getSiteConfig(): Promise<SiteConfiguration> {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('configuration')
             .select('*')
             .maybeSingle()
@@ -24,9 +24,9 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
 
         // Filter out sensitive data and mix with static config for legacy fields
         return {
-            store_name: data.store_name,
-            store_email: data.store_email,
-            store_description: data.store_description,
+            store_name: data.store_name || siteConfig.name,
+            store_email: data.store_email || siteConfig.business.contact.email,
+            store_description: data.store_description || siteConfig.description,
             shipping_cost: 3000, // Hardcoded in API route
             free_shipping_from: 50000,
             shipping_zones: [...siteConfig.ecommerce.shippingZones],
@@ -35,10 +35,10 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             notify_low_stock: true,
             mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || '',
             mercadopago_access_token: '', // Never expose access token
-            instagram_url: data.instagram_url,
-            tiktok_url: data.tiktok_url,
-            store_slogan: data.store_slogan,
-            whatsapp_number: data.whatsapp_number,
+            instagram_url: data.instagram_url || siteConfig.links.instagram,
+            tiktok_url: data.tiktok_url || siteConfig.links.tiktok,
+            store_slogan: data.store_slogan || 'Atrévete a jugar',
+            whatsapp_number: data.whatsapp_number || siteConfig.business.contact.phone,
         }
     } catch (error) {
         // Return safe default configuration on error

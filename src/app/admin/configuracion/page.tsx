@@ -20,10 +20,9 @@ export default function ConfiguracionPage() {
     store_name: '',
     store_email: '',
     store_description: '',
-    store_slogan: '',
-    whatsapp_number: '',
     instagram_url: '',
-    tiktok_url: ''
+    tiktok_url: '',
+    whatsapp_number: ''
   })
 
   useEffect(() => {
@@ -36,11 +35,9 @@ export default function ConfiguracionPage() {
       setConfig(prev => ({
         ...prev,
         ...data,
-        // Ensure new fields exist and fallback to siteConfig if DB is empty
+        whatsapp_number: data.whatsapp_number || siteConfig.business.contact.phone,
         instagram_url: data.instagram_url || siteConfig.links.instagram,
         tiktok_url: data.tiktok_url || siteConfig.links.tiktok,
-        whatsapp_number: data.whatsapp_number || siteConfig.business.contact.phone,
-        store_slogan: data.store_slogan || 'Atrévete a jugar',
         store_email: data.store_email || siteConfig.business.contact.email,
         store_name: data.store_name || siteConfig.name,
         store_description: data.store_description || siteConfig.description
@@ -58,7 +55,14 @@ export default function ConfiguracionPage() {
     setSaving(true)
     try {
       // Send only the relevant fields
-      await adminAPI.updateConfiguration(config)
+      await adminAPI.updateConfiguration({
+        store_name: config.store_name,
+        store_email: config.store_email,
+        store_description: config.store_description,
+        instagram_url: config.instagram_url,
+        tiktok_url: config.tiktok_url,
+        whatsapp_number: config.whatsapp_number
+      })
 
       // Refrescar la configuración en toda la aplicación
       await refreshConfig()
@@ -114,15 +118,6 @@ export default function ConfiguracionPage() {
                   id="store-name"
                   value={config.store_name}
                   onChange={(e) => setConfig({ ...config, store_name: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="store-slogan">Slogan de Marca</Label>
-                <Input
-                  id="store-slogan"
-                  value={config.store_slogan || ''}
-                  onChange={(e) => setConfig({ ...config, store_slogan: e.target.value })}
-                  placeholder="Ej: Atrévete a jugar"
                 />
               </div>
               <div>
@@ -188,6 +183,8 @@ export default function ConfiguracionPage() {
             </div>
           </CardContent>
         </Card>
+
+
 
         <div className="flex justify-end">
           <Button

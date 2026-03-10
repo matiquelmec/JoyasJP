@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Product } from '@/lib/types'
+import { toast } from 'sonner'
 
 export interface CartItem extends Product {
   quantity: number
@@ -31,15 +32,33 @@ export const useCart = create<CartState>()(
           (cartItem) => cartItem.id === item.id
         )
 
+        const availableStock = item.stock || 0
+
         if (existingItem) {
+          const newQuantity = existingItem.quantity + quantity
+
+          if (newQuantity > availableStock) {
+            toast.error(`Stock insuficiente`, {
+              description: `Solo hay ${availableStock} unidades disponibles de "${item.name}".`
+            })
+            return
+          }
+
           set({
             items: currentItems.map((cartItem) =>
               cartItem.id === item.id
-                ? { ...cartItem, quantity: cartItem.quantity + quantity }
+                ? { ...cartItem, quantity: newQuantity }
                 : cartItem
             ),
           })
         } else {
+          if (quantity > availableStock) {
+            toast.error(`Stock insuficiente`, {
+              description: `Solo hay ${availableStock} unidades disponibles de "${item.name}".`
+            })
+            return
+          }
+
           set({
             items: [
               ...currentItems,
@@ -58,6 +77,20 @@ export const useCart = create<CartState>()(
           get().removeItem(id)
           return
         }
+
+        const currentItems = get().items
+        const existingItem = currentItems.find(item => item.id === id)
+
+        if (existingItem) {
+          const availableStock = existingItem.stock || 0
+          if (quantity > availableStock) {
+            toast.error(`Stock máximo alcanzado`, {
+              description: `Solo hay ${availableStock} unidades disponibles de "${existingItem.name}".`
+            })
+            return
+          }
+        }
+
         set({
           items: get().items.map((item) =>
             item.id === id ? { ...item, quantity } : item

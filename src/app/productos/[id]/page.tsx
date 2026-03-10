@@ -1,23 +1,11 @@
-import {
-  ArrowLeft,
-  Heart,
-  RotateCcw,
-  Share2,
-  Shield,
-  ShoppingCart,
-  Star,
-  Truck,
-} from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
 import { RelatedProducts } from '@/components/shop/related-products'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 import { ProductPageClient } from '@/components/shop/product-page-client'

@@ -111,7 +111,7 @@ export function OrdersManager() {
 
   const getStatusStats = () => {
     return {
-      pending: orders.filter(o => o.status === 'pending').length,
+      pending: orders.filter(o => o.status === 'pending' || o.payment_status === 'pending').length,
       processing: orders.filter(o => o.status === 'processing').length,
       shipped: orders.filter(o => o.status === 'shipped').length,
       delivered: orders.filter(o => o.status === 'delivered').length,
@@ -120,9 +120,14 @@ export function OrdersManager() {
   }
 
   const stats = getStatusStats()
+  // 🛡️ REGLA PROFESIONAL: Solo los pedidos PAGADOS o superiores suman a los ingresos.
+  // Ignoramos la gente que cerró la ventana de MercadoPago (pending)
   const totalRevenue = orders
-    .filter(o => o.status === 'delivered')
+    .filter(o => o.payment_status === 'paid' || o.payment_status === 'approved' || o.status === 'delivered')
     .reduce((sum, order) => sum + order.total_amount, 0)
+
+  // Ocultar pedidos fantasmas (gente que abandonó en el checkout) por defecto en la vista rápida
+  const activeOrders = orders.filter(o => o.payment_status === 'paid' || o.payment_status === 'approved' || o.payment_status === 'stock_error' || o.status !== 'pending')
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId)
@@ -275,7 +280,7 @@ export function OrdersManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.map((order) => {
+                {orders.length > 0 ? orders.map((order) => {
                   const orderItems = JSON.parse(order.items)
                   const itemCount = orderItems.reduce((sum: number, item: any) => sum + item.quantity, 0)
 
@@ -397,7 +402,15 @@ export function OrdersManager() {
                                     <User className="w-4 h-4" /> Datos del Cliente
                                   </h4>
                                   <div className="text-sm space-y-1">
-                                    <p><span className="text-muted-foreground mr-2">Nombre:</span> {order.customer_name}</p>
+                                    <p>
+                                      <span className="text-muted-foreground mr-2">Nombre:</span>
+                                      {order.customer_name.includes('(@') ? (
+                                        <>
+                                          <span className="font-semibold">{order.customer_name.split('(@')[0]}</span>
+                                          <span className="text-pink-600 font-bold ml-2">@{order.customer_name.split('(@')[1].replace(')', '')}</span>
+                                        </>
+                                      ) : order.customer_name}
+                                    </p>
                                     <p><span className="text-muted-foreground mr-2">Email:</span> {order.customer_email}</p>
                                     <p><span className="text-muted-foreground mr-2">Teléfono:</span> {order.customer_phone || 'No registrado'}</p>
                                   </div>
@@ -481,7 +494,13 @@ export function OrdersManager() {
                       </TableCell>
                     </TableRow>
                   )
-                })}
+                }) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                      No hay pedidos completados o validados para mostrar. (Se ocultan los carritos abandonados)
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

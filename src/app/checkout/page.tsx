@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
 // Removed Vercel analytics tracking
 import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -21,7 +20,9 @@ interface CheckoutFormData {
   customerName: string
   email: string
   phone: string
+  instagram?: string
   address: string
+  department?: string
   city: string
   region: string
   rut: string
@@ -88,15 +89,16 @@ const chileanRegions = [
 ]
 
 export default function CheckoutPage() {
-  const router = useRouter()
-  const { items, clearCart } = useCart()
+  const { items } = useCart()
   const { config } = useSiteConfig()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
     email: '',
     phone: '',
+    instagram: '',
     address: '',
+    department: '',
     city: '',
     region: '',
     rut: '',
@@ -153,7 +155,7 @@ export default function CheckoutPage() {
 
     if (!address.trim() && !isMetro) {
       toast.error('Campo requerido', {
-        description: 'Por favor ingresa tu dirección completa'
+        description: 'Por favor ingresa tu dirección completa (calle y número)'
       })
       return false
     }
@@ -204,7 +206,9 @@ export default function CheckoutPage() {
             name: formData.customerName,
             email: formData.email,
             phone: formData.phone,
+            instagram: formData.instagram,
             address: formData.address,
+            department: formData.department,
             city: formData.city,
             commune: formData.region,
             rut: formData.rut,
@@ -325,6 +329,21 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
+                  <Label htmlFor="instagram">Instagram (Opcional)</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-3 h-4 w-4 text-muted-foreground font-semibold flex items-center justify-center">@</span>
+                    <Input
+                      id="instagram"
+                      type="text"
+                      value={formData.instagram}
+                      onChange={(e) => handleInputChange('instagram', e.target.value)}
+                      placeholder="tu_usuario_ig"
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                <div>
                   <Label htmlFor="rut">RUT *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -362,8 +381,18 @@ export default function CheckoutPage() {
                     id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder={formData.shippingMethod === 'metro' ? "Opcional (ej: Estación Los Leones)" : "Av. Providencia 1234, Depto 56"}
+                    placeholder={formData.shippingMethod === 'metro' ? "Opcional (ej: Estación Los Leones)" : "Av. Providencia 1234"}
                     required={formData.shippingMethod !== 'metro'}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="department">Depto / Casa / Oficina (Opcional)</Label>
+                  <Input
+                    id="department"
+                    value={formData.department}
+                    onChange={(e) => handleInputChange('department', e.target.value)}
+                    placeholder="Depto 56"
                   />
                 </div>
 
@@ -422,8 +451,17 @@ export default function CheckoutPage() {
                         {formData.shippingMethod === 'starken' && <div className="w-2 h-2 rounded-full bg-primary" />}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm">Starken</p>
-                        <p className="text-xs text-muted-foreground">Envío por pagar a todo Chile</p>
+                        {cartStats.subtotal >= 50000 ? (
+                          <>
+                            <p className="font-semibold text-sm text-green-600">Envío Gratis vía Starken</p>
+                            <p className="text-xs text-muted-foreground">¡Ganaste envío gratis por compras sobre $50.000!</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="font-semibold text-sm">Starken (Envío por Pagar)</p>
+                            <p className="text-xs text-muted-foreground">Llega a tu domicilio o sucursal y pagas el envío al recibir</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -452,8 +490,8 @@ export default function CheckoutPage() {
                         {formData.shippingMethod === 'metro' && <div className="w-2 h-2 rounded-full bg-primary" />}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm">Entrega en Metro</p>
-                        <p className="text-xs text-muted-foreground">Coordinar por WhatsApp (Solo Santiago)</p>
+                        <p className="font-semibold text-sm">Entrega Gratis en Metro</p>
+                        <p className="text-xs text-muted-foreground">Solo Los Leones, Quilín o Chile España (Coordinar por WhatsApp)</p>
                       </div>
                     </div>
                   </div>
@@ -499,11 +537,17 @@ export default function CheckoutPage() {
                       <span>${cartStats.subtotal.toLocaleString('es-CL')}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Envío</span>
-                      <span className="text-orange-600">Por pagar</span>
+                      <span>Envío a {formData.shippingMethod === 'metro' ? 'Metro' : 'Domicilio'}</span>
+                      <span className={(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "text-green-600 font-bold" : "text-orange-600 font-medium"}>
+                        {(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "¡Gratis!" : "Por pagar"}
+                      </span>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      El envío se coordina y paga por separado
+                      {formData.shippingMethod === 'metro'
+                        ? "Te contactaremos para coordinar en L.Leones, Quilín o Chile España."
+                        : cartStats.subtotal >= 50000
+                          ? "¡El costo de envío corre por nuestra cuenta!"
+                          : "Paga tu envío directamente a Starken al recibir tu pedido."}
                     </div>
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
