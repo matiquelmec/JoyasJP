@@ -26,23 +26,35 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
         }
 
-        const { status, status_detail, id } = payment
+        const { status, status_detail } = payment
 
-        // MP usa preference_id o order.id para mapear según la versión
-        const orderId = payment.order?.id || payment.preference_id
+        // ✅ CRÍTICO: usar preference_id (NO order.id que es un ID interno de MP diferente)
+        // orders.id en DB = preference.id del checkout
+        const orderId = payment.preference_id
 
-        console.log(`🔔 Webhook recibido: Pago ${id} - Estado: ${status} (${status_detail}) - Orden: ${orderId}`)
+        console.log(`🔔 Webhook | Pago: ${paymentId} | Preferencia: ${orderId} | Estado: ${status} (${status_detail})`)
 
         if (!supabaseAdmin) {
             console.error('❌ Cliente administrativo de Supabase no disponible')
             return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
         }
 
-        // 📦 Si el pago fue aprobado, procesar inventario a prueba de balas (Enterprise Grade)
-        if (status === 'approved') {
-            console.log(`🔒 Procesando transacción segura para Orden ${id}...`)
+        if (!orderId) {
+            console.error('❌ No se pudo obtener preference_id del pago:', paymentId)
+            return NextResponse.json({ error: 'Missing preference_id' }, { status: 400 })
+        }
 
-            // Llamada RPC a función atómica en Postgres
+        // 📦 Si el pago fue aprobado, procesar inventario a prueba de balas
+        if (status === 'approved') {
+            console.log(`🔒 Procesando pago aprobado → Orden: ${orderId}`)
+
+            // Primero guardar el payment_id real del pago en la orden
+            await supabaseAdmin
+                .from('orders')
+                .update({ payment_id: paymentId, updated_at: new Date().toISOString() })
+                .eq('id', orderId)
+
+            // Llamada RPC atómica: actualiza estado de la orden Y descuenta stock
             const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc('process_order_payment', {
                 p_order_id: orderId,
                 p_payment_status: status,
@@ -77,18 +89,20 @@ export async function POST(req: NextRequest) {
             }
 
         } else {
-            // 🔄 Para estados pendientes/fallidos, actualizamos solo el estado (lógica simple)
+            // 🔄 Para estados pendientes/fallidos, actualizamos estado + payment_id real
             const { error: updateError } = await supabaseAdmin
                 .from('orders')
                 .update({
                     status: status,
                     payment_status: status,
                     payment_detail: status_detail,
+                    payment_id: paymentId,
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', orderId)
 
             if (updateError) console.error('Error updating non-approved order:', updateError)
+            console.log(`ℹ️ Orden ${orderId} actualizada a estado: ${status}`)
         }
 
         return NextResponse.json({ received: true })
