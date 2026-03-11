@@ -13,26 +13,29 @@ const aboutPageContent = {
 
 export default function AboutPage() {
   return (
-    // main tiene pt-0 (isHeroPage=true) → este div empieza en y=0, detrás del header
-    <div className="relative min-h-screen bg-black text-white overflow-hidden">
+    // El layout aplica pt-36/pt-44/etc. en <main> → este div empieza justo bajo el header
+    // La imagen usa position:fixed para cubrir el VIEWPORT COMPLETO incluyendo detrás del header
+    <div className="relative text-white flex items-center justify-center min-h-[calc(100vh-9rem)] sm:min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-11rem)] lg:min-h-[calc(100vh-12rem)] py-8">
 
-      {/* Imagen: absolute inset-0 de este div → cubre desde y=0, detrás del header transparente */}
-      <Image
-        src={getSafeUrl('nosotros.webp')}
-        alt="Equipo de JoyasJP"
-        fill
-        sizes="100vw"
-        className="object-cover opacity-80"
-        priority
-        quality={90}
-      />
-      {/* Vignette */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
+      {/* Fondo FIJO: cubre todo el viewport incluyendo el área del header, SIEMPRE, sin depender del layout padre */}
+      <div className="fixed inset-0 -z-10 bg-black">
+        <Image
+          src={getSafeUrl('nosotros.webp')}
+          alt="Equipo de JoyasJP"
+          fill
+          sizes="100vw"
+          className="object-cover opacity-80"
+          priority
+          quality={90}
+        />
+        {/* Vignette */}
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
+      </div>
 
-      {/* Contenido: mt-36/mt-40 en móvil empuja el card DEBAJO del header */}
-      <div className="relative z-10 container px-4 py-8 mt-36 sm:mt-40 md:mt-0 md:min-h-screen md:flex md:items-center md:justify-center">
+      {/* Contenido */}
+      <div className="container relative px-4">
         <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp" style={{ willChange: 'filter, transform' }}>
           <div className="max-w-3xl mx-auto text-center space-y-8">
 

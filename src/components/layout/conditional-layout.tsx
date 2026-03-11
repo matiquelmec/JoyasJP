@@ -25,7 +25,7 @@ export function ConditionalLayout({ children, initialConfig }: ConditionalLayout
   }
 
   // 🔧 SOLUCIÓN: Detectar páginas "Hero" (Home y Nosotros) que necesitan el header transparente
-  const isHeroPage = pathname === '/' || pathname === '/nosotros'
+  const isHeroPage = pathname === '/'
 
   return (
     <SiteConfigProvider initialConfig={initialConfig}>
