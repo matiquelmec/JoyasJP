@@ -89,20 +89,22 @@ export async function POST(req: NextRequest) {
             }
 
         } else {
-            // 🔄 Para estados pendientes/fallidos, actualizamos estado + payment_id real
+            // 🔄 Para estados NO aprobados (rejected, in_process, pending, etc.)
+            // IMPORTANTE: No tocar orders.status (tiene CHECK constraint con valores fijos)
+            // Solo actualizamos los campos de pago que son texto libre
             const { error: updateError } = await supabaseAdmin
                 .from('orders')
                 .update({
-                    status: status,
-                    payment_status: status,
-                    payment_detail: status_detail,
-                    payment_id: paymentId,
+                    // status: NO se cambia - la orden sigue 'pending' hasta ser aprobada o cancelada manualmente
+                    payment_status: status,        // Estado de MP (puede ser cualquier valor)
+                    payment_detail: status_detail, // Detalle de MP
+                    payment_id: paymentId,         // ID real del pago en MP
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', orderId)
 
-            if (updateError) console.error('Error updating non-approved order:', updateError)
-            console.log(`ℹ️ Orden ${orderId} actualizada a estado: ${status}`)
+            if (updateError) console.error('Error updating payment info for order:', updateError)
+            console.log(`ℹ️ Orden ${orderId} → payment_status: ${status}`)
         }
 
         return NextResponse.json({ received: true })
