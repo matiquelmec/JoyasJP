@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Valid order statuses
-    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+    const validStatuses = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled']
     if (!validStatuses.includes(status)) {
       return NextResponse.json({
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`

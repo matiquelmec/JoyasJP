@@ -56,7 +56,7 @@ interface Order {
   shipping_commune?: string
   created_at: string
   updated_at: string
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   total_amount: number
   shipping_cost: number
   items: string // JSON string
@@ -328,12 +328,15 @@ export function OrdersManager() {
                         <Badge
                           variant={
                             order.status === 'delivered' ? 'default' :
-                              order.status === 'cancelled' ? 'destructive' :
-                                order.status === 'processing' ? 'secondary' :
-                                  'outline'
+                              order.status === 'paid' ? 'default' :
+                                order.status === 'cancelled' ? 'destructive' :
+                                  order.status === 'processing' ? 'secondary' :
+                                    'outline'
                           }
+                          className={order.status === 'paid' ? 'bg-green-600 hover:bg-green-700' : ''}
                         >
                           {order.status === 'pending' && 'Pendiente'}
+                          {order.status === 'paid' && 'Pagado'}
                           {order.status === 'processing' && 'Procesando'}
                           {order.status === 'shipped' && 'Enviado'}
                           {order.status === 'delivered' && 'Entregado'}
@@ -356,6 +359,11 @@ export function OrdersManager() {
                               <SelectItem value="pending">
                                 <div className="flex items-center">
                                   <Clock className="w-3 h-3 mr-2 text-orange-600" /> Pendiente
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="paid">
+                                <div className="flex items-center">
+                                  <CheckCircle className="w-3 h-3 mr-2 text-green-600" /> Pagado
                                 </div>
                               </SelectItem>
                               <SelectItem value="processing">

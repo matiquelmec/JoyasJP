@@ -159,7 +159,7 @@ export interface Order {
   shipping_address: string
   items: OrderItem[]
   total: number
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
+  status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   created_at: string
   updated_at: string
 }
