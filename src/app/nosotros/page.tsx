@@ -15,7 +15,7 @@ const aboutPageContent = {
 
 export default function AboutPage() {
   return (
-    <div className="relative min-h-screen bg-black text-white flex flex-col items-center justify-center overflow-hidden pt-36 sm:pt-40 md:pt-0">
+    <div className="relative min-h-screen bg-black text-white flex flex-col items-center justify-center overflow-hidden">
       {/* Background Image - The Chain */}
       <div className="absolute inset-0 z-0 flex items-center justify-center">
         <Image
@@ -32,6 +32,9 @@ export default function AboutPage() {
         {/* Bottom Fade for Footer transition */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
+
+      {/* Spacer invisible: empuja el card debajo del header fijo en móvil sin afectar la imagen de fondo */}
+      <div className="h-36 sm:h-40 md:h-0 shrink-0 w-full" aria-hidden="true" />
 
       <div className="container relative z-10 px-4 py-12 md:py-20">
         {/* Glassmorphism Container */}
