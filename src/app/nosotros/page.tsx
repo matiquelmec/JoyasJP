@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { getSafeUrl } from '@/lib/safe-asset'
 
-
 const aboutPageContent = {
   title: 'El Manifiesto Urbano',
   subtitle: 'Capítulo I: El Estilo.',
@@ -9,21 +8,19 @@ const aboutPageContent = {
     'El flow no es exclusivo de los escenarios; está en la calle, en tu forma de caminar, en la confianza con la que te mueves. En JoyasJP, entendemos ese lenguaje a la perfección. No creamos las joyas, hacemos algo más difícil: las descubrimos. Somos curadores de estilo, obsesionados con encontrar las piezas que definen la estética urbana.',
     'Nuestra misión es sencilla: poner a tu alcance una colección que hable por ti. Cada pieza que seleccionamos ha sido elegida por su carácter, su peso y su capacidad de transformar un look en una obra de arte.',
   ],
-  closingStatement:
-    'Cada joya cuenta una historia. La tuya está esperando.',
+  closingStatement: 'Cada joya cuenta una historia. La tuya está esperando.',
 }
 
 export default function AboutPage() {
   return (
-    // El layout ya aplica pt-36/pt-44 etc. según el breakpoint.
-    // Esta página usa position:fixed para la imagen de fondo y cubre TODA la pantalla incluyendo tras el header.
-    <div className="relative min-h-[calc(100vh-9rem)] sm:min-h-[calc(100vh-10rem)] md:min-h-[calc(100vh-11rem)] bg-black text-white overflow-hidden flex items-center justify-center">
+    // main tiene pt-0 (isHeroPage=true) → este div empieza en y=0, detrás del header
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
 
-      {/* Imagen de fondo: cubre toda la sección */}
+      {/* Imagen: absolute inset-0 de este div → cubre desde y=0, detrás del header transparente */}
       <Image
         src={getSafeUrl('nosotros.webp')}
         alt="Equipo de JoyasJP"
-        fill={true}
+        fill
         sizes="100vw"
         className="object-cover opacity-80"
         priority
@@ -31,15 +28,14 @@ export default function AboutPage() {
       />
       {/* Vignette */}
       <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/80" />
-      {/* Bottom Fade */}
+      {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
 
-      {/* Contenido */}
-      <div className="container relative z-10 px-4 py-12 md:py-20">
-        {/* Glassmorphism Container */}
+      {/* Contenido: mt-36/mt-40 en móvil empuja el card DEBAJO del header */}
+      <div className="relative z-10 container px-4 py-8 mt-36 sm:mt-40 md:mt-0 md:min-h-screen md:flex md:items-center md:justify-center">
         <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp" style={{ willChange: 'filter, transform' }}>
-
           <div className="max-w-3xl mx-auto text-center space-y-8">
+
             <div className="space-y-4">
               <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                 {aboutPageContent.title}
