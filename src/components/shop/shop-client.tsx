@@ -15,16 +15,24 @@ interface ShopClientProps {
 }
 
 const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
+const PRODUCTS_PER_PAGE = 12
 
 export function ShopClient({ initialProducts, initialColors }: ShopClientProps) {
     const [activeCategory, setActiveCategory] = useState('all')
     const [activeColor, setActiveColor] = useState('all')
     const [searchQuery, setSearchQuery] = useState('')
+    const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {
         setActiveColor(value);
     }, []);
+
+    // Resetear paginación al cambiar de categoría
+    const handleCategoryChange = useCallback((value: string) => {
+        setActiveCategory(value)
+        setVisibleCount(PRODUCTS_PER_PAGE)
+    }, [])
 
     // ⚡ MEMOIZACIÓN: Filtros de productos optimizados con hook personalizado
     const baseFilteredProducts = useMemoizedProducts({
@@ -82,6 +90,11 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         return groupedProducts;
     }, [groupedProducts, activeCategory]);
 
+    // Productos visibles (paginación)
+    const visibleProducts = useMemo(() => filteredProducts.slice(0, visibleCount), [filteredProducts, visibleCount])
+    const hasMore = visibleCount < filteredProducts.length
+    const remaining = filteredProducts.length - visibleCount
+
     return (
         <div className="bg-background min-h-screen overflow-x-hidden">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
@@ -95,7 +108,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                 <Tabs
                     defaultValue="all"
                     className="w-full"
-                    onValueChange={setActiveCategory}
+                    onValueChange={handleCategoryChange}
                 >
                     <TabsList className="grid w-full grid-cols-5 mb-8">
                         {allCategories.map((category) => (
@@ -116,7 +129,10 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                 type="text"
                                 placeholder="Buscar joyas"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value)
+                                    setVisibleCount(PRODUCTS_PER_PAGE)
+                                }}
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             />
                         </div>
@@ -131,16 +147,54 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
                     <Separator className="mb-12" />
 
+                    {/* Contador de resultados */}
+                    <p className="text-sm text-muted-foreground mb-6">
+                        Mostrando <span className="text-foreground font-semibold">{Math.min(visibleCount, filteredProducts.length)}</span> de{' '}
+                        <span className="text-foreground font-semibold">{filteredProducts.length}</span> productos
+                    </p>
+
                     {filteredProducts.length > 0 ? (
-                        <div className="product-grid responsive-container responsive-grid gap-8">
-                            {filteredProducts.map((product, index) => (
-                                <LazyProductCard
-                                    key={product.id}
-                                    product={product}
-                                    priority={index < 6}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div className="product-grid responsive-container responsive-grid gap-8">
+                                {visibleProducts.map((product, index) => (
+                                    <LazyProductCard
+                                        key={product.id}
+                                        product={product}
+                                        priority={index < 6}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Botón Cargar Más */}
+                            {hasMore && (
+                                <div className="flex flex-col items-center mt-14 gap-3">
+                                    <button
+                                        onClick={() => setVisibleCount(prev => prev + PRODUCTS_PER_PAGE)}
+                                        className="group relative inline-flex items-center gap-3 px-10 py-4 bg-transparent border border-primary/50 text-primary font-semibold rounded-full transition-all duration-300 hover:bg-primary hover:text-black hover:border-primary hover:scale-105 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]"
+                                    >
+                                        <span>Cargar más</span>
+                                        <span className="text-xs opacity-70">({remaining} restantes)</span>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className="transition-transform duration-300 group-hover:translate-y-1"
+                                        >
+                                            <path d="M12 5v14M5 12l7 7 7-7" />
+                                        </svg>
+                                    </button>
+                                    <p className="text-xs text-muted-foreground">
+                                        {filteredProducts.length} productos en total
+                                    </p>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="text-center py-20">
                             <h2 className="text-2xl font-semibold">
