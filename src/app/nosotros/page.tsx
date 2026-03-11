@@ -33,7 +33,7 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
-      <div className="container relative z-10 px-4 py-12 md:py-20">
+      <div className="container relative z-10 px-4 pt-40 pb-12 sm:pt-44 sm:pb-16 md:pt-20 md:pb-20">
         {/* Glassmorphism Container */}
         <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-3xl bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl animate-fadeInUp" style={{ willChange: 'filter, transform' }}>
 
