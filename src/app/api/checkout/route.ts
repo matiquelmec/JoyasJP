@@ -74,7 +74,11 @@ export async function POST(req: NextRequest) {
       }
     })
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin;
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin).replace(/\/$/, "");
+
+    // 1. Crear un ID de orden único ANTES de la preferencia para usarlo como external_reference
+    // Usamos el formato de MP pero aseguramos que sea único y rastreable
+    const internalOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     const preferenceBody: any = {
       items: validatedItems,
@@ -83,10 +87,10 @@ export async function POST(req: NextRequest) {
         failure: `${siteUrl}/productos/failure`,
         pending: `${siteUrl}/productos/pending`,
       },
-      // 🛡️ Prevenir cambios maliciosos en el checkout
       statement_descriptor: 'JOYAS JP',
-      external_reference: `ORDER-${Date.now()}`,
-      notification_url: `${siteUrl}/api/webhook/mercadopago`
+      external_reference: internalOrderId, // ✅ Este es el puente más seguro
+      notification_url: `${siteUrl}/api/webhook/mercadopago`,
+      auto_return: 'approved'
     }
 
     // Agregar información del cliente si está disponible
@@ -132,7 +136,7 @@ export async function POST(req: NextRequest) {
         : customerInfo?.name || 'Cliente'
 
       const orderData = {
-        id: preference.id, // ID de MercadoPago como Primary Key del pedido
+        id: preference.id, // Preferencia como PK
         customer_name: finalName,
         customer_email: customerInfo?.email || '',
         customer_phone: customerInfo?.phone || '',
@@ -150,7 +154,7 @@ export async function POST(req: NextRequest) {
         total_amount: totalAmount,
         shipping_cost: 0,
         status: 'pending',
-        payment_id: preference.id,
+        payment_id: null, // ✅ Vacío hasta que MP notifique el pago real
         payment_status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

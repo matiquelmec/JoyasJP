@@ -65,7 +65,7 @@ const nextConfig = {
   },
 
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production', // ⚡ Remove console en producción
+    removeConsole: false, // ⚡ Deshabilitado temporalmente para debugging de webhooks
   },
 
   // Optimización de build

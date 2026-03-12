@@ -31,44 +31,43 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
         }
 
-        const { status, status_detail } = payment
-        let orderId = payment.preference_id
+        const { status, status_detail, preference_id, external_reference } = payment
+        let orderId = null
 
+        // 🔍 ESTRATEGIA DE BÚSQUEDA MULTI-CAPA
+        // 1. Buscar por ID de preferencia (PK de nuestra tabla)
+        if (preference_id) {
+            const { data: byId } = await adminClient.from('orders').select('id').eq('id', preference_id).single()
+            if (byId) orderId = byId.id
+        }
+
+        // 2. Si no, buscar por external_reference (puente seguro que acabamos de implementar)
+        if (!orderId && external_reference) {
+            const { data: byExt } = await adminClient.from('orders').select('id').eq('id', external_reference).single()
+            if (byExt) orderId = byExt.id
+        }
+
+        // 3. Si no, buscar por el payment_id real guardado provisionalmente (legacy)
         if (!orderId) {
-            const { data: orderByPaymentId } = await adminClient
-                .from('orders')
-                .select('id')
-                .eq('payment_id', String(paymentId))
-                .limit(1)
-                .single()
-
-            if (orderByPaymentId?.id) {
-                orderId = orderByPaymentId.id
-            } else {
-                const { data: orderByPrefId } = await adminClient
-                    .from('orders')
-                    .select('id')
-                    .eq('id', String(paymentId))
-                    .limit(1)
-                    .single()
-                orderId = orderByPrefId?.id || null
-            }
+            const { data: byPayId } = await adminClient.from('orders').select('id').eq('payment_id', String(paymentId)).limit(1).single()
+            if (byPayId) orderId = byPayId.id
         }
 
         if (!orderId) {
+            // Un último intento desesperado: el ID del pago real podría ser el preference_id en algunos flujos
+            const { data: byPayIdAsId } = await adminClient.from('orders').select('id').eq('id', String(paymentId)).single()
+            if (byPayIdAsId) orderId = byPayIdAsId.id
+        }
+
+        if (!orderId) {
+            console.error('❌ No se encontró el pedido para el pago MP:', paymentId)
             return NextResponse.json({ received: true })
         }
 
         if (status === 'approved') {
-            // 1. Obtener los items de la orden
-            const { data: order } = await adminClient
-                .from('orders')
-                .select('items, status')
-                .eq('id', orderId)
-                .single()
+            const { data: order } = await adminClient.from('orders').select('items, status').eq('id', orderId).single()
 
             if (order && order.status !== 'paid') {
-                // 2. Descontar stock manualmente vía JS (By-pass RPC bug)
                 let items: any[] = []
                 try {
                     items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items
@@ -79,55 +78,40 @@ export async function POST(req: NextRequest) {
                 if (Array.isArray(items)) {
                     for (const item of items) {
                         try {
-                            // Intentamos descontar stock de forma segura
-                            const { data: prod } = await adminClient
-                                .from('products')
-                                .select('stock')
-                                .eq('id', item.id)
-                                .single()
-
+                            const { data: prod } = await adminClient.from('products').select('stock').eq('id', item.id).single()
                             if (prod) {
-                                await adminClient
-                                    .from('products')
+                                await adminClient.from('products')
                                     .update({ stock: Math.max(0, prod.stock - item.quantity) })
                                     .eq('id', item.id)
                                     .gte('stock', item.quantity)
                             }
                         } catch (prodErr) {
-                            console.error(`Error updating stock for ${item.id}:`, prodErr)
+                            console.error(`Error stock ${item.id}:`, prodErr)
                         }
                     }
                 }
 
-                // 3. Marcar la orden como pagada
-                await adminClient
-                    .from('orders')
-                    .update({
-                        status: 'paid',
-                        payment_status: status,
-                        payment_detail: status_detail,
-                        payment_id: String(paymentId),
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', orderId)
-            }
-        } else {
-            // Para otros estados
-            await adminClient
-                .from('orders')
-                .update({
+                await adminClient.from('orders').update({
+                    status: 'paid',
                     payment_status: status,
                     payment_detail: status_detail,
                     payment_id: String(paymentId),
                     updated_at: new Date().toISOString()
-                })
-                .eq('id', orderId)
+                }).eq('id', orderId)
+            }
+        } else {
+            await adminClient.from('orders').update({
+                payment_status: status,
+                payment_detail: status_detail,
+                payment_id: String(paymentId),
+                updated_at: new Date().toISOString()
+            }).eq('id', orderId)
         }
 
         return NextResponse.json({ received: true })
 
     } catch (error: any) {
-        console.error('❌ Error Webhook:', error.message)
+        console.error('❌ Webhook Panic:', error.message)
         return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
     }
 }
