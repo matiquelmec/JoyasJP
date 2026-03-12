@@ -9,6 +9,23 @@ const client = new MercadoPagoConfig({
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
+        
+        // 🚨 GUARDIA DE EMERGENCIA: Loggear TODA entrada del webhook a la DB usando la tabla orders como bitácora 
+        try {
+            if (supabaseAdmin) {
+                await supabaseAdmin.from('orders').insert({
+                    id: `LOG_WH_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                    customer_name: 'WEBHOOK_PAYLOAD',
+                    items: JSON.stringify(body),
+                    total_amount: 0,
+                    shipping_cost: 0,
+                    status: 'pending',
+                    payment_status: 'log',
+                    payment_detail: 'Registro crudo entrante'
+                })
+            }
+        } catch(e) { console.error('Error log DB', e) }
+
         const { type, data } = body
 
         // Solo nos interesan las notificaciones de pago
@@ -110,6 +127,22 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ received: true })
     } catch (error: any) {
         console.error('❌ Error en Webhook MercadoPago:', error.message)
+        
+        try {
+            if (supabaseAdmin) {
+                await supabaseAdmin.from('orders').insert({
+                    id: `LOG_ERR_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                    customer_name: 'WEBHOOK_CRASH',
+                    items: JSON.stringify({ msg: error.message, stack: String(error) }),
+                    total_amount: 0,
+                    shipping_cost: 0,
+                    status: 'pending',
+                    payment_status: 'log',
+                    payment_detail: 'Error fatal en webhook'
+                })
+            }
+        } catch(e) { console.error('Log falló', e) }
+
         return NextResponse.json(
             { error: 'Webhook processing failed' },
             { status: 500 }

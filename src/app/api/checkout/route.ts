@@ -74,17 +74,19 @@ export async function POST(req: NextRequest) {
       }
     })
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin;
+
     const preferenceBody: any = {
       items: validatedItems,
       back_urls: {
-        success: `${req.nextUrl.origin}/productos/success`,
-        failure: `${req.nextUrl.origin}/productos/failure`,
-        pending: `${req.nextUrl.origin}/productos/pending`,
+        success: `${siteUrl}/productos/success`,
+        failure: `${siteUrl}/productos/failure`,
+        pending: `${siteUrl}/productos/pending`,
       },
       // 🛡️ Prevenir cambios maliciosos en el checkout
       statement_descriptor: 'JOYAS JP',
       external_reference: `ORDER-${Date.now()}`,
-      notification_url: `${req.nextUrl.origin}/api/webhook/mercadopago`
+      notification_url: `${siteUrl}/api/webhook/mercadopago`
     }
 
     // Agregar información del cliente si está disponible
