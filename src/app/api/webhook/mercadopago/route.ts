@@ -4,6 +4,8 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { createClient } from '@supabase/supabase-js'
 
 export async function POST(req: NextRequest) {
+    let globalDbErr: any = null;
+
     try {
         const body = await req.json()
         
@@ -162,6 +164,7 @@ export async function POST(req: NextRequest) {
                     payment_status: 'log',
                     payment_detail: 'Error fatal en webhook'
                 })
+                globalDbErr = dbErr;
             }
         } catch(e) { console.error('Log falló', e) }
 
@@ -171,7 +174,8 @@ export async function POST(req: NextRequest) {
                 debug: {
                     hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
                     hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-                    hasMpAccess: !!process.env.MP_ACCESS_TOKEN
+                    hasMpAccess: !!process.env.MP_ACCESS_TOKEN,
+                    dbError: globalDbErr || null
                 }
             },
             { status: 500 }
