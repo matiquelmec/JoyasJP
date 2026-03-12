@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
         total_amount: totalAmount,
         shipping_cost: 0,
         status: 'pending',
-        payment_id: null, // ✅ Vacío hasta que MP notifique el pago real
+        payment_id: internalOrderId, // ✅ Usamos esto como puente para el webhook
         payment_status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

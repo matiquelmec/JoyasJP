@@ -34,40 +34,34 @@ export async function POST(req: NextRequest) {
         const { status, status_detail, preference_id, external_reference } = payment
         let orderId = null
 
-        // 🔍 ESTRATEGIA DE BÚSQUEDA MULTI-CAPA
-        // 1. Buscar por ID de preferencia (PK de nuestra tabla)
+        // 🔍 ESTRATEGIA DE BÚSQUEDA ROBUSTA
+        // 1. Intentar por preference_id (PK de nuestra tabla)
         if (preference_id) {
             const { data: byId } = await adminClient.from('orders').select('id').eq('id', preference_id).single()
             if (byId) orderId = byId.id
         }
 
-        // 2. Si no, buscar por external_reference (puente seguro que acabamos de implementar)
+        // 2. Intentar por external_reference (que guardamos en la columna payment_id)
         if (!orderId && external_reference) {
-            const { data: byExt } = await adminClient.from('orders').select('id').eq('id', external_reference).single()
+            const { data: byExt } = await adminClient.from('orders').select('id').eq('payment_id', external_reference).single()
             if (byExt) orderId = byExt.id
         }
 
-        // 3. Si no, buscar por el payment_id real guardado provisionalmente (legacy)
+        // 3. Fallback: El paymentId enviado por el webhook podría ser el preference_id
         if (!orderId) {
-            const { data: byPayId } = await adminClient.from('orders').select('id').eq('payment_id', String(paymentId)).limit(1).single()
-            if (byPayId) orderId = byPayId.id
+            const { data: byIdFallback } = await adminClient.from('orders').select('id').eq('id', String(paymentId)).single()
+            if (byIdFallback) orderId = byIdFallback.id
         }
 
         if (!orderId) {
-            // Un último intento desesperado: el ID del pago real podría ser el preference_id en algunos flujos
-            const { data: byPayIdAsId } = await adminClient.from('orders').select('id').eq('id', String(paymentId)).single()
-            if (byPayIdAsId) orderId = byPayIdAsId.id
-        }
-
-        if (!orderId) {
-            console.error('❌ No se encontró el pedido para el pago MP:', paymentId)
+            console.error('❌ No se encontró el pedido para el pago MP:', paymentId, 'Pref:', preference_id, 'Ext:', external_reference)
             return NextResponse.json({ received: true })
         }
 
         if (status === 'approved') {
             const { data: order } = await adminClient.from('orders').select('items, status').eq('id', orderId).single()
 
-            if (order && order.status !== 'paid') {
+            if (order && (order.status !== 'paid' || order.status === 'pending')) {
                 let items: any[] = []
                 try {
                     items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items
@@ -78,7 +72,7 @@ export async function POST(req: NextRequest) {
                 if (Array.isArray(items)) {
                     for (const item of items) {
                         try {
-                            const { data: prod } = await adminClient.from('products').select('stock').eq('id', item.id).single()
+                            const { data: prod } = await adminClient.from('products').select('id, stock').eq('id', item.id).single()
                             if (prod) {
                                 await adminClient.from('products')
                                     .update({ stock: Math.max(0, prod.stock - item.quantity) })
@@ -86,7 +80,7 @@ export async function POST(req: NextRequest) {
                                     .gte('stock', item.quantity)
                             }
                         } catch (prodErr) {
-                            console.error(`Error stock ${item.id}:`, prodErr)
+                            console.error(`Error updating stock for ${item.id}:`, prodErr)
                         }
                     }
                 }
@@ -95,7 +89,7 @@ export async function POST(req: NextRequest) {
                     status: 'paid',
                     payment_status: status,
                     payment_detail: status_detail,
-                    payment_id: String(paymentId),
+                    payment_id: String(paymentId), // ✅ Ahora sí guardamos el ID real del pago
                     updated_at: new Date().toISOString()
                 }).eq('id', orderId)
             }
