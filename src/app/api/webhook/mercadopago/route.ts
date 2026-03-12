@@ -3,10 +3,6 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { createClient } from '@supabase/supabase-js'
 
-const client = new MercadoPagoConfig({
-    accessToken: process.env.MP_ACCESS_TOKEN!,
-})
-
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
@@ -41,6 +37,12 @@ export async function POST(req: NextRequest) {
         const paymentId = data.id
 
         // 🛡️ Consultar el estado real del pago en MercadoPago
+        if (!process.env.MP_ACCESS_TOKEN) {
+            console.error('CRITICAL: MP_ACCESS_TOKEN is not defined')
+            return NextResponse.json({ error: 'Config Error' }, { status: 500 })
+        }
+        
+        const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN })
         const payment = await new Payment(client).get({ id: paymentId }) as any
 
         if (!payment) {
