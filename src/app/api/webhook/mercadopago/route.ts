@@ -1,6 +1,7 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { createClient } from '@supabase/supabase-js'
 
 const client = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN!,
@@ -11,9 +12,13 @@ export async function POST(req: NextRequest) {
         const body = await req.json()
         
         // 🚨 GUARDIA DE EMERGENCIA: Loggear TODA entrada del webhook a la DB usando la tabla orders como bitácora 
+        // Instanciamos Supabase directamente para bypassear fallos de Proxy (supabaseAdmin)
         try {
-            if (supabaseAdmin) {
-                await supabaseAdmin.from('orders').insert({
+            const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+            const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+            if (url && key) {
+                const directAdmin = createClient(url, key)
+                await directAdmin.from('orders').insert({
                     id: `LOG_WH_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                     customer_name: 'WEBHOOK_PAYLOAD',
                     items: JSON.stringify(body),
@@ -129,8 +134,11 @@ export async function POST(req: NextRequest) {
         console.error('❌ Error en Webhook MercadoPago:', error.message)
         
         try {
-            if (supabaseAdmin) {
-                await supabaseAdmin.from('orders').insert({
+            const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+            const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+            if (url && key) {
+                const directAdmin = createClient(url, key)
+                await directAdmin.from('orders').insert({
                     id: `LOG_ERR_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                     customer_name: 'WEBHOOK_CRASH',
                     items: JSON.stringify({ msg: error.message, stack: String(error) }),
