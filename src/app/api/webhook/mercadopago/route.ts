@@ -14,9 +14,15 @@ export async function POST(req: NextRequest) {
             const key = process.env.SUPABASE_SERVICE_ROLE_KEY
             if (url && key) {
                 const directAdmin = createClient(url, key)
-                await directAdmin.from('orders').insert({
+                const { error: dbErr } = await directAdmin.from('orders').insert({
                     id: `LOG_WH_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                     customer_name: 'WEBHOOK_PAYLOAD',
+                    customer_email: 'log@system',
+                    customer_phone: '000',
+                    shipping_address: 'log',
+                    shipping_city: 'log',
+                    shipping_commune: 'log',
+                    shipping_method: 'log',
                     items: JSON.stringify(body),
                     total_amount: 0,
                     shipping_cost: 0,
@@ -140,9 +146,15 @@ export async function POST(req: NextRequest) {
             const key = process.env.SUPABASE_SERVICE_ROLE_KEY
             if (url && key) {
                 const directAdmin = createClient(url, key)
-                await directAdmin.from('orders').insert({
+                const { error: dbErr } = await directAdmin.from('orders').insert({
                     id: `LOG_ERR_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                     customer_name: 'WEBHOOK_CRASH',
+                    customer_email: 'log@system',
+                    customer_phone: '000',
+                    shipping_address: 'log',
+                    shipping_city: 'log',
+                    shipping_commune: 'log',
+                    shipping_method: 'log',
                     items: JSON.stringify({ msg: error.message, stack: String(error) }),
                     total_amount: 0,
                     shipping_cost: 0,
