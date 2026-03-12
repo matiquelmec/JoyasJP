@@ -60,20 +60,50 @@ export async function POST(req: NextRequest) {
 
         const { status, status_detail } = payment
 
-        // ✅ CRÍTICO: usar preference_id (NO order.id que es un ID interno de MP diferente)
-        // orders.id en DB = preference.id del checkout
-        const orderId = payment.preference_id
+        // ✅ ESTRATEGIA DUAL de búsqueda de orden:
+        // 1. Intentar por preference_id (viene en el pago cuando se generó desde nuestro checkout)
+        // 2. Si no, buscar en la DB por payment_id (el ID numérico del pago)
+        let orderId = payment.preference_id
 
-        console.log(`🔔 Webhook | Pago: ${paymentId} | Preferencia: ${orderId} | Estado: ${status} (${status_detail})`)
+        console.log(`🔔 Webhook | Pago: ${paymentId} | Preferencia: ${orderId ?? 'N/A'} | Estado: ${status} (${status_detail})`)
 
-        if (!supabaseAdmin) {
-            console.error('❌ Cliente administrativo de Supabase no disponible')
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+        if (!url || !key) {
+            console.error('❌ Variables de entorno Supabase no disponibles')
             return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        }
+        const adminClient = createClient(url, key)
+
+        // Si preference_id no vino en el pago, buscamos la orden por su payment_id numérico
+        if (!orderId) {
+            console.warn(`⚠️ preference_id no disponible para pago ${paymentId}. Buscando por payment_id numérico...`)
+            const { data: orderByPayment } = await adminClient
+                .from('orders')
+                .select('id')
+                .eq('payment_id', String(paymentId))
+                .limit(1)
+                .single()
+
+            if (orderByPayment?.id) {
+                orderId = orderByPayment.id
+                console.log(`✅ Orden encontrada por payment_id numérico: ${orderId}`)
+            } else {
+                // Último recurso: buscar por el ID de preference que tiene el formato seller_id-uuid
+                // El payment_id inicial es el preference.id que guardamos en la DB al hacer checkout
+                const { data: orderByPrefFallback } = await adminClient
+                    .from('orders')
+                    .select('id')
+                    .eq('id', String(paymentId))
+                    .limit(1)
+                    .single()
+                orderId = orderByPrefFallback?.id || null
+            }
         }
 
         if (!orderId) {
-            console.error('❌ No se pudo obtener preference_id del pago:', paymentId)
-            return NextResponse.json({ error: 'Missing preference_id' }, { status: 400 })
+            console.error('❌ No se pudo encontrar la orden para el pago:', paymentId)
+            return NextResponse.json({ error: 'Order not found for payment' }, { status: 404 })
         }
 
         // 📦 Si el pago fue aprobado, procesar inventario a prueba de balas
@@ -81,13 +111,13 @@ export async function POST(req: NextRequest) {
             console.log(`🔒 Procesando pago aprobado → Orden: ${orderId}`)
 
             // Primero guardar el payment_id real del pago en la orden
-            await supabaseAdmin
+            await adminClient
                 .from('orders')
-                .update({ payment_id: paymentId, updated_at: new Date().toISOString() })
+                .update({ payment_id: String(paymentId), updated_at: new Date().toISOString() })
                 .eq('id', orderId)
 
             // Llamada RPC atómica: actualiza estado de la orden Y descuenta stock
-            const { data: rpcResult, error: rpcError } = await supabaseAdmin.rpc('process_order_payment', {
+            const { data: rpcResult, error: rpcError } = await adminClient.rpc('process_order_payment', {
                 p_order_id: orderId,
                 p_payment_status: status,
                 p_payment_detail: status_detail || 'approved via webhook'
@@ -107,11 +137,9 @@ export async function POST(req: NextRequest) {
 
                 // 🚨 ALERTA VISUAL PARA EL ADMIN
                 // Marcamos la orden con un estado especial en los detalles para que el admin lo vea
-                const { error: alertError } = await supabaseAdmin
+                const { error: alertError } = await adminClient
                     .from('orders')
                     .update({
-                        // No la marcamos como 'paid' para evitar envíos accidentales
-                        // La dejamos en el estado actual (pending) pero con notas alarmantes
                         payment_status: 'stock_error',
                         payment_detail: `⚠️ ERROR CRÍTICO: Cobrado en MP pero SIN STOCK. Motivo: ${errorMessage}`
                     })
@@ -122,15 +150,12 @@ export async function POST(req: NextRequest) {
 
         } else {
             // 🔄 Para estados NO aprobados (rejected, in_process, pending, etc.)
-            // IMPORTANTE: No tocar orders.status (tiene CHECK constraint con valores fijos)
-            // Solo actualizamos los campos de pago que son texto libre
-            const { error: updateError } = await supabaseAdmin
+            const { error: updateError } = await adminClient
                 .from('orders')
                 .update({
-                    // status: NO se cambia - la orden sigue 'pending' hasta ser aprobada o cancelada manualmente
-                    payment_status: status,        // Estado de MP (puede ser cualquier valor)
-                    payment_detail: status_detail, // Detalle de MP
-                    payment_id: paymentId,         // ID real del pago en MP
+                    payment_status: status,
+                    payment_detail: status_detail,
+                    payment_id: String(paymentId),
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', orderId)
