@@ -154,7 +154,14 @@ export async function POST(req: NextRequest) {
         } catch(e) { console.error('Log falló', e) }
 
         return NextResponse.json(
-            { error: 'Webhook processing failed' },
+            { 
+                error: 'Webhook processing failed',
+                debug: {
+                    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+                    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+                    hasMpAccess: !!process.env.MP_ACCESS_TOKEN
+                }
+            },
             { status: 500 }
         )
     }
