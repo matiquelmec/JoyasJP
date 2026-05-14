@@ -7,10 +7,17 @@ import { Product, DatabaseProduct } from '@/lib/types'
  * Maneja las discrepancias legacy (camelCase vs snake_case)
  */
 function mapDatabaseProductToProduct(dbProduct: DatabaseProduct): Product {
+    // 🖼️ Gestión de Galería
+    // Si no hay galería, creamos un array con la imagen principal
+    const gallery = Array.isArray(dbProduct.gallery) && dbProduct.gallery.length > 0 
+        ? dbProduct.gallery 
+        : (dbProduct.imageUrl || dbProduct.image_url ? [dbProduct.imageUrl || dbProduct.image_url] : [])
+
     return {
         ...dbProduct,
         imageUrl: dbProduct.imageUrl || dbProduct.image_url || '',
         image_url: dbProduct.image_url || dbProduct.imageUrl || '',
+        gallery: gallery as string[],
         // Asegurar que los nuevos campos se mapeen correctamente
         discount_price: dbProduct.discount_price,
         custom_label: dbProduct.custom_label,

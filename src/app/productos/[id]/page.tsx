@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 import { ProductPageClient } from '@/components/shop/product-page-client'
 import { ProductSchema } from '@/components/seo/ProductSchema'
+import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 
 interface ProductPageProps {
   params: {
@@ -39,91 +40,34 @@ export async function generateMetadata({
   }
 
   const productDescription = product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`
-
-  const categoryNames = {
-    cadenas: 'cadenas de oro',
-    dijes: 'dijes premium',
-    pulseras: 'pulseras elegantes',
-    aros: 'aros de diseño',
-  }
-
-  const categoryName = categoryNames[product.category as keyof typeof categoryNames] || product.category
   const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(product.price)
+  
+  const galleryImages = Array.isArray(product.gallery) && product.gallery.length > 0 
+    ? product.gallery 
+    : [product.imageUrl || '/assets/logo.webp']
 
   return {
     title: `${product.name} - ${priceFormatted} | Joyas JP`,
-    description: `${productDescription}. ${categoryName} de alta calidad con diseño exclusivo. Precio: ${priceFormatted}. Envío gratis en compras sobre $50.000.`,
-    keywords: [
-      product.name,
-      product.category,
-      categoryName,
-      'joyas urbanas Chile',
-      'joyería premium Santiago',
-      'alta joyería artesanal',
-      'Joyas JP tienda online',
-      'joyas exclusivas',
-      'diseño urbano premium',
-      priceFormatted.replace(/\s/g, ''),
-    ],
-    authors: [{ name: 'Joyas JP' }],
-    creator: 'Joyas JP',
-    publisher: 'Joyas JP',
-    category: 'shopping',
+    description: `${productDescription}. Envío gratis en compras sobre $50.000.`,
     openGraph: {
       type: 'website',
       title: `${product.name} | Joyas JP`,
-      description: `${productDescription}. ${categoryName} premium - ${priceFormatted}`,
-      images: [
-        {
-          url: product.imageUrl || '/assets/logo.webp',
-          width: 1200,
-          height: 630,
-          alt: `${product.name} - ${categoryName} | Joyas JP`,
-          type: 'image/webp',
-        },
-        {
-          url: product.imageUrl || '/assets/logo.webp',
-          width: 800,
-          height: 800,
-          alt: product.name,
-          type: 'image/webp',
-        },
-      ],
+      description: `${productDescription} - ${priceFormatted}`,
+      images: galleryImages.map(img => ({
+        url: img,
+        width: 1200,
+        height: 1200,
+        alt: product.name,
+      })),
       siteName: 'Joyas JP',
       locale: 'es_CL',
       url: `/productos/${product.id}`,
     },
     twitter: {
       card: 'summary_large_image',
-      site: '@joyasjp',
-      creator: '@joyasjp',
       title: `${product.name} | Joyas JP`,
-      description: `${productDescription.slice(0, 140)}...`,
-      images: [
-        {
-          url: product.imageUrl || '/assets/logo.webp',
-          alt: `${product.name} - ${categoryName}`,
-        },
-      ],
-    },
-    alternates: {
-      canonical: `/productos/${product.id}`,
-      languages: {
-        'es-CL': `/productos/${product.id}`,
-      },
-    },
-    robots: {
-      index: true,
-      follow: true,
-      nocache: false,
-      googleBot: {
-        index: true,
-        follow: true,
-        noimageindex: false,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
+      description: productDescription.slice(0, 140),
+      images: [galleryImages[0]],
     },
   }
 }
@@ -142,21 +86,18 @@ export async function generateStaticParams() {
       .select('id, slug')
 
     if (error || !products) {
-      // console.error('Error fetching product IDs for static generation:', error)
       return []
     }
 
-    // Generar params para ID y para Slug (doble entrada para compatibilidad)
     const paths = products.flatMap((product: any) => {
       const p = []
       if (product.id) p.push({ id: product.id })
-      if (product.slug) p.push({ id: product.slug }) // Next.js usa 'id' porque así se llama el archivo [id]
+      if (product.slug) p.push({ id: product.slug })
       return p
     })
 
     return paths
   } catch (error) {
-    // console.error('Error in generateStaticParams:', error)
     return []
   }
 }
@@ -174,7 +115,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <div className="min-h-screen bg-background">
       <ProductSchema product={product} availability={availability} />
 
-      {/* 🔧 SOLUCIÓN: Container con padding adicional para evitar conflicto con header */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
@@ -191,20 +131,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Product Image */}
+          {/* Product Gallery */}
           <div className="space-y-6">
-            <div className="relative aspect-square w-full max-w-lg mx-auto lg:max-w-none bg-muted/30 rounded-lg overflow-hidden">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-                priority
+            <div className="relative w-full max-w-lg mx-auto lg:max-w-none">
+              <ProductImageGallery 
+                images={product.gallery || [product.imageUrl]} 
+                name={product.name} 
               />
 
               {/* Image Actions */}
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4 z-10">
                 <AddToWishlistButton product={product} />
               </div>
             </div>

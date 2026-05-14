@@ -8,8 +8,8 @@ import { NextRequest } from 'next/server'
  */
 export function verifyAdminAuth(request: NextRequest): boolean {
     const authHeader = request.headers.get('authorization')
-    // 🛡️ Seguridad: Solo permitir acceso si la variable de entorno está definida o usar default
-    const expectedPassword = process.env.ADMIN_API_KEY || process.env.NEXT_PUBLIC_ADMIN_KEY || 'joyasjp2024'
+    // 🛡️ Seguridad: Solo permitir acceso si la variable de entorno está definida
+    const expectedPassword = process.env.ADMIN_API_KEY
 
     // Si no hay clave configurada en el servidor, denegar acceso por defecto (Fail Secure)
     if (!expectedPassword) {

@@ -69,12 +69,16 @@ export async function POST(request: NextRequest) {
     // Database uses imageUrl column
     const mappedData = {
       ...productDataWithoutCode,
-      imageUrl: productDataWithoutCode.imageUrl || null
+      imageUrl: productDataWithoutCode.imageUrl || (productDataWithoutCode.gallery?.[0]) || null,
+      gallery: Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery : []
     }
 
     // Remove undefined/empty fields BUT keep null for optional fields
     const cleanedData = Object.fromEntries(
-      Object.entries(mappedData).filter(([_, v]) => v !== undefined && v !== '')
+      Object.entries(mappedData).filter(([k, v]) => {
+        if (k === 'gallery') return true // Keep gallery even if empty array
+        return v !== undefined && v !== ''
+      })
     )
 
     // Add the ID
@@ -133,6 +137,11 @@ export async function PUT(request: NextRequest) {
     }
 
     const { id, code, ...productData } = await request.json()
+
+    // Sync imageUrl with gallery[0] if gallery is provided
+    if (Array.isArray(productData.gallery)) {
+      productData.imageUrl = productData.imageUrl || productData.gallery[0] || null
+    }
 
     const { data, error } = await client
       .from('products')

@@ -21,11 +21,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Save, X } from 'lucide-react'
+import { Save, X, Plus } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
-import { ImageUpload } from './image-upload'
+import { MultiImageUpload } from './multi-image-upload'
 
 interface ProductFormModalProps {
   mode: 'create' | 'edit'
@@ -49,6 +49,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     category: '',
     description: '',
     imageUrl: '',
+    gallery: [] as string[],
     stock: '',
     materials: '',
     dimensions: '',
@@ -73,6 +74,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         category: product.category || '',
         description: product.description || '',
         imageUrl: product.imageUrl || '',
+        gallery: Array.isArray(product.gallery) ? product.gallery : (product.imageUrl ? [product.imageUrl] : []),
         stock: product.stock?.toString() || '',
         materials: product.materials || '',
         dimensions: product.dimensions || '',
@@ -94,6 +96,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         category: '',
         description: '',
         imageUrl: '',
+        gallery: [],
         stock: '',
         materials: '',
         dimensions: '',
@@ -152,7 +155,8 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
-        imageUrl: formData.imageUrl || null, // Database column is imageUrl
+        imageUrl: formData.imageUrl || (formData.gallery.length > 0 ? formData.gallery[0] : null),
+        gallery: formData.gallery,
         stock: parseInt(formData.stock) || 0,
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
@@ -331,9 +335,13 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </select>
           </div>
 
-          <ImageUpload
-            currentImage={formData.imageUrl}
-            onImageUploaded={(imageUrl) => setFormData(prev => ({ ...prev, imageUrl }))}
+          <MultiImageUpload
+            currentImages={formData.gallery}
+            onImagesChange={(gallery) => setFormData(prev => ({ 
+              ...prev, 
+              gallery,
+              imageUrl: gallery.length > 0 ? gallery[0] : '' 
+            }))}
             disabled={loading}
             category={formData.category}
             productCode={formData.code}
