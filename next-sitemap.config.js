@@ -2,7 +2,7 @@
 module.exports = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app',
   generateRobotsTxt: true,
-  exclude: ['/admin*', '/api*'], // Excluir rutas de admin y API
+  exclude: ['/admin*', '/api*', '/productos/success', '/productos/failure', '/productos/pending'], // Excluir rutas de admin, API y estados de pago
   generateIndexSitemap: false, // Para sitios con menos de 50k URLs
   changefreq: 'weekly',
   priority: 0.7,
@@ -50,12 +50,12 @@ module.exports = {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api', '/_next', '/shop/success', '/shop/failure', '/shop/pending']
+        disallow: ['/admin', '/api', '/_next', '/productos/success', '/productos/failure', '/productos/pending']
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/admin', '/api', '/_next', '/shop/success', '/shop/failure', '/shop/pending']
+        disallow: ['/admin', '/api', '/_next', '/productos/success', '/productos/failure', '/productos/pending']
       }
     ],
     additionalSitemaps: []

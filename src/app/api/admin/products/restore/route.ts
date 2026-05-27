@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
 // POST - Restaurar producto eliminado
@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!supabaseAdmin) {
+  const adminClient = getSupabaseAdmin()
+  if (!adminClient) {
     return NextResponse.json({ error: 'Admin client not available' }, { status: 500 })
   }
 
@@ -56,8 +57,9 @@ export async function POST(request: NextRequest) {
   }
 
   function getSupabaseClient() {
-    if (supabaseAdmin) {
-      return { client: supabaseAdmin, isAdmin: true }
+    const adminClient = getSupabaseAdmin()
+    if (adminClient) {
+      return { client: adminClient, isAdmin: true }
     }
 
     // console.warn('Admin client not available, falling back to regular client')

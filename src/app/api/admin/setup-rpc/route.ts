@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
 // POST - Proporcionar SQL para la función RPC process_order_payment
@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!supabaseAdmin) {
+  const adminClient = getSupabaseAdmin()
+  if (!adminClient) {
     return NextResponse.json({ error: 'Admin client not available' }, { status: 500 })
   }
 
@@ -25,7 +26,7 @@ CREATE OR REPLACE FUNCTION process_order_payment(
 DECLARE
   v_order RECORD;
   v_item JSONB;
-  v_product_id UUID;
+  v_product_id TEXT;
   v_quantity INT;
   v_current_stock INT;
   v_items_json JSONB;
@@ -62,7 +63,7 @@ BEGIN
     END;
 
     FOR v_item IN SELECT * FROM jsonb_array_elements(v_items_json) LOOP
-      v_product_id := (v_item->>'id')::UUID;
+      v_product_id := (v_item->>'id')::TEXT;
       v_quantity := (v_item->>'quantity')::INT;
 
       -- Check and Update Stock

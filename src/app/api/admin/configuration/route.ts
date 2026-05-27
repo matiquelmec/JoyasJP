@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
 import { verifyAdminAuth } from '@/lib/admin-auth'
@@ -9,8 +9,9 @@ export const dynamic = 'force-dynamic'
 
 // Fallback client if admin client is not available
 function getSupabaseClient() {
-  if (supabaseAdmin) {
-    return { client: supabaseAdmin, isAdmin: true }
+  const adminClient = getSupabaseAdmin()
+  if (adminClient) {
+    return { client: adminClient, isAdmin: true }
   }
 
   // console.warn('Admin client not available, falling back to regular client')

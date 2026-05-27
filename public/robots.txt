@@ -4,9 +4,9 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /_next
-Disallow: /shop/success
-Disallow: /shop/failure
-Disallow: /shop/pending
+Disallow: /productos/success
+Disallow: /productos/failure
+Disallow: /productos/pending
 
 # Googlebot
 User-agent: Googlebot
@@ -14,9 +14,9 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 Disallow: /_next
-Disallow: /shop/success
-Disallow: /shop/failure
-Disallow: /shop/pending
+Disallow: /productos/success
+Disallow: /productos/failure
+Disallow: /productos/pending
 
 # Host
 Host: https://joyasjp.cl

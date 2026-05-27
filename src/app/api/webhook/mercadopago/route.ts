@@ -58,49 +58,23 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ received: true })
         }
 
-        if (status === 'approved') {
-            const { data: order } = await adminClient.from('orders').select('items, status').eq('id', orderId).single()
+        // 🔒 Ejecución atómica y transaccional mediante RPC en la base de datos
+        const { data: rpcResult, error: rpcError } = await adminClient.rpc('process_order_payment', {
+            p_order_id: orderId,
+            p_payment_status: status,
+            p_payment_detail: status_detail || ''
+        }) as { data: { success: boolean, message: string } | null, error: any }
 
-            if (order && (order.status !== 'paid' || order.status === 'pending')) {
-                let items: any[] = []
-                try {
-                    items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items
-                } catch (e) {
-                    console.error('Error parsing items:', e)
-                }
-
-                if (Array.isArray(items)) {
-                    for (const item of items) {
-                        try {
-                            const { data: prod } = await adminClient.from('products').select('id, stock').eq('id', item.id).single()
-                            if (prod) {
-                                await adminClient.from('products')
-                                    .update({ stock: Math.max(0, prod.stock - item.quantity) })
-                                    .eq('id', item.id)
-                                    .gte('stock', item.quantity)
-                            }
-                        } catch (prodErr) {
-                            console.error(`Error updating stock for ${item.id}:`, prodErr)
-                        }
-                    }
-                }
-
-                await adminClient.from('orders').update({
-                    status: 'paid',
-                    payment_status: status,
-                    payment_detail: status_detail,
-                    payment_id: String(paymentId), // ✅ Ahora sí guardamos el ID real del pago
-                    updated_at: new Date().toISOString()
-                }).eq('id', orderId)
-            }
-        } else {
-            await adminClient.from('orders').update({
-                payment_status: status,
-                payment_detail: status_detail,
-                payment_id: String(paymentId),
-                updated_at: new Date().toISOString()
-            }).eq('id', orderId)
+        if (rpcError || !rpcResult || !rpcResult.success) {
+            console.error('❌ Error en RPC process_order_payment:', rpcError || rpcResult?.message)
+            return NextResponse.json({ error: rpcResult?.message || 'Failed to process payment in DB' }, { status: 500 })
         }
+
+        // Guardar el payment_id real de MercadoPago en la orden
+        await adminClient.from('orders').update({
+            payment_id: String(paymentId),
+            updated_at: new Date().toISOString()
+        }).eq('id', orderId)
 
         return NextResponse.json({ received: true })
 

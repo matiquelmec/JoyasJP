@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
 import { supabase } from '@/lib/supabase-client'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
 // Fallback client if admin client is not available
 function getSupabaseClient() {
-  if (supabaseAdmin) {
-    return { client: supabaseAdmin, isAdmin: true }
+  const adminClient = getSupabaseAdmin()
+  if (adminClient) {
+    return { client: adminClient, isAdmin: true }
   }
 
   // console.warn('Admin client not available, falling back to regular client')

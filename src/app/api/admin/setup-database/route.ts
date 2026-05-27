@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
 // POST - Configurar la base de datos agregando columnas necesarias
@@ -10,13 +10,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!supabaseAdmin) {
+  const adminClient = getSupabaseAdmin()
+  if (!adminClient) {
     return NextResponse.json({ error: 'Admin client not available - need SUPABASE_SERVICE_ROLE_KEY' }, { status: 500 })
   }
 
   try {
     // Agregar columna deleted_at a la tabla products
-    const { error } = await supabaseAdmin.rpc('add_deleted_at_column', {})
+    const { error } = await adminClient.rpc('add_deleted_at_column', {})
 
     if (error && error.message.includes('already exists')) {
       return NextResponse.json({
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       // Try alternative SQL approach
-      const { error: sqlError } = await supabaseAdmin
+      const { error: sqlError } = await adminClient
         .from('products')
         .select('deleted_at')
         .limit(1)
