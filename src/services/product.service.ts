@@ -87,22 +87,31 @@ export class ProductService {
      */
     static async getProductById(idOrSlug: string): Promise<Product | null> {
         try {
-            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
+            // 1. Intentar buscar por ID (ya sea UUID o texto)
+            const { data: byId } = await supabase
+                .from('products')
+                .select('*')
+                .eq('id', idOrSlug)
+                .maybeSingle()
 
-            let query = supabase.from('products').select('*')
-
-            if (isUUID) {
-                query = query.eq('id', idOrSlug)
-            } else {
-                query = query.eq('slug', idOrSlug)
+            if (byId) {
+                return mapDatabaseProductToProduct(byId as unknown as DatabaseProduct)
             }
 
-            const { data, error } = await query.single()
+            // 2. Si no se encuentra, intentar buscar por Slug
+            const { data: bySlug } = await supabase
+                .from('products')
+                .select('*')
+                .eq('slug', idOrSlug)
+                .maybeSingle()
 
-            if (error || !data) return null
+            if (bySlug) {
+                return mapDatabaseProductToProduct(bySlug as unknown as DatabaseProduct)
+            }
 
-            return mapDatabaseProductToProduct(data as unknown as DatabaseProduct)
+            return null
         } catch (error) {
+            console.error('Error fetching product by ID/Slug:', error)
             return null
         }
     }
