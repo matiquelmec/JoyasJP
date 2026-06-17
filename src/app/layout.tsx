@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
 import { getSiteConfig } from '@/lib/server/get-site-config'
+import { MaintenanceScreen } from '@/components/layout/maintenance-screen'
 import '@/lib/env-validator' // 🛡️ Validador de variables de entorno
 
 const playfairDisplay = Playfair_Display({
@@ -139,6 +140,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
 
   return (
     <html lang="es-CL" className="dark scroll-smooth">
@@ -211,10 +213,14 @@ export default async function RootLayout({
             Saltar al contenido principal
           </a>
 
-          {/* Hydrate site config from server */}
-          <ConditionalLayout initialConfig={await getSiteConfig()}>
-            {children}
-          </ConditionalLayout>
+          {isMaintenance ? (
+            <MaintenanceScreen />
+          ) : (
+            /* Hydrate site config from server only when not in maintenance */
+            <ConditionalLayout initialConfig={await getSiteConfig()}>
+              {children}
+            </ConditionalLayout>
+          )}
 
           <Toaster />
         </PreloaderProvider>
