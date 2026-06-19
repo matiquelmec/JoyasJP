@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       .from('joyas-jp-ecommerce')
       .upload(filePath, buffer, {
         contentType: file.type,
-        cacheControl: '3600',
+        cacheControl: '31536000',
         upsert: false
       })
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           .from('joyas-jp-ecommerce')
           .upload(altFilePath, buffer, {
             contentType: file.type,
-            cacheControl: '3600',
+            cacheControl: '31536000',
             upsert: false
           })
 

@@ -61,10 +61,4 @@
     Pragma = "no-cache"
     Expires = "0"
 
-# Force cache invalidation for products page to ensure updates are visible
-[[headers]]
-  for = "/productos/*"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
+

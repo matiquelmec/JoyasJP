@@ -72,8 +72,8 @@ export async function generateMetadata({
   }
 }
 
-// Revalidar cada 60 segundos para mantener datos actualizados
-export const revalidate = 60
+// Revalidar cada 12 horas (ISR) para mantener datos y optimizar el uso de Supabase
+export const revalidate = 43200
 
 export async function generateStaticParams() {
   if (!supabase) {

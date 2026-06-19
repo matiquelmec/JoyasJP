@@ -2,7 +2,7 @@ import { ProductService } from '@/services/product.service'
 import { ShopClient } from '@/components/shop/shop-client'
 import { productConfig } from '@/lib/config'
 
-export const revalidate = 3600 // Revalidar cada hora
+export const revalidate = 43200 // Revalidar cada 12 horas (ISR)
 
 export default async function ShopPage() {
   // Fetch data directly on the server

@@ -8,6 +8,9 @@ import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 
+export const revalidate = 43200 // Habilitar caché de 12 horas en el CDN (ISR)
+
+
 
 
 // ⚡ DYNAMIC IMPORT para componente pesado

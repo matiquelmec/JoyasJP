@@ -105,9 +105,10 @@ export async function POST(request: NextRequest) {
     // Revalidar páginas después de crear nuevo producto
     try {
       const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout') // Revalida todo el sitio, incluyendo layouts y páginas anidadas
       revalidatePath('/productos')
       revalidatePath(`/productos/${productId}`)
-      revalidatePath('/') // ⚡ Actualizar Home (Destacados)
+      revalidatePath('/')
     } catch (revalidateError) {
       // console.log('Revalidation triggered for new product:', productId)
     }
@@ -155,9 +156,10 @@ export async function PUT(request: NextRequest) {
     // Revalidar la página del producto después de actualizar
     try {
       const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout') // Revalida todo el sitio, incluyendo layouts y páginas anidadas
       revalidatePath(`/productos/${id}`)
       revalidatePath('/productos')
-      revalidatePath('/') // ⚡ Actualizar Home (Destacados)
+      revalidatePath('/')
     } catch (revalidateError) {
       // console.log('Revalidation triggered for product:', id)
     }
@@ -230,6 +232,17 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (result.error) throw result.error
+
+    // Revalidar páginas después de eliminar un producto
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout') // Revalida todo el sitio
+      revalidatePath('/productos')
+      revalidatePath(`/productos/${productId}`)
+      revalidatePath('/')
+    } catch (revalidateError) {
+      // console.log('Revalidation triggered for deleted product:', productId)
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
