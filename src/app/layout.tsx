@@ -140,7 +140,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+  // Forzamos el modo mantenimiento a true ya que la cuota de Supabase sigue excedida
+  const isMaintenance = true
 
   return (
     <html lang="es-CL" className="dark scroll-smooth">
