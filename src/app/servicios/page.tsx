@@ -68,7 +68,7 @@ export default function ServicesPage() {
 
               <div className="pt-8 flex flex-col sm:flex-row justify-center items-center gap-4 border-t border-white/5 mt-8">
                 <Link
-                  href={`https://wa.me/${(config?.whatsapp_number || '56974662174').replace(/\D/g, '')}`}
+                  href={`https://wa.me/${(config?.whatsapp_number || '56982990513').replace(/\D/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto"

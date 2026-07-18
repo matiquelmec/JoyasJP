@@ -30,8 +30,8 @@ const contactPageContent = {
   phone: {
     title: 'WhatsApp',
     label: 'Atención directa y ventas',
-    number: '+56 9 7466 2174',
-    cleanNumber: '56974662174',
+    number: '+56 9 8299 0513',
+    cleanNumber: '56982990513',
   },
   social: {
     title: 'Mensaje Directo',

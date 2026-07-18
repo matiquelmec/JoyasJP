@@ -19,9 +19,9 @@ export const siteConfig = {
   links: {
     instagram: 'https://www.instagram.com/joyasjp.cl',
     tiktok: 'https://tiktok.com/@joyasjp',
-    whatsapp: 'https://wa.me/56974662174',
+    whatsapp: 'https://wa.me/56982990513',
     email: 'contacto@joyasjp.cl',
-    phone: '+56 9 7466 2174',
+    phone: '+56 9 8299 0513',
   },
   business: {
     name: 'Joyas JP',
@@ -36,8 +36,8 @@ export const siteConfig = {
     },
     contact: {
       email: 'contacto@joyasjp.cl',
-      phone: '+56 9 7466 2174',
-      whatsapp: '+56 9 7466 2174',
+      phone: '+56 9 8299 0513',
+      whatsapp: '+56 9 8299 0513',
       hours: {
         weekdays: '09:00 - 18:00',
         saturday: '10:00 - 16:00',
