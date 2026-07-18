@@ -140,7 +140,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+  const isMaintenance = true // process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
 
   return (
     <html lang="es-CL" className="dark scroll-smooth">
