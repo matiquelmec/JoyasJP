@@ -347,7 +347,7 @@ export function CouponsManager() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-36 p-1">
-                              <DropdownMenuItem className="cursor-pointer">
+                              <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                                 <CouponFormModal
                                   mode="edit"
                                   coupon={c}
@@ -358,7 +358,7 @@ export function CouponsManager() {
                                     </div>
                                   }
                                 />
-                              </DropdownMenuItem>
+                              </div>
                               <DropdownMenuItem 
                                 className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-700 flex items-center gap-2 text-xs"
                                 onClick={() => setDeleteCode(c.code)}
