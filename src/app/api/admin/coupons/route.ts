@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
+// ✅ Siempre datos en vivo en el panel admin
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // GET - Obtener todos los cupones con sus estadísticas de ventas
 export async function GET(request: NextRequest) {
   if (!verifyAdminAuth(request)) {
@@ -128,15 +132,7 @@ export async function PUT(request: NextRequest) {
     const codeUpper = code.trim().toUpperCase()
 
     await turso.execute({
-      sql: `UPDATE coupons SET 
-        discount_type = ?, 
-        discount_value = ?, 
-        min_cart_amount = ?, 
-        usage_limit = ?, 
-        expires_at = ?, 
-        is_active = ?, 
-        affiliate_name = ?
-        WHERE code = ?`,
+      sql: "UPDATE coupons SET discount_type = ?, discount_value = ?, min_cart_amount = ?, usage_limit = ?, expires_at = ?, is_active = ?, affiliate_name = ? WHERE code = ?",
       args: [
         discount_type,
         Number(discount_value),

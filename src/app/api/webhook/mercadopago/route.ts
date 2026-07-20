@@ -79,13 +79,7 @@ export async function POST(request: NextRequest) {
         try {
             // Actualizar datos del pago y estado en Turso
             await tx.execute({
-                sql: `UPDATE orders SET 
-                    status = ?, 
-                    payment_status = ?, 
-                    payment_id = ?, 
-                    payment_detail = ?, 
-                    updated_at = CURRENT_TIMESTAMP
-                    WHERE id = ?`,
+                sql: "UPDATE orders SET status = ?, payment_status = ?, payment_id = ?, payment_detail = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
                 args: [
                     orderStatus,
                     status,
