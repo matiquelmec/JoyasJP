@@ -2,7 +2,7 @@
 // Supabase fue eliminado en la migración a Turso
 export const databaseConfig = {
   turso: {
-    url: process.env.TURSO_DATABASE_URL!,
+    url: process.env.TURSO_CONNECTION_URL!,
     authToken: process.env.TURSO_AUTH_TOKEN!,
   },
   tables: {

@@ -7,7 +7,7 @@
 
 // Variables de entorno críticas actuales (Turso + MercadoPago + Admin)
 const REQUIRED_ENV_VARS = [
-  'TURSO_DATABASE_URL',
+  'TURSO_CONNECTION_URL',
   'TURSO_AUTH_TOKEN',
   'NEXT_PUBLIC_MP_PUBLIC_KEY',
   'MP_ACCESS_TOKEN',
