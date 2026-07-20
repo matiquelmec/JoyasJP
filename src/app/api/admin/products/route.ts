@@ -86,9 +86,9 @@ export async function POST(request: NextRequest) {
     // Usar slug del formulario si existe, sino generarlo desde el nombre
     let slug = productDataWithoutCode.slug || generateSlug(productDataWithoutCode.name || '')
 
-    // Verificar que el slug no esté ya tomado en la DB y agregar sufijo si es necesario
+    // Verificar si el slug ya existe en la DB (incluidos los borrados blandos debido al UNIQUE constraint de la DB)
     const { rows: slugCheck } = await turso.execute({
-      sql: "SELECT id FROM products WHERE slug = ? AND (deleted_at IS NULL OR deleted_at = '')",
+      sql: "SELECT id FROM products WHERE slug = ?",
       args: [slug]
     })
     if (slugCheck.length > 0) {
@@ -190,6 +190,29 @@ export async function PUT(request: NextRequest) {
     const is_priority = productData.is_priority ? 1 : 0
     const is_bundle = productData.is_bundle ? 1 : 0
 
+    // ✅ Generar y validar slug al actualizar
+    const generateSlug = (name: string, suffix?: string): string => {
+      const base = name
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar tildes
+        .replace(/[^a-z0-9\s-]/g, '')                      // quitar caracteres especiales
+        .trim()
+        .replace(/\s+/g, '-')                              // espacios → guiones
+        .replace(/-+/g, '-')                               // guiones múltiples → uno
+      return suffix ? `${base}-${suffix}` : base
+    }
+
+    let slug = productData.slug || generateSlug(productData.name || '')
+    
+    // Verificar si el slug está tomado por OTRO producto (diferente al que editamos)
+    const { rows: slugCheck } = await turso.execute({
+      sql: "SELECT id FROM products WHERE slug = ? AND id != ?",
+      args: [slug, id]
+    })
+    if (slugCheck.length > 0) {
+      slug = generateSlug(productData.name || '', Date.now().toString(36))
+    }
+
     const tx = await turso.transaction("write")
     try {
       await tx.execute({
@@ -215,7 +238,7 @@ export async function PUT(request: NextRequest) {
           productData.image_hint || null,
           is_priority,
           is_bundle,
-          productData.slug || null,
+          slug,
           productData.discount_price ? Number(productData.discount_price) : null,
           productData.custom_label || null,
           id
