@@ -59,11 +59,16 @@ export async function POST(req: NextRequest) {
         throw new Error(`Stock insuficiente para: ${dbProduct.name}`)
       }
 
+      // ✅ Usar discount_price de la DB si es menor al precio original
+      const realUnitPrice = (dbProduct.discount_price && dbProduct.discount_price < dbProduct.price)
+        ? dbProduct.discount_price
+        : dbProduct.price
+
       return {
         id: dbProduct.id,
         title: dbProduct.name,
         quantity: item.quantity,
-        unit_price: dbProduct.price, // ✅ Usar precio REAL de la DB
+        unit_price: realUnitPrice, 
         currency_id: 'CLP',
         picture_url: item.imageUrl,
         description: item.description,
