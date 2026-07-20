@@ -56,9 +56,12 @@ export async function POST(request: NextRequest) {
   try {
     const productData = await request.json()
 
-    // Use provided code as ID if available, otherwise generate UUID
-    const productId = productData.code || crypto.randomUUID()
+    // ✅ Siempre generar un UUID único en el servidor — el campo 'code' es solo referencia visual (SKU)
+    const productId = crypto.randomUUID()
     const { code, components, ...productDataWithoutCode } = productData
+
+    // El 'code' del formulario se guarda como SKU si no hay SKU explícito
+    const sku = productDataWithoutCode.sku || code || null
 
     // Formatear arrays/objetos a strings JSON para SQLite
     const gallery = JSON.stringify(Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery : [])
@@ -92,7 +95,7 @@ export async function POST(request: NextRequest) {
           specifications,
           gallery,
           variants,
-          productDataWithoutCode.sku || null,
+          sku,
           seo,
           productDataWithoutCode.image_hint || null,
           is_priority,
