@@ -71,6 +71,30 @@ export async function POST(request: NextRequest) {
     const is_priority = productDataWithoutCode.is_priority ? 1 : 0
     const is_bundle = productDataWithoutCode.is_bundle ? 1 : 0
 
+    // ✅ Generar slug legible desde el nombre: "Cadena Cubana Premium" → "cadena-cubana-premium"
+    const generateSlug = (name: string, suffix?: string): string => {
+      const base = name
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar tildes
+        .replace(/[^a-z0-9\s-]/g, '')                      // quitar caracteres especiales
+        .trim()
+        .replace(/\s+/g, '-')                              // espacios → guiones
+        .replace(/-+/g, '-')                               // guiones múltiples → uno
+      return suffix ? `${base}-${suffix}` : base
+    }
+
+    // Usar slug del formulario si existe, sino generarlo desde el nombre
+    let slug = productDataWithoutCode.slug || generateSlug(productDataWithoutCode.name || '')
+
+    // Verificar que el slug no esté ya tomado en la DB y agregar sufijo si es necesario
+    const { rows: slugCheck } = await turso.execute({
+      sql: "SELECT id FROM products WHERE slug = ? AND (deleted_at IS NULL OR deleted_at = '')",
+      args: [slug]
+    })
+    if (slugCheck.length > 0) {
+      slug = generateSlug(productDataWithoutCode.name || '', Date.now().toString(36))
+    }
+
     // Database uses imageUrl column
     const imageUrl = productDataWithoutCode.imageUrl || (Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery[0] : null)
 
@@ -100,7 +124,7 @@ export async function POST(request: NextRequest) {
           productDataWithoutCode.image_hint || null,
           is_priority,
           is_bundle,
-          productDataWithoutCode.slug || null,
+          slug,
           productDataWithoutCode.discount_price ? Number(productDataWithoutCode.discount_price) : null,
           productDataWithoutCode.custom_label || null
         ]
