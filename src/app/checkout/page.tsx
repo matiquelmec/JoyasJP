@@ -1,15 +1,13 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-// Removed Vercel analytics tracking
-import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin } from 'lucide-react'
+import { ArrowLeft, Loader2, ShoppingBag, User, Mail, Phone, MapPin, Tag as TagIcon, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/use-cart'
-
 import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -29,18 +27,20 @@ interface CheckoutFormData {
   shippingMethod: 'starken' | 'metro'
 }
 
-function formatRUT(rut: string): string {
-  // Eliminar puntos y guiones
-  let value = rut.replace(/\./g, '').replace(/-/g, '');
+interface AppliedCoupon {
+  code: string
+  discount_type: string
+  discount_value: number
+  discount_amount: number
+  affiliate_name: string | null
+}
 
+function formatRUT(rut: string): string {
+  let value = rut.replace(/\./g, '').replace(/-/g, '');
   if (value.length > 1) {
-    // Separar dígito verificador
     const dv = value.slice(-1);
     let rutBody = value.slice(0, -1);
-
-    // Formatear cuerpo con puntos
     rutBody = rutBody.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
     return `${rutBody}-${dv}`;
   }
   return value;
@@ -92,6 +92,10 @@ export default function CheckoutPage() {
   const { items } = useCart()
   const { config } = useSiteConfig()
   const [isLoading, setIsLoading] = useState(false)
+  const [couponInput, setCouponInput] = useState('')
+  const [isCouponLoading, setIsCouponLoading] = useState(false)
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
     email: '',
@@ -110,19 +114,66 @@ export default function CheckoutPage() {
     totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
     subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }), [items])
-  // Shipping will be paid separately - not included in online payment
-  const total = cartStats.subtotal
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return
+    setIsCouponLoading(true)
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          code: couponInput.trim(), 
+          cart_amount: cartStats.subtotal 
+        })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Código no válido')
+      }
+
+      setAppliedCoupon(data)
+      toast.success('¡Cupón aplicado!', {
+        description: data.affiliate_name 
+          ? `Descuento del afiliado ${data.affiliate_name} activado.`
+          : `Se aplicó el descuento correctamente.`
+      })
+    } catch (err: any) {
+      toast.error('Cupón inválido', {
+        description: err.message || 'Código no válido o compra mínima no alcanzada.'
+      })
+      setAppliedCoupon(null)
+    } finally {
+      setIsCouponLoading(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponInput('')
+    toast.info('Cupón removido')
+  }
+
+  // Descuento final en dinero
+  const discountAmount = useMemo(() => {
+    if (!appliedCoupon) return 0
+    return appliedCoupon.discount_amount
+  }, [appliedCoupon])
+
+  // Total final con descuento aplicado
+  const finalTotal = useMemo(() => {
+    return Math.max(0, cartStats.subtotal - discountAmount)
+  }, [cartStats.subtotal, discountAmount])
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => {
       const nextData = { ...prev, [field]: value }
-
-      // Logic for senior programmer: ensure data consistency
-      // If region changes to anything other than RM, reset shipping to Starken if it was Metro
       if (field === 'region' && value !== 'Metropolitana de Santiago' && prev.shippingMethod === 'metro') {
         nextData.shippingMethod = 'starken'
       }
-
       return nextData
     })
   }
@@ -131,53 +182,39 @@ export default function CheckoutPage() {
     const { customerName, email, phone, address, city, region } = formData
 
     if (!customerName.trim()) {
-      toast.error('Campo requerido', {
-        description: 'Por favor ingresa tu nombre completo'
-      })
+      toast.error('Campo requerido', { description: 'Por favor ingresa tu nombre completo' })
       return false
     }
 
     if (!email.trim() || !email.includes('@')) {
-      toast.error('Email inválido', {
-        description: 'Por favor ingresa un email válido'
-      })
+      toast.error('Email inválido', { description: 'Por favor ingresa un email válido' })
       return false
     }
 
     if (!phone.trim()) {
-      toast.error('Campo requerido', {
-        description: 'Por favor ingresa tu número de teléfono'
-      })
+      toast.error('Campo requerido', { description: 'Por favor ingresa tu número de teléfono' })
       return false
     }
 
     const isMetro = formData.shippingMethod === 'metro'
 
     if (!address.trim() && !isMetro) {
-      toast.error('Campo requerido', {
-        description: 'Por favor ingresa tu dirección completa (calle y número)'
-      })
+      toast.error('Campo requerido', { description: 'Por favor ingresa tu dirección completa (calle y número)' })
       return false
     }
 
     if (!city.trim() && !isMetro) {
-      toast.error('Campo requerido', {
-        description: 'Por favor ingresa tu ciudad'
-      })
+      toast.error('Campo requerido', { description: 'Por favor ingresa tu ciudad' })
       return false
     }
 
     if (!region) {
-      toast.error('Error', {
-        description: 'Hubo un problema al procesar tu pedido. Por favor intenta nuevamente.'
-      })
+      toast.error('Error', { description: 'Hubo un problema al procesar tu pedido. Por favor intenta nuevamente.' })
       return false
     }
 
     if (!validateRUT(formData.rut)) {
-      toast.error('RUT inválido', {
-        description: 'Por favor ingresa un RUT válido (ej: 12.345.678-9)'
-      })
+      toast.error('RUT inválido', { description: 'Por favor ingresa un RUT válido (ej: 12.345.678-9)' })
       return false
     }
 
@@ -193,15 +230,12 @@ export default function CheckoutPage() {
     setIsLoading(true)
 
     try {
-      // Analytics tracking removed (Vercel -> Netlify migration)
-
-      // Preparar datos para crear la orden
-      // Proceder con el pago en MercadoPago y guardar orden
       const checkoutResponse = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cartItems: items,
+          couponCode: appliedCoupon?.code || null,
           customerInfo: {
             name: formData.customerName,
             email: formData.email,
@@ -225,7 +259,6 @@ export default function CheckoutPage() {
       }
 
       if (checkoutData.checkoutUrl) {
-        // Redirigir a MercadoPago
         window.location.href = checkoutData.checkoutUrl
       } else {
         throw new Error('No se recibió la URL de pago.')
@@ -240,129 +273,78 @@ export default function CheckoutPage() {
     }
   }
 
-  // Redirect si el carrito está vacío
-  if (items.length === 0) {
-    return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 text-center">
-        <ShoppingBag className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-        <h1 className="text-2xl font-bold mb-2">Tu carrito está vacío</h1>
-        <p className="text-muted-foreground mb-6">
-          Agrega algunos productos antes de proceder al checkout
-        </p>
-        <Button asChild>
-          <Link href="/productos">Ir a la Tienda</Link>
-        </Button>
-      </div>
-    )
-  }
-
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/productos">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Checkout</h1>
-            <p className="text-muted-foreground">
-              Completa tu información para finalizar la compra
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <header className="mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver a la vitrina
+          </Link>
+          <h1 className="text-3xl font-bold font-headline uppercase tracking-tighter">Confirmar tu Pedido</h1>
+        </header>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Formulario de datos */}
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Formulario de información de despacho */}
+          <div className="lg:col-span-7 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Información Personal
+                  <User className="h-5 w-5" /> Datos de Contacto
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="customerName">Nombre Completo *</Label>
-                  <Input
-                    id="customerName"
-                    value={formData.customerName}
-                    onChange={(e) => handleInputChange('customerName', e.target.value)}
-                    placeholder="Ej: María González Silva"
-                    required
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="customerName">Nombre Completo *</Label>
+                    <Input
+                      id="customerName"
+                      value={formData.customerName}
+                      onChange={(e) => handleInputChange('customerName', e.target.value)}
+                      placeholder="Ej: Juan Pérez"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rut">RUT *</Label>
+                    <Input
+                      id="rut"
+                      value={formData.rut}
+                      onChange={(e) => handleInputChange('rut', formatRUT(e.target.value))}
+                      placeholder="Ej: 12.345.678-9"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="email">Correo Electrónico *</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="maria@ejemplo.com"
-                      className="pl-10"
-                      required
+                      placeholder="Ej: juan@gmail.com"
                     />
                   </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="phone">Teléfono *</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">WhatsApp / Teléfono *</Label>
                     <Input
                       id="phone"
-                      type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+56 9 1234 5678"
-                      className="pl-10"
-                      required
+                      placeholder="Ej: +56912345678"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="instagram">Instagram (Opcional)</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-3 h-4 w-4 text-muted-foreground font-semibold flex items-center justify-center">@</span>
-                    <Input
-                      id="instagram"
-                      type="text"
-                      value={formData.instagram}
-                      onChange={(e) => handleInputChange('instagram', e.target.value)}
-                      placeholder="tu_usuario_ig"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="rut">RUT *</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="rut"
-                      value={formData.rut}
-                      onChange={(e) => {
-                        const val = formatRUT(e.target.value)
-                        setFormData(prev => ({ ...prev, rut: val }))
-                      }}
-                      placeholder="12.345.678-9"
-                      className="pl-10"
-                      maxLength={12}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Requerido para la boleta/factura y validación de pago.
-                    </p>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="instagram">Usuario de Instagram (Opcional)</Label>
+                  <Input
+                    id="instagram"
+                    value={formData.instagram}
+                    onChange={(e) => handleInputChange('instagram', e.target.value)}
+                    placeholder="Ej: @tu_usuario"
+                  />
+                  <p className="text-[10px] text-muted-foreground">Usa esto para facilitarnos contactarte sobre tu pedido.</p>
                 </div>
               </CardContent>
             </Card>
@@ -370,58 +352,57 @@ export default function CheckoutPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  Dirección de Envío
+                  <MapPin className="h-5 w-5" /> Dirección de Despacho
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="address">Dirección Completa {formData.shippingMethod !== 'metro' && '*'}</Label>
-                  <Input
-                    id="address"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    placeholder={formData.shippingMethod === 'metro' ? "Opcional (ej: Estación Los Leones)" : "Av. Providencia 1234"}
-                    required={formData.shippingMethod !== 'metro'}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="department">Depto / Casa / Oficina (Opcional)</Label>
-                  <Input
-                    id="department"
-                    value={formData.department}
-                    onChange={(e) => handleInputChange('department', e.target.value)}
-                    placeholder="Depto 56"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city">Ciudad {formData.shippingMethod !== 'metro' && '*'}</Label>
-                    <Input
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      placeholder="Santiago"
-                      required={formData.shippingMethod !== 'metro'}
-                    />
-                  </div>
-
-                  <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
                     <Label htmlFor="region">Región *</Label>
                     <select
                       id="region"
                       value={formData.region}
                       onChange={(e) => handleInputChange('region', e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      required
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                      <option value="">Selecciona región</option>
-                      {chileanRegions.map(region => (
+                      <option value="">Selecciona tu región</option>
+                      {chileanRegions.map((region) => (
                         <option key={region} value={region}>{region}</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Ciudad *</Label>
+                    <Input
+                      id="city"
+                      value={formData.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      placeholder="Ej: Providencia, Viña del Mar"
+                      disabled={formData.shippingMethod === 'metro'}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="md:col-span-2 space-y-2">
+                    <Label htmlFor="address">Calle y Número *</Label>
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      placeholder="Ej: Av. Providencia 1234"
+                      disabled={formData.shippingMethod === 'metro'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Depto / Casa</Label>
+                    <Input
+                      id="department"
+                      value={formData.department}
+                      onChange={(e) => handleInputChange('department', e.target.value)}
+                      placeholder="Ej: Depto 402"
+                      disabled={formData.shippingMethod === 'metro'}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -430,8 +411,7 @@ export default function CheckoutPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <ShoppingBag className="h-5 w-5" />
-                  Método de Entrega
+                  <ShoppingBag className="h-5 w-5" /> Método de Entrega
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -501,7 +481,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Resumen del pedido */}
-          <div className="space-y-6">
+          <div className="lg:col-span-5 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Resumen del Pedido</CardTitle>
@@ -518,11 +498,11 @@ export default function CheckoutPage() {
                         className="rounded-lg bg-black"
                       />
                       <div className="flex-grow">
-                        <h4 className="font-medium">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-medium text-sm">{item.name}</h4>
+                        <p className="text-xs text-muted-foreground">
                           Cantidad: {item.quantity}
                         </p>
-                        <p className="text-sm font-medium">
+                        <p className="text-xs font-semibold">
                           ${(item.price * item.quantity).toLocaleString('es-CL')}
                         </p>
                       </div>
@@ -531,28 +511,90 @@ export default function CheckoutPage() {
 
                   <Separator />
 
+                  {/* Campo de Código de Descuento */}
+                  <div className="space-y-2">
+                    <Label htmlFor="coupon" className="text-xs font-bold uppercase tracking-wider text-slate-500">¿Tienes un cupón de descuento?</Label>
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-emerald-200 bg-emerald-500/5 text-emerald-800 text-xs">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                          <div>
+                            <span className="font-bold font-mono">{appliedCoupon.code}</span> aplicado
+                            {appliedCoupon.affiliate_name && (
+                              <p className="text-[10px] text-emerald-600">Afiliado: {appliedCoupon.affiliate_name}</p>
+                            )}
+                          </div>
+                        </div>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={handleRemoveCoupon}
+                          className="h-7 text-red-500 hover:text-red-700 hover:bg-red-50 text-xs px-2"
+                        >
+                          Remover
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <div className="relative flex-grow">
+                          <TagIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            id="coupon"
+                            value={couponInput}
+                            onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                            placeholder="CÓDIGO"
+                            className="pl-9 h-9 text-xs uppercase"
+                            disabled={isCouponLoading}
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={isCouponLoading || !couponInput.trim()}
+                          className="bg-zinc-950 hover:bg-zinc-800 text-white font-bold h-9 text-xs"
+                        >
+                          {isCouponLoading ? 'Aplicando...' : 'Aplicar'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <Separator />
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Subtotal ({cartStats.totalItems} productos)</span>
                       <span>${cartStats.subtotal.toLocaleString('es-CL')}</span>
                     </div>
+
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-sm text-emerald-600 font-bold">
+                        <span>Descuento ({appliedCoupon.code})</span>
+                        <span>-${discountAmount.toLocaleString('es-CL')}</span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between text-sm">
                       <span>Envío a {formData.shippingMethod === 'metro' ? 'Metro' : 'Domicilio'}</span>
                       <span className={(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "text-green-600 font-bold" : "text-orange-600 font-medium"}>
                         {(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "¡Gratis!" : "Por pagar"}
                       </span>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+
+                    <div className="text-[10px] text-muted-foreground">
                       {formData.shippingMethod === 'metro'
                         ? "Te contactaremos para coordinar en L.Leones, Quilín o Chile España."
                         : cartStats.subtotal >= 50000
                           ? "¡El costo de envío corre por nuestra cuenta!"
                           : "Paga tu envío directamente a Starken al recibir tu pedido."}
                     </div>
+
                     <Separator />
-                    <div className="flex justify-between font-bold text-lg">
+                    
+                    <div className="flex justify-between font-bold text-lg text-zinc-900">
                       <span>Total</span>
-                      <span>${total.toLocaleString('es-CL')}</span>
+                      <span>${finalTotal.toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>
@@ -564,7 +606,7 @@ export default function CheckoutPage() {
                 <form onSubmit={handleSubmit}>
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
                     size="lg"
                     disabled={isLoading}
                   >

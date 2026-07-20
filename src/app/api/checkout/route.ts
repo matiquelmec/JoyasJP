@@ -16,16 +16,17 @@ export async function POST(req: NextRequest) {
     // Puede venir como array de items (legacy) o como object con cartItems y customerInfo
     let cartItems: CartItem[]
     let customerInfo: CustomerInfo | null = null
+    let couponCode: string | null = null
 
     if (Array.isArray(requestData)) {
       cartItems = requestData
-      // Verificar si los items tienen customerInfo
       if (requestData[0]?.customerInfo) {
         customerInfo = requestData[0].customerInfo
       }
     } else {
       cartItems = requestData.cartItems || requestData
       customerInfo = requestData.customerInfo
+      couponCode = requestData.couponCode || null
     }
 
     if (!cartItems || cartItems.length === 0) {
@@ -68,6 +69,60 @@ export async function POST(req: NextRequest) {
         description: item.description,
       }
     })
+
+    // Calcular total inicial sin descuento
+    const originalTotal = validatedItems.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
+    let finalTotal = originalTotal
+    let appliedCoupon: string | null = null
+
+    // 🛡️ VALIDACIÓN DEL CUPÓN EN EL SERVIDOR
+    if (couponCode) {
+      const upperCoupon = couponCode.trim().toUpperCase()
+      const { rows } = await turso.execute({
+        sql: "SELECT * FROM coupons WHERE code = ?",
+        args: [upperCoupon]
+      })
+
+      if (rows.length > 0) {
+        const coupon = rows[0]
+        const isActive = Number(coupon.is_active) === 1
+        const minCartAmount = Number(coupon.min_cart_amount || 0)
+        let isExpired = false
+
+        if (coupon.expires_at) {
+          isExpired = new Date(coupon.expires_at as string) < new Date()
+        }
+
+        let isLimitReached = false
+        if (coupon.usage_limit !== null && coupon.usage_limit !== undefined) {
+          isLimitReached = Number(coupon.usage_count || 0) >= Number(coupon.usage_limit)
+        }
+
+        if (isActive && !isExpired && !isLimitReached && originalTotal >= minCartAmount) {
+          appliedCoupon = coupon.code as string
+          const value = Number(coupon.discount_value)
+          
+          let discount = 0
+          if (coupon.discount_type === 'percentage') {
+            discount = Math.round(originalTotal * (value / 100))
+          } else {
+            discount = value
+          }
+
+          // Evitar que el descuento supere el total
+          const finalDiscount = Math.min(discount, originalTotal)
+          
+          // Aplicar factor de descuento proporcional a cada ítem para MercadoPago
+          const factor = (originalTotal - finalDiscount) / originalTotal
+          validatedItems.forEach(item => {
+            item.unit_price = Math.round(item.unit_price * factor)
+          })
+
+          // Recalcular finalTotal en base a los nuevos precios redondeados
+          finalTotal = validatedItems.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
+        }
+      }
+    }
 
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin).replace(/\/$/, "");
 
@@ -114,9 +169,6 @@ export async function POST(req: NextRequest) {
       body: preferenceBody,
     })
 
-    // Guardar orden en la base de datos - solo productos (shipping por pagar)
-    const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-
     try {
       // Formatear datos para que encajen en la DB
       const finalAddress = customerInfo?.department
@@ -127,36 +179,13 @@ export async function POST(req: NextRequest) {
         ? `${customerInfo.name} (@${customerInfo.instagram.replace('@', '')})`
         : customerInfo?.name || 'Cliente'
 
-      const orderData = {
-        id: preference.id, // Preferencia como PK
-        customer_name: finalName,
-        customer_email: customerInfo?.email || '',
-        customer_phone: customerInfo?.phone || '',
-        shipping_address: finalAddress,
-        shipping_city: customerInfo?.city || '',
-        shipping_commune: customerInfo?.commune || '',
-        shipping_method: customerInfo?.shippingMethod || 'starken',
-        items: JSON.stringify(cartItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          imageUrl: item.imageUrl
-        }))),
-        total_amount: totalAmount,
-        shipping_cost: 0,
-        status: 'pending',
-        payment_id: internalOrderId, // ✅ Usamos esto como puente para el webhook
-        payment_status: 'pending'
-      }
-
       // Guardar el pedido en Turso
       await turso.execute({
         sql: `INSERT INTO orders (
           id, customer_name, customer_email, customer_phone, shipping_address, 
           shipping_city, shipping_commune, shipping_method, items, total_amount, 
-          shipping_cost, status, payment_id, payment_status, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+          shipping_cost, status, payment_id, payment_status, coupon_code, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         args: [
           preference.id as string,
           finalName,
@@ -173,11 +202,12 @@ export async function POST(req: NextRequest) {
             price: item.price,
             imageUrl: item.imageUrl
           }))),
-          totalAmount,
+          finalTotal, // ✅ Almacenamos el total final con descuento aplicado
           0,
           'pending',
           internalOrderId,
-          'pending'
+          'pending',
+          appliedCoupon // ✅ Almacenar el código del cupón si se aplicó con éxito
         ]
       })
 

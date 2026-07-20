@@ -126,6 +126,67 @@ class AdminAPI {
     const data = await response.json()
     return data.configuration
   }
+
+  async getCoupons() {
+    const response = await fetch('/api/admin/coupons', {
+      headers: this.getHeaders()
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.coupons
+  }
+
+  async createCoupon(couponData: any) {
+    const response = await fetch('/api/admin/coupons', {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(couponData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || 'Error al crear cupón')
+    }
+
+    return response.json()
+  }
+
+  async updateCoupon(couponData: any) {
+    const response = await fetch('/api/admin/coupons', {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(couponData)
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || 'Error al actualizar cupón')
+    }
+
+    return response.json()
+  }
+
+  async deleteCoupon(code: string) {
+    const url = new URL('/api/admin/coupons', window.location.origin)
+    url.searchParams.set('code', code)
+
+    const response = await fetch(url.toString(), {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || 'Error al eliminar cupón')
+    }
+
+    return response.json()
+  }
 }
 
 export const adminAPI = new AdminAPI()

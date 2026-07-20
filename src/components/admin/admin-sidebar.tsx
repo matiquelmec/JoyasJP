@@ -16,13 +16,15 @@ import {
   BookOpen,
   LogOut,
   Gauge,
-  Wrench
+  Wrench,
+  Tag
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Catálogo de Joyas', href: '/admin/productos', icon: Package },
   { name: 'Pedidos y Ventas', href: '/admin/pedidos', icon: ShoppingCart },
+  { name: 'Cupones y Afiliados', href: '/admin/cupones', icon: Tag },
   { name: 'Ajustes del Sitio', href: '/admin/configuracion', icon: Settings },
 ]
 

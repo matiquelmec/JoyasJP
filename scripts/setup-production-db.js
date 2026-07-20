@@ -180,6 +180,7 @@ async function main() {
       payment_status TEXT DEFAULT 'pending',
       shipping_method TEXT DEFAULT 'starken',
       payment_detail TEXT,
+      coupon_code TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
@@ -198,6 +199,23 @@ async function main() {
     );
   `);
   console.log('✅ Tabla "bundle_items" creada o ya existente en la nube.');
+
+  // 2.9 Crear tabla de cupones y afiliados
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS coupons (
+      code TEXT PRIMARY KEY,
+      discount_type TEXT NOT NULL,
+      discount_value REAL NOT NULL,
+      min_cart_amount REAL DEFAULT 0,
+      usage_limit INTEGER,
+      usage_count INTEGER DEFAULT 0,
+      expires_at TEXT,
+      is_active INTEGER DEFAULT 1,
+      affiliate_name TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  console.log('✅ Tabla "coupons" creada o ya existente en la nube.');
 
   // 3. Poblar configuración por defecto
   const configRows = await client.execute('SELECT COUNT(*) as count FROM configuration');
