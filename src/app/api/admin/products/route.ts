@@ -243,16 +243,36 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
+    const permanent = searchParams.get('permanent') === 'true'
 
     if (!id) {
       return NextResponse.json({ error: 'Missing product ID' }, { status: 400 })
     }
 
-    // Usamos soft delete marcando stock en 0 y seteando deleted_at
-    await turso.execute({
-      sql: "UPDATE products SET deleted_at = CURRENT_TIMESTAMP, stock = 0 WHERE id = ?",
-      args: [id]
-    })
+    if (permanent) {
+      // Eliminación permanente (hard delete)
+      await turso.execute({
+        sql: "DELETE FROM products WHERE id = ?",
+        args: [id]
+      })
+    } else {
+      // Soft delete: marcar como eliminado en la DB
+      await turso.execute({
+        sql: "UPDATE products SET deleted_at = CURRENT_TIMESTAMP, stock = 0 WHERE id = ?",
+        args: [id]
+      })
+    }
+
+    // ✅ CRÍTICO: Invalidar caché de Next.js para que la página pública actualice inmediatamente
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout')         // Homepage y layout global
+      revalidatePath('/')                   // Root
+      revalidatePath('/productos')          // Catálogo completo
+      revalidatePath(`/productos/${id}`)    // Página individual del producto
+    } catch (revalidateError) {
+      console.warn('⚠️ Revalidation failed after DELETE for product:', id, revalidateError)
+    }
 
     return NextResponse.json({ success: true, message: 'Product deleted successfully' })
   } catch (error) {

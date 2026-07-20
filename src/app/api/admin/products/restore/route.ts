@@ -9,7 +9,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { productId, originalStock } = await request.json()
+    const body = await request.json()
+    // Soportar tanto 'id' (adminAPI.restoreProduct) como 'productId' (legacy)
+    const productId = body.id || body.productId
+    const originalStock = body.originalStock
+
+    if (!productId) {
+      return NextResponse.json({ error: 'Missing product ID' }, { status: 400 })
+    }
 
     // En SQLite/Turso la columna deleted_at existe. Hacemos update directo:
     await turso.execute({
@@ -24,6 +31,17 @@ export async function POST(request: NextRequest) {
 
     if (rows.length === 0) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
+
+    // ✅ Invalidar caché al restaurar también
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout')
+      revalidatePath('/')
+      revalidatePath('/productos')
+      revalidatePath(`/productos/${productId}`)
+    } catch (revalidateError) {
+      console.warn('⚠️ Revalidation failed after restore for product:', productId, revalidateError)
     }
 
     return NextResponse.json({ product: rows[0] })
