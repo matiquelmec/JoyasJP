@@ -1,20 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
-import { supabase } from '@/lib/supabase-client'
+import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
-// Fallback client if admin client is not available
-function getSupabaseClient() {
-  const adminClient = getSupabaseAdmin()
-  if (adminClient) {
-    return { client: adminClient, isAdmin: true }
-  }
-
-  // console.warn('Admin client not available, falling back to regular client')
-  return { client: supabase, isAdmin: false }
-}
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // GET - Obtener todos los pedidos
 export async function GET(request: NextRequest) {
@@ -23,29 +12,17 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { client } = getSupabaseClient()
+    const { rows } = await turso.execute("SELECT * FROM orders ORDER BY created_at DESC")
 
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
-    // Obtener pedidos ordenados por fecha más reciente
-    const { data: orders, error } = await client
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      // console.error('Error fetching orders:', error)
-      return NextResponse.json({
-        error: 'Failed to fetch orders',
-        details: (error as Error).message || String(error)
-      }, { status: 500 })
-    }
+    const orders = rows.map(r => ({
+      ...r,
+      items: typeof r.items === 'string' ? JSON.parse(r.items) : r.items || [],
+      payment_detail: typeof r.payment_detail === 'string' ? JSON.parse(r.payment_detail) : r.payment_detail || null
+    }))
 
     return NextResponse.json({ orders: orders || [] })
   } catch (error) {
-    // console.error('Error fetching orders:', error)
+    console.error('Error fetching orders:', error)
     return NextResponse.json({
       error: 'Failed to fetch orders',
       details: (error as Error).message || String(error)
@@ -60,12 +37,6 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { client } = getSupabaseClient()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
     const { orderId, status } = await request.json()
 
     if (!orderId || !status) {
@@ -82,27 +53,29 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const { data, error } = await client
-      .from('orders')
-      .update({
-        status,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', orderId)
-      .select()
-      .single()
+    await turso.execute({
+      sql: "UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      args: [status, orderId]
+    })
 
-    if (error) {
-      // console.error('Error updating order:', error)
-      return NextResponse.json({
-        error: 'Failed to update order',
-        details: (error as Error).message || String(error)
-      }, { status: 500 })
+    const { rows } = await turso.execute({
+      sql: "SELECT * FROM orders WHERE id = ?",
+      args: [orderId]
+    })
+
+    if (rows.length === 0) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ order: data })
+    const order = {
+      ...rows[0],
+      items: typeof rows[0].items === 'string' ? JSON.parse(rows[0].items) : rows[0].items || [],
+      payment_detail: typeof rows[0].payment_detail === 'string' ? JSON.parse(rows[0].payment_detail) : rows[0].payment_detail || null
+    }
+
+    return NextResponse.json({ order })
   } catch (error) {
-    // console.error('Error updating order:', error)
+    console.error('Error updating order:', error)
     return NextResponse.json({
       error: 'Failed to update order',
       details: (error as Error).message || String(error)

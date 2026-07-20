@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { supabase } from '@/lib/supabase-client'
+import { ProductService } from '@/services/product.service'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
@@ -41,24 +41,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get dynamic product pages
   let productPages: MetadataRoute.Sitemap = []
 
-  if (supabase) {
-    try {
-      const { data: products, error } = await supabase
-        .from('products')
-        .select('id, updated_at')
-        .order('updated_at', { ascending: false })
-
-      if (!error && products) {
-        productPages = products.map((product: any) => ({
-          url: `${baseUrl}/productos/${product.id}`,
-          lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
-          changeFrequency: 'weekly' as const,
-          priority: 0.8,
-        }))
-      }
-    } catch (error) {
-      // console.error('Error generating sitemap for products:', error)
-    }
+  try {
+    const products = await ProductService.getAllProducts()
+    productPages = products.map((product: any) => ({
+      url: `${baseUrl}/productos/${product.id}`,
+      lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
+  } catch (error) {
+    console.error('Error generating sitemap for products:', error)
   }
 
   return [...staticPages, ...productPages]

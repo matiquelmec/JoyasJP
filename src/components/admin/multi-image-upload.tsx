@@ -9,6 +9,7 @@ import { Upload, X, Image as ImageIcon, AlertCircle, Star, ArrowLeft, ArrowRight
 import { toast } from 'sonner'
 import { useAdminAuth } from '@/components/admin/admin-auth-provider'
 import { cn } from '@/lib/utils'
+import { compressToWebP } from '@/lib/image.utils'
 
 interface MultiImageUploadProps {
   onImagesChange: (images: string[]) => void
@@ -73,7 +74,15 @@ export function MultiImageUpload({
         continue
       }
 
-      await uploadFile(file)
+      // Compress and convert to WebP in the client before upload
+      let fileToUpload = file
+      try {
+        fileToUpload = await compressToWebP(file)
+      } catch (err) {
+        console.warn('Failed to compress image, uploading original instead:', err)
+      }
+
+      await uploadFile(fileToUpload)
     }
     
     setUploading(false)
@@ -117,9 +126,11 @@ export function MultiImageUpload({
         throw new Error(result.error || 'Error uploading image')
       }
 
-      const newImages = [...images, result.publicUrl]
-      setImages(newImages)
-      onImagesChange(newImages)
+      setImages(prev => {
+        const updated = [...prev, result.publicUrl]
+        onImagesChange(updated)
+        return updated
+      })
 
       toast.success('Imagen subida', {
         description: `${file.name} agregada a la galería.`,

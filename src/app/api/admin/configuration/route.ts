@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
-import { supabase } from '@/lib/supabase-client'
+import { turso } from '@/lib/db/turso'
 import { siteConfig } from '@/lib/config'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
-
-// Fallback client if admin client is not available
-function getSupabaseClient() {
-  const adminClient = getSupabaseAdmin()
-  if (adminClient) {
-    return { client: adminClient, isAdmin: true }
-  }
-
-  // console.warn('Admin client not available, falling back to regular client')
-  return { client: supabase, isAdmin: false }
-}
 
 // GET - Obtener configuración
 export async function GET(request: NextRequest) {
@@ -25,20 +13,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { client } = getSupabaseClient()
+    const { rows } = await turso.execute("SELECT * FROM configuration LIMIT 1")
 
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
-    // Get configuration from database
-    const { data, error } = await client
-      .from('configuration')
-      .select('*')
-      .single()
-
-    if (error && (error.code === 'PGRST116' || error.message?.includes('relation "public.configuration" does not exist'))) {
-      // Table doesn't exist or no configuration exists, return defaults from config.ts
+    if (!rows || rows.length === 0) {
       return NextResponse.json({
         configuration: {
           store_name: siteConfig.name,
@@ -57,11 +34,9 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    if (error) throw error
-
-    return NextResponse.json({ configuration: data })
+    return NextResponse.json({ configuration: rows[0] })
   } catch (error) {
-    // console.error('Error fetching configuration:', error)
+    console.error('Error fetching configuration:', error)
     return NextResponse.json({
       error: 'Failed to fetch configuration',
       details: (error as Error).message || String(error)
@@ -76,45 +51,55 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { client } = getSupabaseClient()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
     const configData = await request.json()
 
-    // Check if configuration exists
-    const { data: existing, error: checkError } = await client
-      .from('configuration')
-      .select('id')
-      .single()
+    // Check if configuration exists (id = 1)
+    const { rows } = await turso.execute("SELECT id FROM configuration WHERE id = 1")
+    const exists = rows && rows.length > 0
 
-
-    let result
-    if (existing && !checkError) {
-      // Update existing configuration (always id = 1)
-      result = await client
-        .from('configuration')
-        .update(configData)
-        .eq('id', 1)
-        .select()
+    if (exists) {
+      await turso.execute({
+        sql: `UPDATE configuration SET 
+          store_name = ?, store_email = ?, store_description = ?, instagram_url = ?, tiktok_url = ?, whatsapp_number = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE id = 1`,
+        args: [
+          configData.store_name || null,
+          configData.store_email || null,
+          configData.store_description || null,
+          configData.instagram_url || null,
+          configData.tiktok_url || null,
+          configData.whatsapp_number || null
+        ]
+      })
     } else {
-      // Create new configuration with id = 1
-      result = await client
-        .from('configuration')
-        .insert([{ id: 1, ...configData }])
-        .select()
+      await turso.execute({
+        sql: `INSERT INTO configuration (
+          id, store_name, store_email, store_description, instagram_url, tiktok_url, whatsapp_number
+        ) VALUES (1, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          configData.store_name || null,
+          configData.store_email || null,
+          configData.store_description || null,
+          configData.instagram_url || null,
+          configData.tiktok_url || null,
+          configData.whatsapp_number || null
+        ]
+      })
     }
 
-    if (result.error) throw result.error
+    // Obtener la configuración actualizada
+    const updated = await turso.execute("SELECT * FROM configuration WHERE id = 1")
 
-    // Purge the static cache for the entire site to immediately show new config
-    revalidatePath('/', 'layout')
+    // Purge cache
+    try {
+      revalidatePath('/', 'layout')
+    } catch (e) {
+      console.warn('Revalidation failed for configuration:', e)
+    }
 
-    return NextResponse.json({ configuration: result.data[0] })
+    return NextResponse.json({ configuration: updated.rows[0] })
   } catch (error) {
-    // console.error('Error updating configuration:', error)
+    console.error('Error updating configuration:', error)
     return NextResponse.json({
       error: 'Failed to update configuration',
       details: (error as Error).message || String(error)

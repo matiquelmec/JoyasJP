@@ -1,6 +1,6 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { turso } from '@/lib/db/turso'
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,13 +17,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Config Error' }, { status: 500 })
         }
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-        if (!supabaseUrl || !supabaseKey) {
-            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
-        }
-
-        const adminClient = createClient(supabaseUrl, supabaseKey)
         const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN })
         const payment = await new Payment(client).get({ id: paymentId }) as any
 
@@ -34,23 +27,32 @@ export async function POST(req: NextRequest) {
         const { status, status_detail, preference_id, external_reference } = payment
         let orderId = null
 
-        // 🔍 ESTRATEGIA DE BÚSQUEDA ROBUSTA
-        // 1. Intentar por preference_id (PK de nuestra tabla)
+        // 🔍 BÚSQUEDA DE PEDIDO EN TURSO
+        // 1. Intentar por preference_id
         if (preference_id) {
-            const { data: byId } = await adminClient.from('orders').select('id').eq('id', preference_id).single()
-            if (byId) orderId = byId.id
+            const { rows } = await turso.execute({
+                sql: "SELECT id FROM orders WHERE id = ?",
+                args: [preference_id]
+            })
+            if (rows && rows.length > 0) orderId = rows[0].id
         }
 
-        // 2. Intentar por external_reference (que guardamos en la columna payment_id)
+        // 2. Intentar por external_reference
         if (!orderId && external_reference) {
-            const { data: byExt } = await adminClient.from('orders').select('id').eq('payment_id', external_reference).single()
-            if (byExt) orderId = byExt.id
+            const { rows } = await turso.execute({
+                sql: "SELECT id FROM orders WHERE payment_id = ?",
+                args: [external_reference]
+            })
+            if (rows && rows.length > 0) orderId = rows[0].id
         }
 
-        // 3. Fallback: El paymentId enviado por el webhook podría ser el preference_id
+        // 3. Fallback
         if (!orderId) {
-            const { data: byIdFallback } = await adminClient.from('orders').select('id').eq('id', String(paymentId)).single()
-            if (byIdFallback) orderId = byIdFallback.id
+            const { rows } = await turso.execute({
+                sql: "SELECT id FROM orders WHERE id = ?",
+                args: [String(paymentId)]
+            })
+            if (rows && rows.length > 0) orderId = rows[0].id
         }
 
         if (!orderId) {
@@ -58,24 +60,28 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ received: true })
         }
 
-        // 🔒 Ejecución atómica y transaccional mediante RPC en la base de datos
-        const { data: rpcResult, error: rpcError } = await adminClient.rpc('process_order_payment', {
-            p_order_id: orderId,
-            p_payment_status: status,
-            p_payment_detail: status_detail || ''
-        }) as { data: { success: boolean, message: string } | null, error: any }
+        // Determinar estado final del pedido
+        const orderStatus = (status === 'approved') ? 'paid' : status
 
-        if (rpcError || !rpcResult || !rpcResult.success) {
-            console.error('❌ Error en RPC process_order_payment:', rpcError || rpcResult?.message)
-            return NextResponse.json({ error: rpcResult?.message || 'Failed to process payment in DB' }, { status: 500 })
-        }
+        // Actualizar datos del pago y estado en Turso
+        await turso.execute({
+            sql: `UPDATE orders SET 
+                status = ?, 
+                payment_status = ?, 
+                payment_id = ?, 
+                payment_detail = ?, 
+                updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?`,
+            args: [
+                orderStatus,
+                status,
+                String(paymentId),
+                status_detail || '',
+                orderId
+            ]
+        })
 
-        // Guardar el payment_id real de MercadoPago en la orden
-        await adminClient.from('orders').update({
-            payment_id: String(paymentId),
-            updated_at: new Date().toISOString()
-        }).eq('id', orderId)
-
+        console.log(`✅ Pedido ${orderId} actualizado con éxito a estado: ${orderStatus} (Pago MP: ${paymentId})`)
         return NextResponse.json({ received: true })
 
     } catch (error: any) {

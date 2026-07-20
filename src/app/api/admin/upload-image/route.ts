@@ -1,33 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
-import { supabase } from '@/lib/supabase-client'
 import { verifyAdminAuth } from '@/lib/admin-auth'
-
-// Fallback client if admin client is not available
-function getSupabaseClient() {
-  const adminClient = getSupabaseAdmin()
-  if (adminClient) {
-    return { client: adminClient, isAdmin: true }
-  }
-
-  // Using regular client as fallback
-  return { client: supabase, isAdmin: false }
-}
-
-// Generar nombre único para el archivo
-function generateFileName(originalName: string, productCode?: string): string {
-  const timestamp = Date.now()
-  const randomString = Math.random().toString(36).substring(2, 8)
-  const extension = originalName.split('.').pop()?.toLowerCase() || 'jpg'
-
-  // Si hay código de producto, usarlo como prefijo
-  if (productCode) {
-    return `${productCode}_${timestamp}_${randomString}.${extension}`
-  }
-
-  // Sino, usar timestamp y random string
-  return `product_${timestamp}_${randomString}.${extension}`
-}
+import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   // Verificar autenticación
@@ -36,23 +9,24 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { client, isAdmin } = getSupabaseClient()
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+    const apiKey = process.env.CLOUDINARY_API_KEY
+    const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
+    if (!cloudName || !apiKey || !apiSecret) {
+      return NextResponse.json({ error: 'Cloudinary credentials not configured' }, { status: 500 })
     }
 
     // Obtener el FormData
     const formData = await request.formData()
     const file = formData.get('file') as File
     const rawCategory = formData.get('category') as string || 'otros'
-    const category = rawCategory.toLowerCase().trim() // 🛡️ Normalizar a minúsculas
-    const productCode = formData.get('productCode') as string | null
+    const category = rawCategory.toLowerCase().trim()
+    const productCode = formData.get('productCode') as string || ''
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
-
 
     // Validar tipo de archivo
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -70,76 +44,64 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Convertir File a ArrayBuffer y luego a Buffer
+    // Convertir File a ArrayBuffer y luego a base64 para subir a Cloudinary
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+    const base64Image = `data:${file.type};base64,${buffer.toString('base64')}`
 
-    // Generar nombre único para el archivo
-    const fileName = generateFileName(file.name, productCode || undefined)
-    const filePath = `${category}/${fileName}` // category ya está en minúsculas
+    // 🏷️ GENERACIÓN DE NOMBRE DE ARCHIVO (public_id) ORDENADO
+    const originalName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+    const cleanName = originalName
+      .toLowerCase()
+      .normalize('NFD') // Eliminar acentos y diacríticos
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9_-]/g, '_') // Caracteres especiales a guion bajo
+      .replace(/_+/g, '_') // Evitar guiones bajos repetidos
+      .replace(/^_+|_+$/g, '') // Quitar guiones al inicio o final
 
+    const timestamp = Math.round((new Date()).getTime() / 1000)
+    const folder = `joyas-jp-ecommerce/${category}`
+    
+    // Si viene código de producto (ej: PCP_31), lo usamos como prefijo para ordenar
+    const publicId = productCode 
+      ? `${productCode}_${cleanName}`
+      : cleanName
 
-    // Subir a Supabase Storage
-    const { data: uploadData, error: uploadError } = await client.storage
-      .from('joyas-jp-ecommerce')
-      .upload(filePath, buffer, {
-        contentType: file.type,
-        cacheControl: '31536000',
-        upsert: false
-      })
+    // Preparar firma y parámetros de Cloudinary
+    const paramsToSign = `folder=${folder}&public_id=${publicId}&timestamp=${timestamp}${apiSecret}`
+    const signature = crypto.createHash('sha1').update(paramsToSign).digest('hex')
 
-    if (uploadError) {
-      // Si el archivo ya existe, intentar con un nombre diferente
-      if (uploadError.message?.includes('already exists')) {
-        const altFileName = generateFileName(file.name)
-        const altFilePath = `${category}/${altFileName}`
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
 
-        const { data: retryData, error: retryError } = await client.storage
-          .from('joyas-jp-ecommerce')
-          .upload(altFilePath, buffer, {
-            contentType: file.type,
-            cacheControl: '31536000',
-            upsert: false
-          })
+    const uploadFormData = new FormData()
+    uploadFormData.append('file', base64Image)
+    uploadFormData.append('api_key', apiKey)
+    uploadFormData.append('timestamp', timestamp.toString())
+    uploadFormData.append('signature', signature)
+    uploadFormData.append('folder', folder)
+    uploadFormData.append('public_id', publicId)
 
-        if (retryError) {
-          throw retryError
-        }
+    const response = await fetch(cloudinaryUrl, {
+      method: 'POST',
+      body: uploadFormData,
+    })
 
-        // Obtener URL pública del archivo subido (intento alternativo)
-        const { data: publicUrlData } = client.storage
-          .from('joyas-jp-ecommerce')
-          .getPublicUrl(altFilePath)
-
-
-        return NextResponse.json({
-          success: true,
-          fileName: altFileName,
-          filePath: altFilePath,
-          publicUrl: publicUrlData.publicUrl,
-          fileSize: file.size
-        })
-      }
-
-      throw uploadError
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error?.message || 'Failed to upload to Cloudinary')
     }
 
-    // Obtener URL pública del archivo subido
-    const { data: publicUrlData } = client.storage
-      .from('joyas-jp-ecommerce')
-      .getPublicUrl(filePath)
-
+    const uploadData = await response.json()
 
     return NextResponse.json({
       success: true,
-      fileName,
-      filePath,
-      publicUrl: publicUrlData.publicUrl,
+      fileName: file.name,
+      filePath: uploadData.public_id,
+      publicUrl: uploadData.secure_url,
       fileSize: file.size
     })
 
   } catch (error) {
-    // console.error('💥 Upload error:', error)
     return NextResponse.json({
       error: 'Failed to upload image',
       details: error instanceof Error ? error.message : 'Unknown error'

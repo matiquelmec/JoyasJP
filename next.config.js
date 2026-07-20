@@ -56,12 +56,18 @@ const nextConfig = {
         port: '',
         pathname: '/storage/v1/object/public/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
     formats: ['image/webp', 'image/avif'],
-    // ⚡ Configuración para Supabase Images
-    domains: ['lrsmmfpsbawznjpnllwr.supabase.co'],
+    // ⚡ Configuración para Dominios Permitidos de Imágenes
+    domains: ['lrsmmfpsbawznjpnllwr.supabase.co', 'res.cloudinary.com'],
   },
 
   compiler: {

@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Dialog,
@@ -13,15 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Save, X, Plus } from 'lucide-react'
+import { Save, X, Plus, Trash2 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
@@ -36,12 +27,15 @@ interface ProductFormModalProps {
 
 import { productConfig } from '@/lib/config'
 
-// Categories are now derived from productConfig
-
+interface BundleComponent {
+  product_id: string
+  quantity: number
+}
 
 export function ProductFormModal({ mode, product, onSave, trigger }: ProductFormModalProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -59,17 +53,33 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     seo: '',
     discount_price: '',
     custom_label: '',
-    is_priority: false
+    is_priority: false,
+    is_bundle: false,
+    components: [] as BundleComponent[]
   })
+
+  // Cargar productos para el selector de componentes
+  useEffect(() => {
+    if (open) {
+      adminAPI.getProducts()
+        .then(products => {
+          // Filtrar para no poder meter bundles dentro de otros bundles y no meterse a sí mismo
+          const candidates = products.filter((p: Product) => !p.is_bundle && p.id !== product?.id)
+          setAllProducts(candidates)
+        })
+        .catch(err => {
+          console.error('Error loading products for bundle selector:', err)
+        })
+    }
+  }, [open, product])
 
   useEffect(() => {
     if (product && mode === 'edit') {
-      // En modo edición, el código es el ID del producto si parece un código personalizado
       const productCode = product.id?.startsWith('P') ? product.id : ''
 
       setFormData({
         name: product.name || '',
-        code: productCode, // Usar el ID como código si es un código personalizado
+        code: productCode,
         price: product.price?.toString() || '',
         category: product.category || '',
         description: product.description || '',
@@ -84,7 +94,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         seo: product.seo || '',
         discount_price: product.discount_price?.toString() || '',
         custom_label: product.custom_label || '',
-        is_priority: product.is_priority || false
+        is_priority: product.is_priority || false,
+        is_bundle: product.is_bundle || false,
+        components: (product as any).components || []
       })
 
     } else {
@@ -106,45 +118,73 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         seo: '',
         discount_price: '',
         custom_label: '',
-        is_priority: false
+        is_priority: false,
+        is_bundle: false,
+        components: []
       })
     }
   }, [product, mode, open])
+
+  const addComponentRow = () => {
+    setFormData(prev => ({
+      ...prev,
+      components: [...prev.components, { product_id: '', quantity: 1 }]
+    }))
+  }
+
+  const removeComponentRow = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      components: prev.components.filter((_, i) => i !== index)
+    }))
+  }
+
+  const handleComponentChange = (index: number, field: keyof BundleComponent, value: any) => {
+    setFormData(prev => {
+      const updated = [...prev.components]
+      updated[index] = { ...updated[index], [field]: value }
+      return { ...prev, components: updated }
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      // Validación básica
       if (!formData.name.trim()) {
-        toast.error('Error de validación', {
-          description: 'El nombre del producto es requerido.',
-        })
+        toast.error('Error de validación', { description: 'El nombre del producto es requerido.' })
         setLoading(false)
         return
       }
 
       if (!formData.price || parseFloat(formData.price) <= 0) {
-        toast.error('Error de validación', {
-          description: 'El precio debe ser mayor a 0.',
-        })
+        toast.error('Error de validación', { description: 'El precio debe ser mayor a 0.' })
         setLoading(false)
         return
       }
 
       if (!formData.category) {
-        toast.error('Error de validación', {
-          description: 'La categoría es requerida.',
-        })
+        toast.error('Error de validación', { description: 'La categoría es requerida.' })
         setLoading(false)
         return
       }
 
-      if (!formData.stock || parseInt(formData.stock) < 0) {
-        toast.error('Error de validación', {
-          description: 'El stock debe ser 0 o mayor.',
-        })
+      if (!formData.is_bundle && (!formData.stock || parseInt(formData.stock) < 0)) {
+        toast.error('Error de validación', { description: 'El stock debe ser 0 o mayor.' })
+        setLoading(false)
+        return
+      }
+
+      if (formData.is_bundle && formData.components.length === 0) {
+        toast.error('Error de validación', { description: 'Debes agregar al menos una joya componente al conjunto.' })
+        setLoading(false)
+        return
+      }
+
+      const emptyComp = formData.components.find(c => !c.product_id)
+      if (formData.is_bundle && emptyComp) {
+        toast.error('Error de validación', { description: 'Selecciona un producto para cada fila del conjunto.' })
         setLoading(false)
         return
       }
@@ -157,7 +197,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         description: formData.description || null,
         imageUrl: formData.imageUrl || (formData.gallery.length > 0 ? formData.gallery[0] : null),
         gallery: formData.gallery,
-        stock: parseInt(formData.stock) || 0,
+        stock: formData.is_bundle ? 0 : (parseInt(formData.stock) || 0),
         materials: formData.materials || null,
         dimensions: formData.dimensions || null,
         color: formData.color || null,
@@ -166,7 +206,9 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         seo: formData.seo || null,
         discount_price: formData.discount_price ? parseFloat(formData.discount_price) : null,
         custom_label: formData.custom_label || null,
-        is_priority: formData.is_priority
+        is_priority: formData.is_priority,
+        is_bundle: formData.is_bundle,
+        components: formData.is_bundle ? formData.components : []
       }
 
       let createdProduct = null
@@ -180,7 +222,6 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         description: `${formData.name} se ha ${mode === 'create' ? 'creado' : 'actualizado'} exitosamente.`,
       })
 
-      // Show product info to user for new products
       if (mode === 'create' && createdProduct?.id) {
         toast.info('Producto creado exitosamente', {
           description: `ID del producto: ${createdProduct.id}`,
@@ -191,9 +232,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
       setOpen(false)
       onSave()
     } catch (error) {
-      // Mensaje de error más específico
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-
       toast.error('Error', {
         description: `No se pudo ${mode === 'create' ? 'crear' : 'actualizar'} el producto: ${errorMessage}`,
       })
@@ -289,33 +328,118 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             <div>
-              <Label htmlFor="stock">Stock Inicial *</Label>
-              <input
-                id="stock"
-                type="number"
-                value={formData.stock}
-                onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
-                required
-                placeholder="10"
-                min="0"
-                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-              />
+              <Label htmlFor="stock">Stock Físico *</Label>
+              {formData.is_bundle ? (
+                <div className="flex items-center h-10 w-full rounded-md border border-yellow-300 bg-yellow-50 px-3 py-2 text-xs text-yellow-800">
+                  Calculado dinámicamente en base a sus componentes
+                </div>
+              ) : (
+                <input
+                  id="stock"
+                  type="number"
+                  value={formData.stock}
+                  onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
+                  required={!formData.is_bundle}
+                  placeholder="10"
+                  min="0"
+                  className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+                />
+              )}
             </div>
-            <div className="flex items-center gap-2 pt-6">
-              <input
-                type="checkbox"
-                id="is_priority"
-                checked={formData.is_priority}
-                onChange={(e) => setFormData(prev => ({ ...prev, is_priority: e.target.checked }))}
-                className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-              />
-              <Label htmlFor="is_priority" className="font-bold text-primary cursor-pointer">
-                ⭐ DESTACAR PRIORIDAD (Aparece primero en Home)
-              </Label>
+            <div className="flex flex-col gap-2 pt-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_priority"
+                  checked={formData.is_priority}
+                  onChange={(e) => setFormData(prev => ({ ...prev, is_priority: e.target.checked }))}
+                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                />
+                <Label htmlFor="is_priority" className="font-bold text-primary cursor-pointer text-xs">
+                  ⭐ DESTACAR PRIORIDAD (Primero en Home)
+                </Label>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_bundle"
+                  checked={formData.is_bundle}
+                  onChange={(e) => setFormData(prev => ({ ...prev, is_bundle: e.target.checked }))}
+                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                />
+                <Label htmlFor="is_bundle" className="font-bold text-amber-600 cursor-pointer text-xs">
+                  📦 ES UN CONJUNTO / PACK (Stock Relacional)
+                </Label>
+              </div>
             </div>
           </div>
+
+          {/* Selector de Componentes de Conjuntos */}
+          {formData.is_bundle && (
+            <div className="p-4 border border-amber-200 rounded-lg bg-amber-50/50 space-y-4">
+              <div className="flex justify-between items-center">
+                <Label className="text-amber-800 font-bold text-sm">Joyas componentes que integran el conjunto</Label>
+                <Button 
+                  type="button" 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={addComponentRow}
+                  className="border-amber-300 text-amber-800 hover:bg-amber-100 text-xs"
+                >
+                  <Plus className="w-3. h-3 mr-1" /> Agregar Pieza
+                </Button>
+              </div>
+
+              {formData.components.length === 0 ? (
+                <p className="text-xs text-amber-600 italic">No has agregado ninguna pieza a este pack. Haz clic en "Agregar Pieza".</p>
+              ) : (
+                <div className="space-y-2">
+                  {formData.components.map((comp, idx) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <div className="flex-1">
+                        <select
+                          value={comp.product_id}
+                          onChange={(e) => handleComponentChange(idx, 'product_id', e.target.value)}
+                          required
+                          className="flex h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+                        >
+                          <option value="">Selecciona una joya física...</option>
+                          {allProducts.map(p => (
+                            <option key={p.id} value={p.id}>
+                              {p.name} (Stock: {p.stock} • Sku: {p.sku || p.id})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="w-24">
+                        <input
+                          type="number"
+                          value={comp.quantity}
+                          min="1"
+                          required
+                          onChange={(e) => handleComponentChange(idx, 'quantity', parseInt(e.target.value) || 1)}
+                          className="flex h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+                          placeholder="Cantidad"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => removeComponentRow(idx)}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 w-9 h-9"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div>
             <Label htmlFor="category">Categoría *</Label>
@@ -353,7 +477,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe las características principales del producto..."
+              placeholder="Describe las características principales del conjunto..."
               rows={3}
               className="flex min-h-[80px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 resize-y"
             />
@@ -458,7 +582,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button
               type="button"
-              variant={"outline" as any}
+              variant="outline"
               onClick={() => setOpen(false)}
             >
               <X className="w-4 h-4 mr-2" />

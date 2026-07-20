@@ -1,9 +1,9 @@
 import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
-import { supabase } from '@/lib/supabase-client'
+import { turso } from '@/lib/db/turso'
+import { ProductService } from '@/services/product.service'
 import type { CartItem } from '@/hooks/use-cart'
-import type { CustomerInfo, DatabaseProduct } from '@/lib/types'
+import type { CustomerInfo } from '@/lib/types'
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
@@ -35,16 +35,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 🛡️ VALIDACIÓN DE PRECIOS EN SERVIDOR
+    // 🛡️ VALIDACIÓN DE PRECIOS EN SERVIDOR (Usando ProductService y Turso)
     const productIds = cartItems.map(item => item.id)
-    const { data, error: dbError } = await supabase
-      .from('products')
-      .select('id, price, name, stock')
-      .in('id', productIds)
+    const dbProducts = await ProductService.getProductsByIds(productIds)
 
-    const dbProducts = data as Pick<DatabaseProduct, 'id' | 'price' | 'name' | 'stock'>[] | null
-
-    if (dbError || !dbProducts) {
+    if (!dbProducts || dbProducts.length === 0) {
       return NextResponse.json(
         { error: 'Error al validar productos en la base de datos' },
         { status: 500 }
@@ -77,7 +72,6 @@ export async function POST(req: NextRequest) {
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin).replace(/\/$/, "");
 
     // 1. Crear un ID de orden único ANTES de la preferencia para usarlo como external_reference
-    // Usamos el formato de MP pero aseguramos que sea único y rastreable
     const internalOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     const preferenceBody: any = {
@@ -123,10 +117,8 @@ export async function POST(req: NextRequest) {
     // Guardar orden en la base de datos - solo productos (shipping por pagar)
     const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
-    // 🔒 TRANSACTIONAL WRITE: Guardar orden con permisos de ADMIN
-    // Usamos supabaseAdmin para bypassear RLS (Row Level Security) y asegurar la escritura
     try {
-      // Formatear datos para que encajen en la DB actual sin migrar esquema
+      // Formatear datos para que encajen en la DB
       const finalAddress = customerInfo?.department
         ? `${customerInfo.address}, ${customerInfo.department}`
         : customerInfo?.address || ''
@@ -155,26 +147,42 @@ export async function POST(req: NextRequest) {
         shipping_cost: 0,
         status: 'pending',
         payment_id: internalOrderId, // ✅ Usamos esto como puente para el webhook
-        payment_status: 'pending',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        payment_status: 'pending'
       }
 
-      const { error: orderError } = await supabaseAdmin
-        .from('orders')
-        .insert(orderData)
-
-      if (orderError) {
-        console.error('❌ Critical Error saving order:', orderError)
-        // 🛑 STOP LOSS Pattern:
-        // Si no podemos guardar el pedido, ABORTAMOS INMEDIATAMENTE.
-        // Es preferible mostrar un error al usuario que tomar su dinero sin registrar el pedido.
-        throw new Error('No se pudo registrar su orden. Por seguridad, no se ha iniciado el cobro.')
-      }
+      // Guardar el pedido en Turso
+      await turso.execute({
+        sql: `INSERT INTO orders (
+          id, customer_name, customer_email, customer_phone, shipping_address, 
+          shipping_city, shipping_commune, shipping_method, items, total_amount, 
+          shipping_cost, status, payment_id, payment_status, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        args: [
+          preference.id as string,
+          finalName,
+          customerInfo?.email || '',
+          customerInfo?.phone || null,
+          finalAddress,
+          customerInfo?.city || null,
+          customerInfo?.commune || null,
+          customerInfo?.shippingMethod || 'starken',
+          JSON.stringify(cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            imageUrl: item.imageUrl
+          }))),
+          totalAmount,
+          0,
+          'pending',
+          internalOrderId,
+          'pending'
+        ]
+      })
 
     } catch (dbError) {
       console.error('❌ Database Exception during checkout:', dbError)
-      // Re-throw para que el controlador principal capture y devuelva 500
       throw dbError
     }
 

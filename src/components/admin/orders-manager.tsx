@@ -281,7 +281,7 @@ export function OrdersManager() {
               </TableHeader>
               <TableBody>
                 {orders.length > 0 ? orders.map((order) => {
-                  const orderItems = JSON.parse(order.items)
+                  const orderItems = typeof order.items === 'string' ? JSON.parse(order.items) : order.items || []
                   const itemCount = orderItems.reduce((sum: number, item: any) => sum + item.quantity, 0)
 
                   return (
@@ -446,7 +446,7 @@ export function OrdersManager() {
                                   <ShoppingBag className="w-4 h-4" /> Productos ({itemCount})
                                 </h4>
                                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
-                                  {JSON.parse(order.items).map((item: any, idx: number) => {
+                                  {orderItems.map((item: any, idx: number) => {
                                     // 🛠️ Hotfix: Supabase es Case Sensitive. Normalizar URLs a minúsculas en segmentos clave.
                                     const fixSupabaseUrl = (url: string) => {
                                       if (!url) return ''

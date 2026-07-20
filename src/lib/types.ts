@@ -61,6 +61,7 @@ export interface Product {
   discount_price?: number
   custom_label?: string
   is_priority?: boolean
+  is_bundle?: boolean
   hasVariants?: boolean // ⚡ Optimización para catálogo
   minPrice?: number    // ⚡ Optimización para catálogo
 }
@@ -94,6 +95,7 @@ export interface DatabaseProduct {
   discount_price?: number
   custom_label?: string
   is_priority?: boolean
+  is_bundle?: number
 }
 
 export interface ProductFilters {

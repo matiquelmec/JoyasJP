@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import { Separator } from '@/components/ui/separator'
-import { supabase } from '@/lib/supabase-client'
 import type { Product } from '@/lib/types'
 
 interface RelatedProductsProps {
@@ -24,45 +23,25 @@ export function RelatedProducts({
     async function fetchProducts() {
       try {
         setLoading(true)
-        if (!supabase) {
-          throw new Error('Supabase client is not initialized.')
-        }
+        setError(null)
         
-        // Obtener productos relacionados (misma categoría)
-        const { data: relatedData, error: relatedError } = await supabase
-          .from('products')
-          .select('*')
-          .eq('category', category)
-          .neq('id', currentProductId)
-          .gt('stock', 0)
-          .limit(4)
-
-        if (relatedError) {
-          throw relatedError
+        const response = await fetch(`/api/products/related?category=${encodeURIComponent(category)}&id=${encodeURIComponent(currentProductId)}`)
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch related products from API')
         }
 
-        // Obtener otros productos (diferentes categorías)
-        const { data: otherData, error: otherError } = await supabase
-          .from('products')
-          .select('*')
-          .neq('category', category)
-          .neq('id', currentProductId)
-          .gt('stock', 0)
-          .limit(4)
-
-        if (otherError) {
-          throw otherError
-        }
-
-        setRelatedProducts(relatedData as unknown as Product[])
+        const data = await response.json()
+        
+        setRelatedProducts(data.related || [])
         
         // Mezclar aleatoriamente los otros productos para variedad
-        const shuffledOthers = (otherData as unknown as Product[])
-          .sort(() => Math.random() - 0.5)
+        const shuffledOthers = (data.others || []).sort(() => Math.random() - 0.5)
         setOtherProducts(shuffledOthers)
         
       } catch (err: any) {
-        setError(err.message)
+        console.warn('Falla al obtener productos relacionados de la API:', err)
+        setError(err.message || 'Error al cargar productos relacionados')
       } finally {
         setLoading(false)
       }

@@ -18,19 +18,6 @@ export function Preloader() {
         const removeTimer = setTimeout(() => {
             setIsVisible(false)
         }, 3200)
-
-        // Optimización: Preload del video nativo sin bloquear
-        if (typeof window !== 'undefined') {
-            const videoUrl = getSafeUrl('mi-video.mp4')
-            if (!document.querySelector(`link[href="${videoUrl}"]`)) {
-                const link = document.createElement('link')
-                link.rel = 'preload'
-                link.as = 'video'
-                link.href = videoUrl
-                document.head.appendChild(link)
-            }
-        }
-
         return () => {
             clearTimeout(fadeTimer)
             clearTimeout(removeTimer)

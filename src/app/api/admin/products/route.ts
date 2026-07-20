@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin, getSupabaseAdmin } from '@/lib/supabase-admin'
-import { supabase } from '@/lib/supabase-client'
+import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
-
-// Fallback client if admin client is not available
-function getSupabaseClient() {
-  const adminClient = getSupabaseAdmin()
-  if (adminClient) {
-    return { client: adminClient, isAdmin: true }
-  }
-
-  // console.warn('Admin client not available, falling back to regular client')
-  return { client: supabase, isAdmin: false }
-}
 
 // GET - Obtener todos los productos (incluyendo eliminados para admin)
 export async function GET(request: NextRequest) {
@@ -21,22 +9,33 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { client, isAdmin } = getSupabaseClient()
+    const { rows } = await turso.execute("SELECT * FROM products ORDER BY id DESC")
+    const { rows: bundleItems } = await turso.execute("SELECT * FROM bundle_items")
 
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
+    const products = rows.map(r => {
+      const is_bundle = Boolean(r.is_bundle === 1 || r.is_bundle === '1')
+      const components = is_bundle 
+        ? bundleItems.filter(item => item.bundle_id === r.id).map(item => ({
+            product_id: item.product_id,
+            quantity: Number(item.quantity || 1)
+          }))
+        : []
 
-    const { data, error } = await client
-      .from('products')
-      .select('*')
-      .order('id', { ascending: false })
+      return {
+        ...r,
+        is_priority: Boolean(r.is_priority === 1 || r.is_priority === '1'),
+        is_bundle,
+        components,
+        gallery: typeof r.gallery === 'string' ? JSON.parse(r.gallery) : r.gallery || [],
+        variants: typeof r.variants === 'string' ? JSON.parse(r.variants) : r.variants || [],
+        specifications: typeof r.specifications === 'string' ? JSON.parse(r.specifications) : r.specifications || [],
+        seo: typeof r.seo === 'string' ? JSON.parse(r.seo) : r.seo || {}
+      }
+    })
 
-    if (error) throw error
-
-    return NextResponse.json({ products: data })
+    return NextResponse.json({ products })
   } catch (error) {
-    // console.error('Error fetching products:', error)
+    console.error('Error fetching products:', error)
     return NextResponse.json({
       error: 'Failed to fetch products',
       details: (error as Error).message || String(error)
@@ -51,76 +50,90 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { client, isAdmin } = getSupabaseClient()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
     const productData = await request.json()
-    // console.log('📦 Product data received:', JSON.stringify(productData, null, 2))
 
     // Use provided code as ID if available, otherwise generate UUID
     const productId = productData.code || crypto.randomUUID()
-    // console.log('🆔 Product ID:', productId)
+    const { code, components, ...productDataWithoutCode } = productData
 
-    // Remove code from productData since it's not a database column
-    const { code, ...productDataWithoutCode } = productData
+    // Formatear arrays/objetos a strings JSON para SQLite
+    const gallery = JSON.stringify(Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery : [])
+    const variants = JSON.stringify(Array.isArray(productDataWithoutCode.variants) ? productDataWithoutCode.variants : [])
+    const specifications = JSON.stringify(Array.isArray(productDataWithoutCode.specifications) ? productDataWithoutCode.specifications : [])
+    const seo = JSON.stringify(productDataWithoutCode.seo || {})
+    const is_priority = productDataWithoutCode.is_priority ? 1 : 0
+    const is_bundle = productDataWithoutCode.is_bundle ? 1 : 0
 
     // Database uses imageUrl column
-    const mappedData = {
-      ...productDataWithoutCode,
-      imageUrl: productDataWithoutCode.imageUrl || (productDataWithoutCode.gallery?.[0]) || null,
-      gallery: Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery : []
-    }
+    const imageUrl = productDataWithoutCode.imageUrl || (Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery[0] : null)
 
-    // Remove undefined/empty fields BUT keep null for optional fields
-    const cleanedData = Object.fromEntries(
-      Object.entries(mappedData).filter(([k, v]) => {
-        if (k === 'gallery') return true // Keep gallery even if empty array
-        return v !== undefined && v !== ''
+    const tx = await turso.transaction("write")
+    try {
+      await tx.execute({
+        sql: `INSERT INTO products (
+          id, name, price, imageUrl, category, dimensions, materials, color, stock, detail, description, specifications, gallery, variants, sku, seo, image_hint, is_priority, is_bundle, slug, discount_price, custom_label
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          productId,
+          productDataWithoutCode.name,
+          Number(productDataWithoutCode.price),
+          imageUrl,
+          productDataWithoutCode.category || null,
+          productDataWithoutCode.dimensions || null,
+          productDataWithoutCode.materials || null,
+          productDataWithoutCode.color || null,
+          Number(productDataWithoutCode.stock || 0),
+          productDataWithoutCode.detail || null,
+          productDataWithoutCode.description || null,
+          specifications,
+          gallery,
+          variants,
+          productDataWithoutCode.sku || null,
+          seo,
+          productDataWithoutCode.image_hint || null,
+          is_priority,
+          is_bundle,
+          productDataWithoutCode.slug || null,
+          productDataWithoutCode.discount_price ? Number(productDataWithoutCode.discount_price) : null,
+          productDataWithoutCode.custom_label || null
+        ]
       })
-    )
 
-    // Add the ID
-    const productWithId = {
-      id: productId,
-      ...cleanedData
+      // Guardar componentes de conjuntos si corresponde
+      if (is_bundle === 1 && Array.isArray(components)) {
+        for (const comp of components) {
+          if (comp.product_id) {
+            await tx.execute({
+              sql: "INSERT INTO bundle_items (bundle_id, product_id, quantity) VALUES (?, ?, ?)",
+              args: [productId, comp.product_id, Number(comp.quantity || 1)]
+            })
+          }
+        }
+      }
+
+      await tx.commit()
+    } catch (txErr) {
+      await tx.rollback()
+      throw txErr
     }
-
-    // console.log('💾 Final product object:', JSON.stringify(productWithId, null, 2))
-    // console.log('🔑 Fields being sent:', Object.keys(productWithId))
-
-    const { data, error } = await client
-      .from('products')
-      .insert([productWithId])
-      .select()
-
-    if (error) {
-      throw error
-    }
-
-    // console.log('✅ Product created successfully:', data[0])
 
     // Revalidar páginas después de crear nuevo producto
     try {
       const { revalidatePath } = await import('next/cache')
-      revalidatePath('/', 'layout') // Revalida todo el sitio, incluyendo layouts y páginas anidadas
+      revalidatePath('/', 'layout')
       revalidatePath('/productos')
       revalidatePath(`/productos/${productId}`)
       revalidatePath('/')
     } catch (revalidateError) {
-      // console.log('Revalidation triggered for new product:', productId)
+      console.warn('Revalidation failed for product:', productId, revalidateError)
     }
 
-    return NextResponse.json({ product: data[0] }, { status: 201 })
+    return NextResponse.json({ product: { id: productId, ...productDataWithoutCode } }, { status: 201 })
   } catch (error: any) {
-    // console.error('💥 Full error creating product:', error)
+    console.error('Full error creating product:', error)
     return NextResponse.json({
       error: 'Failed to create product',
       details: error?.message || 'Unknown error',
-      code: error?.code,
-      hint: error?.hint
     }, { status: 500 })
   }
 }
@@ -132,121 +145,118 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const { client, isAdmin } = getSupabaseClient()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
-    const { id, code, ...productData } = await request.json()
+    const { id, code, components, ...productData } = await request.json()
 
     // Sync imageUrl with gallery[0] if gallery is provided
     if (Array.isArray(productData.gallery)) {
       productData.imageUrl = productData.imageUrl || productData.gallery[0] || null
     }
 
-    const { data, error } = await client
-      .from('products')
-      .update(productData)
-      .eq('id', id)
-      .select()
+    const gallery = JSON.stringify(Array.isArray(productData.gallery) ? productData.gallery : [])
+    const variants = JSON.stringify(Array.isArray(productData.variants) ? productData.variants : [])
+    const specifications = JSON.stringify(Array.isArray(productData.specifications) ? productData.specifications : [])
+    const seo = JSON.stringify(productData.seo || {})
+    const is_priority = productData.is_priority ? 1 : 0
+    const is_bundle = productData.is_bundle ? 1 : 0
 
-    if (error) throw error
+    const tx = await turso.transaction("write")
+    try {
+      await tx.execute({
+        sql: `UPDATE products SET 
+          name = ?, price = ?, imageUrl = ?, category = ?, dimensions = ?, materials = ?, color = ?, stock = ?, detail = ?, description = ?, specifications = ?, gallery = ?, variants = ?, sku = ?, seo = ?, image_hint = ?, is_priority = ?, is_bundle = ?, slug = ?, discount_price = ?, custom_label = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?`,
+        args: [
+          productData.name,
+          Number(productData.price),
+          productData.imageUrl,
+          productData.category || null,
+          productData.dimensions || null,
+          productData.materials || null,
+          productData.color || null,
+          Number(productData.stock || 0),
+          productData.detail || null,
+          productData.description || null,
+          specifications,
+          gallery,
+          variants,
+          productData.sku || null,
+          seo,
+          productData.image_hint || null,
+          is_priority,
+          is_bundle,
+          productData.slug || null,
+          productData.discount_price ? Number(productData.discount_price) : null,
+          productData.custom_label || null,
+          id
+        ]
+      })
+
+      // Actualizar relaciones en bundle_items
+      await tx.execute({
+        sql: "DELETE FROM bundle_items WHERE bundle_id = ?",
+        args: [id]
+      })
+
+      if (is_bundle === 1 && Array.isArray(components)) {
+        for (const comp of components) {
+          if (comp.product_id) {
+            await tx.execute({
+              sql: "INSERT INTO bundle_items (bundle_id, product_id, quantity) VALUES (?, ?, ?)",
+              args: [id, comp.product_id, Number(comp.quantity || 1)]
+            })
+          }
+        }
+      }
+
+      await tx.commit()
+    } catch (txErr) {
+      await tx.rollback()
+      throw txErr
+    }
 
     // Revalidar la página del producto después de actualizar
     try {
       const { revalidatePath } = await import('next/cache')
-      revalidatePath('/', 'layout') // Revalida todo el sitio, incluyendo layouts y páginas anidadas
+      revalidatePath('/', 'layout')
       revalidatePath(`/productos/${id}`)
       revalidatePath('/productos')
-      revalidatePath('/')
     } catch (revalidateError) {
-      // console.log('Revalidation triggered for product:', id)
+      console.warn('Revalidation failed for product:', id, revalidateError)
     }
 
-    return NextResponse.json({ product: data[0] })
-  } catch (error) {
-    // console.error('Error updating product:', error)
+    return NextResponse.json({ product: { id, ...productData } })
+  } catch (error: any) {
+    console.error('Error updating product:', error)
     return NextResponse.json({
       error: 'Failed to update product',
-      details: (error as Error).message || String(error)
+      details: error?.message || 'Unknown error'
     }, { status: 500 })
   }
 }
 
-// DELETE - Eliminar producto (soft delete)
+// DELETE - Eliminar producto (soft delete para seguridad)
 export async function DELETE(request: NextRequest) {
   if (!verifyAdminAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const { client, isAdmin } = getSupabaseClient()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Database client not available' }, { status: 500 })
-    }
-
     const { searchParams } = new URL(request.url)
-    const productId = searchParams.get('id')
-    const permanent = searchParams.get('permanent') === 'true'
+    const id = searchParams.get('id')
 
-    if (!productId) {
-      return NextResponse.json({ error: 'Product ID required' }, { status: 400 })
+    if (!id) {
+      return NextResponse.json({ error: 'Missing product ID' }, { status: 400 })
     }
 
-    // First, check if deleted_at column exists by trying to query it
-    let hasDeletedAtColumn = false
-    try {
-      await client
-        .from('products')
-        .select('deleted_at')
-        .limit(1)
-      hasDeletedAtColumn = true
-    } catch (error) {
-      hasDeletedAtColumn = false
-    }
+    // Usamos soft delete marcando stock en 0 y seteando deleted_at
+    await turso.execute({
+      sql: "UPDATE products SET deleted_at = CURRENT_TIMESTAMP, stock = 0 WHERE id = ?",
+      args: [id]
+    })
 
-    let result
-    if (permanent && isAdmin) {
-      // Hard delete (permanent) - only with admin client
-      result = await client
-        .from('products')
-        .delete()
-        .eq('id', productId)
-    } else if (hasDeletedAtColumn) {
-      // Soft delete with deleted_at column
-      result = await client
-        .from('products')
-        .update({
-          deleted_at: new Date().toISOString(),
-          stock: 0
-        })
-        .eq('id', productId)
-    } else {
-      // Fallback: just set stock to 0 (hide product)
-      result = await client
-        .from('products')
-        .update({ stock: 0 })
-        .eq('id', productId)
-    }
-
-    if (result.error) throw result.error
-
-    // Revalidar páginas después de eliminar un producto
-    try {
-      const { revalidatePath } = await import('next/cache')
-      revalidatePath('/', 'layout') // Revalida todo el sitio
-      revalidatePath('/productos')
-      revalidatePath(`/productos/${productId}`)
-      revalidatePath('/')
-    } catch (revalidateError) {
-      // console.log('Revalidation triggered for deleted product:', productId)
-    }
-
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, message: 'Product deleted successfully' })
   } catch (error) {
-    // console.error('Error deleting product:', error)
+    console.error('Error deleting product:', error)
     return NextResponse.json({
       error: 'Failed to delete product',
       details: (error as Error).message || String(error)

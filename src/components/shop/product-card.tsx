@@ -9,7 +9,7 @@ import { useCart } from '@/hooks/use-cart'
 import { toast } from 'sonner'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
-import { cn, normalizeColor } from '@/lib/utils'
+import { cn, normalizeColor, getLocalFallbackImage } from '@/lib/utils'
 
 interface ProductCardProps {
   product: Product
@@ -30,6 +30,7 @@ const ProductCard = memo(function ProductCard({
   } = useWishlist()
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
+  const [displayUrl, setDisplayUrl] = useState(product.imageUrl)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [isClient, setIsClient] = useState(false)
 
@@ -125,8 +126,13 @@ const ProductCard = memo(function ProductCard({
 
   const handleImageError = useCallback(() => {
     setImageLoading(false)
-    setImageError(true)
-  }, [])
+    const fallback = getLocalFallbackImage(product.id, product.category)
+    if (displayUrl !== fallback) {
+      setDisplayUrl(fallback)
+    } else {
+      setImageError(true)
+    }
+  }, [product.id, product.category, displayUrl])
 
   // ⚡ Lógica Inteligente de Etiquetas Premium
   const badges = useMemo(() => {
@@ -138,6 +144,15 @@ const ProductCard = memo(function ProductCard({
         text: product.custom_label.toUpperCase(),
         variant: 'custom',
         className: 'badge-premium badge-custom'
+      })
+    }
+
+    // 1.5 Etiqueta de Set Exclusivo para conjuntos
+    if (product.is_bundle || product.category === 'conjuntos') {
+      list.push({
+        text: 'SET EXCLUSIVO',
+        variant: 'bundle',
+        className: 'badge-premium bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-zinc-950 font-black tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.6)] border border-amber-300/40 text-[9px] uppercase px-2 py-0.5 rounded-sm'
       })
     }
 
@@ -199,7 +214,7 @@ const ProductCard = memo(function ProductCard({
 
           {!imageError ? (
             <Image
-              src={product.imageUrl}
+              src={displayUrl}
               alt={`${product.name} - Joya urbana premium`}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

@@ -6,7 +6,6 @@ import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/sonner'
 import { PreloaderProvider } from '@/components/providers/preloader-provider'
 import { cn } from '@/lib/utils'
-import { supabase } from '@/lib/supabase-client'
 import { siteConfig } from '@/lib/config'
 import { getSiteConfig } from '@/lib/server/get-site-config'
 import { MaintenanceScreen } from '@/components/layout/maintenance-screen'
@@ -41,10 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   try {
     // Fetch dynamic config from DB with built-in resilience
-    const { data: config } = await supabase
-      .from('configuration')
-      .select('*')
-      .maybeSingle()
+    const config = await getSiteConfig()
 
     if (config?.store_name) storeName = config.store_name
     if (config?.store_description) description = config.store_description
@@ -140,7 +136,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const isMaintenance = true // process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+  const isMaintenance = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
 
   return (
     <html lang="es-CL" className="dark scroll-smooth">

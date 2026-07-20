@@ -9,6 +9,7 @@ import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { generateSlug } from '@/lib/slug-utils'
 import { useAdminAuth } from '@/components/admin/admin-auth-provider'
+import { compressToWebP } from '@/lib/image.utils'
 
 interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void
@@ -47,15 +48,23 @@ export function ImageUpload({ onImageUploaded, currentImage, disabled, category 
       return
     }
 
+    // Compress and convert to WebP in the client before upload
+    let fileToUpload = file
+    try {
+      fileToUpload = await compressToWebP(file)
+    } catch (err) {
+      console.warn('Failed to compress image, uploading original instead:', err)
+    }
+
     // Show preview immediately
     const reader = new FileReader()
     reader.onload = (e) => {
       setPreview(e.target?.result as string)
     }
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(fileToUpload)
 
     // Upload file
-    await uploadFile(file)
+    await uploadFile(fileToUpload)
   }
 
   const uploadFile = async (file: File) => {

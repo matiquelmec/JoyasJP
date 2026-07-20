@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { turso } from '@/lib/db/turso'
 import { siteConfig } from '@/lib/config'
 import type { SiteConfiguration } from '@/lib/types'
 
@@ -8,19 +8,13 @@ import type { SiteConfiguration } from '@/lib/types'
  */
 export async function getSiteConfig(): Promise<SiteConfiguration> {
     try {
-        const { data, error } = await supabaseAdmin
-            .from('configuration')
-            .select('*')
-            .maybeSingle()
-
-        if (error) {
-            // console.warn('Error fetching config server-side:', error.message)
-            throw error
-        }
-
-        if (!data) {
+        const { rows } = await turso.execute("SELECT * FROM configuration LIMIT 1")
+        
+        if (rows.length === 0) {
             throw new Error('No configuration found')
         }
+
+        const data = rows[0] as any
 
         // Filter out sensitive data and mix with static config for legacy fields
         return {
@@ -37,7 +31,7 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             mercadopago_access_token: '', // Never expose access token
             instagram_url: data.instagram_url || siteConfig.links.instagram,
             tiktok_url: data.tiktok_url || siteConfig.links.tiktok,
-            store_slogan: data.store_slogan || 'Atrévete a jugar',
+            store_slogan: 'Atrévete a jugar',
             whatsapp_number: data.whatsapp_number || siteConfig.business.contact.phone,
         }
     } catch (error) {

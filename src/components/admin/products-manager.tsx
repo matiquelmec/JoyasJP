@@ -280,15 +280,28 @@ export function ProductsManager() {
                           <Image src={p.imageUrl || '/assets/logo.webp'} alt={p.name} fill className="object-cover" />
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-zinc-900 leading-tight mb-1 flex items-center gap-2">
+                          <div className="font-bold text-sm text-zinc-900 leading-tight mb-1 flex items-center gap-2">
                             {p.name}
                             {p.is_priority && <span className="text-amber-500" title="Prioritario">⭐</span>}
+                            {p.is_bundle && <Badge className="bg-amber-500 hover:bg-amber-600 text-white h-4 text-[8px] px-1 border-none font-black">CONJUNTO</Badge>}
                             {p.discount_price && <Badge variant="destructive" className="h-4 text-[8px] px-1">OFERTA</Badge>}
-                          </p>
+                          </div>
                           <p className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
                             ID: {p.id.slice(0, 8)}
                             {p.custom_label && <span className="text-indigo-500 font-bold uppercase">[{p.custom_label}]</span>}
                           </p>
+                          {p.is_bundle && (p as any).components && (p as any).components.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {(p as any).components.map((comp: any, idx: number) => {
+                                const matched = products.find(prod => prod.id === comp.product_id)
+                                return (
+                                  <span key={idx} className="inline-flex items-center text-[9px] bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-0.5 font-bold">
+                                    {comp.quantity}x {matched?.name || comp.product_id}
+                                  </span>
+                                )
+                              })}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </TableCell>

@@ -134,6 +134,11 @@ export const productConfig = {
       name: 'Aros',
       description: 'Aros de diferentes tamaños y estilos',
     },
+    {
+      id: 'conjuntos',
+      name: 'Conjuntos',
+      description: 'Sets y conjuntos de joyas exclusivas con descuento especial',
+    },
   ],
   materials: [
     'Plata 925',
