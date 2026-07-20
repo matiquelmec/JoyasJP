@@ -1,15 +1,15 @@
+// ✅ Configuración de base de datos activa: Turso (SQLite distribuido)
+// Supabase fue eliminado en la migración a Turso
 export const databaseConfig = {
-  supabase: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  turso: {
+    url: process.env.TURSO_DATABASE_URL!,
+    authToken: process.env.TURSO_AUTH_TOKEN!,
   },
   tables: {
     products: 'products',
-    orders: 'orders', 
+    orders: 'orders',
     configuration: 'configuration',
-  },
-  buckets: {
-    productImages: 'joyas-jp-ecommerce',
+    coupons: 'coupons',
+    bundle_items: 'bundle_items',
   },
 } as const

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 
+// ✅ Nunca cachear el panel de administración — siempre datos en vivo
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // GET - Obtener todos los productos (incluyendo eliminados para admin)
 export async function GET(request: NextRequest) {
   if (!verifyAdminAuth(request)) {

@@ -148,13 +148,9 @@ export default async function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin=""
         />
-        {/* Preconnect para Supabase */}
-        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
-          <>
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-          </>
-        )}
+        {/* Preconnect para Turso (base de datos activa) */}
+        <link rel="preconnect" href="https://aws-us-east-1.turso.io" />
+        <link rel="dns-prefetch" href="//aws-us-east-1.turso.io" />
 
         <link rel="icon" href="/favicon.png?v=2" />
         <link rel="shortcut icon" href="/favicon.png?v=2" />
@@ -187,9 +183,6 @@ export default async function RootLayout({
         {/* DNS Prefetch para mejor performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
-          <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
-        )}
 
       </head>
       <body

@@ -5,10 +5,10 @@
  * Se debe importar al inicio de la aplicación (layout.tsx o middleware).
  */
 
+// Variables de entorno críticas actuales (Turso + MercadoPago + Admin)
 const REQUIRED_ENV_VARS = [
-  'NEXT_PUBLIC_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-  'SUPABASE_SERVICE_ROLE_KEY',
+  'TURSO_DATABASE_URL',
+  'TURSO_AUTH_TOKEN',
   'NEXT_PUBLIC_MP_PUBLIC_KEY',
   'MP_ACCESS_TOKEN',
   'ADMIN_API_KEY',
