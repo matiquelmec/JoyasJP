@@ -214,7 +214,7 @@ export function ProductsManager() {
         {[
           { label: 'Productos', value: products.length, icon: Package, color: 'text-slate-600', bg: 'bg-slate-100' },
           { label: 'Stock Bajo', value: lowStockProducts.length, icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100' },
-          { label: 'Valor Total', value: formatCLP(products.reduce((t, p) => t + (p.price * p.stock), 0)), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+          { label: 'Valor Total', value: formatCLP(products.filter(p => !p.is_bundle).reduce((t, p) => t + (p.price * p.stock), 0)), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-100' },
           { label: 'Agotados', value: products.filter(p => p.stock === 0).length, icon: Package, color: 'text-rose-600', bg: 'bg-rose-100' }
         ].map((stat, i) => (
           <Card key={i} className="border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white">
