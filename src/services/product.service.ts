@@ -256,7 +256,8 @@ export class ProductService {
             })
 
             if (!rows || rows.length === 0) {
-                return LOCAL_MOCK_PRODUCTS.slice(0, limit)
+                if (process.env.NODE_ENV !== 'production') return LOCAL_MOCK_PRODUCTS.slice(0, limit)
+                return []
             }
 
             const mapped = rows.map(mapDatabaseProductToProduct)
@@ -269,7 +270,8 @@ export class ProductService {
 
             return sortedProducts
         } catch (error) {
-            console.error('Error in getFeaturedProducts, returning mock:', error)
+            console.error('❌ Error crítico en getFeaturedProducts:', error)
+            if (process.env.NODE_ENV === 'production') return []
             return LOCAL_MOCK_PRODUCTS.slice(0, limit)
         }
     }
@@ -359,8 +361,13 @@ export class ProductService {
                 args: []
             })
 
+            // En producción: si no hay filas, retornar vacío (nunca usar mocks)
             if (!rows || rows.length === 0) {
-                return LOCAL_MOCK_PRODUCTS
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn('Turso vacío — usando mock products (solo desarrollo)')
+                    return LOCAL_MOCK_PRODUCTS
+                }
+                return []
             }
 
             const mapped = rows.map(mapDatabaseProductToProduct)
@@ -377,7 +384,9 @@ export class ProductService {
                 return product
             })
         } catch (error) {
-            console.error('Error in getAllProducts:', error)
+            console.error('❌ Error crítico en getAllProducts:', error)
+            // En producción: retornar vacío para no mostrar datos falsos
+            if (process.env.NODE_ENV === 'production') return []
             return LOCAL_MOCK_PRODUCTS
         }
     }
