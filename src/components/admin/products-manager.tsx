@@ -130,7 +130,7 @@ export function ProductsManager() {
   const handleUndoDelete = async () => {
     if (!recentlyDeleted) return
     try {
-      await adminAPI.restoreProduct(recentlyDeleted.product.id, recentlyDeleted.product.stock || 0)
+      await adminAPI.restoreProduct(recentlyDeleted.product.id)
       setProducts(prev => [...prev, recentlyDeleted.product])
       setRecentlyDeleted(null)
       toast.success('Producto restaurado', { description: `${recentlyDeleted.product.name} ha sido restaurado.` })

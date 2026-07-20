@@ -9,12 +9,20 @@ class AdminAPI {
     }
   }
 
+  private handleUnauthorized(response: Response) {
+    if ((response.status === 401 || response.status === 403) && typeof window !== 'undefined') {
+      localStorage.removeItem('joyasjp-admin-token')
+      window.location.reload()
+    }
+  }
+
   async getProducts() {
     const response = await fetch('/api/admin/products', {
       headers: this.getHeaders()
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
@@ -24,7 +32,6 @@ class AdminAPI {
   }
 
   async createProduct(productData: any) {
-    // Use the regular products endpoint
     const response = await fetch('/api/admin/products', {
       method: 'POST',
       headers: this.getHeaders(),
@@ -32,9 +39,8 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
-
-      // Handle duplicate product error specifically
       if (response.status === 409) {
         throw new Error(errorData.message || 'Producto duplicado')
       }
@@ -53,6 +59,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
 
@@ -71,21 +78,23 @@ class AdminAPI {
     })
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
+      this.handleUnauthorized(response)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
 
-    return response.json()
+    const data = await response.json()
+    return data.success
   }
 
-  async restoreProduct(productId: string, originalStock: number) {
+  async restoreProduct(id: string) {
     const response = await fetch('/api/admin/products/restore', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify({ productId, originalStock })
+      body: JSON.stringify({ id })
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
 
@@ -93,8 +102,49 @@ class AdminAPI {
     return data.product
   }
 
-  async updateStock(id: string, stock: number) {
-    return this.updateProduct(id, { stock })
+  async updateStock(productId: string, stock: number) {
+    const response = await fetch('/api/admin/products/stock', {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ id: productId, stock })
+    })
+
+    if (!response.ok) {
+      this.handleUnauthorized(response)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    return response.json()
+  }
+
+  async getOrders() {
+    const response = await fetch('/api/admin/orders', {
+      headers: this.getHeaders()
+    })
+
+    if (!response.ok) {
+      this.handleUnauthorized(response)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.orders
+  }
+
+  async updateOrderStatus(orderId: string, status: string, trackingNumber?: string) {
+    const response = await fetch('/api/admin/orders', {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ id: orderId, status, trackingNumber })
+    })
+
+    if (!response.ok) {
+      this.handleUnauthorized(response)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.order
   }
 
   async getConfiguration() {
@@ -103,6 +153,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
@@ -119,6 +170,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
@@ -133,6 +185,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(`Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`)
     }
@@ -149,6 +202,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(errorData.error || 'Error al crear cupón')
     }
@@ -164,6 +218,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(errorData.error || 'Error al actualizar cupón')
     }
@@ -181,6 +236,7 @@ class AdminAPI {
     })
 
     if (!response.ok) {
+      this.handleUnauthorized(response)
       const errorData = await response.json().catch(() => ({}))
       throw new Error(errorData.error || 'Error al eliminar cupón')
     }
