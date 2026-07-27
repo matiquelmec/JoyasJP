@@ -22,15 +22,21 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const [activeColor, setActiveColor] = useState('all')
     const [searchQuery, setSearchQuery] = useState('')
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
+    const [sortBy, setSortBy] = useState('featured')
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {
         setActiveColor(value);
     }, []);
 
-    // Resetear paginación al cambiar de categoría
+    // Resetear paginación al cambiar de categoría o de ordenamiento
     const handleCategoryChange = useCallback((value: string) => {
         setActiveCategory(value)
+        setVisibleCount(PRODUCTS_PER_PAGE)
+    }, [])
+
+    const handleSortChange = useCallback((value: string) => {
+        setSortBy(value)
         setVisibleCount(PRODUCTS_PER_PAGE)
     }, [])
 
@@ -73,22 +79,46 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         return Object.values(groups);
     }, [baseFilteredProducts]);
 
-    // Ordenamiento memoizado por categoría (aplicado a los productos agrupados)
+    // Ordenamiento memoizado (aplicado a los productos agrupados)
     const filteredProducts = useMemo(() => {
-        const categoryOrder = productConfig.categories.map(c => c.id);
+        let result = [...groupedProducts]
 
-        if (activeCategory === 'all') {
-            return [...groupedProducts].sort((a, b) => {
-                const indexA = categoryOrder.indexOf(a.category as typeof productConfig.categories[number]['id']);
-                const indexB = categoryOrder.indexOf(b.category as typeof productConfig.categories[number]['id']);
-                const finalIndexA = indexA === -1 ? 999 : indexA;
-                const finalIndexB = indexB === -1 ? 999 : indexB;
-                return finalIndexA - finalIndexB;
+        // 1. Aplicar la lógica de ordenamiento seleccionada
+        if (sortBy === 'price-asc') {
+            result.sort((a, b) => a.minPrice - b.minPrice)
+        } else if (sortBy === 'price-desc') {
+            result.sort((a, b) => b.minPrice - a.minPrice)
+        } else if (sortBy === 'newest') {
+            result.sort((a, b) => {
+                const dateA = a.created_at ? new Date(a.created_at).getTime() : 0
+                const dateB = b.created_at ? new Date(b.created_at).getTime() : 0
+                return dateB - dateA
+            })
+        } else {
+            // Por defecto: Orden inteligente (o por categoría si estamos en 'all')
+            const categoryOrder = productConfig.categories.map(c => c.id)
+            
+            result.sort((a, b) => {
+                // Si estamos en la categoría 'Todos', agrupamos un poco por categoría para mantener armonía visual
+                if (activeCategory === 'all') {
+                    const indexA = categoryOrder.indexOf(a.category as typeof productConfig.categories[number]['id'])
+                    const indexB = categoryOrder.indexOf(b.category as typeof productConfig.categories[number]['id'])
+                    const finalIndexA = indexA === -1 ? 999 : indexA
+                    const finalIndexB = indexB === -1 ? 999 : indexB
+                    if (finalIndexA !== finalIndexB) {
+                        return finalIndexA - finalIndexB
+                    }
+                }
+                
+                // Si son de la misma categoría o no estamos en 'all', usamos el score inteligente
+                const scoreA = (a.is_priority ? 1000000 : 0) + (a.custom_label ? 500000 : 0)
+                const scoreB = (b.is_priority ? 1000000 : 0) + (b.custom_label ? 500000 : 0)
+                return scoreB - scoreA
             })
         }
 
-        return groupedProducts;
-    }, [groupedProducts, activeCategory]);
+        return result;
+    }, [groupedProducts, activeCategory, sortBy]);
 
     // Productos visibles (paginación)
     const visibleProducts = useMemo(() => filteredProducts.slice(0, visibleCount), [filteredProducts, visibleCount])
@@ -122,27 +152,44 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                         ))}
                     </TabsList>
 
-                    <div className="flex flex-col md:flex-row justify-end items-center gap-4 mb-8">
-                        {/* Search Input */}
-                        <div className="w-full md:w-auto md:min-w-[300px]">
-                            <input
-                                type="text"
-                                placeholder="Buscar joyas"
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value)
-                                    setVisibleCount(PRODUCTS_PER_PAGE)
-                                }}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            />
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 w-full">
+                        {/* Selector de Ordenamiento */}
+                        <div className="w-full md:w-auto">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => handleSortChange(e.target.value)}
+                                className="flex h-10 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer font-medium text-muted-foreground"
+                            >
+                                <option value="featured">Recomendados</option>
+                                <option value="newest">Lo más nuevo</option>
+                                <option value="price-asc">Precio: Menor a Mayor</option>
+                                <option value="price-desc">Precio: Mayor a Menor</option>
+                            </select>
                         </div>
 
-                        <ColorFilter
-                            colors={initialColors}
-                            activeColor={activeColor}
-                            onColorChange={handleColorChange}
-                            className="w-full md:w-auto"
-                        />
+                        {/* Buscador y filtro de color */}
+                        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
+                            {/* Search Input */}
+                            <div className="w-full md:w-[250px]">
+                                <input
+                                    type="text"
+                                    placeholder="Buscar joyas"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value)
+                                        setVisibleCount(PRODUCTS_PER_PAGE)
+                                    }}
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                            </div>
+
+                            <ColorFilter
+                                colors={initialColors}
+                                activeColor={activeColor}
+                                onColorChange={handleColorChange}
+                                className="w-full md:w-auto"
+                            />
+                        </div>
                     </div>
 
                     <Separator className="mb-12" />
