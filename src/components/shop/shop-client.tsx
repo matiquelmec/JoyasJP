@@ -126,7 +126,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const remaining = filteredProducts.length - visibleCount
 
     return (
-        <div className="bg-background min-h-screen overflow-x-hidden">
+        <div className="smoke-gold-bg min-h-screen overflow-x-hidden">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
                 <div className="text-center mb-12">
                     <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
