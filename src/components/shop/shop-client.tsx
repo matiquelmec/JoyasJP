@@ -110,12 +110,12 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     className="w-full"
                     onValueChange={handleCategoryChange}
                 >
-                    <TabsList className="grid w-full grid-cols-5 mb-8">
+                    <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1 bg-zinc-950/80 border border-zinc-800 rounded-lg justify-start md:justify-center mb-8 gap-1">
                         {allCategories.map((category) => (
                             <TabsTrigger
                                 key={category}
                                 value={category}
-                                className="capitalize"
+                                className="capitalize px-5 py-2.5 text-xs font-semibold tracking-wider transition-all duration-300 data-[state=active]:bg-primary data-[state=active]:text-black rounded-md flex-shrink-0"
                             >
                                 {category === 'all' ? 'Todos' : category}
                             </TabsTrigger>
