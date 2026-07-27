@@ -20,7 +20,7 @@ export const siteConfig = {
     instagram: 'https://www.instagram.com/joyasjp.cl',
     tiktok: 'https://tiktok.com/@joyasjp',
     whatsapp: 'https://wa.me/56982990513',
-    email: 'contacto@joyasjp.cl',
+    email: 'JOYASJP.CL@GMAIL.COM',
     phone: '+56 9 8299 0513',
   },
   business: {
@@ -35,7 +35,7 @@ export const siteConfig = {
       postalCode: '7500000',
     },
     contact: {
-      email: 'contacto@joyasjp.cl',
+      email: 'JOYASJP.CL@GMAIL.COM',
       phone: '+56 9 8299 0513',
       whatsapp: '+56 9 8299 0513',
       hours: {
