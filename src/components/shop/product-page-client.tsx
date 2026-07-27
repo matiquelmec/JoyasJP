@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge'
 import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
+import { ProductImageGallery } from '@/components/shop/product-image-gallery'
+import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
+
 interface ProductPageClientProps {
   product: Product
   variants?: Product[]
@@ -37,127 +40,167 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
 
   // Ordenar variantes por dimensiones si es posible
   const sortedVariants = useMemo(() => {
-    if (variants.length === 0) return [selectedProduct]
-    return [...variants].sort((a, b) => {
+    // Incluir tanto las variantes (siblings) como el producto seleccionado, filtrando duplicados
+    const all = [initialProduct, ...variants]
+    const unique = all.filter((v, i, self) => self.findIndex(t => t.id === v.id) === i)
+    
+    return unique.sort((a, b) => {
       const dimA = a.dimensions || ''
       const dimB = b.dimensions || ''
       return dimA.localeCompare(dimB, undefined, { numeric: true })
     })
-  }, [variants, selectedProduct])
+  }, [variants, initialProduct])
+
+  // Obtener la galería de fotos del producto seleccionado
+  const productGallery = useMemo(() => {
+    return selectedProduct.gallery && selectedProduct.gallery.length > 0
+      ? selectedProduct.gallery
+      : [selectedProduct.imageUrl || '/assets/logo.webp']
+  }, [selectedProduct])
 
   return (
-    <>
-      {/* Price */}
-      <div className="space-y-2">
-        {priceDisplay.hasDiscount ? (
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground line-through decoration-red-500/50">
+    <div className="contents">
+      {/* Columna Izquierda: Galería de Imágenes (Reactiva al tamaño seleccionado) */}
+      <div className="space-y-6">
+        <div className="relative w-full max-w-lg mx-auto lg:max-w-none">
+          <ProductImageGallery 
+            images={productGallery} 
+            name={selectedProduct.name} 
+          />
+
+          {/* Botón de Lista de deseos */}
+          <div className="absolute top-4 right-4 z-10">
+            <AddToWishlistButton product={selectedProduct} />
+          </div>
+        </div>
+      </div>
+
+      {/* Columna Derecha: Detalles del Producto */}
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Badge className="capitalize">
+              {selectedProduct.category}
+            </Badge>
+          </div>
+
+          <h1 className="text-3xl lg:text-4xl font-headline font-bold">
+            {selectedProduct.name}
+          </h1>
+        </div>
+
+        {/* Price */}
+        <div className="space-y-2">
+          {priceDisplay.hasDiscount ? (
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground line-through decoration-red-500/50">
+                {priceDisplay.original}
+              </p>
+              <div className="flex items-center gap-3">
+                <span className="text-4xl font-black text-red-600 tracking-tighter">
+                  {priceDisplay.discount}
+                </span>
+                <Badge className="animate-pulse">
+                  OFERTA ESPECIAL
+                </Badge>
+              </div>
+            </div>
+          ) : (
+            <p className="text-4xl font-bold text-primary tracking-tighter">
               {priceDisplay.original}
             </p>
-            <div className="flex items-center gap-3">
-              <span className="text-4xl font-black text-red-600 tracking-tighter">
-                {priceDisplay.discount}
-              </span>
-              <Badge className="animate-pulse">
-                OFERTA ESPECIAL
-              </Badge>
+          )}
+          <p className="text-sm text-muted-foreground">
+            Precio incluye IVA. ¡Envío gratis a partir de $50.000!
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            <div className="flex items-center gap-2 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                <span className="text-blue-600 font-bold text-xs">S</span>
+              </div>
+              <div className="text-xs">
+                <p className="font-bold text-blue-700">Envío por Starken</p>
+                <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre $50.000!</span></p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                <span className="text-green-600 font-bold text-xs">M</span>
+              </div>
+              <div className="text-xs">
+                <p className="font-bold text-green-700">Entrega en Metro (Gratis)</p>
+                <p className="text-green-600/70">Solo estaciones Los Leones, Quilín o Chile España.</p>
+              </div>
             </div>
           </div>
-        ) : (
-          <p className="text-4xl font-bold text-primary tracking-tighter">
-            {priceDisplay.original}
-          </p>
+        </div>
+
+        {/* Variants / Dimensions Selector */}
+        {sortedVariants.length > 1 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Seleccionar Dimensión</h3>
+            <div className="flex flex-wrap gap-2">
+              {sortedVariants.map((variant) => (
+                <button
+                  key={variant.id}
+                  onClick={() => setSelectedProduct(variant)}
+                  className={cn(
+                    "px-4 py-2 rounded-md border transition-all duration-200 text-sm font-medium",
+                    selectedProduct.id === variant.id
+                      ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
+                      : "bg-background border-input hover:border-primary/50 hover:bg-accent"
+                  )}
+                >
+                  {variant.dimensions || 'Estándar'}
+                  {variant.price !== selectedProduct.price && (
+                    <span className="block text-[10px] opacity-70">
+                      {formatter.format(variant.price)}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
-        <p className="text-sm text-muted-foreground">
-          Precio incluye IVA. ¡Envío gratis a partir de $50.000!
-        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-          <div className="flex items-center gap-2 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-              <span className="text-blue-600 font-bold text-xs">S</span>
-            </div>
-            <div className="text-xs">
-              <p className="font-bold text-blue-700">Envío por Starken</p>
-              <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre $50.000!</span></p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-              <span className="text-green-600 font-bold text-xs">M</span>
-            </div>
-            <div className="text-xs">
-              <p className="font-bold text-green-700">Entrega en Metro (Gratis)</p>
-              <p className="text-green-600/70">Solo estaciones Los Leones, Quilín o Chile España.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Variants / Dimensions Selector */}
-      {sortedVariants.length > 1 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Seleccionar Dimensión</h3>
-          <div className="flex flex-wrap gap-2">
-            {sortedVariants.map((variant) => (
-              <button
-                key={variant.id}
-                onClick={() => setSelectedProduct(variant)}
-                className={cn(
-                  "px-4 py-2 rounded-md border transition-all duration-200 text-sm font-medium",
-                  selectedProduct.id === variant.id
-                    ? "bg-primary text-primary-foreground border-primary shadow-md scale-105"
-                    : "bg-background border-input hover:border-primary/50 hover:bg-accent"
-                )}
-              >
-                {variant.dimensions || 'Estándar'}
-                {variant.price !== selectedProduct.price && (
-                  <span className="block text-[10px] opacity-70">
-                    {formatter.format(variant.price)}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Description */}
-      {selectedProduct.description && (
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Descripción</h3>
-          <p className="text-muted-foreground leading-relaxed">
-            {selectedProduct.description}
-          </p>
-        </div>
-      )}
-
-      {/* Product Details / Characteristics */}
-      {(selectedProduct.dimensions ||
-        selectedProduct.materials ||
-        selectedProduct.color ||
-        selectedProduct.detail) && (
+        {/* Description */}
+        {selectedProduct.description && (
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Detalles del Producto</h3>
-            <ul className="list-disc list-inside text-muted-foreground">
-              {selectedProduct.dimensions && (
-                <li>Dimensiones: {selectedProduct.dimensions}</li>
-              )}
-              {selectedProduct.materials && (
-                <li>Materiales: {selectedProduct.materials}</li>
-              )}
-              {selectedProduct.color && <li>Color: {selectedProduct.color}</li>}
-              {selectedProduct.detail && <li>Detalle: {selectedProduct.detail}</li>}
-            </ul>
+            <h3 className="text-lg font-semibold">Descripción</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              {selectedProduct.description}
+            </p>
           </div>
         )}
 
-      {/* Actions */}
-      <div className="space-y-4 pt-4">
-        <AddToCartButton product={selectedProduct} className="w-full" size="lg" />
-      </div>
+        {/* Product Details / Characteristics */}
+        {(selectedProduct.dimensions ||
+          selectedProduct.materials ||
+          selectedProduct.color ||
+          selectedProduct.detail) && (
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Detalles del Producto</h3>
+              <ul className="list-disc list-inside text-muted-foreground">
+                {selectedProduct.dimensions && (
+                  <li>Dimensiones: {selectedProduct.dimensions}</li>
+                )}
+                {selectedProduct.materials && (
+                  <li>Materiales: {selectedProduct.materials}</li>
+                )}
+                {selectedProduct.color && <li>Color: {selectedProduct.color}</li>}
+                {selectedProduct.detail && <li>Detalle: {selectedProduct.detail}</li>}
+              </ul>
+            </div>
+          )}
 
-    </>
+        {/* Actions */}
+        <div className="space-y-4 pt-4">
+          <AddToCartButton product={selectedProduct} className="w-full" size="lg" />
+        </div>
+      </div>
+    </div>
   )
 }
