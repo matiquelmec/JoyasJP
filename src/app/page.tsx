@@ -110,7 +110,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0 bg-black">
         <video
-          src={getVideoUrl('mi-video.mp4')}
           autoPlay
           loop
           muted
@@ -118,7 +117,10 @@ export default function Home() {
           preload="none" // No bloquea la carga de la página
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
-        />
+        >
+          <source src={getVideoUrl('mi-video.webm')} type="video/webm" />
+          <source src={getVideoUrl('mi-video.mp4')} type="video/mp4" />
+        </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
 
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-3 sm:px-4 pt-44 sm:pt-48 md:pt-52 lg:pt-56 xl:pt-60 pb-20">

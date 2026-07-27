@@ -9,7 +9,9 @@ const BUILD_ID = '20240523' // Versión fija para consistencia SSR/Client
 export const ASSET_VERSIONS = {
   // Videos principales - incrementa cuando cambies el contenido
   'mi-video.mp4': 'v1',
+  'mi-video.webm': 'v1',
   'mi-video2.mp4': 'v3',
+  'mi-video2.webm': 'v1',
 
   // Logo WebP optimizado - incrementa cuando cambies el logo
   'logo.webp': 'v2',
