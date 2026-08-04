@@ -1,7 +1,17 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
+import { checkRateLimit } from '@/lib/rate-limit'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // 🛡️ PROTECCIÓN ANTI-BOTS: Máximo 8 intentos de validación de cupones por minuto por IP
+  const rateCheck = checkRateLimit(request, 8, 60 * 1000)
+  if (!rateCheck.success) {
+    return NextResponse.json(
+      { error: 'Demasiadas solicitudes. Por favor espera un minuto antes de intentar validar otro cupón.' },
+      { status: 429 }
+    )
+  }
+
   try {
     const { code, cart_amount } = await request.json()
 
