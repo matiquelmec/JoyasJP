@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           productId,
-          productDataWithoutCode.name,
+          (productDataWithoutCode.name || '').trim(),
           Number(productDataWithoutCode.price),
           imageUrl,
           productDataWithoutCode.category || null,
@@ -220,7 +220,7 @@ export async function PUT(request: NextRequest) {
           name = ?, price = ?, imageUrl = ?, category = ?, dimensions = ?, materials = ?, color = ?, stock = ?, detail = ?, description = ?, specifications = ?, gallery = ?, variants = ?, sku = ?, seo = ?, image_hint = ?, is_priority = ?, is_bundle = ?, slug = ?, discount_price = ?, custom_label = ?, updated_at = CURRENT_TIMESTAMP
           WHERE id = ?`,
         args: [
-          productData.name,
+          (productData.name || '').trim(),
           Number(productData.price),
           productData.imageUrl,
           productData.category || null,

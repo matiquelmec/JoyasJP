@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing payment ID' }, { status: 400 })
         }
 
-        // Consultar el detalle del pago a la API de MercadoPago
+        // 🛡️ SEGURIDAD ZERO-TRUST: Verificar la autenticidad con las APIs oficiales de MercadoPago
         const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
             headers: {
                 Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
