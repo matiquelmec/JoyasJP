@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import LazyProductCard from '@/components/shop/lazy-product-card'
