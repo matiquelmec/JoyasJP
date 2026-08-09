@@ -144,7 +144,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             case 'plata-925':
                 return {
                     title: 'Plata Italiana 925',
-                    subtitle: 'Bóveda VIP de Plata Fina Ley 925 importada de Italia. Brillo eterno, acabado artesanal y resistencia superior.',
+                    subtitle: 'Ley 925 legítima importada de Italia. Brillo eterno y acabado pulido a mano.',
                     badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
                 }
             case 'cadenas':
@@ -216,13 +216,12 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                     key={catId}
                                     value={catId}
                                     className={cn(
-                                        "capitalize px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5",
+                                        "px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5",
                                         isVip 
                                             ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
                                             : "data-[state=active]:bg-primary data-[state=active]:text-black"
                                     )}
                                 >
-                                    {isVip && <span className="text-amber-400">✨</span>}
                                     {label}
                                 </TabsTrigger>
                             )

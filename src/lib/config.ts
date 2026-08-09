@@ -116,32 +116,32 @@ export const productConfig = {
   categories: [
     {
       id: 'plata-925',
-      name: 'Plata Italiana 925',
+      name: '✨ Bóveda Plata 925',
       description: 'Colección VIP de Plata Fina Ley 925 importada directamente de Italia',
     },
     {
       id: 'cadenas',
-      name: 'Cadenas',
-      description: 'Cadenas de diferentes estilos y materiales',
+      name: '⛓️ Cadenas & Cubanas',
+      description: 'Eslabones diseñados para dominar la escena',
     },
     {
       id: 'dijes',
-      name: 'Dijes',
-      description: 'Dijes únicos para personalizar tu look',
+      name: '💎 Dijes & Pendientes',
+      description: 'Dijes únicos con actitud urbana',
     },
     {
       id: 'pulseras',
-      name: 'Pulseras',
-      description: 'Pulseras elegantes y modernas',
+      name: '⚡ Pulseras & Tuki',
+      description: 'Pulseras exclusivas ajustables',
     },
     {
       id: 'aros',
-      name: 'Aros',
-      description: 'Aros de diferentes tamaños y estilos',
+      name: '🔥 Aros & Arracadas',
+      description: 'Aros y arracadas de alto impacto',
     },
     {
       id: 'conjuntos',
-      name: 'Conjuntos',
+      name: '👑 Sets & Conjuntos',
       description: 'Sets y conjuntos de joyas exclusivas con descuento especial',
     },
   ],
