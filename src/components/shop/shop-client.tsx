@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Product } from '@/lib/types'
 import { productConfig } from '@/lib/config'
+import { cn } from '@/lib/utils'
 
 interface ShopClientProps {
     initialProducts: Product[]
@@ -120,18 +121,82 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         return result;
     }, [groupedProducts, activeCategory, sortBy]);
 
+    // ⚡ Filtro especial: Si la categoría es 'plata-925', filtrar por categoría O por material 'Plata Italiana 925' / 'Plata 925'
+    const finalFilteredProducts = useMemo(() => {
+        if (activeCategory === 'plata-925') {
+            return filteredProducts.filter(p => 
+                p.category === 'plata-925' || 
+                (p.materials && p.materials.toLowerCase().includes('plata')) ||
+                (p.custom_label && p.custom_label.toLowerCase().includes('plata'))
+            )
+        }
+        return filteredProducts
+    }, [filteredProducts, activeCategory])
+
     // Productos visibles (paginación)
-    const visibleProducts = useMemo(() => filteredProducts.slice(0, visibleCount), [filteredProducts, visibleCount])
-    const hasMore = visibleCount < filteredProducts.length
-    const remaining = filteredProducts.length - visibleCount
+    const visibleProducts = useMemo(() => finalFilteredProducts.slice(0, visibleCount), [finalFilteredProducts, visibleCount])
+    const hasMore = visibleCount < finalFilteredProducts.length
+    const remaining = finalFilteredProducts.length - visibleCount
+
+    // Configuración narrativa dinámica por categoría
+    const categoryHeader = useMemo(() => {
+        switch (activeCategory) {
+            case 'plata-925':
+                return {
+                    title: 'Plata Italiana 925',
+                    subtitle: 'Bóveda VIP de Plata Fina Ley 925 importada de Italia. Brillo eterno, acabado artesanal y resistencia superior.',
+                    badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
+                }
+            case 'cadenas':
+                return {
+                    title: 'Cadenas & Cubanas',
+                    subtitle: 'Eslabones diseñados para dominar la escena. Estilos Cubana, Rolo, Espiga y Snake.',
+                    badge: null
+                }
+            case 'dijes':
+                return {
+                    title: 'Dijes & Colgantes',
+                    subtitle: 'Detalles únicos con actitud urbana para personalizar tu cadena.',
+                    badge: null
+                }
+            case 'pulseras':
+                return {
+                    title: 'Pulseras & Tuki',
+                    subtitle: 'Piezas exclusivas ajustadas para acompañar tu estilo diario.',
+                    badge: null
+                }
+            case 'conjuntos':
+                return {
+                    title: 'Sets & Conjuntos',
+                    subtitle: 'Combinaciones perfectas de cadena y pulsera con precio preferencial.',
+                    badge: '✨ DESCUENTO ESPECIAL'
+                }
+            default:
+                return {
+                    title: 'Nuestra Colección',
+                    subtitle: 'Define tu flow con cada pieza. Alta joyería para la escena urbana.',
+                    badge: null
+                }
+        }
+    }, [activeCategory])
+
+    const isSilverBg = activeCategory === 'plata-925'
 
     return (
-        <div className="smoke-gold-bg min-h-screen overflow-x-hidden">
+        <div className={cn("min-h-screen overflow-x-hidden transition-all duration-700", isSilverBg ? "smoke-silver-bg" : "smoke-gold-bg")}>
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
-                <div className="text-center mb-12">
-                    <h1 className="text-5xl md:text-6xl font-bold">Nuestra Colección</h1>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        Define tu flow con cada pieza
+                {/* Header Dinámico e Inmersivo */}
+                <div className="text-center mb-12 max-w-3xl mx-auto space-y-3 animate-fadeIn">
+                    {categoryHeader.badge && (
+                        <div className="inline-block px-4 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 text-xs font-black tracking-widest uppercase mb-2 shadow-xl backdrop-blur-md animate-pulse">
+                            {categoryHeader.badge}
+                        </div>
+                    )}
+                    <h1 className={cn("text-5xl md:text-6xl font-black tracking-tight transition-all duration-500", isSilverBg ? "text-slate-100 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" : "text-foreground")}>
+                        {categoryHeader.title}
+                    </h1>
+                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                        {categoryHeader.subtitle}
                     </p>
                 </div>
 
@@ -140,16 +205,28 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     className="w-full"
                     onValueChange={handleCategoryChange}
                 >
-                    <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1 bg-zinc-950/80 border border-zinc-800 rounded-lg justify-start md:justify-center mb-8 gap-1">
-                        {allCategories.map((category) => (
-                            <TabsTrigger
-                                key={category}
-                                value={category}
-                                className="capitalize px-5 py-2.5 text-xs font-semibold tracking-wider transition-all duration-300 data-[state=active]:bg-primary data-[state=active]:text-black rounded-md flex-shrink-0"
-                            >
-                                {category === 'all' ? 'Todos' : category}
-                            </TabsTrigger>
-                        ))}
+                    <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800 rounded-xl justify-start md:justify-center mb-10 gap-1.5 shadow-2xl">
+                        {allCategories.map((catId) => {
+                            const isVip = catId === 'plata-925'
+                            const catObj = productConfig.categories.find(c => c.id === catId)
+                            const label = catId === 'all' ? 'Todos' : (catObj?.name || catId)
+
+                            return (
+                                <TabsTrigger
+                                    key={catId}
+                                    value={catId}
+                                    className={cn(
+                                        "capitalize px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5",
+                                        isVip 
+                                            ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
+                                            : "data-[state=active]:bg-primary data-[state=active]:text-black"
+                                    )}
+                                >
+                                    {isVip && <span className="text-amber-400">✨</span>}
+                                    {label}
+                                </TabsTrigger>
+                            )
+                        })}
                     </TabsList>
 
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 w-full">

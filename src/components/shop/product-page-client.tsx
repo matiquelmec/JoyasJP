@@ -115,6 +115,26 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
             Precio incluye IVA. ¡Envío gratis a partir de $50.000!
           </p>
 
+          {/* 🇮🇹 CERTIFICADO DE AUTENTICIDAD PARA PLATA ITALIANA 925 */}
+          {((selectedProduct.materials && selectedProduct.materials.toLowerCase().includes('plata')) ||
+            selectedProduct.category === 'plata-925' ||
+            (selectedProduct.custom_label && selectedProduct.custom_label.toLowerCase().includes('plata'))) && (
+            <div className="p-4 rounded-xl border border-slate-300/30 bg-slate-900/60 backdrop-blur-md shadow-xl flex items-start gap-3 mt-4 animate-fadeIn">
+              <div className="w-10 h-10 rounded-full bg-slate-100/10 border border-slate-200/30 flex items-center justify-center shrink-0 text-lg shadow-inner">
+                🇮🇹
+              </div>
+              <div className="text-xs space-y-1">
+                <p className="font-black text-slate-100 tracking-wider uppercase flex items-center gap-1.5">
+                  Plata Fina Ley 925 de Italia
+                  <span className="bg-slate-200/20 text-[9px] px-1.5 py-0.5 rounded text-slate-300 font-mono">925 STAMPED</span>
+                </p>
+                <p className="text-slate-300/80 leading-relaxed">
+                  Pieza certificada de origen italiano. Elaborada en pureza del 92.5% de plata maciza. Inalterable al uso diario e hipoalergénica.
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
             <div className="flex items-center gap-2 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
               <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">

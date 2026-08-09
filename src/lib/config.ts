@@ -115,6 +115,11 @@ export const navLinks: NavLink[] = [
 export const productConfig = {
   categories: [
     {
+      id: 'plata-925',
+      name: 'Plata Italiana 925',
+      description: 'Colección VIP de Plata Fina Ley 925 importada directamente de Italia',
+    },
+    {
       id: 'cadenas',
       name: 'Cadenas',
       description: 'Cadenas de diferentes estilos y materiales',
@@ -141,6 +146,7 @@ export const productConfig = {
     },
   ],
   materials: [
+    'Plata Italiana 925',
     'Plata 925',
     'Oro 18k',
     'Acero Inoxidable',
@@ -149,6 +155,8 @@ export const productConfig = {
   ],
   colors: ['Dorado', 'Plateado', 'Mixto', 'Negro'],
   labels: [
+    'PLATA 925 ITALIA',
+    'EDICIÓN MILANO',
     'NUEVO',
     'OFERTA',
     'EXCLUSIVO',

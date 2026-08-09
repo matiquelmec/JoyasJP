@@ -275,6 +275,7 @@
               radial-gradient(circle at 10% 20%, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0) 40%),
               linear-gradient(180deg, #09090b 0%, #030303 100%);
   position: relative;
+  transition: background 0.8s ease-in-out;
 }
 
 .smoke-gold-bg::before {
@@ -286,6 +287,28 @@
   height: 500px;
   background: radial-gradient(circle at 20% 10%, rgba(212, 175, 55, 0.04) 0%, transparent 60%),
               radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 🏛️ EFECTO INMERSIVO: Humo Cromo Plata VIP para Plata Italiana 925 */
+.smoke-silver-bg {
+  background: radial-gradient(circle at 50% -10%, rgba(226, 232, 240, 0.15) 0%, rgba(15, 23, 42, 0.4) 40%, rgba(3, 7, 18, 1) 90%),
+              radial-gradient(circle at 80% 20%, rgba(148, 163, 184, 0.08) 0%, transparent 50%),
+              linear-gradient(180deg, #0b0f17 0%, #020617 100%);
+  position: relative;
+  transition: background 0.8s ease-in-out;
+}
+
+.smoke-silver-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 600px;
+  background: radial-gradient(circle at 30% 10%, rgba(255, 255, 255, 0.06) 0%, transparent 60%),
+              radial-gradient(circle at 70% 35%, rgba(203, 213, 225, 0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: 1;
 }
