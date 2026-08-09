@@ -168,36 +168,37 @@ export default function Home() {
       <div className="h-screen"></div>
 
       {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 */}
-      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-slate-950 via-slate-900 to-background border-y border-slate-800/80 overflow-hidden">
-        {/* Glow de luz metálica cromo de fondo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-slate-400/10 blur-[120px] rounded-full pointer-events-none" />
+      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-black via-zinc-950 to-background border-y border-amber-500/20 overflow-hidden">
+        {/* Glow de luz dorada y metálica de fondo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-amber-500/10 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[400px] h-[250px] bg-slate-300/10 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Texto & Branding VIP */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 text-xs font-black tracking-widest uppercase shadow-xl backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-black tracking-widest uppercase shadow-xl backdrop-blur-md">
                 <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
               </div>
 
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 leading-[1.15] drop-shadow-[0_0_25px_rgba(255,255,255,0.25)]">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_20px_rgba(212,175,55,0.2)]">
                 PLATA ITALIANA 925 <br />
-                <span className="bg-gradient-to-r from-slate-200 via-white to-slate-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-200 via-primary to-amber-400 bg-clip-text text-transparent">
                   EL NUEVO ESTÁNDAR
                 </span>
               </h2>
 
-              <p className="text-base sm:text-lg text-slate-300/80 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+              <p className="text-base sm:text-lg text-zinc-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
                 Piezas macizas moldeadas en Plata Fina de Milán. Brillo eterno, densidad metálica superior y acabado pulido a mano para quienes exigen la más alta calidad urbana.
               </p>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-2 rounded-lg">
+                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-200 bg-zinc-900/90 border border-amber-500/20 px-3.5 py-2 rounded-xl shadow-md">
                   <span className="text-amber-400">✨</span> 92.5% Pureza Certificada
                 </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-2 rounded-lg">
-                  <span className="text-blue-400">🛡️</span> Inalterable & Hipoalergénico
+                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-200 bg-zinc-900/90 border border-amber-500/20 px-3.5 py-2 rounded-xl shadow-md">
+                  <span className="text-slate-300">🛡️</span> Inalterable & Hipoalergénico
                 </div>
               </div>
 
@@ -205,7 +206,7 @@ export default function Home() {
                 <Link href="/productos">
                   <Button
                     size="lg"
-                    className="font-extrabold text-base px-8 py-6 bg-gradient-to-r from-slate-100 via-white to-slate-300 text-slate-950 hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.2)] transition-all duration-300"
+                    className="font-extrabold text-base px-8 py-6 bg-primary text-black hover:bg-primary/90 hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300"
                   >
                     Explorar Bóveda Plata 925
                     <ChevronRight className="w-5 h-5 ml-1" />
@@ -214,21 +215,28 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Tarjeta Visual de Impacto */}
+            {/* Tarjeta Visual de Impacto con Branding Dorado */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-950/90 border border-slate-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl max-w-md w-full text-center space-y-6 transform group-hover:scale-[1.02] transition-all duration-500">
-                <div className="w-20 h-20 mx-auto rounded-full bg-slate-800/80 border border-slate-300/40 flex items-center justify-center text-4xl shadow-inner">
+              <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-black to-zinc-950/90 border border-amber-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-xl max-w-md w-full text-center space-y-6 transform group-hover:scale-[1.02] transition-all duration-500">
+                
+                {/* Badge de Sello */}
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-amber-400/20 to-zinc-800 border border-amber-500/40 flex items-center justify-center text-4xl shadow-[0_0_20px_rgba(212,175,55,0.2)]">
                   🇮🇹
                 </div>
+
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-slate-100">Sello de Origen Italiano</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Cada cadena y pulsera cuenta con el grabado oficial de ley 925 importada, garantizando autenticidad internacional.
+                  <span className="text-[10px] font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 inline-block">
+                    GARANTÍA DE AUTENTICIDAD
+                  </span>
+                  <h3 className="text-2xl font-bold text-white tracking-tight">Sello de Origen Italiano</h3>
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    Cada cadena y pulsera cuenta con el grabado oficial de ley 925 importada de Milán, garantizando brillo y pureza internacional.
                   </p>
                 </div>
-                <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-300 font-mono">
-                  <span>PUREZA: 92.5%</span>
-                  <span className="text-amber-400 font-bold">MILANO LUXURY</span>
+
+                <div className="pt-3 border-t border-zinc-800 flex justify-between items-center text-xs text-zinc-300 font-mono">
+                  <span className="flex items-center gap-1"><span className="text-amber-400">●</span> PUREZA 92.5%</span>
+                  <span className="text-amber-400 font-bold tracking-wider">MILANO LUXURY</span>
                 </div>
               </div>
             </div>
