@@ -1,6 +1,5 @@
-'use client'
-
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import LazyProductCard from '@/components/shop/lazy-product-card'
 import { useMemoizedProducts } from '@/hooks/use-memoized-products'
 import { ColorFilter } from '@/components/shop/color-filter'
@@ -19,11 +18,21 @@ const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
 const PRODUCTS_PER_PAGE = 12
 
 export function ShopClient({ initialProducts, initialColors }: ShopClientProps) {
-    const [activeCategory, setActiveCategory] = useState('all')
+    const searchParams = useSearchParams()
+    const categoryParam = searchParams.get('categoria') || 'all'
+
+    const [activeCategory, setActiveCategory] = useState(categoryParam)
     const [activeColor, setActiveColor] = useState('all')
     const [searchQuery, setSearchQuery] = useState('')
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
+
+    // Sincronizar categoría si cambia la URL
+    useEffect(() => {
+        if (categoryParam && allCategories.includes(categoryParam)) {
+            setActiveCategory(categoryParam)
+        }
+    }, [categoryParam])
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {

@@ -203,7 +203,7 @@ export default function Home() {
               </div>
 
               <div className="pt-4">
-                <Link href="/productos">
+                <Link href="/productos?categoria=plata-925">
                   <Button
                     size="lg"
                     className="font-extrabold text-base px-8 py-6 bg-primary text-black hover:bg-primary/90 hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300"

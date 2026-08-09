@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { ProductService } from '@/services/product.service'
 import { ShopClient } from '@/components/shop/shop-client'
 import { productConfig } from '@/lib/config'
@@ -20,5 +21,9 @@ export default async function ShopPage() {
 
   const colors = ['all', ...productConfig.colors]
 
-  return <ShopClient initialProducts={validProducts} initialColors={colors} />
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ShopClient initialProducts={validProducts} initialColors={colors} />
+    </Suspense>
+  )
 }
