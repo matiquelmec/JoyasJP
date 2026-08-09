@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useMemo, useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import LazyProductCard from '@/components/shop/lazy-product-card'
 import { useMemoizedProducts } from '@/hooks/use-memoized-products'
 import { ColorFilter } from '@/components/shop/color-filter'
@@ -20,6 +21,8 @@ const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
 const PRODUCTS_PER_PAGE = 12
 
 export function ShopClient({ initialProducts, initialColors }: ShopClientProps) {
+    const router = useRouter()
+    const pathname = usePathname()
     const searchParams = useSearchParams()
     const categoryParam = searchParams.get('categoria') || 'all'
 
@@ -41,11 +44,21 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         setActiveColor(value);
     }, []);
 
-    // Resetear paginación al cambiar de categoría o de ordenamiento
+    // ⚡ NAVEGACIÓN PROFESIONAL: Actualizar estado y la URL dinámicamente sin parpadeos
     const handleCategoryChange = useCallback((value: string) => {
         setActiveCategory(value)
         setVisibleCount(PRODUCTS_PER_PAGE)
-    }, [])
+
+        const params = new URLSearchParams(searchParams.toString())
+        if (value === 'all') {
+            params.delete('categoria')
+        } else {
+            params.set('categoria', value)
+        }
+
+        const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+        router.push(newUrl, { scroll: false })
+    }, [pathname, router, searchParams])
 
     const handleSortChange = useCallback((value: string) => {
         setSortBy(value)
@@ -221,19 +234,23 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                             const isVip = catId === 'plata-925'
                             const catObj = productConfig.categories.find(c => c.id === catId)
                             const label = catId === 'all' ? 'Todos' : (catObj?.name || catId)
+                            const targetHref = catId === 'all' ? '/productos' : `/productos?categoria=${catId}`
 
                             return (
                                 <TabsTrigger
                                     key={catId}
                                     value={catId}
+                                    asChild
                                     className={cn(
-                                        "px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5",
+                                        "px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5 cursor-pointer",
                                         isVip 
                                             ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
                                             : "data-[state=active]:bg-primary data-[state=active]:text-black"
                                     )}
                                 >
-                                    {label}
+                                    <Link href={targetHref} scroll={false}>
+                                        {label}
+                                    </Link>
                                 </TabsTrigger>
                             )
                         })}
