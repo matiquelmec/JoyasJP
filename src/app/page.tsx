@@ -7,8 +7,28 @@ import { Button } from '@/components/ui/button'
 import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
+import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
 
 export const revalidate = 43200 // Habilitar caché de 12 horas en el CDN (ISR)
+
+async function SilverShowcaseCarouselSection() {
+  let silverProducts: Product[] = []
+  try {
+    silverProducts = await ProductService.getSilverProducts(8)
+  } catch (error) {
+    console.warn('[SilverShowcaseCarouselSection]: Error cargando joyas de plata')
+  }
+
+  return (
+    <Suspense fallback={
+      <div className="w-full max-w-md h-[450px] rounded-2xl bg-zinc-900/50 border border-amber-500/20 animate-pulse flex items-center justify-center text-zinc-500">
+        Cargando Bóveda Plata 925...
+      </div>
+    }>
+      <SilverShowcaseCarousel products={silverProducts} />
+    </Suspense>
+  )
+}
 
 
 
@@ -215,30 +235,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Tarjeta Visual de Impacto con Branding Dorado */}
+            {/* Carrusel Visual de Piezas de Plata Ley 925 */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-zinc-900/90 via-black to-zinc-950/90 border border-amber-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-xl max-w-md w-full text-center space-y-6 transform group-hover:scale-[1.02] transition-all duration-500">
-                
-                {/* Badge de Sello */}
-                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-amber-400/20 to-zinc-800 border border-amber-500/40 flex items-center justify-center text-4xl shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                  🇮🇹
-                </div>
-
-                <div className="space-y-2">
-                  <span className="text-[10px] font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 inline-block">
-                    GARANTÍA DE AUTENTICIDAD
-                  </span>
-                  <h3 className="text-2xl font-bold text-white tracking-tight">Sello de Origen Italiano</h3>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    Cada cadena y pulsera cuenta con el grabado oficial de ley 925 importada de Milán, garantizando brillo y pureza internacional.
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-zinc-800 flex justify-between items-center text-xs text-zinc-300 font-mono">
-                  <span className="flex items-center gap-1"><span className="text-amber-400">●</span> PUREZA 92.5%</span>
-                  <span className="text-amber-400 font-bold tracking-wider">MILANO LUXURY</span>
-                </div>
-              </div>
+              <SilverShowcaseCarouselSection />
             </div>
 
           </div>

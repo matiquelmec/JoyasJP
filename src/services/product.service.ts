@@ -277,6 +277,41 @@ export class ProductService {
     }
 
     /**
+     * 🏛️ Obtiene joyas de Plata Italiana 925 para la pasarela / carrusel VIP del inicio
+     */
+    static async getSilverProducts(limit: number = 8): Promise<Product[]> {
+        try {
+            const { rows } = await turso.execute({
+                sql: "SELECT * FROM products WHERE (deleted_at IS NULL OR deleted_at = '')",
+                args: []
+            })
+
+            if (!rows || rows.length === 0) {
+                return LOCAL_MOCK_PRODUCTS.filter(p => (p.materials && p.materials.toLowerCase().includes('plata'))).slice(0, limit)
+            }
+
+            const mapped = rows.map(mapDatabaseProductToProduct)
+            const resolved = await this.resolveBundleStocks(mapped)
+
+            // Filtrar inteligentemente piezas de plata
+            const silverProducts = resolved.filter(p => 
+                p.category === 'plata-925' || 
+                (p.materials && p.materials.toLowerCase().includes('plata')) ||
+                (p.custom_label && p.custom_label.toLowerCase().includes('plata'))
+            ).sort((a, b) => {
+                // Priorizar productos con is_priority = true o etiquetas especiales
+                if (a.is_priority !== b.is_priority) return (b.is_priority ? 1 : 0) - (a.is_priority ? 1 : 0)
+                return (b.imageUrl ? 1 : 0) - (a.imageUrl ? 1 : 0)
+            }).slice(0, limit)
+
+            return silverProducts
+        } catch (error) {
+            console.error('❌ Error cargando joyas de plata para el carrusel:', error)
+            return []
+        }
+    }
+
+    /**
      * Obtiene un producto por ID o Slug con validación estricta
      */
     static async getProductById(idOrSlug: string): Promise<Product | null> {
