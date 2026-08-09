@@ -167,6 +167,76 @@ export default function Home() {
       {/* Spacer for fixed video */}
       <div className="h-screen"></div>
 
+      {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 */}
+      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-slate-950 via-slate-900 to-background border-y border-slate-800/80 overflow-hidden">
+        {/* Glow de luz metálica cromo de fondo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-slate-400/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Texto & Branding VIP */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 text-xs font-black tracking-widest uppercase shadow-xl backdrop-blur-md">
+                <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
+              </div>
+
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-100 leading-[1.15] drop-shadow-[0_0_25px_rgba(255,255,255,0.25)]">
+                PLATA ITALIANA 925 <br />
+                <span className="bg-gradient-to-r from-slate-200 via-white to-slate-400 bg-clip-text text-transparent">
+                  EL NUEVO ESTÁNDAR
+                </span>
+              </h2>
+
+              <p className="text-base sm:text-lg text-slate-300/80 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                Piezas macizas moldeadas en Plata Fina de Milán. Brillo eterno, densidad metálica superior y acabado pulido a mano para quienes exigen la más alta calidad urbana.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-2 rounded-lg">
+                  <span className="text-amber-400">✨</span> 92.5% Pureza Certificada
+                </div>
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 bg-slate-900/80 border border-slate-800 px-3 py-2 rounded-lg">
+                  <span className="text-blue-400">🛡️</span> Inalterable & Hipoalergénico
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Link href="/productos">
+                  <Button
+                    size="lg"
+                    className="font-extrabold text-base px-8 py-6 bg-gradient-to-r from-slate-100 via-white to-slate-300 text-slate-950 hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.2)] transition-all duration-300"
+                  >
+                    Explorar Bóveda Plata 925
+                    <ChevronRight className="w-5 h-5 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Tarjeta Visual de Impacto */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative group p-8 rounded-2xl bg-gradient-to-br from-slate-900/90 to-slate-950/90 border border-slate-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl max-w-md w-full text-center space-y-6 transform group-hover:scale-[1.02] transition-all duration-500">
+                <div className="w-20 h-20 mx-auto rounded-full bg-slate-800/80 border border-slate-300/40 flex items-center justify-center text-4xl shadow-inner">
+                  🇮🇹
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-slate-100">Sello de Origen Italiano</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Cada cadena y pulsera cuenta con el grabado oficial de ley 925 importada, garantizando autenticidad internacional.
+                  </p>
+                </div>
+                <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-300 font-mono">
+                  <span>PUREZA: 92.5%</span>
+                  <span className="text-amber-400 font-bold">MILANO LUXURY</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products Section */}
       <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
         <div className="container mx-auto px-4 max-w-7xl">
