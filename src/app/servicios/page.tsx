@@ -30,12 +30,12 @@ export default function ServicesPage() {
         loop
         muted
         playsInline
-        preload="none"
+        preload="auto"
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
         aria-label="Video promocional de servicios para artistas"
       >
-        <source src={getVideoUrl('mi-video2.webm')} type="video/webm" />
         <source src={getVideoUrl('mi-video2.mp4')} type="video/mp4" />
+        <source src={getVideoUrl('mi-video2.webm')} type="video/webm" />
       </video>
       {/* Overlay like homepage */}
       <div className="fixed top-0 left-0 w-full h-full bg-black/40 z-0" />

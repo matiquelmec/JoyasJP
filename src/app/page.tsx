@@ -114,12 +114,12 @@ export default function Home() {
           loop
           muted
           playsInline
-          preload="none" // No bloquea la carga de la página
+          preload="auto"
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         >
-          <source src={getVideoUrl('mi-video.webm')} type="video/webm" />
           <source src={getVideoUrl('mi-video.mp4')} type="video/mp4" />
+          <source src={getVideoUrl('mi-video.webm')} type="video/webm" />
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
 
