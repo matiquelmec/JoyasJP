@@ -287,19 +287,23 @@ export class ProductService {
             })
 
             if (!rows || rows.length === 0) {
-                return LOCAL_MOCK_PRODUCTS.filter(p => (p.materials && p.materials.toLowerCase().includes('plata'))).slice(0, limit)
+                return LOCAL_MOCK_PRODUCTS.filter(p => p.category === 'plata-925' || (p.materials && p.materials.toLowerCase().includes('plata 925'))).slice(0, limit)
             }
 
             const mapped = rows.map(mapDatabaseProductToProduct)
             const resolved = await this.resolveBundleStocks(mapped)
 
-            // Filtrar inteligentemente piezas de plata
-            const silverProducts = resolved.filter(p => 
-                p.category === 'plata-925' || 
-                (p.materials && p.materials.toLowerCase().includes('plata')) ||
-                (p.custom_label && p.custom_label.toLowerCase().includes('plata'))
-            ).sort((a, b) => {
-                // Priorizar productos con is_priority = true o etiquetas especiales
+            // 🛡️ Filtro ESTRICTO: Solo piezas con categoría 'plata-925' o material 'Plata Italiana 925' / 'Plata 925'
+            const silverProducts = resolved.filter(p => {
+                const mat = (p.materials || '').toLowerCase()
+                const cat = (p.category || '').toLowerCase()
+                const label = (p.custom_label || '').toLowerCase()
+
+                // Excluir bañados o fantasía si se busca exclusividad Ley 925
+                if (mat.includes('bañado') || mat.includes('banado')) return false
+
+                return cat === 'plata-925' || mat.includes('plata 925') || mat.includes('plata italiana') || label.includes('plata 925')
+            }).sort((a, b) => {
                 if (a.is_priority !== b.is_priority) return (b.is_priority ? 1 : 0) - (a.is_priority ? 1 : 0)
                 return (b.imageUrl ? 1 : 0) - (a.imageUrl ? 1 : 0)
             }).slice(0, limit)
