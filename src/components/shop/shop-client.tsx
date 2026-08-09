@@ -225,7 +225,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                 </div>
 
                 <Tabs
-                    defaultValue="all"
+                    value={activeCategory}
                     className="w-full"
                     onValueChange={handleCategoryChange}
                 >
