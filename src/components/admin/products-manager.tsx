@@ -322,12 +322,21 @@ export function ProductsManager() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Input
-                          type="number"
-                          value={p.stock}
-                          onChange={(e) => updateStock(p.id, parseInt(e.target.value) || 0)}
-                          className="h-8 w-16 text-center text-xs font-bold border-zinc-200"
-                        />
+                        {p.is_bundle ? (
+                          <div className="flex items-center gap-2">
+                            <span className="h-8 px-2.5 flex items-center justify-center text-xs font-black bg-amber-50 text-amber-900 border border-amber-300 rounded-md shadow-inner" title="Stock calculado dinámicamente según componentes">
+                              {p.stock}
+                            </span>
+                            <span className="text-[10px] text-amber-700 font-bold uppercase tracking-tighter">Auto</span>
+                          </div>
+                        ) : (
+                          <Input
+                            type="number"
+                            value={p.stock}
+                            onChange={(e) => updateStock(p.id, parseInt(e.target.value) || 0)}
+                            className="h-8 w-16 text-center text-xs font-bold border-zinc-200"
+                          />
+                        )}
                         {getStockBadge(p.stock)}
                       </div>
                     </TableCell>

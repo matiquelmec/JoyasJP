@@ -74,8 +74,11 @@ export function AdminDashboard() {
         .sort((a: any, b: any) => a.stock - b.stock)
         .slice(0, 5)
 
-      // Calcular valor total del inventario
-      const totalInventoryValue = products.reduce((sum: number, p: any) => sum + (p.price * p.stock), 0)
+      // 🛡️ ALTO ESTÁNDAR ERP: Calcular valor del inventario acumulando únicamente piezas físicas tangibles (!p.is_bundle)
+      // Los productos tipo "is_bundle" son conjuntos virtuales cuyas piezas ya están valorizadas individualmente.
+      const totalInventoryValue = products
+        .filter((p: any) => !p.is_bundle)
+        .reduce((sum: number, p: any) => sum + (Number(p.price) * Number(p.stock || 0)), 0)
 
       const dashboardStats: DashboardStats = {
         totalProducts: products.length,
