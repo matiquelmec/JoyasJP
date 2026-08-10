@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
+import { ProductService } from '@/services/product.service'
 
 // Webhook de MercadoPago para procesar la confirmación del pago en producción
 export async function POST(request: NextRequest) {
@@ -65,9 +66,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ received: true })
         }
 
-        // Obtener datos del pedido actual para verificar cupones
+        // Obtener datos del pedido actual para verificar cupones e ítems comprados
         const { rows: orderRows } = await turso.execute({
-            sql: "SELECT coupon_code, payment_status FROM orders WHERE id = ?",
+            sql: "SELECT coupon_code, payment_status, items FROM orders WHERE id = ?",
             args: [orderId]
         })
         const order = orderRows[0]
@@ -89,13 +90,26 @@ export async function POST(request: NextRequest) {
                 ]
             })
 
-            // Si el pago es aprobado, el estado anterior no era aprobado y tiene cupón, incrementamos el uso
-            if (status === 'approved' && order && order.payment_status !== 'approved' && order.coupon_code) {
-                await tx.execute({
-                    sql: "UPDATE coupons SET usage_count = usage_count + 1 WHERE code = ?",
-                    args: [order.coupon_code]
-                })
-                console.log(`🎫 Webhook: Cupón "${order.coupon_code}" incrementado (+1 uso) por orden aprobada: ${orderId}`)
+            // 🛡️ DEDUCCIÓN DE STOCK E INCREMENTO DE CUPÓN (Solo al transicionar por primera vez a pago APROBADO)
+            if (status === 'approved' && order && order.payment_status !== 'approved') {
+                // 1. Incrementar uso del cupón si aplicó
+                if (order.coupon_code) {
+                    await tx.execute({
+                        sql: "UPDATE coupons SET usage_count = usage_count + 1 WHERE code = ?",
+                        args: [order.coupon_code]
+                    })
+                    console.log(`🎫 Webhook: Cupón "${order.coupon_code}" incrementado (+1 uso) por orden aprobada: ${orderId}`)
+                }
+
+                // 2. Deducción atómica y relacional de stock (Productos Simples y Bundles)
+                if (order.items) {
+                    try {
+                        const items = JSON.parse(order.items as string)
+                        await ProductService.processOrderStockDeduction(tx, items)
+                    } catch (parseErr) {
+                        console.error('❌ Error parseando items para deducción de stock:', parseErr)
+                    }
+                }
             }
 
             await tx.commit()

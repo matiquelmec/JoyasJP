@@ -511,4 +511,53 @@ export class ProductService {
             )
         }
     }
+
+    /**
+     * 🛡️ Deducción atómica y relacional de stock en transacciones de compra (Productos Simples y Bundles)
+     */
+    static async processOrderStockDeduction(tx: any, items: Array<{ id: string; quantity: number }>): Promise<void> {
+        if (!items || items.length === 0) return
+
+        for (const item of items) {
+            const qtyPurchased = Number(item.quantity || 1)
+            
+            // Consultar si el producto comprado es un conjunto / bundle
+            const { rows: prodRows } = await tx.execute({
+                sql: "SELECT id, is_bundle FROM products WHERE id = ?",
+                args: [item.id]
+            })
+
+            if (!prodRows || prodRows.length === 0) continue
+
+            const isBundle = Number(prodRows[0].is_bundle || 0) === 1
+
+            if (isBundle) {
+                // Consultar las piezas componentes del conjunto
+                const { rows: bundleItems } = await tx.execute({
+                    sql: "SELECT product_id, quantity FROM bundle_items WHERE bundle_id = ?",
+                    args: [item.id]
+                })
+
+                if (bundleItems && bundleItems.length > 0) {
+                    for (const bItem of bundleItems) {
+                        const childId = bItem.product_id as string
+                        const childQtyNeeded = Number(bItem.quantity || 1) * qtyPurchased
+
+                        await tx.execute({
+                            sql: "UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?",
+                            args: [childQtyNeeded, childId]
+                        })
+                        console.log(`📦 Bundles Stock: Componente ${childId} descontado -${childQtyNeeded} unidades por venta de conjunto ${item.id}`)
+                    }
+                }
+            } else {
+                // Producto simple: decrementar stock directamente
+                await tx.execute({
+                    sql: "UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?",
+                    args: [qtyPurchased, item.id]
+                })
+                console.log(`🛍️ Stock: Producto ${item.id} descontado -${qtyPurchased} unidades`)
+            }
+        }
+    }
 }
