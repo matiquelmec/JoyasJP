@@ -61,9 +61,9 @@ export function AdminDashboard() {
 
       // Calcular estadísticas de productos (Excluyendo bundles de alertas de inventario físico)
       const physicalProducts = products.filter((p: any) => !p.is_bundle)
-      const activeProducts = products.filter((p: any) => p.stock > 0)
-      const lowStockProducts = physicalProducts.filter((p: any) => p.stock > 0 && p.stock === 1)
-      const outOfStockProducts = physicalProducts.filter((p: any) => p.stock === 0)
+      const activeProducts = products.filter((p: any) => Number(p.stock || 0) > 0)
+      const lowStockProducts = physicalProducts.filter((p: any) => Number(p.stock || 0) === 1)
+      const outOfStockProducts = physicalProducts.filter((p: any) => Number(p.stock || 0) === 0)
 
       // Top 5 productos por precio (como ejemplo de "más valiosos")
       const topProducts = [...activeProducts]
