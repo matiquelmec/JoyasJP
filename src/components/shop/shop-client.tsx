@@ -229,70 +229,79 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     className="w-full"
                     onValueChange={handleCategoryChange}
                 >
-                    <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800 rounded-xl justify-start md:justify-center mb-10 gap-1.5 shadow-2xl">
-                        {allCategories.map((catId) => {
-                            const isVip = catId === 'plata-925'
-                            const catObj = productConfig.categories.find(c => c.id === catId)
-                            const label = catId === 'all' ? 'Todos' : (catObj?.name || catId)
-                            const targetHref = catId === 'all' ? '/productos' : `/productos?categoria=${catId}`
+                    {/* 📱 BARRA DE CATEGORÍAS APP-LIKE CON FADE EDGES Y SCROLL OCULTO */}
+                    <div className="relative mb-8 w-full group">
+                      {/* Fade edge derecho indicando scroll */}
+                      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none md:hidden" />
+                      
+                      <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center gap-1.5 shadow-2xl backdrop-blur-md">
+                          {allCategories.map((catId) => {
+                              const isVip = catId === 'plata-925'
+                              const catObj = productConfig.categories.find(c => c.id === catId)
+                              const label = catId === 'all' ? 'Todos' : (catObj?.name || catId)
+                              const targetHref = catId === 'all' ? '/productos' : `/productos?categoria=${catId}`
 
-                            return (
-                                <TabsTrigger
-                                    key={catId}
-                                    value={catId}
-                                    asChild
-                                    className={cn(
-                                        "px-5 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5 cursor-pointer",
-                                        isVip 
-                                            ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
-                                            : "data-[state=active]:bg-primary data-[state=active]:text-black"
-                                    )}
-                                >
-                                    <Link href={targetHref} scroll={false}>
-                                        {label}
-                                    </Link>
-                                </TabsTrigger>
-                            )
-                        })}
-                    </TabsList>
+                              return (
+                                  <TabsTrigger
+                                      key={catId}
+                                      value={catId}
+                                      asChild
+                                      className={cn(
+                                          "px-4 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5 cursor-pointer select-none",
+                                          isVip 
+                                              ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
+                                              : "data-[state=active]:bg-primary data-[state=active]:text-black"
+                                      )}
+                                  >
+                                      <Link href={targetHref} scroll={false}>
+                                          {label}
+                                      </Link>
+                                  </TabsTrigger>
+                              )
+                          })}
+                      </TabsList>
+                    </div>
 
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 w-full">
-                        {/* Selector de Ordenamiento */}
-                        <div className="w-full md:w-auto">
-                            <select
-                                value={sortBy}
-                                onChange={(e) => handleSortChange(e.target.value)}
-                                className="flex h-10 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer font-medium text-muted-foreground"
-                            >
-                                <option value="featured">Recomendados</option>
-                                <option value="newest">Lo más nuevo</option>
-                                <option value="price-asc">Precio: Menor a Mayor</option>
-                                <option value="price-desc">Precio: Mayor a Menor</option>
-                            </select>
+                    {/* ⚡ BARRA COMPACTA DE FILTROS PARA MÓVIL (Grid de 2 columnas en celulares) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row justify-between items-center gap-3 mb-8 w-full">
+                        {/* Buscador de Joyas */}
+                        <div className="w-full md:w-[240px]">
+                            <input
+                                type="text"
+                                placeholder="🔍 Buscar joyas..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value)
+                                    setVisibleCount(PRODUCTS_PER_PAGE)
+                                }}
+                                className="flex h-10 w-full rounded-lg border border-zinc-800 bg-zinc-950/80 px-3.5 py-2 text-xs font-medium text-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary shadow-inner"
+                            />
                         </div>
 
-                        {/* Buscador y filtro de color */}
-                        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto items-center">
-                            {/* Search Input */}
-                            <div className="w-full md:w-[250px]">
-                                <input
-                                    type="text"
-                                    placeholder="Buscar joyas"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value)
-                                        setVisibleCount(PRODUCTS_PER_PAGE)
-                                    }}
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                />
+                        {/* Contenedor secundario: Selector de orden y filtro de color */}
+                        <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 w-full md:w-auto items-center">
+                            {/* Selector de Ordenamiento */}
+                            <div className="w-full sm:w-auto">
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => handleSortChange(e.target.value)}
+                                    className="flex h-10 w-full sm:w-[160px] md:w-[180px] rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-xs font-medium text-zinc-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer shadow-inner"
+                                >
+                                    <option value="featured">Recomendados</option>
+                                    <option value="newest">Lo más nuevo</option>
+                                    <option value="price-asc">Precio: Menor</option>
+                                    <option value="price-desc">Precio: Mayor</option>
+                                </select>
                             </div>
 
-                            <ColorFilter
-                                colors={initialColors}
-                                activeColor={activeColor}
-                                onColorChange={handleColorChange}
-                                className="w-full md:w-auto"
-                            />
+                            {/* Color Filter */}
+                            <div className="w-full sm:w-auto">
+                                <ColorFilter
+                                    colors={initialColors}
+                                    activeColor={activeColor}
+                                    onColorChange={handleColorChange}
+                                />
+                            </div>
                         </div>
                     </div>
 

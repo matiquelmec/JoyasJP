@@ -638,3 +638,16 @@ header {
   transform: translateY(-1px) scale(1.05);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
+/* 📱 OCULTAR SCROLLBAR NATIVO EN MÓVILES */
+.scrollbar-none, .no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-none::-webkit-scrollbar, .no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
