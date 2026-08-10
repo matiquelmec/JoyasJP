@@ -59,10 +59,11 @@ export function AdminDashboard() {
       const allProducts = await adminAPI.getProducts()
       const products = allProducts.filter((p: any) => !p.deleted_at)
 
-      // Calcular estadísticas de productos
+      // Calcular estadísticas de productos (Excluyendo bundles de alertas de inventario físico)
+      const physicalProducts = products.filter((p: any) => !p.is_bundle)
       const activeProducts = products.filter((p: any) => p.stock > 0)
-      const lowStockProducts = products.filter((p: any) => p.stock > 0 && p.stock === 1)
-      const outOfStockProducts = products.filter((p: any) => p.stock === 0)
+      const lowStockProducts = physicalProducts.filter((p: any) => p.stock > 0 && p.stock === 1)
+      const outOfStockProducts = physicalProducts.filter((p: any) => p.stock === 0)
 
       // Top 5 productos por precio (como ejemplo de "más valiosos")
       const topProducts = [...activeProducts]
