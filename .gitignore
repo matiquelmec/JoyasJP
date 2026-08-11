@@ -37,9 +37,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# environment files
+# environment & local db files
 .env*
 !.env.example
+local.db
+*.db
+
 
 # temporary files
 .genkit/*

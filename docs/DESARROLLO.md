@@ -5,7 +5,7 @@ E-commerce completo para Joyas JP, tienda de joyería especializada con panel de
 
 ## Stack Tecnológico
 - **Frontend**: Next.js 14.2.31 con TypeScript y App Router
-- **Base de Datos**: Supabase (PostgreSQL)
+- **Base de Datos**: Turso (SQLite distribuido) vía `@libsql/client`
 - **Estado**: Zustand (carrito y wishlist)
 - **Pagos**: MercadoPago
 - **Estilos**: Tailwind CSS
@@ -16,9 +16,9 @@ E-commerce completo para Joyas JP, tienda de joyería especializada con panel de
 
 ### Variables de Entorno (.env.local)
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://lrsmmfpsbawznjpnllwr.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-MP_ACCESS_TOKEN=APP_USR-5821576549474913-072203...
+TURSO_CONNECTION_URL=libsql://...
+TURSO_AUTH_TOKEN=eyJhbGci...
+MP_ACCESS_TOKEN=APP_USR-5821576549474913...
 ```
 
 ### Base de Datos

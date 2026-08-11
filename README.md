@@ -2,9 +2,9 @@
 
 > E-commerce premium y plataforma de administración avanzada para **Joyas JP**, una tienda de joyería fina especializada en Chile.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.2.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2.31-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Turso](https://img.shields.io/badge/Turso-SQLite--Distribuido-440099?style=for-the-badge&logo=sqlite)](https://turso.tech/)
 [![MercadoPago](https://img.shields.io/badge/MercadoPago-SDK-blueviolet?style=for-the-badge)](https://www.mercadopago.cl/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Netlify](https://img.shields.io/badge/Netlify-Deployed-00C7B7?style=for-the-badge&logo=netlify)](https://www.netlify.com/)
@@ -22,7 +22,7 @@
 La plataforma está construida utilizando tecnologías modernas de desarrollo web:
 
 *   **Frontend**: [Next.js 14.2.3](https://nextjs.org/) (App Router) con [React 18](https://react.dev/) y [TypeScript](https://www.typescriptlang.org/).
-*   **Base de Datos y Autenticación**: [Supabase](https://supabase.com/) (PostgreSQL) para la gestión dinámica de datos y consistencia atómica de stock.
+*   **Base de Datos**: [Turso](https://turso.tech/) (SQLite distribuido de alta disponibilidad vía `@libsql/client`) para la gestión dinámica de datos e inventario.
 *   **Gestión de Estado**: [Zustand](https://zustand.docs.pmnd.rs/) para el manejo del carrito de compras y lista de favoritos (wishlist).
 *   **Pasarela de Pagos**: [Mercado Pago SDK](https://www.mercadopago.cl/developers) para transacciones locales seguras y fluidas en Chile.
 *   **Diseño y Estilos**: [Tailwind CSS](https://tailwindcss.com/) para una UI responsiva, moderna y premium.
@@ -108,16 +108,16 @@ npm install
 Crea un archivo `.env.local` en la raíz del proyecto y añade las siguientes claves:
 
 ```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-de-supabase
+# Turso Database
+TURSO_CONNECTION_URL=libsql://tu-db.turso.io
+TURSO_AUTH_TOKEN=tu-auth-token-de-turso
 
 # Mercado Pago
 MP_ACCESS_TOKEN=APP_USR-tu-access-token-de-mercado-pago
 NEXT_PUBLIC_MP_PUBLIC_KEY=APP_USR-tu-public-key-de-mercado-pago
 
 # Administración
-NEXT_PUBLIC_ADMIN_KEY=joyasjp2024 # Contraseña para acceder a /admin
+NEXT_PUBLIC_ADMIN_KEY=joyasjp2024
 ```
 
 ### 4. Inicializar Servidor de Desarrollo
