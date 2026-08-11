@@ -98,7 +98,10 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
     icons: {
-      icon: '/favicon.png',
+      icon: [
+        { url: '/favicon.png', type: 'image/png' },
+        { url: '/assets/logo.webp', type: 'image/webp' }
+      ],
       shortcut: '/favicon.png',
       apple: '/favicon.png',
     },
@@ -152,12 +155,28 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://aws-us-east-1.turso.io" />
         <link rel="dns-prefetch" href="//aws-us-east-1.turso.io" />
 
-        <link rel="icon" href="/favicon.png?v=2" />
-        <link rel="shortcut icon" href="/favicon.png?v=2" />
-        <link rel="apple-touch-icon" href="/favicon.png?v=2" />
+        <link rel="icon" href="/favicon.png?v=3" type="image/png" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.png?v=3" />
+        <link rel="apple-touch-icon" href="/favicon.png?v=3" />
 
-
-        {/* Cache busting y optimización determinística */}
+        {/* 🔍 GOOGLE SEARCH FAVICON & BRAND LOGO SCHEMA (JSON-LD) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              'name': 'Joyas JP',
+              'url': siteConfig.url,
+              'logo': `${siteConfig.url}/assets/logo.webp`,
+              'image': `${siteConfig.url}/assets/logo.webp`,
+              'sameAs': [
+                siteConfig.links.instagram,
+                siteConfig.links.tiktok
+              ]
+            })
+          }}
+        />
         <meta name="build-version" content="20240523" />
 
         {/* ⚡ PRELOAD ASSETS CRÍTICOS */}
