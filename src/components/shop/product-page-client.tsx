@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
+import { StickyVaultBar } from '@/components/shop/sticky-vault-bar'
 
 interface ProductPageClientProps {
   product: Product
@@ -220,6 +221,9 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
         <div className="space-y-4 pt-4">
           <AddToCartButton product={selectedProduct} className="w-full" size="lg" />
         </div>
+
+        {/* 📱 Sticky Vault Bar para móviles */}
+        <StickyVaultBar product={selectedProduct} />
       </div>
     </div>
   )

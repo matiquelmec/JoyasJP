@@ -544,7 +544,7 @@ export default function CheckoutPage() {
                             value={couponInput}
                             onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                             placeholder="CÓDIGO"
-                            className="pl-9 h-9 text-xs uppercase"
+                            className="pl-9 h-9 text-xs uppercase text-white bg-zinc-900 border-zinc-700"
                             disabled={isCouponLoading}
                           />
                         </div>
@@ -552,7 +552,7 @@ export default function CheckoutPage() {
                           type="button"
                           onClick={handleApplyCoupon}
                           disabled={isCouponLoading || !couponInput.trim()}
-                          className="bg-zinc-950 hover:bg-zinc-800 text-white font-bold h-9 text-xs"
+                          className="bg-primary hover:bg-primary/90 text-black font-bold h-9 text-xs"
                         >
                           {isCouponLoading ? 'Aplicando...' : 'Aplicar'}
                         </Button>
@@ -592,9 +592,9 @@ export default function CheckoutPage() {
 
                     <Separator />
                     
-                    <div className="flex justify-between font-bold text-lg text-zinc-900">
+                    <div className="flex justify-between font-bold text-lg text-white">
                       <span>Total</span>
-                      <span>${finalTotal.toLocaleString('es-CL')}</span>
+                      <span className="text-primary font-headline tracking-tight text-xl">${finalTotal.toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>

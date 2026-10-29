@@ -8,13 +8,12 @@ import { Eye, EyeOff, Lock, AlertCircle } from 'lucide-react'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import Image from 'next/image'
 
-// Contexto para compartir el token (password) con componentes hijos
 interface AdminAuthContextType {
   token: string | null
-  logout: () => void
+  logout: () => Promise<void>
 }
 
-const AdminAuthContext = createContext<AdminAuthContextType>({ token: null, logout: () => { } })
+const AdminAuthContext = createContext<AdminAuthContextType>({ token: null, logout: async () => { } })
 
 export function useAdminAuth() {
   return useContext(AdminAuthContext)
@@ -26,22 +25,36 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
-  const [token, setToken] = useState<string | null>(null)
   const { config } = useSiteConfig()
 
   useEffect(() => {
-    // Restaurar sesión si existe
-    const savedToken = localStorage.getItem('joyasjp-admin-token')
-    if (savedToken) {
-      setToken(savedToken)
-      setIsAuthenticated(true)
+    // Verificar si la cookie de sesión HttpOnly es válida consultando un endpoint ligero
+    async function verifySession() {
+      try {
+        const res = await fetch('/api/admin/products?limit=1')
+        if (res.ok) {
+          setIsAuthenticated(true)
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch {
+        setIsAuthenticated(false)
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+
+    verifySession()
   }, [])
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/login', { method: 'DELETE' })
+    } catch {
+      // Ignorar error de red al salir
+    }
+    // Limpieza de claves obsoletas si existiesen
     localStorage.removeItem('joyasjp-admin-token')
-    setToken(null)
     setIsAuthenticated(false)
     setPassword('')
   }
@@ -59,8 +72,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
       if (res.ok) {
         setIsAuthenticated(true)
-        setToken(password) // Usamos el password como "token" Bearer simple
-        localStorage.setItem('joyasjp-admin-token', password)
+        setPassword('')
       } else {
         setError('Credenciales inválidas')
       }
@@ -96,7 +108,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight">Panel de Administración</CardTitle>
-            <p className="text-muted-foreground mt-2">Acceso seguro requerido</p>
+            <p className="text-muted-foreground mt-2">Acceso protegido mediante sesión encriptada</p>
           </CardHeader>
           <CardContent className="pb-10 px-8">
             <form onSubmit={handleLogin} className="space-y-6">
@@ -140,7 +152,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AdminAuthContext.Provider value={{ token, logout }}>
+    <AdminAuthContext.Provider value={{ token: null, logout }}>
       {children}
     </AdminAuthContext.Provider>
   )

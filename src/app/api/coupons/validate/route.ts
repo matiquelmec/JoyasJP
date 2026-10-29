@@ -1,29 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { couponValidationSchema } from '@/lib/validations/checkout'
 
 export async function POST(request: NextRequest) {
-  // 🛡️ PROTECCIÓN ANTI-BOTS: Máximo 8 intentos de validación de cupones por minuto por IP
+  // 🛡️ PROTECCIÓN ANTI-BOTS: Máximo 8 intentos por minuto por IP
   const rateCheck = checkRateLimit(request, 8, 60 * 1000)
   if (!rateCheck.success) {
     return NextResponse.json(
-      { error: 'Demasiadas solicitudes. Por favor espera un minuto antes de intentar validar otro cupón.' },
+      { error: 'Demasiadas solicitudes. Por favor espera un minuto antes de reintentar.' },
       { status: 429 }
     )
   }
 
   try {
-    const { code, cart_amount } = await request.json()
+    const rawBody = await request.json()
+    const parsed = couponValidationSchema.safeParse(rawBody)
 
-    if (!code) {
-      return NextResponse.json({ error: 'Código de cupón requerido' }, { status: 400 })
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || 'Datos de cupón inválidos' },
+        { status: 400 }
+      )
     }
 
-    const upperCode = code.trim().toUpperCase()
+    const { code, cart_amount } = parsed.data
 
     const { rows } = await turso.execute({
       sql: "SELECT * FROM coupons WHERE code = ?",
-      args: [upperCode]
+      args: [code]
     })
 
     if (rows.length === 0) {
@@ -40,8 +45,7 @@ export async function POST(request: NextRequest) {
     // 2. Verificar expiración
     if (coupon.expires_at) {
       const expiryDate = new Date(coupon.expires_at as string)
-      const now = new Date()
-      if (expiryDate < now) {
+      if (expiryDate < new Date()) {
         return NextResponse.json({ error: 'Este cupón ha expirado' }, { status: 400 })
       }
     }
@@ -57,21 +61,22 @@ export async function POST(request: NextRequest) {
 
     // 4. Verificar compra mínima
     const minAmount = Number(coupon.min_cart_amount || 0)
-    const currentAmount = Number(cart_amount || 0)
-    if (currentAmount < minAmount) {
-      return NextResponse.json({ 
-        error: `Este cupón requiere una compra mínima de $${minAmount.toLocaleString('es-CL')} CLP` 
+    if (cart_amount < minAmount) {
+      return NextResponse.json({
+        error: `Este cupón requiere una compra mínima de $${minAmount.toLocaleString('es-CL')} CLP`
       }, { status: 400 })
     }
 
-    // 5. Calcular descuento estimado (informativo para el cliente, el server lo recalcula estricto en checkout)
+    // 5. Calcular descuento estimado
     let discountAmount = 0
     const value = Number(coupon.discount_value)
     if (coupon.discount_type === 'percentage') {
-      discountAmount = Math.round(currentAmount * (value / 100))
+      discountAmount = Math.round(cart_amount * (value / 100))
     } else {
       discountAmount = value
     }
+
+    discountAmount = Math.min(discountAmount, cart_amount)
 
     return NextResponse.json({
       valid: true,
