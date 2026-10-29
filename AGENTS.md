@@ -11,7 +11,8 @@ Este archivo define las directrices, contratos arquitectónicos y estándares de
 * **Base de Datos:** **Turso DB (LibSQL / SQLite Edge Database)** con cliente `@libsql/client`.
 * **ORM & Esquema Centralizado:** **Drizzle ORM** (`src/db/schema.ts`, `src/db/index.ts`).
 * **Validación de Contratos:** **Zod v4** (`zod`) mediante `safeParse` en mutaciones, checkout, cupones y configuraciones.
-* **Pasarela de Pagos Dual:** **Mercado Pago SDK** + **Flow.cl Nativo** con verificación criptográfica HMAC-SHA256 y deducción atómica de stock en `turso.batch`.
+* **Pasarela de Pagos:** **Flow.cl Nativo (`src/lib/flow.ts`)** con firma criptográfica **HMAC-SHA256** (`crypto` nativo, 0 dependencias externas), conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return` con redirección `303 See Other`) y deducción atómica de inventario (simples y `bundle_items` en `turso.batch`).
+* **Panel de Administración Blindado:** `StockEditor` con throttle/enter/blur y botones `+`/`-`, gestión de pedidos en tiempo real con cookie `HttpOnly` y soporte para cupones.
 * **Dirección de Arte & Estilos:** Tailwind CSS con estética *Urban Luxury & Vault* (Negro Obsidiana `#09090B`, Oro Milano `#D4AF37`, Plata Italiana 925 `#E2E8F0` y Rubí Terciopelo), retícula Base 8 y touch targets $\ge 44\text{px}$.
 * **Testing:** **Vitest** (`npm test`) en `tests/unit/*.test.ts`.
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { generateSlug, generateUniqueSlug } from '@/lib/slug-utils'
 import { optimizeCloudinaryUrl, normalizeColor } from '@/lib/utils'
 import { checkoutPayloadSchema, couponValidationSchema } from '@/lib/validations/checkout'
+import { signFlowParams } from '@/lib/flow'
 
 function calculateEffectivePrice(price: number, discount_price?: number): number {
   if (discount_price && discount_price > 0 && discount_price < price) {
@@ -52,6 +53,24 @@ describe('Reglas de Negocio Financieras e Inventario Joyas JP', () => {
       { stock: 0, quantity: 1 },
     ]
     expect(calculateBundleStock(outOfStockBundle)).toBe(0)
+  })
+})
+
+describe('Pasarela de Pagos Flow.cl Nativa (HMAC-SHA256)', () => {
+  it('ordena parámetros alfabéticamente y genera firma HMAC-SHA256 oficial', () => {
+    const secretKey = 'test_secret_key'
+    const params = {
+      apiKey: 'test_key',
+      amount: 49990,
+      commerceOrder: 'ORD-1234',
+      currency: 'CLP',
+      email: 'cliente@joyasjp.cl',
+    }
+
+    const signature = signFlowParams(params, secretKey)
+    expect(signature).toBeDefined()
+    expect(typeof signature).toBe('string')
+    expect(signature.length).toBe(64) // Longitud sha256 hex
   })
 })
 

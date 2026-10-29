@@ -618,7 +618,7 @@ export default function CheckoutPage() {
                 </form>
 
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  Al continuar, serás redirigido a MercadoPago para completar tu pago de forma segura.
+                  Al continuar, serás redirigido a Flow.cl para completar tu pago de forma 100% segura (Webpay Plus, Tarjetas de Crédito, Débito o Transferencia).
                 </p>
               </CardContent>
             </Card>

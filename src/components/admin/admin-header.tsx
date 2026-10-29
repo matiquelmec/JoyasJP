@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, Menu, User, Settings, Home, LogOut, Package, ShoppingCart, Wrench, LayoutDashboard } from 'lucide-react'
+import { Bell, Menu, User, Settings, Home, LogOut, Package, ShoppingCart, Tag, LayoutDashboard } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -24,11 +24,13 @@ import { useSiteConfig } from '@/hooks/use-site-config'
 import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
 import { useAdminAuth } from '@/components/admin/admin-auth-provider'
+import { adminAPI } from '@/lib/admin-api'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Catálogo de Joyas', href: '/admin/productos', icon: Package },
   { name: 'Pedidos y Ventas', href: '/admin/pedidos', icon: ShoppingCart },
+  { name: 'Cupones y Afiliados', href: '/admin/cupones', icon: Tag },
   { name: 'Ajustes del Sitio', href: '/admin/configuracion', icon: Settings },
 ]
 
@@ -53,12 +55,11 @@ export function AdminHeader() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     window.location.href = '/'
   }
 
-  // Estilo para enlaces de navegación - inspirado en el header principal
   const linkClassName =
     'text-sm font-medium text-white hover:text-primary transition-all duration-300 hover:scale-105 relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full px-3 py-2'
 
@@ -70,7 +71,6 @@ export function AdminHeader() {
       )}
     >
       <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo - Redirige al dashboard */}
         <Link href="/admin" className="flex items-center h-full py-2 group">
           <div className="relative">
             <Image
@@ -89,7 +89,8 @@ export function AdminHeader() {
         {/* Navegación Desktop */}
         <nav className="hidden lg:flex items-center gap-2">
           {navigation.map((link) => {
-            const isActive = pathname === link.href ||
+            const isActive =
+              pathname === link.href ||
               (link.href !== '/admin' && pathname.startsWith(link.href))
 
             return (
@@ -110,15 +111,13 @@ export function AdminHeader() {
 
         {/* Acciones */}
         <div className="flex items-center gap-2">
-          {/* Notificaciones Reales */}
           <NotificationsMenu />
 
-          {/* Menú de usuario */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant={"ghost" as any}
-                size={"sm" as any}
+                variant={'ghost' as any}
+                size={'sm' as any}
                 className="text-white hover:text-primary hover:bg-white/10 flex items-center gap-2"
               >
                 <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary to-accent p-[1px]">
@@ -147,7 +146,7 @@ export function AdminHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Cerrar Sesión
@@ -160,8 +159,8 @@ export function AdminHeader() {
             <Sheet>
               <SheetTrigger asChild>
                 <Button
-                  variant={"ghost" as any}
-                  size={"sm" as any}
+                  variant={'ghost' as any}
+                  size={'sm' as any}
                   className="text-white hover:text-primary hover:bg-white/10"
                   aria-label="Abrir menú de navegación"
                 >
@@ -191,7 +190,8 @@ export function AdminHeader() {
 
                   <nav className="flex flex-col gap-2">
                     {navigation.map((link) => {
-                      const isActive = pathname === link.href ||
+                      const isActive =
+                        pathname === link.href ||
                         (link.href !== '/admin' && pathname.startsWith(link.href))
 
                       return (
@@ -213,7 +213,7 @@ export function AdminHeader() {
 
                   <div className="mt-auto pt-6 border-t border-slate-700">
                     <Button
-                      variant={"ghost" as any}
+                      variant={'ghost' as any}
                       className="w-full justify-start text-white hover:text-destructive hover:bg-destructive/10"
                       onClick={handleLogout}
                     >
@@ -234,37 +234,23 @@ export function AdminHeader() {
 function NotificationsMenu() {
   const [notifications, setNotifications] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const { token } = useAdminAuth()
 
   useEffect(() => {
-    if (token) {
-      fetchNotifications()
-      // Polling cada 60 segundos
-      const interval = setInterval(fetchNotifications, 60000)
-      return () => clearInterval(interval)
-    }
-  }, [token])
+    fetchNotifications()
+    const interval = setInterval(fetchNotifications, 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   const fetchNotifications = async () => {
     try {
-      // Reutilizamos el endpoint de orders para ver las pendientes
-      // Idealmente haríamos un endpoint específico ligero, pero este sirve por ahora
-      const response = await fetch('/api/admin/orders', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      if (!response.ok) return
-
-      const data = await response.json()
-      // Filtramos las pendientes recientes
-      const pendingOrders = data.orders
+      const orders = await adminAPI.getOrders()
+      const pendingOrders = (orders || [])
         .filter((o: any) => o.status === 'pending')
-        .slice(0, 5) // Top 5
+        .slice(0, 5)
 
       setNotifications(pendingOrders)
     } catch (error) {
-      console.error('Error fetching notifications', error)
+      // Ignorar error si no hay conexión
     } finally {
       setLoading(false)
     }
@@ -276,15 +262,15 @@ function NotificationsMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={"ghost" as any}
-          size={"sm" as any}
+          variant={'ghost' as any}
+          size={'sm' as any}
           className="relative text-white hover:text-primary hover:bg-white/10"
           aria-label="Notificaciones"
         >
-          <Bell className={cn("h-5 w-5 transition-transform duration-500", hasNotifications ? "shake-animation" : "")} />
+          <Bell className={cn('h-5 w-5 transition-transform duration-500')} />
           {hasNotifications && (
             <Badge
-              variant={"destructive" as any}
+              variant={'destructive' as any}
               className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 flex items-center justify-center text-[10px] animate-pulse bg-red-600 border border-slate-900"
             >
               {notifications.length}
@@ -295,7 +281,11 @@ function NotificationsMenu() {
       <DropdownMenuContent align="end" className="w-80 p-0 overflow-hidden border-slate-200 shadow-xl">
         <div className="bg-slate-50 p-3 border-b border-slate-200 flex justify-between items-center">
           <h3 className="font-bold text-sm text-slate-700">Notificaciones</h3>
-          {hasNotifications && <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">{notifications.length} Nuevas</span>}
+          {hasNotifications && (
+            <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">
+              {notifications.length} Nuevas
+            </span>
+          )}
         </div>
 
         <div className="max-h-[300px] overflow-y-auto">
@@ -323,7 +313,10 @@ function NotificationsMenu() {
                       <p className="text-[10px] font-mono text-slate-400 flex justify-between">
                         <span>#{order.id.slice(0, 8)}</span>
                         <span className="font-bold text-green-600">
-                          {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(order.total_amount)}
+                          {new Intl.NumberFormat('es-CL', {
+                            style: 'currency',
+                            currency: 'CLP',
+                          }).format(order.total_amount)}
                         </span>
                       </p>
                     </div>
@@ -337,7 +330,11 @@ function NotificationsMenu() {
         {hasNotifications && (
           <div className="p-2 border-t border-slate-50 bg-slate-50">
             <Link href="/admin/pedidos">
-              <Button variant={"ghost" as any} size={"sm" as any} className="w-full text-xs h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+              <Button
+                variant={'ghost' as any}
+                size={'sm' as any}
+                className="w-full text-xs h-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              >
                 Ver todos los pedidos
               </Button>
             </Link>

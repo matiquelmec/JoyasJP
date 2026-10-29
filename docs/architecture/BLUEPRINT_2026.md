@@ -37,12 +37,14 @@
 | Ruta | Método | Propósito y Seguridad |
 | :--- | :--- | :--- |
 | `/api/health` | `GET` | Telemetría Edge y latencia en vivo de Turso SQLite (`latencyMs`). |
-| `/api/checkout` | `POST` | Validación Zod, recálculo autoritativo de precios/cupones y preferencia MP. |
-| `/api/webhook/mercadopago` | `POST` | Conciliación idempotente, deducción de stock (simple y bundles) y purga ISR 0ms. |
+| `/api/checkout` | `POST` | Validación Zod, recálculo autoritativo de precios/cupones y creación de orden Flow.cl (`createFlowPayment`). |
+| `/api/webhook/flow` | `POST` | Webhook S2S Flow.cl con conciliación idempotente, deducción de stock (simple y bundles) y purga ISR 0ms. |
+| `/api/flow/return` | `GET/POST` | Retorno seguro del cliente desde Flow.cl con reconciliación idempotente y redirección 303 a `/productos/success` o `/checkout`. |
 | `/api/coupons/validate` | `POST` | Validación Zod de vigencia, monto mínimo y límite de uso de cupones. |
 | `/api/products/related` | `GET` | Recomendaciones relacionales por categoría excluyendo el producto actual. |
 | `/api/auth/login` & `/logout` | `POST` | Emisión y revocación de sesión administrativa en cookie `HttpOnly` JWT. |
 | `/api/admin/*` | `ALL` | Gestión de catálogo, órdenes, cupones y configuración protegida con `await verifyAdminAuth(request)`. |
+| `/api/admin/products/stock` | `PUT` | Actualización atómica de stock protegida con control visual `StockEditor`. |
 
 ---
 

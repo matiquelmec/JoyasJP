@@ -9,12 +9,11 @@ import { Progress } from '@/components/ui/progress'
 import {
   TrendingUp,
   Package,
-  ShoppingCart,
   DollarSign,
   AlertTriangle,
-  Users,
-  Calendar,
-  BarChart3
+  BarChart3,
+  ShoppingCart,
+  Clock,
 } from 'lucide-react'
 import { adminAPI } from '@/lib/admin-api'
 import Link from 'next/link'
@@ -26,8 +25,9 @@ interface DashboardStats {
   outOfStockProducts: number
   totalOrders: number
   pendingOrders: number
+  paidOrders: number
   totalRevenue: number
-  totalCustomers: number
+  inventoryValue: number
   topProducts: Array<{
     id: string
     name: string
@@ -54,49 +54,61 @@ export function AdminDashboard() {
 
   const loadDashboardStats = async () => {
     try {
-      // Obtener productos reales
-      // Obtener productos reales y filtrar eliminados (Soft Delete)
-      const allProducts = await adminAPI.getProducts()
-      const products = allProducts.filter((p: any) => !p.deleted_at)
+      const [allProducts, allOrders] = await Promise.all([
+        adminAPI.getProducts().catch(() => []),
+        adminAPI.getOrders().catch(() => []),
+      ])
 
-      // Calcular estadísticas de productos (Excluyendo bundles de alertas de inventario físico)
+      const products = (allProducts || []).filter((p: any) => !p.deleted_at)
+      const orders = allOrders || []
+
       const physicalProducts = products.filter((p: any) => !p.is_bundle)
       const activeProducts = products.filter((p: any) => Number(p.stock || 0) > 0)
       const lowStockProducts = physicalProducts.filter((p: any) => Number(p.stock || 0) === 1)
       const outOfStockProducts = physicalProducts.filter((p: any) => Number(p.stock || 0) === 0)
 
-      // Top 5 productos por precio (como ejemplo de "más valiosos")
       const topProducts = [...activeProducts]
         .sort((a: any, b: any) => b.price - a.price)
         .slice(0, 5)
 
-      // Productos con stock bajo
       const lowStockItems = lowStockProducts
         .sort((a: any, b: any) => a.stock - b.stock)
         .slice(0, 5)
 
-      // 🛡️ ALTO ESTÁNDAR ERP: Calcular valor del inventario acumulando únicamente piezas físicas tangibles (!p.is_bundle)
-      // Los productos tipo "is_bundle" son conjuntos virtuales cuyas piezas ya están valorizadas individualmente.
-      const totalInventoryValue = products
-        .filter((p: any) => !p.is_bundle)
-        .reduce((sum: number, p: any) => sum + (Number(p.price) * Number(p.stock || 0)), 0)
+      const totalInventoryValue = physicalProducts.reduce(
+        (sum: number, p: any) => sum + Number(p.price) * Number(p.stock || 0),
+        0
+      )
 
-      const dashboardStats: DashboardStats = {
+      const paidOrdersList = orders.filter(
+        (o: any) =>
+          o.payment_status === 'paid' ||
+          o.payment_status === 'approved' ||
+          o.status === 'delivered' ||
+          o.status === 'paid'
+      )
+      const pendingOrdersList = orders.filter((o: any) => o.status === 'pending')
+
+      const totalRevenue = paidOrdersList.reduce(
+        (sum: number, o: any) => sum + Number(o.total_amount || 0),
+        0
+      )
+
+      setStats({
         totalProducts: products.length,
         activeProducts: activeProducts.length,
         lowStockProducts: lowStockProducts.length,
         outOfStockProducts: outOfStockProducts.length,
-        totalOrders: 0, // Por ahora 0, cuando tengamos tabla de orders se actualiza
-        pendingOrders: 0,
-        totalRevenue: totalInventoryValue, // Valor del inventario como referencia
-        totalCustomers: 0, // Por ahora 0
+        totalOrders: orders.length,
+        pendingOrders: pendingOrdersList.length,
+        paidOrders: paidOrdersList.length,
+        totalRevenue,
+        inventoryValue: totalInventoryValue,
         topProducts,
-        lowStockItems
-      }
-
-      setStats(dashboardStats)
+        lowStockItems,
+      })
     } catch (error) {
-      // console.error('Error loading dashboard stats:', error)
+      // Ignorar
     } finally {
       setLoading(false)
     }
@@ -105,7 +117,9 @@ export function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-muted-foreground">Cargando estadísticas...</div>
+        <div className="text-muted-foreground uppercase font-black tracking-widest text-xs animate-pulse">
+          Cargando métricas...
+        </div>
       </div>
     )
   }
@@ -126,68 +140,82 @@ export function AdminDashboard() {
     <div className="space-y-8">
       {/* KPIs principales */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+        <Card className="relative overflow-hidden border-border/10 bg-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Valor del Inventario</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+              Ventas Aprobadas
+            </CardTitle>
             <div className="p-2 rounded-xl bg-green-500/10">
               <DollarSign className="h-5 w-5 text-green-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">
+            <div className="text-3xl font-black text-slate-950 mb-1">
               {formatCLP(stats.totalRevenue)}
             </div>
             <p className="text-xs text-slate-500 font-bold">
-              Valor total de piezas en stock
+              {stats.paidOrders} pedidos pagados
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+        <Card className="relative overflow-hidden border-border/10 bg-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Productos Totales</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+              Valor del Inventario
+            </CardTitle>
             <div className="p-2 rounded-xl bg-primary/10">
               <Package className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.totalProducts}</div>
+            <div className="text-3xl font-black text-slate-950 mb-1">
+              {formatCLP(stats.inventoryValue)}
+            </div>
             <p className="text-xs text-slate-500 font-bold">
-              {stats.activeProducts} con stock disponible
+              {stats.activeProducts} de {stats.totalProducts} joyas con stock
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+        <Card className="relative overflow-hidden border-border/10 bg-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-yellow-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Stock Bajo</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+              Pedidos Pendientes
+            </CardTitle>
             <div className="p-2 rounded-xl bg-orange-500/10">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
+              <Clock className="h-5 w-5 text-orange-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.lowStockProducts}</div>
+            <div className="text-3xl font-black text-slate-950 mb-1">
+              {stats.pendingOrders}
+            </div>
             <p className="text-xs text-slate-500 font-bold">
-              Productos con 1 unidad restante
+              De {stats.totalOrders} pedidos totales registrados
             </p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/10 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+        <Card className="relative overflow-hidden border-border/10 bg-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
           <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-rose-500/5" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
-            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">Sin Stock</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-600 uppercase tracking-wider">
+              Sin Stock / Agotados
+            </CardTitle>
             <div className="p-2 rounded-xl bg-red-500/10">
-              <Package className="h-5 w-5 text-red-600" />
+              <AlertTriangle className="h-5 w-5 text-red-600" />
             </div>
           </CardHeader>
           <CardContent className="relative z-10">
-            <div className="text-3xl font-black text-slate-950 dark:text-white mb-1">{stats.outOfStockProducts}</div>
+            <div className="text-3xl font-black text-slate-950 mb-1">
+              {stats.outOfStockProducts}
+            </div>
             <p className="text-xs text-slate-500 font-bold">
-              Productos agotados
+              {stats.lowStockProducts} con 1 unidad restante
             </p>
           </CardContent>
         </Card>
@@ -195,32 +223,35 @@ export function AdminDashboard() {
 
       {/* Alertas de Stock Bajo */}
       {stats.lowStockProducts > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-950">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center gap-2 text-orange-800">
               <AlertTriangle className="h-5 w-5" />
               Alertas de Inventario
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700 dark:text-orange-300 mb-4">
-              {stats.lowStockProducts} productos requieren reposición inmediata
+            <p className="text-orange-700 mb-4 text-sm">
+              {stats.lowStockProducts} productos tienen solo 1 unidad restante en catálogo
             </p>
             <div className="space-y-2">
               {stats.lowStockItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded-lg">
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-2 bg-white rounded-lg border border-orange-100"
+                >
                   <div>
-                    <span className="font-medium">{item.name}</span>
-                    <span className="text-sm text-muted-foreground ml-2">({item.category})</span>
+                    <span className="font-bold text-sm text-slate-900">{item.name}</span>
+                    <span className="text-xs text-muted-foreground ml-2">({item.category})</span>
                   </div>
-                  <Badge variant={"destructive" as any}>
-                    {item.stock} unidades
+                  <Badge variant={'destructive' as any}>
+                    {item.stock} unidad
                   </Badge>
                 </div>
               ))}
             </div>
             <Link href="/admin/productos">
-              <Button variant={"outline" as any} className="mt-4" size={"sm" as any}>
+              <Button variant={'outline' as any} className="mt-4 bg-white" size={'sm' as any}>
                 Ver todos los productos
               </Button>
             </Link>
@@ -234,29 +265,30 @@ export function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Productos de Mayor Valor
+              Piezas Exclusivas de Mayor Valor
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.topProducts.map((product) => (
                 <div key={product.id} className="flex items-center space-x-4">
-                  <Image
-                    src={product.imageUrl || '/assets/logo.webp'}
-                    alt={product.name}
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-lg object-cover"
-                  />
+                  <div className="relative h-10 w-10 rounded-lg overflow-hidden border bg-zinc-100 shrink-0">
+                    <Image
+                      src={product.imageUrl || '/assets/logo.webp'}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-sm font-bold text-slate-900 truncate">
                       {product.name}
                     </p>
                     <p className="text-xs text-slate-500 font-medium">
                       Stock: {product.stock} | {product.category}
                     </p>
                   </div>
-                  <div className="text-sm font-bold">
+                  <div className="text-sm font-black text-slate-900">
                     {formatCLP(product.price)}
                   </div>
                 </div>
@@ -269,45 +301,37 @@ export function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              Resumen de Inventario
+              Estado del Catálogo
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <div className="flex justify-between text-sm">
-                <span>Productos Activos</span>
-                <span className="font-bold">{stats.activeProducts}/{stats.totalProducts}</span>
+                <span>Disponibilidad en Vitrina</span>
+                <span className="font-bold">
+                  {stats.activeProducts}/{stats.totalProducts}
+                </span>
               </div>
               <Progress
-                value={(stats.activeProducts / stats.totalProducts) * 100}
+                value={
+                  stats.totalProducts > 0
+                    ? (stats.activeProducts / stats.totalProducts) * 100
+                    : 0
+                }
                 className="mt-2"
               />
             </div>
-            <div>
-              <div className="flex justify-between text-sm">
-                <span>Estado del Stock</span>
-                <span>{Math.round(((stats.totalProducts - stats.lowStockProducts - stats.outOfStockProducts) / stats.totalProducts) * 100)}% Óptimo</span>
-              </div>
-              <Progress
-                value={((stats.totalProducts - stats.lowStockProducts - stats.outOfStockProducts) / stats.totalProducts) * 100}
-                className="mt-2"
-              />
-            </div>
-            <div className="pt-2 border-t">
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-green-600">{stats.activeProducts - stats.lowStockProducts}</p>
-                  <p className="text-xs text-slate-600 font-medium">En Stock</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-orange-600">{stats.lowStockProducts}</p>
-                  <p className="text-xs text-muted-foreground">Stock Bajo</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-red-600">{stats.outOfStockProducts}</p>
-                  <p className="text-xs text-muted-foreground">Sin Stock</p>
-                </div>
-              </div>
+            <div className="pt-4 border-t flex justify-between items-center">
+              <Link href="/admin/pedidos">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ShoppingCart className="w-4 h-4" /> Ver Pedidos
+                </Button>
+              </Link>
+              <Link href="/admin/cupones">
+                <Button variant="outline" size="sm" className="gap-2">
+                  Gestión de Cupones
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

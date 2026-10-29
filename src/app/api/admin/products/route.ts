@@ -3,11 +3,10 @@ import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 import { generateSlug } from '@/lib/slug-utils'
 
-// ✅ Nunca cachear el panel de administración — siempre datos en vivo
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-// GET - Obtener todos los productos (incluyendo eliminados para admin)
+// GET - Obtener todos los productos con stock de bundles resuelto
 export async function GET(request: NextRequest) {
   if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -16,6 +15,12 @@ export async function GET(request: NextRequest) {
   try {
     const { rows } = await turso.execute('SELECT * FROM products ORDER BY id DESC')
     const { rows: bundleItems } = await turso.execute('SELECT * FROM bundle_items')
+
+    // Mapa de stock físico de componentes
+    const stockMap = new Map<string, number>()
+    rows.forEach(r => {
+      stockMap.set(String(r.id), Number(r.stock || 0))
+    })
 
     const products = rows.map(r => {
       const is_bundle = Boolean(r.is_bundle === 1 || r.is_bundle === '1')
@@ -28,8 +33,23 @@ export async function GET(request: NextRequest) {
             }))
         : []
 
+      // Si es un bundle, calcular el stock físico real disponible en base a sus componentes
+      let calculatedStock = Number(r.stock || 0)
+      if (is_bundle) {
+        if (components.length === 0) {
+          calculatedStock = 0
+        } else {
+          const maxBundles = components.map(c => {
+            const compStock = stockMap.get(String(c.product_id)) || 0
+            return Math.floor(compStock / c.quantity)
+          })
+          calculatedStock = Math.min(...maxBundles)
+        }
+      }
+
       return {
         ...r,
+        stock: calculatedStock,
         is_priority: Boolean(r.is_priority === 1 || r.is_priority === '1'),
         is_bundle,
         components,
@@ -64,15 +84,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const productData = await request.json()
-
-    // ✅ Siempre generar un UUID único en el servidor — el campo 'code' es solo referencia visual (SKU)
     const productId = crypto.randomUUID()
     const { code, components, ...productDataWithoutCode } = productData
-
-    // El 'code' del formulario se guarda como SKU si no hay SKU explícito
     const sku = productDataWithoutCode.sku || code || null
 
-    // Formatear arrays/objetos a strings JSON para SQLite
     const gallery = JSON.stringify(
       Array.isArray(productDataWithoutCode.gallery) ? productDataWithoutCode.gallery : []
     )
@@ -88,11 +103,9 @@ export async function POST(request: NextRequest) {
     const is_priority = productDataWithoutCode.is_priority ? 1 : 0
     const is_bundle = productDataWithoutCode.is_bundle ? 1 : 0
 
-    // Usar slug del formulario si existe, sino generarlo desde el nombre
     let slug =
       productDataWithoutCode.slug || generateSlug(productDataWithoutCode.name || '')
 
-    // Verificar si el slug ya existe en la DB
     const { rows: slugCheck } = await turso.execute({
       sql: 'SELECT id FROM products WHERE slug = ?',
       args: [slug],
@@ -141,7 +154,6 @@ export async function POST(request: NextRequest) {
         ],
       })
 
-      // Guardar componentes de conjuntos si corresponde
       if (is_bundle === 1 && Array.isArray(components)) {
         for (const comp of components) {
           if (comp.product_id) {
@@ -159,7 +171,6 @@ export async function POST(request: NextRequest) {
       throw txErr
     }
 
-    // Revalidar páginas después de crear nuevo producto
     try {
       const { revalidatePath } = await import('next/cache')
       revalidatePath('/', 'layout')
@@ -196,7 +207,6 @@ export async function PUT(request: NextRequest) {
   try {
     const { id, code, components, ...productData } = await request.json()
 
-    // Sync imageUrl with gallery[0] if gallery is provided
     if (Array.isArray(productData.gallery)) {
       productData.imageUrl = productData.imageUrl || productData.gallery[0] || null
     }
@@ -216,7 +226,6 @@ export async function PUT(request: NextRequest) {
 
     let slug = productData.slug || generateSlug(productData.name || '')
 
-    // Verificar si el slug está tomado por OTRO producto (diferente al que editamos)
     const { rows: slugCheck } = await turso.execute({
       sql: 'SELECT id FROM products WHERE slug = ? AND id != ?',
       args: [slug, id],
@@ -257,7 +266,6 @@ export async function PUT(request: NextRequest) {
         ],
       })
 
-      // Actualizar relaciones en bundle_items
       await tx.execute({
         sql: 'DELETE FROM bundle_items WHERE bundle_id = ?',
         args: [id],
@@ -280,7 +288,6 @@ export async function PUT(request: NextRequest) {
       throw txErr
     }
 
-    // Revalidar la página del producto después de actualizar
     try {
       const { revalidatePath } = await import('next/cache')
       revalidatePath('/', 'layout')
@@ -304,7 +311,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE - Eliminar producto (soft delete para seguridad)
+// DELETE - Eliminar producto
 export async function DELETE(request: NextRequest) {
   if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

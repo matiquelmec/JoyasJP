@@ -41,7 +41,7 @@ export default function SuccessPage() {
             </p>
             <Button asChild className="bg-[#25D366] hover:bg-[#128C7E] text-white border-none w-full">
               <a
-                href={`https://wa.me/${config?.whatsapp_number?.replace(/\+/g, '') || '56912345678'}?text=Hola! Acabo de realizar una compra y tengo una duda sobre la entrega.`}
+                href={`https://wa.me/56982990513?text=Hola! Acabo de realizar una compra y tengo una duda sobre la entrega.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2"

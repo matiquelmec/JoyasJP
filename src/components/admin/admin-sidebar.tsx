@@ -10,15 +10,11 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  BarChart3,
-  Users,
   Settings,
-  BookOpen,
   LogOut,
-  Gauge,
-  Wrench,
-  Tag
+  Tag,
 } from 'lucide-react'
+import { useAdminAuth } from '@/components/admin/admin-auth-provider'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -31,6 +27,12 @@ const navigation = [
 export function AdminSidebar() {
   const pathname = usePathname()
   const { config } = useSiteConfig()
+  const { logout } = useAdminAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    window.location.href = '/'
+  }
 
   return (
     <>
@@ -65,7 +67,8 @@ export function AdminSidebar() {
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => {
-                    const isActive = pathname === item.href ||
+                    const isActive =
+                      pathname === item.href ||
                       (item.href !== '/admin' && pathname.startsWith(item.href))
 
                     return (
@@ -101,11 +104,9 @@ export function AdminSidebar() {
               {/* Logout */}
               <li className="mt-auto">
                 <button
+                  type="button"
                   className="group flex w-full gap-x-3 rounded-lg p-3 text-sm font-medium leading-6 transition-all duration-200 text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20"
-                  onClick={() => {
-                    // Implementar logout
-                    window.location.href = '/'
-                  }}
+                  onClick={handleLogout}
                 >
                   <LogOut className="h-5 w-5 shrink-0 transition-all duration-200 group-hover:scale-110" />
                   Cerrar Sesión
@@ -120,7 +121,8 @@ export function AdminSidebar() {
       <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-slate-950/95 backdrop-blur-xl border-t border-white/10 shadow-2xl">
         <div className="grid grid-cols-5 gap-1 p-2">
           {navigation.slice(0, 5).map((item) => {
-            const isActive = pathname === item.href ||
+            const isActive =
+              pathname === item.href ||
               (item.href !== '/admin' && pathname.startsWith(item.href))
 
             return (

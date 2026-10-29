@@ -17,7 +17,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -38,17 +37,13 @@ import {
   Trash2,
   Undo2,
   Clock,
+  Plus,
+  Minus,
 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
 import { ProductFormModal } from './product-form-modal'
-
-// Tipo para los datos que vienen de Supabase
-interface SupabaseProduct {
-  [key: string]: any
-  imageUrl?: string
-}
 
 export function ProductsManager() {
   const [products, setProducts] = useState<Product[]>([])
@@ -57,6 +52,7 @@ export function ProductsManager() {
   const [searchTerm, setSearchTerm] = useState('')
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [updatingStockId, setUpdatingStockId] = useState<string | null>(null)
   const [recentlyDeleted, setRecentlyDeleted] = useState<{
     product: Product
     timestamp: number
@@ -66,7 +62,6 @@ export function ProductsManager() {
     loadProducts()
   }, [])
 
-  // Auto-clear recently deleted after 10 seconds
   useEffect(() => {
     if (recentlyDeleted) {
       const timer = setTimeout(() => {
@@ -79,12 +74,8 @@ export function ProductsManager() {
   const loadProducts = async () => {
     try {
       const data = await adminAPI.getProducts()
-      const activeProducts = data.filter((product: any) => !product.deleted_at)
-      const mappedProducts = activeProducts.map((product: SupabaseProduct) => ({
-        ...product,
-        imageUrl: product.imageUrl,
-      })) as Product[]
-      setProducts(mappedProducts)
+      const activeProducts = (data || []).filter((product: any) => !product.deleted_at)
+      setProducts(activeProducts)
     } catch (error) {
       toast.error('Error', {
         description: 'No se pudieron cargar los productos.',
@@ -95,15 +86,22 @@ export function ProductsManager() {
   }
 
   const updateStock = async (productId: string, newStock: number) => {
+    const validStock = Math.max(0, newStock)
+    setUpdatingStockId(productId)
     try {
-      await adminAPI.updateStock(productId, newStock)
+      await adminAPI.updateStock(productId, validStock)
       setProducts(prev =>
-        prev.map(p => p.id === productId ? { ...p, stock: newStock } : p)
+        prev.map(p => (p.id === productId ? { ...p, stock: validStock } : p))
       )
+      toast.success('Stock actualizado', {
+        description: `Nuevo stock asignado: ${validStock} unidades`,
+      })
     } catch (error) {
       toast.error('Error', {
-        description: 'No se pudo actualizar el stock.',
+        description: 'No se pudo actualizar el stock en la base de datos.',
       })
+    } finally {
+      setUpdatingStockId(null)
     }
   }
 
@@ -133,7 +131,9 @@ export function ProductsManager() {
       await adminAPI.restoreProduct(recentlyDeleted.product.id)
       setProducts(prev => [...prev, recentlyDeleted.product])
       setRecentlyDeleted(null)
-      toast.success('Producto restaurado', { description: `${recentlyDeleted.product.name} ha sido restaurado.` })
+      toast.success('Producto restaurado', {
+        description: `${recentlyDeleted.product.name} ha sido restaurado.`,
+      })
     } catch (error) {
       toast.error('Error', { description: 'No se pudo restaurar.' })
     }
@@ -141,7 +141,8 @@ export function ProductsManager() {
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory
-    const matchesSearch = searchTerm === '' ||
+    const matchesSearch =
+      searchTerm === '' ||
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.id.toLowerCase().includes(searchTerm.toLowerCase())
 
@@ -161,18 +162,28 @@ export function ProductsManager() {
 
   const getStockBadge = (stock: number) => {
     if (stock === 0) {
-      return <Badge variant={"destructive" as any}>Agotado</Badge>
+      return <Badge variant={'destructive' as any}>Agotado</Badge>
     } else if (stock === 1) {
-      return <Badge variant={"secondary" as any} className="bg-orange-500 text-white border-none">Última Unidad</Badge>
+      return (
+        <Badge variant={'secondary' as any} className="bg-orange-500 text-white border-none">
+          Última Unidad
+        </Badge>
+      )
     } else {
-      return <Badge variant={"default" as any} className="bg-green-600 text-white border-none">En Stock</Badge>
+      return (
+        <Badge variant={'default' as any} className="bg-green-600 text-white border-none">
+          En Stock
+        </Badge>
+      )
     }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-20">
-        <div className="animate-pulse text-muted-foreground uppercase tracking-widest font-black">Cargando Inventario...</div>
+        <div className="animate-pulse text-muted-foreground uppercase tracking-widest font-black">
+          Cargando Inventario...
+        </div>
       </div>
     )
   }
@@ -181,7 +192,9 @@ export function ProductsManager() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter text-slate-900">Inventario Maestro</h1>
+          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter text-slate-900">
+            Inventario Maestro
+          </h1>
           <p className="text-slate-600 font-medium">Gestión total de piezas, stock y precios.</p>
         </div>
         <ProductFormModal mode="create" onSave={loadProducts} />
@@ -194,14 +207,25 @@ export function ProductsManager() {
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-orange-600" />
                 <p className="text-sm font-medium">
-                  "{recentlyDeleted.product.name}" eliminado. <span className="hidden sm:inline">¿Fue un error?</span>
+                  "{recentlyDeleted.product.name}" eliminado.{' '}
+                  <span className="hidden sm:inline">¿Fue un error?</span>
                 </p>
               </div>
               <div className="flex gap-2">
-                <Button size={"sm" as any} variant={"outline" as any} onClick={handleUndoDelete} className="bg-white hover:bg-orange-50 border-orange-200 text-orange-700">
+                <Button
+                  size={'sm' as any}
+                  variant={'outline' as any}
+                  onClick={handleUndoDelete}
+                  className="bg-white hover:bg-orange-50 border-orange-200 text-orange-700"
+                >
                   <Undo2 className="w-4 h-4 mr-1" /> Deshacer
                 </Button>
-                <Button size={"sm" as any} variant={"ghost" as any} onClick={() => setRecentlyDeleted(null)} className="text-orange-600">
+                <Button
+                  size={'sm' as any}
+                  variant={'ghost' as any}
+                  onClick={() => setRecentlyDeleted(null)}
+                  className="text-orange-600"
+                >
                   Cerrar
                 </Button>
               </div>
@@ -212,15 +236,48 @@ export function ProductsManager() {
 
       <div className="grid gap-6 md:grid-cols-4">
         {[
-          { label: 'Productos', value: products.length, icon: Package, color: 'text-slate-600', bg: 'bg-slate-100' },
-          { label: 'Stock Bajo', value: lowStockProducts.length, icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100' },
-          { label: 'Valor Total', value: formatCLP(products.filter(p => !p.is_bundle).reduce((t, p) => t + (p.price * p.stock), 0)), icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-          { label: 'Agotados', value: products.filter(p => p.stock === 0).length, icon: Package, color: 'text-rose-600', bg: 'bg-rose-100' }
+          {
+            label: 'Productos',
+            value: products.length,
+            icon: Package,
+            color: 'text-slate-600',
+            bg: 'bg-slate-100',
+          },
+          {
+            label: 'Stock Bajo',
+            value: lowStockProducts.length,
+            icon: AlertTriangle,
+            color: 'text-amber-600',
+            bg: 'bg-amber-100',
+          },
+          {
+            label: 'Valor Total',
+            value: formatCLP(
+              products
+                .filter(p => !p.is_bundle)
+                .reduce((t, p) => t + p.price * p.stock, 0)
+            ),
+            icon: DollarSign,
+            color: 'text-emerald-600',
+            bg: 'bg-emerald-100',
+          },
+          {
+            label: 'Agotados',
+            value: products.filter(p => p.stock === 0).length,
+            icon: Package,
+            color: 'text-rose-600',
+            bg: 'bg-rose-100',
+          },
         ].map((stat, i) => (
-          <Card key={i} className="border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white">
+          <Card
+            key={i}
+            className="border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white"
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">{stat.label}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">
+                  {stat.label}
+                </p>
                 <p className={`text-3xl font-black ${stat.color}`}>{stat.value}</p>
               </div>
               <div className={`p-3 rounded-xl ${stat.bg}`}>
@@ -228,32 +285,36 @@ export function ProductsManager() {
               </div>
             </CardContent>
           </Card>
-        ))
-        }
+        ))}
       </div>
 
       <Card className="border-slate-200 shadow-xl overflow-hidden bg-white">
         <CardHeader className="bg-slate-950 text-white p-6 border-b border-slate-900">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <CardTitle className="text-xl font-black uppercase tracking-widest">Joyas en Catálogo</CardTitle>
+            <CardTitle className="text-xl font-black uppercase tracking-widest">
+              Joyas en Catálogo
+            </CardTitle>
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              {/* Search Bar */}
               <Input
                 placeholder="Buscar por nombre o ID..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="bg-zinc-900 border-zinc-800 text-white text-xs h-9 w-full sm:w-64 placeholder:text-zinc-500 focus-visible:ring-primary"
               />
 
-              <span className="text-xs font-bold uppercase tracking-widest opacity-60 ml-2">Filtrar:</span>
+              <span className="text-xs font-bold uppercase tracking-widest opacity-60 ml-2">
+                Filtrar:
+              </span>
               <select
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
+                onChange={e => setFilterCategory(e.target.value)}
                 className="bg-zinc-900 border-zinc-800 text-white text-xs p-2 rounded-md focus:ring-1 focus:ring-primary h-9"
               >
                 <option value="all">TODAS LAS CATEGORÍAS</option>
                 {categories.map(c => (
-                  <option key={c} value={c}>{c.toUpperCase()}</option>
+                  <option key={c} value={c}>
+                    {c.toUpperCase()}
+                  </option>
                 ))}
               </select>
             </div>
@@ -264,49 +325,91 @@ export function ProductsManager() {
             <Table>
               <TableHeader className="bg-slate-100 border-b border-slate-200">
                 <TableRow className="hover:bg-slate-100">
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 pl-6 text-slate-700">Producto</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Categoría</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Precio</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Stock</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700 text-right pr-6">Acciones</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 pl-6 text-slate-700">
+                    Producto
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Categoría
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Precio
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Stock
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700 text-right pr-6">
+                    Acciones
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((p) => (
-                  <TableRow key={p.id} className="hover:bg-slate-50 transition-colors border-slate-100 group">
+                {filteredProducts.map(p => (
+                  <TableRow
+                    key={p.id}
+                    className="hover:bg-slate-50 transition-colors border-slate-100 group"
+                  >
                     <TableCell className="py-4 pl-6">
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-lg bg-zinc-100 border border-zinc-200 overflow-hidden relative shadow-inner">
-                          <Image src={p.imageUrl || '/assets/logo.webp'} alt={p.name} fill className="object-cover" />
+                          <Image
+                            src={p.imageUrl || '/assets/logo.webp'}
+                            alt={p.name}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
                         <div>
                           <div className="font-bold text-sm text-zinc-900 leading-tight mb-1 flex items-center gap-2">
                             {p.name}
-                            {p.is_priority && <span className="text-amber-500" title="Prioritario">⭐</span>}
-                            {p.is_bundle && <Badge className="bg-amber-500 hover:bg-amber-600 text-white h-4 text-[8px] px-1 border-none font-black">CONJUNTO</Badge>}
-                            {p.discount_price && <Badge variant="destructive" className="h-4 text-[8px] px-1">OFERTA</Badge>}
+                            {p.is_priority && (
+                              <span className="text-amber-500" title="Prioritario">
+                                ⭐
+                              </span>
+                            )}
+                            {p.is_bundle && (
+                              <Badge className="bg-amber-500 hover:bg-amber-600 text-white h-4 text-[8px] px-1 border-none font-black">
+                                CONJUNTO
+                              </Badge>
+                            )}
+                            {p.discount_price && (
+                              <Badge variant="destructive" className="h-4 text-[8px] px-1">
+                                OFERTA
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
                             ID: {p.id.slice(0, 8)}
-                            {p.custom_label && <span className="text-indigo-500 font-bold uppercase">[{p.custom_label}]</span>}
+                            {p.custom_label && (
+                              <span className="text-indigo-500 font-bold uppercase">
+                                [{p.custom_label}]
+                              </span>
+                            )}
                           </p>
-                          {p.is_bundle && (p as any).components && (p as any).components.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {(p as any).components.map((comp: any, idx: number) => {
-                                const matched = products.find(prod => prod.id === comp.product_id)
-                                return (
-                                  <span key={idx} className="inline-flex items-center text-[9px] bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-0.5 font-bold">
-                                    {comp.quantity}x {matched?.name || comp.product_id}
-                                  </span>
-                                )
-                              })}
-                            </div>
-                          )}
+                          {p.is_bundle &&
+                            (p as any).components &&
+                            (p as any).components.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {(p as any).components.map((comp: any, idx: number) => {
+                                  const matched = products.find(prod => prod.id === comp.product_id)
+                                  return (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center text-[9px] bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-0.5 font-bold"
+                                    >
+                                      {comp.quantity}x {matched?.name || comp.product_id}
+                                    </span>
+                                  )
+                                })}
+                              </div>
+                            )}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={"outline" as any} className="bg-slate-100 text-slate-800 border-slate-300 text-[10px] uppercase font-bold tracking-widest">
+                      <Badge
+                        variant={'outline' as any}
+                        className="bg-slate-100 text-slate-800 border-slate-300 text-[10px] uppercase font-bold tracking-widest"
+                      >
                         {p.category}
                       </Badge>
                     </TableCell>
@@ -314,7 +417,9 @@ export function ProductsManager() {
                       {p.discount_price ? (
                         <div className="flex flex-col">
                           <span className="text-red-600">{formatCLP(p.discount_price)}</span>
-                          <span className="text-[10px] text-zinc-400 line-through">{formatCLP(p.price)}</span>
+                          <span className="text-[10px] text-zinc-400 line-through">
+                            {formatCLP(p.price)}
+                          </span>
                         </div>
                       ) : (
                         formatCLP(p.price)
@@ -324,17 +429,22 @@ export function ProductsManager() {
                       <div className="flex items-center gap-3">
                         {p.is_bundle ? (
                           <div className="flex items-center gap-2">
-                            <span className="h-8 px-2.5 flex items-center justify-center text-xs font-black bg-amber-50 text-amber-900 border border-amber-300 rounded-md shadow-inner" title="Stock calculado dinámicamente según componentes">
+                            <span
+                              className="h-8 px-2.5 flex items-center justify-center text-xs font-black bg-amber-50 text-amber-900 border border-amber-300 rounded-md shadow-inner"
+                              title="Stock calculado dinámicamente según componentes"
+                            >
                               {p.stock}
                             </span>
-                            <span className="text-[10px] text-amber-700 font-bold uppercase tracking-tighter">Auto</span>
+                            <span className="text-[10px] text-amber-700 font-bold uppercase tracking-tighter">
+                              Auto
+                            </span>
                           </div>
                         ) : (
-                          <Input
-                            type="number"
-                            value={p.stock}
-                            onChange={(e) => updateStock(p.id, parseInt(e.target.value) || 0)}
-                            className="h-8 w-16 text-center text-xs font-bold border-zinc-200"
+                          <StockEditor
+                            productId={p.id}
+                            initialStock={p.stock}
+                            onUpdate={updateStock}
+                            disabled={updatingStockId === p.id}
                           />
                         )}
                         {getStockBadge(p.stock)}
@@ -343,7 +453,11 @@ export function ProductsManager() {
                     <TableCell className="text-right pr-6">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant={"outline" as any} size={"icon" as any} className="h-8 w-8 border-slate-300 bg-white hover:bg-slate-50 shadow-sm">
+                          <Button
+                            variant={'outline' as any}
+                            size={'icon' as any}
+                            className="h-8 w-8 border-slate-300 bg-white hover:bg-slate-50 shadow-sm"
+                          >
                             <MoreHorizontal className="h-4 w-4 text-slate-700" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -380,9 +494,12 @@ export function ProductsManager() {
       <AlertDialog open={!!deleteProduct} onOpenChange={() => setDeleteProduct(null)}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black uppercase tracking-tighter">¿Confirmar Eliminación?</AlertDialogTitle>
+            <AlertDialogTitle className="text-2xl font-black uppercase tracking-tighter">
+              ¿Confirmar Eliminación?
+            </AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-600">
-              Estás a punto de eliminar <strong>"{deleteProduct?.name}"</strong>. Esta acción se puede revertir temporalmente, pero el producto dejará de estar visible para los clientes.
+              Estás a punto de eliminar <strong>"{deleteProduct?.name}"</strong>. Esta acción se puede
+              revertir temporalmente, pero el producto dejará de estar visible para los clientes.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
@@ -397,6 +514,78 @@ export function ProductsManager() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  )
+}
+
+function StockEditor({
+  productId,
+  initialStock,
+  onUpdate,
+  disabled,
+}: {
+  productId: string
+  initialStock: number
+  onUpdate: (id: string, stock: number) => Promise<void>
+  disabled?: boolean
+}) {
+  const [val, setVal] = useState(String(initialStock))
+
+  useEffect(() => {
+    setVal(String(initialStock))
+  }, [initialStock])
+
+  const commitValue = (targetVal: number) => {
+    const clean = Math.max(0, targetVal)
+    if (clean !== initialStock) {
+      onUpdate(productId, clean)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <Button
+        type="button"
+        size="icon"
+        variant="outline"
+        className="h-8 w-7 border-slate-300 bg-white"
+        disabled={disabled || initialStock <= 0}
+        onClick={() => commitValue(initialStock - 1)}
+      >
+        <Minus className="h-3 w-3" />
+      </Button>
+
+      <Input
+        type="number"
+        value={val}
+        disabled={disabled}
+        onChange={e => setVal(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            e.currentTarget.blur()
+          }
+        }}
+        onBlur={() => {
+          const parsed = parseInt(val, 10)
+          if (isNaN(parsed)) {
+            setVal(String(initialStock))
+          } else {
+            commitValue(parsed)
+          }
+        }}
+        className="h-8 w-14 text-center text-xs font-bold border-zinc-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      />
+
+      <Button
+        type="button"
+        size="icon"
+        variant="outline"
+        className="h-8 w-7 border-slate-300 bg-white"
+        disabled={disabled}
+        onClick={() => commitValue(initialStock + 1)}
+      >
+        <Plus className="h-3 w-3" />
+      </Button>
     </div>
   )
 }

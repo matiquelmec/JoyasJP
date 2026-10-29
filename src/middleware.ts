@@ -7,29 +7,21 @@ const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_API_KEY || 'joyasj
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Proteger rutas de administración en el Edge
-  if (pathname.startsWith('/admin')) {
-    // Permitir acceso a la página de login
-    if (pathname === '/admin/login') {
-      return NextResponse.next()
-    }
-
+  // Proteger endpoints de administración en el Edge (/api/admin/*)
+  if (pathname.startsWith('/api/admin')) {
     const sessionCookie = request.cookies.get(ADMIN_COOKIE_NAME)?.value
 
     if (!sessionCookie) {
-      const loginUrl = new URL('/admin/login', request.url)
-      return NextResponse.redirect(loginUrl)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     try {
       const { payload } = await jwtVerify(sessionCookie, JWT_SECRET)
       if (!payload || payload.role !== 'admin') {
-        const loginUrl = new URL('/admin/login', request.url)
-        return NextResponse.redirect(loginUrl)
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
     } catch {
-      const loginUrl = new URL('/admin/login', request.url)
-      return NextResponse.redirect(loginUrl)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }
 
@@ -37,5 +29,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/api/admin/:path*'],
 }

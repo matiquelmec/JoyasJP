@@ -32,7 +32,6 @@ export function MultiImageUpload({
   const [uploadProgress, setUploadProgress] = useState(0)
   const [images, setImages] = useState<string[]>(currentImages)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { token } = useAdminAuth()
 
   // Sincronizar estado interno con props cuando cambia el producto (edición)
   useEffect(() => {
@@ -111,10 +110,8 @@ export function MultiImageUpload({
 
       const response = await fetch('/api/admin/upload-image', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
+        credentials: 'include',
+        body: formData,
       })
 
       clearInterval(progressInterval)

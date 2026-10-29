@@ -28,7 +28,7 @@ Opera bajo una arquitectura unidireccional estricta (`app ➔ components/hooks/s
 * **Base de Datos & ORM:** Turso DB (`@libsql/client`) + **Drizzle ORM** (`src/db/schema.ts`, `src/db/index.ts`).
 * **Validación & Contratos:** **Zod v4** (`src/lib/validations/checkout.ts`).
 * **Seguridad Admin:** **Web Crypto JWT (`jose`)** en cookie `HttpOnly` (`joyasjp_admin_session`) verificada en Edge Middleware (`src/middleware.ts`) y Route Handlers (`src/lib/admin-auth.ts`).
-* **Pasarela de Pagos:** Mercado Pago SDK (`src/app/api/checkout/route.ts`, `src/app/api/webhook/mercadopago/route.ts`) con idempotencia transaccional y deducción atómica de stock simple y de conjuntos (`bundle_items`).
+* **Pasarela de Pagos:** **Flow.cl Nativo (`src/lib/flow.ts`)** con firma HMAC-SHA256, conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return`) y deducción atómica de inventario para productos simples y conjuntos (`bundle_items`).
 * **CDN & Multimedia:** Cloudinary CDN con transformación automática `f_auto,q_auto:good` vía `optimizeCloudinaryUrl()` (`src/lib/utils.ts`).
 * **Suite de Pruebas:** Vitest (`tests/unit/commerce-rules.test.ts`).
 
@@ -95,9 +95,10 @@ TURSO_AUTH_TOKEN=tu-auth-token
 ADMIN_PASSWORD=tu-password-segura
 JWT_SECRET=tu-secreto-criptografico-jwt
 
-# Mercado Pago
-MP_ACCESS_TOKEN=APP_USR-...
-NEXT_PUBLIC_MP_PUBLIC_KEY=APP_USR-...
+# Pasarela Flow.cl (Producción)
+FLOW_API_KEY=tu-flow-api-key
+FLOW_SECRET_KEY=tu-flow-secret-key
+FLOW_ENV=production
 
 # Cloudinary CDN
 CLOUDINARY_CLOUD_NAME=...

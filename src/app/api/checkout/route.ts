@@ -1,12 +1,8 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { type NextRequest, NextResponse } from 'next/server'
 import { turso } from '@/lib/db/turso'
 import { ProductService } from '@/services/product.service'
 import { checkoutPayloadSchema } from '@/lib/validations/checkout'
-
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || '',
-})
+import { createFlowPayment } from '@/lib/flow'
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +13,7 @@ export async function POST(req: NextRequest) {
       ? {
           cartItems: rawData,
           customerInfo: rawData[0]?.customerInfo || {},
-          couponCode: null
+          couponCode: null,
         }
       : rawData
 
@@ -66,8 +62,7 @@ export async function POST(req: NextRequest) {
         title: dbProduct.name,
         quantity: item.quantity,
         unit_price: realUnitPrice,
-        currency_id: 'CLP',
-        picture_url: item.imageUrl || dbProduct.imageUrl,
+        imageUrl: item.imageUrl || dbProduct.imageUrl,
         description: dbProduct.description || undefined,
       }
     })
@@ -91,7 +86,9 @@ export async function POST(req: NextRequest) {
         const coupon = rows[0]
         const isActive = Number(coupon.is_active) === 1
         const minCartAmount = Number(coupon.min_cart_amount || 0)
-        const isExpired = coupon.expires_at ? new Date(coupon.expires_at as string) < new Date() : false
+        const isExpired = coupon.expires_at
+          ? new Date(coupon.expires_at as string) < new Date()
+          : false
         const isLimitReached =
           coupon.usage_limit !== null && coupon.usage_limit !== undefined
             ? Number(coupon.usage_count || 0) >= Number(coupon.usage_limit)
@@ -108,62 +105,13 @@ export async function POST(req: NextRequest) {
           }
 
           discountAmount = Math.min(discountAmount, originalTotal)
-
-          // Factor proporcional sin pérdida de centavos
-          if (discountAmount > 0) {
-            const factor = (originalTotal - discountAmount) / originalTotal
-            validatedItems.forEach((item) => {
-              item.unit_price = Math.max(1, Math.round(item.unit_price * factor))
-            })
-          }
         }
       }
     }
 
-    const finalTotal = validatedItems.reduce(
-      (sum, item) => sum + item.unit_price * item.quantity,
-      0
-    )
-
+    const finalTotal = Math.max(0, originalTotal - discountAmount)
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin).replace(/\/$/, '')
     const internalOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
-
-    const preferenceBody: any = {
-      items: validatedItems,
-      back_urls: {
-        success: `${siteUrl}/productos/success`,
-        failure: `${siteUrl}/productos/failure`,
-        pending: `${siteUrl}/productos/pending`,
-      },
-      statement_descriptor: 'JOYAS JP',
-      external_reference: internalOrderId,
-      notification_url: `${siteUrl}/api/webhook/mercadopago`,
-      auto_return: 'approved',
-    }
-
-    preferenceBody.payer = {
-      name: customerInfo.name,
-      email: customerInfo.email,
-      phone: {
-        number: customerInfo.phone,
-      },
-      address: {
-        street_name: customerInfo.address || '',
-        zip_code: '',
-        street_number: '',
-      },
-    }
-
-    if (customerInfo.rut) {
-      preferenceBody.payer.identification = {
-        type: 'RUT',
-        number: customerInfo.rut,
-      }
-    }
-
-    const preference = await new Preference(client).create({
-      body: preferenceBody,
-    })
 
     const finalAddress = customerInfo.department
       ? `${customerInfo.address}, ${customerInfo.department}`
@@ -173,7 +121,7 @@ export async function POST(req: NextRequest) {
       ? `${customerInfo.name} (@${customerInfo.instagram.replace('@', '')})`
       : customerInfo.name
 
-    // 🔒 PERSISTIR ORDEN CON PRECIOS Y STOCK VERIFICADOS
+    // 🔒 PERSISTIR ORDEN EN ESTADO PENDIENTE
     await turso.execute({
       sql: `INSERT INTO orders (
         id, customer_name, customer_email, customer_phone, shipping_address, 
@@ -181,7 +129,7 @@ export async function POST(req: NextRequest) {
         shipping_cost, status, payment_id, payment_status, coupon_code, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
       args: [
-        preference.id as string,
+        internalOrderId,
         finalName,
         customerInfo.email,
         customerInfo.phone,
@@ -195,11 +143,11 @@ export async function POST(req: NextRequest) {
             name: item.title,
             quantity: item.quantity,
             price: item.unit_price,
-            imageUrl: item.picture_url,
+            imageUrl: item.imageUrl,
           }))
         ),
         finalTotal,
-        customerInfo.shippingCost,
+        customerInfo.shippingCost || 0,
         'pending',
         internalOrderId,
         'pending',
@@ -207,14 +155,39 @@ export async function POST(req: NextRequest) {
       ],
     })
 
+    // 💳 CREAR TRANSACCIÓN EN FLOW.CL
+    const totalItemsCount = validatedItems.reduce((acc, it) => acc + it.quantity, 0)
+    const subject = `Joyas JP: Pedido ${internalOrderId} (${totalItemsCount} pieza${totalItemsCount > 1 ? 's' : ''})`
+
+    const flowPayment = await createFlowPayment({
+      commerceOrder: internalOrderId,
+      subject,
+      currency: 'CLP',
+      amount: finalTotal,
+      email: customerInfo.email,
+      urlConfirmation: `${siteUrl}/api/webhook/flow`,
+      urlReturn: `${siteUrl}/api/flow/return`,
+      optional: {
+        customerName: finalName,
+        phone: customerInfo.phone,
+      },
+    })
+
+    // Actualizar payment_id con el token emitido por Flow
+    await turso.execute({
+      sql: 'UPDATE orders SET payment_id = ? WHERE id = ?',
+      args: [flowPayment.token, internalOrderId],
+    })
+
     return NextResponse.json({
-      checkoutUrl: preference.init_point,
-      orderId: preference.id,
+      checkoutUrl: flowPayment.redirectUrl,
+      orderId: internalOrderId,
+      flowOrder: flowPayment.flowOrder,
     })
   } catch (error: any) {
-    console.error('❌ Checkout Error:', error)
+    console.error('❌ Checkout Error (Flow):', error)
     return NextResponse.json(
-      { error: error?.message || 'Error al procesar el pago con Mercado Pago' },
+      { error: error?.message || 'Error al procesar el pago con Flow' },
       { status: 500 }
     )
   }
