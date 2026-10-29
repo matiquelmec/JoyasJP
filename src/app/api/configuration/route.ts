@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
           shipping_cost: 3000,
           free_shipping_from: 50000,
           shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
-          mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ''
         }
       })
     }
@@ -37,7 +36,6 @@ export async function GET(request: NextRequest) {
       shipping_cost: 3000,
       free_shipping_from: 50000,
       shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
-      mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ''
     }
 
     return NextResponse.json({ configuration: publicConfig })
@@ -51,7 +49,6 @@ export async function GET(request: NextRequest) {
         shipping_cost: 3000,
         free_shipping_from: 50000,
         shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
-        mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || ''
       }
     })
   }

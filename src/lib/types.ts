@@ -27,8 +27,6 @@ export interface SiteConfiguration {
   admin_email?: string
   notify_new_orders: boolean
   notify_low_stock: boolean
-  mercadopago_public_key?: string
-  mercadopago_access_token?: string
   instagram_url?: string
   tiktok_url?: string
 }

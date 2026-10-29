@@ -1,6 +1,6 @@
 ---
 name: vault-commerce-audit
-description: Reglas de auditoría transaccional para Joyas JP: cálculo atómico de conjuntos dinámicos (bundle_items), cupones de descuento, pasarelas de pago (Mercado Pago y Flow.cl con HMAC-SHA256) y persistencia en Turso DB + Drizzle ORM.
+description: Reglas de auditoría transaccional para Joyas JP: cálculo atómico de conjuntos dinámicos (bundle_items), cupones de descuento, pasarelas de pago (Flow.cl con HMAC-SHA256) y persistencia en Turso DB + Drizzle ORM.
 ---
 
 # Vault Commerce Audit Skill — Joyas JP

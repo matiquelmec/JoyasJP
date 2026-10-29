@@ -30,8 +30,6 @@ export function SiteConfigProvider({
     admin_email: defaultConfig.business.contact.email,
     notify_new_orders: true,
     notify_low_stock: true,
-    mercadopago_public_key: '',
-    mercadopago_access_token: '',
     instagram_url: defaultConfig.links.instagram,
     tiktok_url: defaultConfig.links.tiktok,
     store_slogan: 'Atrévete a jugar',

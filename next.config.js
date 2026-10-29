@@ -77,13 +77,7 @@ const nextConfig = {
             priority: 10,
             enforce: true,
           },
-          mercadopago: {
-            name: 'mercadopago',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]@mercadopago/,
-            priority: 15,
-            enforce: true,
-          },
+          
           radix: {
             name: 'radix-ui',
             chunks: 'all',
@@ -120,12 +114,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://http2.mlstatic.com https://www.googletagmanager.com https://connect.facebook.net",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https: res.cloudinary.com https://http2.mlstatic.com",
+              "img-src 'self' data: blob: https: res.cloudinary.com ",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https: wss: *.turso.io https://api.mercadopago.com",
-              "frame-src 'self' https://sdk.mercadopago.com https://www.mercadopago.cl",
+              "connect-src 'self' https: wss: *.turso.io ",
+              "frame-src 'self' ",
               "media-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",

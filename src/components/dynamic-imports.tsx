@@ -23,21 +23,6 @@ export const OrdersManager = dynamic(() => import('./admin/orders-manager').then
   ssr: false
 })
 
-// ⚡ MERCADOPAGO - Solo carga en checkout
-export const MercadoPagoCheckout = dynamic(
-  () => import('@mercadopago/sdk-react').then(mod => ({
-    default: mod.Payment
-  })),
-  {
-    loading: () => (
-      <div className="bg-gray-50 p-8 rounded-lg animate-pulse">
-        <div className="h-64 bg-gray-200 rounded"></div>
-      </div>
-    ),
-    ssr: false
-  }
-)
-
 // ⚡ CARRITO - Solo carga cuando se abre
 export const CartPanel = dynamic(() => import('./shop/cart-panel').then(mod => ({ default: mod.CartPanel })), {
   loading: () => null,
@@ -108,7 +93,6 @@ export const preloadAdminComponents = () => {
 
 export const preloadCheckoutComponents = () => {
   if (typeof window !== 'undefined') {
-    import('@mercadopago/sdk-react')
     import('./shop/cart-panel')
   }
 }

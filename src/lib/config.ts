@@ -85,7 +85,7 @@ export const siteConfig = {
     currencySymbol: '$',
     taxRate: 0.19,
     shippingZones: ['Santiago', 'Regiones'],
-    paymentMethods: ['MercadoPago', 'Transferencia', 'WebPay'],
+    paymentMethods: ['Flow', 'WebPay Plus', 'Servipag', 'Multicaja'],
     returnPolicy: {
       days: 30,
       conditions: 'Producto en estado original con etiquetas',
@@ -213,7 +213,7 @@ export const apiConfig = {
     products: '/api/products',
     orders: '/api/orders',
     checkout: '/api/checkout',
-    webhookMercadoPago: '/api/webhook/mercadopago',
+    webhookFlow: '/api/webhook/flow',
     newsletter: '/api/newsletter',
     contact: '/api/contact',
   },

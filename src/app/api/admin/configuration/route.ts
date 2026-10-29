@@ -28,8 +28,6 @@ export async function GET(request: NextRequest) {
           notify_new_orders: true,
           notify_low_stock: true,
           notify_new_customers: false,
-          mercadopago_public_key: process.env.NEXT_PUBLIC_MP_PUBLIC_KEY || '',
-          mercadopago_access_token: process.env.MP_ACCESS_TOKEN || ''
         }
       })
     }

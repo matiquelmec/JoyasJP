@@ -7,7 +7,7 @@ E-commerce completo para Joyas JP, tienda de joyería especializada con panel de
 - **Frontend**: Next.js 14.2.31 con TypeScript y App Router
 - **Base de Datos**: Turso (SQLite distribuido) vía `@libsql/client`
 - **Estado**: Zustand (carrito y wishlist)
-- **Pagos**: MercadoPago
+- **Pagos**: Flow.cl
 - **Estilos**: Tailwind CSS
 - **Formateo**: Biome
 - **Deploy**: Netlify
@@ -147,7 +147,7 @@ src/
 ## Características Principales (Actualizado)
 
 ### 4. Sistema de Checkout Completo ⭐ **NUEVO**
-**Flujo Completo**: `Carrito → Checkout (/checkout) → Formulario Envío → Crear Orden → MercadoPago → Success`
+**Flujo Completo**: `Carrito → Checkout (/checkout) → Formulario Envío → Crear Orden → Flow.cl → Success`
 
 #### Formulario de Checkout (`/checkout`)
 - **Información Personal**: Nombre completo, email, teléfono con validación
@@ -158,7 +158,7 @@ src/
 
 #### Integración Backend Mejorada
 - **Crea orden en BD** ANTES del pago (usando API `/api/create-order`)
-- **Envía info del cliente** a MercadoPago (nombre, email, teléfono pre-cargado)
+- **Envía info del cliente** a Flow.cl (nombre, email, teléfono pre-cargado)
 - **Manejo de stock** y validaciones automáticas
 - **Compatible** con admin panel existente para ver órdenes con datos de envío
 
@@ -179,7 +179,7 @@ src/
 - Despliegue exitoso en Netlify
 - Limpieza completa del código
 - TypeScript sin errores
-- **Configuración de entorno local verificada** (Supabase + MercadoPago) ✅
+- **Configuración de entorno local verificada** (Supabase + Flow.cl) ✅
 
 ## Próximos Pasos Sugeridos
 1. Conectar gestión de pedidos con base de datos real
@@ -191,7 +191,7 @@ src/
 ## Credenciales y Accesos
 - **Admin Panel**: `/admin` - Password: `joyasjp2024`
 - **Supabase**: Configurado y funcionando
-- **MercadoPago**: Token configurado para pagos
+- **Flow.cl**: Token configurado para pagos
 - **GitHub**: Repositorio sincronizado
 - **Netlify**: Deploy automático desde main branch
 
@@ -203,7 +203,7 @@ src/
 src/app/checkout/page.tsx
 - Formulario con validación completa
 - Selector de regiones chilenas (16 regiones)
-- Integración con createOrder() y MercadoPago
+- Integración con createOrder() y Flow.cl
 - UI responsive con shadcn/ui components
 
 // MODIFICADO: Cart panel simplificado
@@ -215,7 +215,7 @@ src/components/shop/cart-panel.tsx
 // MEJORADO: API de checkout con info cliente
 src/app/api/checkout/route.ts
 - Acepta customerInfo junto con cartItems
-- Envía datos del cliente a MercadoPago (payer)
+- Envía datos del cliente a Flow.cl (payer)
 - Mantiene compatibilidad con flujo anterior
 ```
 
@@ -223,8 +223,8 @@ src/app/api/checkout/route.ts
 ```
 1. Usuario llena formulario → Validación frontend
 2. Crear orden en BD → API /api/create-order 
-3. Orden confirmada → Proceder a MercadoPago
-4. MercadoPago con datos pre-cargados → Pago
+3. Orden confirmada → Proceder a Flow.cl
+4. Flow.cl con datos pre-cargados → Pago
 5. Success → Auto-limpia carrito
 ```
 
