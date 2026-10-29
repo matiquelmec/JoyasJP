@@ -15,7 +15,7 @@ const colorMap: { [key: string]: string } = {
   negra: 'negro',
   mixto: 'mixto',
   mixta: 'mixto',
-  multicolor: 'mixto', // Compatibilidad con datos antiguos
+  multicolor: 'mixto',
 }
 
 export function normalizeColor(color: string | null | undefined): string {
@@ -26,7 +26,6 @@ export function normalizeColor(color: string | null | undefined): string {
 
   const lowerColor = trimmed.toLowerCase()
 
-  // Filtrar colores de prueba o inválidos
   if (lowerColor === 'prueba' || lowerColor === 'test' || lowerColor === '') {
     return ''
   }
@@ -34,10 +33,25 @@ export function normalizeColor(color: string | null | undefined): string {
   return colorMap[lowerColor] || lowerColor
 }
 
+/**
+ * Optimiza automáticamente URLs de Cloudinary inyectando f_auto,q_auto:good,w_...,c_limit
+ */
+export function optimizeCloudinaryUrl(url: string | null | undefined, maxWidth: number = 800): string {
+  if (!url || typeof url !== 'string') return ''
+  if (!url.includes('res.cloudinary.com') || !url.includes('/upload/')) {
+    return url
+  }
+  if (url.includes('f_auto') || url.includes('q_auto')) {
+    return url
+  }
+  return url.replace('/upload/', `/upload/f_auto,q_auto:good,w_${maxWidth},c_limit/`)
+}
+
 export function getLocalFallbackImage(productId: string | number, category?: string): string {
-  const idNum = typeof productId === 'number' 
-    ? productId 
-    : parseInt(productId.toString().replace(/\D/g, '')) || 1
+  const idNum =
+    typeof productId === 'number'
+      ? productId
+      : parseInt(productId.toString().replace(/\D/g, '')) || 1
   const cleanCategory = (category || '').toLowerCase()
 
   if (cleanCategory.includes('cadena')) {
@@ -54,4 +68,3 @@ export function getLocalFallbackImage(productId: string | number, category?: str
     return `/assets/Producto ${index}.jpg`
   }
 }
-

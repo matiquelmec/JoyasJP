@@ -26,10 +26,9 @@ const nextConfig = {
       '@radix-ui/react-accordion',
       '@radix-ui/react-select',
       '@radix-ui/react-popover',
-      '@radix-ui/react-toast'
+      '@radix-ui/react-toast',
     ],
     serverComponentsExternalPackages: ['sharp'],
-    // Optimización adicional para performance
     turbo: {
       rules: {
         '*.svg': {
@@ -40,22 +39,10 @@ const nextConfig = {
     },
   },
 
-  // Configuración de imágenes optimizada
+  // Configuración de imágenes optimizada (Cloudinary CDN)
   images: {
-    unoptimized: false, // ⚡ CAMBIO: Habilitar optimización de imágenes
+    unoptimized: false,
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lrsmmfpsbawznjpnllwr.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
@@ -66,77 +53,64 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512],
     formats: ['image/webp', 'image/avif'],
-    // ⚡ Configuración para Dominios Permitidos de Imágenes
-    domains: ['lrsmmfpsbawznjpnllwr.supabase.co', 'res.cloudinary.com'],
   },
 
   compiler: {
-    removeConsole: false, // ⚡ Deshabilitado temporalmente para debugging de webhooks
+    removeConsole: false,
   },
 
-  // Optimización de build
   swcMinify: true,
 
   // ⚡ WEBPACK OPTIMIZATIONS
-  webpack: (config, { isServer, dev }) => {
+  webpack: (config, { dev }) => {
     config.resolve.alias['@'] = path.resolve(__dirname, 'src')
 
-    // Solo en producción
     if (!dev) {
-      // Separar MercadoPago en chunk separado
       config.optimization.splitChunks = {
         ...config.optimization.splitChunks,
         cacheGroups: {
           ...config.optimization.splitChunks.cacheGroups,
-          // Admin bundle separado
           admin: {
             name: 'admin',
             chunks: 'all',
             test: /[\\/]src[\\/]app[\\/]admin/,
             priority: 10,
-            enforce: true
+            enforce: true,
           },
-          // MercadoPago separado
           mercadopago: {
             name: 'mercadopago',
             chunks: 'all',
             test: /[\\/]node_modules[\\/]@mercadopago/,
             priority: 15,
-            enforce: true
+            enforce: true,
           },
-          // Radix UI separado y optimizado
           radix: {
             name: 'radix-ui',
             chunks: 'all',
             test: /[\\/]node_modules[\\/]@radix-ui/,
             priority: 12,
             enforce: true,
-            // Solo incluir lo que realmente usamos
             minSize: 0,
             maxSize: 50000,
           },
-          // Vendor chunk para otras librerías
           vendor: {
             name: 'vendor',
             chunks: 'all',
             test: /[\\/]node_modules[\\/]/,
-            priority: 5
-          }
-        }
+            priority: 5,
+          },
+        },
       }
     }
-
-    // Next.js maneja automáticamente los assets estáticos
 
     return config
   },
 
-  // Variables de entorno públicas
   env: {
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app',
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl',
   },
 
-  // ⚡ Headers de performance y cacheo avanzado
+  // ⚡ Headers de seguridad y cacheo avanzado
   async headers() {
     return [
       {
@@ -148,39 +122,39 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sdk.mercadopago.com https://http2.mlstatic.com https://www.googletagmanager.com https://connect.facebook.net",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https: res.cloudinary.com *.supabase.co https://http2.mlstatic.com",
+              "img-src 'self' data: blob: https: res.cloudinary.com https://http2.mlstatic.com",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https: wss: *.turso.io https://api.mercadopago.com",
               "frame-src 'self' https://sdk.mercadopago.com https://www.mercadopago.cl",
               "media-src 'self' blob:",
               "object-src 'none'",
-              "base-uri 'self'"
-            ].join('; ')
+              "base-uri 'self'",
+            ].join('; '),
           },
           {
             key: 'X-DNS-Prefetch-Control',
-            value: 'on'
+            value: 'on',
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin'
+            value: 'origin-when-cross-origin',
           },
           {
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '1; mode=block',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
-          }
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
         ],
       },
       {
@@ -188,66 +162,52 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable'
-          }
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
-      // Cache API responses
       {
         source: '/api/products/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, s-maxage=60, stale-while-revalidate=300'
-          }
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
         ],
       },
-      // Cache para assets estáticos (imágenes no críticas)
-      {
-        source: '/assets/nosotros.jpg',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800'
-          }
-        ],
-      },
-      // Cache más agresivo para logo WebP (cambia raramente)
       {
         source: '/assets/logo.webp',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=604800, stale-while-revalidate=2592000'
-          }
+            value: 'public, max-age=604800, stale-while-revalidate=2592000',
+          },
         ],
       },
-      // Cache para imágenes WebP optimizadas
       {
         source: '/assets/(.*).webp',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800'
-          }
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
         ],
       },
-      // Cache corto para videos (para ver cambios rápidamente)
       {
         source: '/assets/mi-video(.*).mp4',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=3600, stale-while-revalidate=86400'
+            value: 'public, max-age=3600, stale-while-revalidate=86400',
           },
           {
             key: 'Vary',
-            value: 'Accept-Encoding'
-          }
+            value: 'Accept-Encoding',
+          },
         ],
       },
     ]
-  }
+  },
 }
 
 module.exports = nextConfig

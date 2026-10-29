@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Obtener productos relacionados y otros desde el servicio de servidor (que usa Turso/SQLite)
     const [related, allProducts] = await Promise.all([
-      ProductService.getRelatedProducts(category, currentProductId),
+      ProductService.getRelatedProducts(currentProductId, category),
       ProductService.getAllProducts()
     ])
 

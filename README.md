@@ -1,151 +1,109 @@
-# Joyas JP 💍✨
+# Joyas JP 💍✨ — Titanium Vault Edition (2026)
 
-> E-commerce premium y plataforma de administración avanzada para **Joyas JP**, una tienda de joyería fina especializada en Chile.
+> E-Commerce de Alta Joyería Urbana y Bóveda Plata Italiana Ley 925 en Chile, gobernado bajo el estándar **Titanium Vault Flow — Nivel 6**.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.2.31-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Turso](https://img.shields.io/badge/Turso-SQLite--Distribuido-440099?style=for-the-badge&logo=sqlite)](https://turso.tech/)
-[![MercadoPago](https://img.shields.io/badge/MercadoPago-SDK-blueviolet?style=for-the-badge)](https://www.mercadopago.cl/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Netlify](https://img.shields.io/badge/Netlify-Deployed-00C7B7?style=for-the-badge&logo=netlify)](https://www.netlify.com/)
+[![Turso](https://img.shields.io/badge/Turso-SQLite--Edge-440099?style=for-the-badge&logo=sqlite)](https://turso.tech/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge&logo=drizzle)](https://orm.drizzle.team/)
+[![Zod v4](https://img.shields.io/badge/Zod-v4-3E67B1?style=for-the-badge)](https://zod.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-Testing-6E9F18?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 
 ---
 
-## 📖 Resumen del Proyecto
+## 📖 Resumen Arquitectónico
 
-**Joyas JP** es una aplicación web moderna de comercio electrónico (E-commerce) de extremo a extremo diseñada para la exhibición y venta de piezas de joyería exclusivas. Cuenta con una experiencia de usuario (UX) sumamente fluida y visualmente atractiva en el frontend, y un panel de administración robusto para la gestión de productos, inventario en tiempo real y seguimiento de pedidos.
+**Joyas JP (`JoyasJP_Definitive`)** es una plataforma de comercio electrónico de alto rendimiento diseñada para la exhibición, venta y gestión de inventario en tiempo real de joyería urbana y piezas de **Plata Fina Italiana Ley 925**.
 
----
+Opera bajo una arquitectura unidireccional estricta (`app ➔ components/hooks/services ➔ db/lib`), persistencia distribuida en **Turso SQLite Edge**, validación de contratos al 100% con **Zod v4**, sesiones administrativas blindadas mediante **Cookies `HttpOnly` JWT** y sincronización instantánea de caché (`ISR 60s` + `revalidatePath` en `0ms`).
 
-## 🛠️ Stack Tecnológico
-
-La plataforma está construida utilizando tecnologías modernas de desarrollo web:
-
-*   **Frontend**: [Next.js 14.2.3](https://nextjs.org/) (App Router) con [React 18](https://react.dev/) y [TypeScript](https://www.typescriptlang.org/).
-*   **Base de Datos**: [Turso](https://turso.tech/) (SQLite distribuido de alta disponibilidad vía `@libsql/client`) para la gestión dinámica de datos e inventario.
-*   **Gestión de Estado**: [Zustand](https://zustand.docs.pmnd.rs/) para el manejo del carrito de compras y lista de favoritos (wishlist).
-*   **Pasarela de Pagos**: [Mercado Pago SDK](https://www.mercadopago.cl/developers) para transacciones locales seguras y fluidas en Chile.
-*   **Diseño y Estilos**: [Tailwind CSS](https://tailwindcss.com/) para una UI responsiva, moderna y premium.
-*   **Herramientas de Calidad de Código**: [Biome](https://biomejs.dev/) para formateo ultra rápido y linting de código.
-*   **Optimización de Imágenes**: [Sharp](https://sharp.pixelplumbing.com/) para el procesamiento y optimización de assets.
+* **WhatsApp Concierge Oficial:** `+56 9 8299 0513` (`https://wa.me/56982990513`)
 
 ---
 
-## 🌟 Características Principales
+## 🛠️ Stack Tecnológico Oficial (SSoT)
 
-### 1. Experiencia de Usuario Premium (Frontend)
-*   **Sección Hero Inmersiva**: Integración de video de fondo (`mi-video.mp4`) optimizado que se extiende hasta el borde de navegación superior.
-*   **Optimización de Carga**: Carga ultrarrápida del catálogo de joyas (menos de 1.2s en LCP) gracias al Server-Side Rendering (SSR).
-*   **Favicon Personalizado**: Asset dedicado con cache-busting integrado para garantizar actualizaciones visuales inmediatas.
-*   **Navegación Dinámica e Intuitiva**: Sección de catálogo de productos, servicios exclusivos para artistas y flujo de compra simplificado.
-
-### 2. Algoritmo de Productos Destacados
-Para maximizar las conversiones y visibilidad de las joyas, se implementó un sistema dinámico que baraja de forma inteligente los productos en vitrina usando el algoritmo **Fisher-Yates** con 4 estrategias alternativas:
-*   `pure_random`: Aleatoriedad pura sobre el catálogo.
-*   `weighted_categories`: Ponderación inteligente basada en categorías de productos.
-*   `stock_weighted`: Impulso automático de productos con mayor stock disponible.
-*   `time_based`: Estrategia temporal para destacar novedades.
-
-### 3. Flujo de Checkout Completo 🛒
-*   **Formulario de Despacho Optimizado**: Captura inteligente de datos de envío incluyendo validación de correos, teléfonos y selector nativo de las 16 regiones de Chile.
-*   **Generación de Órdenes Seguras**: Las órdenes se registran en la base de datos de Supabase *antes* de redirigir al portal de Mercado Pago para garantizar trazabilidad.
-*   **Integración con Mercado Pago**: Transferencia automática de datos del cliente (nombre, email y teléfono) a la pasarela de pagos para evitar rellenados repetitivos.
-*   **Auto-limpieza del Carrito**: Limpieza reactiva del estado local del carrito tras una compra completada con éxito.
-
-### 4. Panel de Administración Avanzado (`/admin`)
-Panel protegido por contraseña para la administración general del negocio:
-*   **Dashboard con KPIs**: Métricas clave de rendimiento en tiempo real (ventas del mes, número de pedidos, alerta de productos con stock bajo).
-*   **Gestión de Inventario**: Edición interactiva y en tiempo real del stock de los más de 126 productos disponibles.
-*   **Filtros de Búsqueda**: Filtrado ágil por categoría, nombre e indicador visual del estado de stock.
-*   **Control de Pedidos**: Visualización y actualización del estado de los pedidos (Pendiente, Procesando, Enviado, Entregado, Cancelado) sincronizado con las notificaciones de pago de Mercado Pago.
+* **Framework:** Next.js 14.2 (App Router, Server Components, Route Handlers, Dynamic Sitemap/Robots).
+* **Lenguaje:** TypeScript 5.8+ en modo estricto (`npm run typecheck`).
+* **Base de Datos & ORM:** Turso DB (`@libsql/client`) + **Drizzle ORM** (`src/db/schema.ts`, `src/db/index.ts`).
+* **Validación & Contratos:** **Zod v4** (`src/lib/validations/checkout.ts`).
+* **Seguridad Admin:** **Web Crypto JWT (`jose`)** en cookie `HttpOnly` (`joyasjp_admin_session`) verificada en Edge Middleware (`src/middleware.ts`) y Route Handlers (`src/lib/admin-auth.ts`).
+* **Pasarela de Pagos:** Mercado Pago SDK (`src/app/api/checkout/route.ts`, `src/app/api/webhook/mercadopago/route.ts`) con idempotencia transaccional y deducción atómica de stock simple y de conjuntos (`bundle_items`).
+* **CDN & Multimedia:** Cloudinary CDN con transformación automática `f_auto,q_auto:good` vía `optimizeCloudinaryUrl()` (`src/lib/utils.ts`).
+* **Suite de Pruebas:** Vitest (`tests/unit/commerce-rules.test.ts`).
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Arquitectura de Directorios Limpia (Unidireccional)
 
-```bash
-src/
-├── app/                  # Rutas principales (Next.js App Router)
-│   ├── (legal)/          # Términos, condiciones y políticas de privacidad
-│   ├── admin/            # Panel de control de administración y login
-│   ├── api/              # Endpoints API (checkout, webhook de Mercado Pago, etc.)
-│   ├── checkout/         # Flujo de recolección de datos y checkout
-│   ├── contacto/         # Formulario de contacto
-│   ├── favoritos/        # Sección de Wishlist del cliente
-│   ├── productos/        # Catálogo detallado e inventario
-│   ├── nosotros/         # Historia de Joyas JP
-│   └── servicios/        # Servicio especial para artistas y orfebrería
-├── components/           # Componentes modulares y reutilizables
-│   ├── admin/            # AuthProvider, Sidebar, ProductsManager, OrdersManager
-│   ├── layout/           # Header, Footer, Navegación responsiva
-│   └── ui/               # Componentes atómicos (Table, Buttons, Dialogs, etc.)
-├── config/               # Configuraciones del sitio y SEO
-├── contexts/             # Contextos globales de React
-├── hooks/                # Hooks personalizados
-├── lib/                  # Clientes de servicios (Supabase client)
-└── public/               # Assets públicos (Videos, logotipos, favicon)
+```text
+JoyasJP_Definitive/
+├── .agents/skills/              # Skills especializados del agente (vault-commerce-audit, ui-ux-pro-max)
+├── docs/
+│   ├── architecture/            # BLUEPRINT_2026.md (Especificación Técnica Maestra)
+│   └── templates/               # PROMPT_MASTERS_2026.md (Plantillas de trabajo)
+├── public/assets/               # Videos hero y activos estáticos versionados
+├── src/
+│   ├── app/                     # Next.js App Router (Rutas públicas, /admin y API Routes)
+│   │   ├── api/
+│   │   │   ├── admin/           # CRUD protegido con await verifyAdminAuth(request)
+│   │   │   ├── auth/            # Login / Logout con Cookie HttpOnly JWT
+│   │   │   ├── checkout/        # Creación de orden validada con Zod y recálculo en servidor
+│   │   │   ├── coupons/         # Validación de cupones en tiempo real
+│   │   │   ├── health/          # Diagnóstico de salud Edge y latencia de Turso DB
+│   │   │   └── webhook/         # Conciliación idempotente de pagos y deducción de stock
+│   │   ├── productos/           # Catálogo ISR (60s) y fichas con Sticky Vault Bar
+│   │   ├── robots.ts            # Reglas dinámicas de indexación
+│   │   └── sitemap.ts           # Sitemap dinámico con slugs canónicos
+│   ├── components/              # Componentes modulares (admin, layout, seo, shop, ui)
+│   ├── db/                      # Esquema centralizado Drizzle ORM (schema.ts, index.ts)
+│   ├── hooks/                   # Custom React Hooks
+│   ├── lib/                     # Utilidades puras, clientes DB, auth JWT y validaciones Zod
+│   └── services/                # Capa de dominio y negocio (ProductService)
+├── tests/unit/                  # Suite de pruebas unitarias Vitest
+└── AGENTS.md                    # Constitución y protocolo Titanium Vault Flow
 ```
 
 ---
 
-## 🚀 Guía de Configuración Local
+## 📦 Scripts Oficiales de Desarrollo y Calidad
 
-Sigue los siguientes pasos para poner en marcha el proyecto en tu entorno local:
-
-### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/tu-usuario/JoyasJP.git
-cd JoyasJP
+# Servidor de desarrollo
+npm run dev
+
+# Puerta de Calidad 1: Verificación estricta de tipos TypeScript (0 errores)
+npm run typecheck
+
+# Puerta de Calidad 2: Suite de pruebas unitarias Vitest (100% pasando)
+npm test
+
+# Compilación de producción
+npm run build
 ```
 
-### 2. Instalar Dependencias
-Se recomienda utilizar `npm` para mantener la consistencia del package-lock:
-```bash
-npm install
-```
+---
 
-### 3. Configurar Variables de Entorno
-Crea un archivo `.env.local` en la raíz del proyecto y añade las siguientes claves:
+## 🔒 Variables de Entorno Requeridas (`.env.local`)
 
 ```env
-# Turso Database
+# Turso SQLite Edge Database
 TURSO_CONNECTION_URL=libsql://tu-db.turso.io
-TURSO_AUTH_TOKEN=tu-auth-token-de-turso
+TURSO_AUTH_TOKEN=tu-auth-token
+
+# Seguridad Admin (HttpOnly JWT)
+ADMIN_PASSWORD=tu-password-segura
+JWT_SECRET=tu-secreto-criptografico-jwt
 
 # Mercado Pago
-MP_ACCESS_TOKEN=APP_USR-tu-access-token-de-mercado-pago
-NEXT_PUBLIC_MP_PUBLIC_KEY=APP_USR-tu-public-key-de-mercado-pago
+MP_ACCESS_TOKEN=APP_USR-...
+NEXT_PUBLIC_MP_PUBLIC_KEY=APP_USR-...
 
-# Administración
-NEXT_PUBLIC_ADMIN_KEY=joyasjp2024
+# Cloudinary CDN
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+
+# URL Pública Canónica
+NEXT_PUBLIC_SITE_URL=https://joyasjp.cl
 ```
-
-### 4. Inicializar Servidor de Desarrollo
-```bash
-npm run dev
-```
-La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
-
----
-
-## 📦 Scripts Disponibles
-
-*   `npm run dev`: Inicia el servidor de desarrollo local.
-*   `npm run build`: Genera el build de producción optimizado y crea el sitemap.
-*   `npm run start`: Inicia el servidor de Next.js en producción.
-*   `npm run lint`: Ejecuta el análisis estático de errores (ESLint).
-*   `npm run typecheck`: Valida los tipos de TypeScript sin emitir archivos.
-*   `npm run clean`: Formatea y corrige automáticamente el código utilizando Biome.
-*   `npm run check`: Ejecuta el análisis completo de Biome (formato + linter).
-
----
-
-## 🔒 Seguridad y Buenas Prácticas
-
-1.  **Protección de Credenciales**: Las claves secretas de producción de Supabase y Mercado Pago están configuradas como variables del sistema en el entorno del servidor y nunca se exponen al cliente.
-2.  **Optimización SEO**: Configuración automatizada de sitemaps (`next-sitemap`), datos estructurados en formato JSON-LD y etiquetas meta optimizadas para el mercado en Chile.
-3.  **Consistencia de Código**: Formateo estricto del código con **Biome** y chequeos automatizados de tipos antes de cada compilación para prevenir fallos en producción.
-4.  **Trazabilidad**: Conciliación directa a través de identificadores únicos entre las órdenes registradas en Supabase y las transacciones reportadas vía Webhooks por Mercado Pago.
-
----
-*Desarrollado con pasión para Joyas JP. Todos los derechos reservados.* 💍✨

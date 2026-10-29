@@ -4,7 +4,7 @@ import { verifyAdminAuth } from '@/lib/admin-auth'
 
 // POST - Restaurar producto eliminado
 export async function POST(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

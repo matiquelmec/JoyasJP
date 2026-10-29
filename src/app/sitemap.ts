@@ -4,7 +4,6 @@ import { ProductService } from '@/services/product.service'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
 
-  // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -19,35 +18,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/favoritos`,
+      url: `${baseUrl}/servicios`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/carrito`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/checkout`,
+      url: `${baseUrl}/nosotros`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.6,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contacto`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
     },
   ]
 
-  // Get dynamic product pages
   let productPages: MetadataRoute.Sitemap = []
 
   try {
     const products = await ProductService.getAllProducts()
     productPages = products.map((product: any) => ({
-      url: `${baseUrl}/productos/${product.id}`,
+      url: `${baseUrl}/productos/${product.slug || product.id}`,
       lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      priority: 0.85,
     }))
   } catch (error) {
     console.error('Error generating sitemap for products:', error)

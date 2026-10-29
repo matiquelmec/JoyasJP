@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
-import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
+import { getVideoUrl } from '@/lib/safe-asset'
 
 
 const servicesPageContent = {

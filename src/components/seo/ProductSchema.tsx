@@ -14,26 +14,35 @@ interface ProductSchemaProps {
 export function ProductSchema({
   product,
   availability = 'InStock',
-  rating
+  rating,
 }: ProductSchemaProps) {
   const categoryNames = {
     cadenas: 'Jewelry > Necklaces',
     dijes: 'Jewelry > Pendants',
     pulseras: 'Jewelry > Bracelets',
     aros: 'Jewelry > Earrings',
+    conjuntos: 'Jewelry > Jewelry Sets',
+    'plata-925': 'Jewelry > Sterling Silver 925',
   }
 
-  const category = categoryNames[product.category as keyof typeof categoryNames] || 'Jewelry'
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.netlify.app'
-  const productUrl = `${siteUrl}/productos/${product.id}`
+  const category =
+    categoryNames[product.category as keyof typeof categoryNames] || 'Jewelry'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
+  const canonicalSlug = product.slug || product.id
+  const productUrl = `${siteUrl}/productos/${canonicalSlug}`
   const imageUrl = product.imageUrl || `${siteUrl}${getSafeUrl('logo.webp')}`
+  const effectivePrice =
+    product.discount_price && product.discount_price > 0 && product.discount_price < product.price
+      ? product.discount_price
+      : product.price
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': productUrl,
     name: product.name,
-    description: product.description || `${product.name} - Alta joyería urbana de diseño exclusivo`,
+    description:
+      product.description || `${product.name} - Alta joyería urbana de diseño exclusivo`,
     category,
     brand: {
       '@type': 'Brand',
@@ -60,8 +69,10 @@ export function ProductSchema({
       '@type': 'Offer',
       url: productUrl,
       priceCurrency: 'CLP',
-      price: product.price.toString(),
-      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      price: effectivePrice.toString(),
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0],
       availability: `https://schema.org/${availability}`,
       itemCondition: 'https://schema.org/NewCondition',
       seller: {
@@ -110,10 +121,9 @@ export function ProductSchema({
       '@type': 'Audience',
       audienceType: 'Consumers interested in urban jewelry',
     },
-    material: 'Premium metals and materials',
-    sku: product.id,
-    gtin: product.id,
-    mpn: product.id,
+    material: product.materials || 'Plata Italiana 925 / Metales Nobles',
+    sku: product.sku || product.id,
+    mpn: product.sku || product.id,
     ...(rating && {
       aggregateRating: {
         '@type': 'AggregateRating',
@@ -121,31 +131,14 @@ export function ProductSchema({
         reviewCount: rating.count,
         bestRating: 5,
         worstRating: 1,
-      }
+      },
     }),
-    additionalProperty: [
-      {
-        '@type': 'PropertyValue',
-        name: 'Style',
-        value: 'Urban Premium Jewelry',
-      },
-      {
-        '@type': 'PropertyValue',
-        name: 'Target Audience',
-        value: 'Urban Fashion Enthusiasts',
-      },
-      {
-        '@type': 'PropertyValue',
-        name: 'Material Quality',
-        value: 'Premium',
-      },
-    ],
   }
 
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
     />
   )
 }

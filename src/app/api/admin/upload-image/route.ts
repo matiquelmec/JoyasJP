@@ -4,7 +4,7 @@ import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
   // Verificar autenticación
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

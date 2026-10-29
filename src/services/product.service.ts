@@ -1,4 +1,4 @@
-import { normalizeColor, getLocalFallbackImage } from '@/lib/utils'
+import { normalizeColor, getLocalFallbackImage, optimizeCloudinaryUrl } from '@/lib/utils'
 import { turso } from '@/lib/db/turso'
 import { Product } from '@/lib/types'
 
@@ -122,6 +122,8 @@ function mapDatabaseProductToProduct(dbProduct: any): Product {
     
     if (imageUrl.includes('supabase')) {
         imageUrl = getLocalFallbackImage(dbProduct.id, dbProduct.category)
+    } else {
+        imageUrl = optimizeCloudinaryUrl(imageUrl, 800)
     }
 
     return {
@@ -141,7 +143,7 @@ function mapDatabaseProductToProduct(dbProduct: any): Product {
             if (img && img.includes('supabase')) {
                 return getLocalFallbackImage(`${dbProduct.id}_${idx}`, dbProduct.category)
             }
-            return img || ''
+            return optimizeCloudinaryUrl(img || '', 1200)
         }) as string[],
         variants: safeParseJSON<any>(dbProduct.variants, undefined),
         sku: dbProduct.sku || undefined,

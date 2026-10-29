@@ -40,25 +40,18 @@ next-env.d.ts
 # environment & local db files
 .env*
 !.env.example
-local.db
+local.db*
 *.db
-
+scratch/
 
 # temporary files
 .genkit/*
 nul
 *.tmp
 *.temp
-
-# backup files
 *.backup
 *.backup*
 *~
-
-# documentation files (temporary)
-*.md
-!README.md
-!DESARROLLO.md
 
 # netlify build scripts (temporary)
 netlify-build*.sh

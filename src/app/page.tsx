@@ -4,12 +4,12 @@ import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { getVideoUrl, getImageUrl } from '@/lib/asset-version'
+import { getVideoUrl, getImageUrl } from '@/lib/safe-asset'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
 
-export const revalidate = 43200 // Habilitar caché de 12 horas en el CDN (ISR)
+export const revalidate = 60 // Revalidación ISR de 60s + purga en 0ms vía revalidatePath
 
 async function SilverShowcaseCarouselSection() {
   let silverProducts: Product[] = []

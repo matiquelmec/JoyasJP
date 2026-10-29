@@ -1,4 +1,7 @@
 import { describe, it, expect } from 'vitest'
+import { generateSlug, generateUniqueSlug } from '@/lib/slug-utils'
+import { optimizeCloudinaryUrl, normalizeColor } from '@/lib/utils'
+import { checkoutPayloadSchema, couponValidationSchema } from '@/lib/validations/checkout'
 
 function calculateEffectivePrice(price: number, discount_price?: number): number {
   if (discount_price && discount_price > 0 && discount_price < price) {
@@ -7,7 +10,10 @@ function calculateEffectivePrice(price: number, discount_price?: number): number
   return price
 }
 
-function calculateDiscount(total: number, coupon: { type: 'percentage' | 'fixed'; value: number }): number {
+function calculateDiscount(
+  total: number,
+  coupon: { type: 'percentage' | 'fixed'; value: number }
+): number {
   if (coupon.type === 'percentage') {
     return Math.round(total * (coupon.value / 100))
   }
@@ -28,16 +34,12 @@ describe('Reglas de Negocio Financieras e Inventario Joyas JP', () => {
   })
 
   it('calcula descuentos de cupones porcentuales y fijos en CLP', () => {
-    // 10% de $50.000 = $5.000
     expect(calculateDiscount(50000, { type: 'percentage', value: 10 })).toBe(5000)
-    // Cupón fijo de $10.000 en carrito de $50.000
     expect(calculateDiscount(50000, { type: 'fixed', value: 10000 })).toBe(10000)
-    // Cupón fijo mayor al total del carrito se acota al total
     expect(calculateDiscount(5000, { type: 'fixed', value: 10000 })).toBe(5000)
   })
 
   it('resuelve el stock relacional de un conjunto dinámico (bundle)', () => {
-    // Set incluye: 1 Cadena (stock 10) + 1 Pulsera (stock 4) + 1 Dije (stock 8)
     const bundle = [
       { stock: 10, quantity: 1 },
       { stock: 4, quantity: 1 },
@@ -45,11 +47,66 @@ describe('Reglas de Negocio Financieras e Inventario Joyas JP', () => {
     ]
     expect(calculateBundleStock(bundle)).toBe(4)
 
-    // Si uno de los componentes se agota, el conjunto debe reportar 0 stock
     const outOfStockBundle = [
       { stock: 10, quantity: 1 },
       { stock: 0, quantity: 1 },
     ]
     expect(calculateBundleStock(outOfStockBundle)).toBe(0)
+  })
+})
+
+describe('Utilidades de SEO, CDN y Validación Zod (Titanium Vault Flow)', () => {
+  it('genera slugs limpios y únicos sin tildes ni caracteres especiales', () => {
+    expect(generateSlug('Cadena Cubana Plata 925 (Edición Milano)')).toBe(
+      'cadena-cubana-plata-925-edicion-milano'
+    )
+    expect(
+      generateUniqueSlug('Cadena Cubana', ['cadena-cubana', 'cadena-cubana-1'])
+    ).toBe('cadena-cubana-2')
+  })
+
+  it('optimiza automáticamente URLs de Cloudinary CDN con f_auto,q_auto:good', () => {
+    const rawUrl =
+      'https://res.cloudinary.com/demo/image/upload/v170000/joyas-jp-ecommerce/cadenas/cubana.jpg'
+    const optimized = optimizeCloudinaryUrl(rawUrl, 800)
+    expect(optimized).toContain('/upload/f_auto,q_auto:good,w_800,c_limit/')
+    expect(optimizeCloudinaryUrl('/assets/logo.webp')).toBe('/assets/logo.webp')
+  })
+
+  it('normaliza colores de catálogo y filtra valores de prueba', () => {
+    expect(normalizeColor('Pleteado')).toBe('plateado')
+    expect(normalizeColor('Dorada')).toBe('dorado')
+    expect(normalizeColor('prueba')).toBe('')
+  })
+
+  it('valida contratos de Checkout y Cupones con Zod safeParse', () => {
+    const validCheckout = checkoutPayloadSchema.safeParse({
+      cartItems: [{ id: 'prod-1', name: 'Cadena Cubana 925', price: 49990, quantity: 2 }],
+      customerInfo: {
+        name: 'Matías Riquelme',
+        email: 'cliente@joyasjp.cl',
+        phone: '+56982990513',
+        commune: 'Providencia',
+        rut: '12.345.678-9',
+        shippingMethod: 'starken',
+      },
+      couponCode: 'VIP10',
+    })
+    expect(validCheckout.success).toBe(true)
+
+    const invalidCheckout = checkoutPayloadSchema.safeParse({
+      cartItems: [],
+      customerInfo: { name: 'A', email: 'correo-invalido' },
+    })
+    expect(invalidCheckout.success).toBe(false)
+
+    const validCoupon = couponValidationSchema.safeParse({
+      code: 'milano925',
+      cart_amount: 49990,
+    })
+    expect(validCoupon.success).toBe(true)
+    if (validCoupon.success) {
+      expect(validCoupon.data.code).toBe('MILANO925')
+    }
   })
 })

@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { MessageCircle, Instagram } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getImageUrl } from '@/lib/asset-version'
+import { getImageUrl } from '@/lib/safe-asset'
 import { siteConfig } from '@/lib/config'
 
 export function MaintenanceScreen() {

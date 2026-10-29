@@ -1,24 +1,22 @@
-// Utilities for calling admin API endpoints with proper authentication
+// Cliente tipado para endpoints de administración autenticado vía Cookie HttpOnly JWT (joyasjp_admin_session)
 
 class AdminAPI {
   private getHeaders() {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('joyasjp-admin-token') || '' : ''
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
     }
   }
 
   private handleUnauthorized(response: Response) {
     if ((response.status === 401 || response.status === 403) && typeof window !== 'undefined') {
-      localStorage.removeItem('joyasjp-admin-token')
-      window.location.reload()
+      window.location.href = '/admin/login'
     }
   }
 
   async getProducts() {
     const response = await fetch('/api/admin/products', {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -35,7 +33,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/products', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify(productData)
+      credentials: 'include',
+      body: JSON.stringify(productData),
     })
 
     if (!response.ok) {
@@ -55,7 +54,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/products', {
       method: 'PUT',
       headers: this.getHeaders(),
-      body: JSON.stringify({ id, ...productData })
+      credentials: 'include',
+      body: JSON.stringify({ id, ...productData }),
     })
 
     if (!response.ok) {
@@ -74,7 +74,8 @@ class AdminAPI {
 
     const response = await fetch(url.toString(), {
       method: 'DELETE',
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -90,7 +91,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/products/restore', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify({ id })
+      credentials: 'include',
+      body: JSON.stringify({ id }),
     })
 
     if (!response.ok) {
@@ -106,7 +108,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/products/stock', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify({ id: productId, stock })
+      credentials: 'include',
+      body: JSON.stringify({ id: productId, stock }),
     })
 
     if (!response.ok) {
@@ -119,7 +122,8 @@ class AdminAPI {
 
   async getOrders() {
     const response = await fetch('/api/admin/orders', {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -135,7 +139,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/orders', {
       method: 'PUT',
       headers: this.getHeaders(),
-      body: JSON.stringify({ id: orderId, status, trackingNumber })
+      credentials: 'include',
+      body: JSON.stringify({ orderId, status, trackingNumber }),
     })
 
     if (!response.ok) {
@@ -149,7 +154,8 @@ class AdminAPI {
 
   async getConfiguration() {
     const response = await fetch('/api/admin/configuration', {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -166,7 +172,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/configuration', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify(configData)
+      credentials: 'include',
+      body: JSON.stringify(configData),
     })
 
     if (!response.ok) {
@@ -181,7 +188,8 @@ class AdminAPI {
 
   async getCoupons() {
     const response = await fetch('/api/admin/coupons', {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -198,7 +206,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/coupons', {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify(couponData)
+      credentials: 'include',
+      body: JSON.stringify(couponData),
     })
 
     if (!response.ok) {
@@ -214,7 +223,8 @@ class AdminAPI {
     const response = await fetch('/api/admin/coupons', {
       method: 'PUT',
       headers: this.getHeaders(),
-      body: JSON.stringify(couponData)
+      credentials: 'include',
+      body: JSON.stringify(couponData),
     })
 
     if (!response.ok) {
@@ -232,7 +242,8 @@ class AdminAPI {
 
     const response = await fetch(url.toString(), {
       method: 'DELETE',
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      credentials: 'include',
     })
 
     if (!response.ok) {

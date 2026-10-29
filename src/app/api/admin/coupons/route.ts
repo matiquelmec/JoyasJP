@@ -8,7 +8,7 @@ export const revalidate = 0
 
 // GET - Obtener todos los cupones con sus estadísticas de ventas
 export async function GET(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
 // POST - Crear un nuevo cupón
 export async function POST(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 
 // PUT - Actualizar un cupón
 export async function PUT(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -157,7 +157,7 @@ export async function PUT(request: NextRequest) {
 
 // DELETE - Eliminar un cupón de forma permanente
 export async function DELETE(request: NextRequest) {
-  if (!verifyAdminAuth(request)) {
+  if (!(await verifyAdminAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
