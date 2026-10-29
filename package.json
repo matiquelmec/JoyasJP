@@ -67,5 +67,9 @@
     "@typescript-eslint/parser": "^7.18.0",
     "dotenv": "^17.2.1",
     "vitest": "^5.0.5"
+  },
+  "optionalDependencies": {
+    "@libsql/linux-x64-gnu": "0.5.29",
+    "@libsql/linux-x64-musl": "0.5.29"
   }
 }
