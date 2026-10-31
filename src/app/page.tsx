@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { getVideoUrl, getImageUrl } from '@/lib/safe-asset'
+import { getVideoUrl } from '@/lib/safe-asset'
+import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
@@ -143,22 +143,21 @@ export default function Home() {
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-3 sm:px-4 pt-44 sm:pt-48 md:pt-52 lg:pt-56 xl:pt-60 pb-20">
-          <Image
-            src={getImageUrl('logo.webp')}
-            alt="Joyas JP - Alta joyería para la escena urbana"
-            width={240} // Tamaño visual real optimizado
-            height={240}
-            priority
-            fetchPriority="high"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxAPwCdABmX/9k="
-            className="h-auto w-48 sm:w-56 md:w-60 lg:w-64 mb-6 drop-shadow-[0_2px_10px_rgba(255,255,255,0.4)] animate-fadeInScale"
-            sizes="(max-width: 640px) 192px, (max-width: 1024px) 240px, 256px"
-          />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 pt-28 pb-16">
+          <div className="mb-6 drop-shadow-[0_4px_24px_rgba(255,255,255,0.25)] animate-fadeInScale">
+            <JoyasJPLogo
+              variant="insignia"
+              color="plata"
+              size="2xl"
+              priority
+              asLink={false}
+            />
+          </div>
 
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-white/90 mb-8 animate-fadeInUp-delayed-02 uppercase tracking-wider">
-            ATRÉVETE A JUGAR
+          <h1 className="sr-only">Joyas JP - Alta Joyería para la Escena Urbana</h1>
+
+          <p className="mt-2 max-w-2xl text-base sm:text-lg md:text-xl font-headline font-bold text-zinc-100 tracking-[0.25em] uppercase mb-8 animate-fadeInUp-delayed-02 drop-shadow-md">
+            ATRÉVETE A JUGAR • PLATA FINA 925
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp-delayed-04">
@@ -226,7 +225,7 @@ export default function Home() {
                 <Link href="/productos?categoria=plata-925">
                   <Button
                     size="lg"
-                    className="font-extrabold text-base px-8 py-6 bg-primary text-black hover:bg-primary/90 hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300"
+                    className="font-extrabold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.4)] transition-all duration-300"
                   >
                     Explorar Bóveda Plata 925
                     <ChevronRight className="w-5 h-5 ml-1" />

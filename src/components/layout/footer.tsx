@@ -2,6 +2,7 @@
 
 import { Instagram, Mail, Phone } from 'lucide-react'
 import Link from 'next/link'
+import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import { navLinks, siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
 
@@ -28,14 +29,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center md:text-left">
           {/* Columna 1: Marca con Estilo Premium */}
           <div className="flex flex-col items-center md:items-start space-y-4">
-            <div className="relative">
-              <h3 className="text-4xl md:text-5xl font-bebas tracking-wide text-white uppercase group cursor-default">
-                {config?.store_name || siteConfig.name}
-                <span className="block h-1 w-12 bg-primary mt-1 transition-all duration-500 group-hover:w-full" />
-              </h3>
-            </div>
+            <JoyasJPLogo variant="horizontal" color="plata" size="md" />
             <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-headline font-medium uppercase tracking-widest">
-              {config?.store_slogan || 'Atrévete a jugar'}
+              {config?.store_slogan || 'Atrévete a jugar • Plata Fina 925'}
             </p>
           </div>
 

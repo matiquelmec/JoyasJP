@@ -1,0 +1,22 @@
+{
+  "name": "Joyas JP | Joyer�a Urbana & Plata Fina 925",
+  "short_name": "Joyas JP",
+  "description": "Joyas de alta gama en Plata Fina de Mil�n 925 y Oro. Dise�os macizos con despacho express en Punta Arenas y todo Chile.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090B",
+  "theme_color": "#09090B",
+  "icons": [
+    {
+      "src": "/brand/favicon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/favicon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

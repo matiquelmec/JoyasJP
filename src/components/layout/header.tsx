@@ -1,12 +1,11 @@
 'use client'
 
 import { Heart, Menu, ShoppingBag } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { CartPanel } from '@/components/dynamic-imports'
 import { Button } from '@/components/ui/button'
-import { getSafeUrl } from '@/lib/safe-asset'
+import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import {
   Sheet,
   SheetClose,
@@ -32,26 +31,26 @@ export function Header() {
   }, []);
 
   // Estilo unificado para todos los enlaces de navegación
-  const linkClassName = "text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+  const linkClassName =
+    "text-sm font-semibold tracking-wide text-zinc-300 transition-colors hover:text-[#F43F5E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-sm py-1"
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent backdrop-blur-sm",
-      hasScrolled ? "shadow-lg" : "shadow-none"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
+      hasScrolled
+        ? "bg-[#09090B]/90 backdrop-blur-md shadow-xl border-b border-zinc-800/60"
+        : "bg-transparent backdrop-blur-[2px] shadow-none"
     )}>
-      <div className="container mx-auto flex h-36 sm:h-40 md:h-44 lg:h-48 xl:h-52 items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8">
-        <Link href="/" className="flex items-center shrink-0">
-          <Image
-            src={getSafeUrl('logo.webp')}
-            alt="Joyas JP Logo"
-            width={208}
-            height={208}
+      <div className="container mx-auto flex h-20 md:h-24 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center shrink-0">
+          <JoyasJPLogo
+            variant="horizontal"
+            color="plata"
+            size="md"
             priority
-            sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, (max-width: 1024px) 160px, 192px"
-            className="h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:h-44 lg:w-44 xl:h-48 xl:w-48 object-contain"
-            style={{ aspectRatio: '1/1' }}
+            className="hover:scale-105"
           />
-        </Link>
+        </div>
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className={linkClassName}>
@@ -63,13 +62,13 @@ export function Header() {
           <Link href="/favoritos">
             <Button
               variant="ghost"
-              size="lg"
-              className="relative"
+              size="icon"
+              className="relative h-11 w-11 rounded-full text-zinc-200 hover:text-white hover:bg-zinc-800/60 focus-visible:ring-2 focus-visible:ring-[#F43F5E]"
               aria-label={`Ver favoritos (${wishlistItems.length} productos)`}
             >
-              <Heart className="h-7 w-7" />
+              <Heart className="h-5 w-5" />
               {wishlistItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 text-sm flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-[#D4113C] text-white rounded-full h-5 w-5 text-xs font-bold flex items-center justify-center shadow-md">
                   {wishlistItems.length}
                 </span>
               )}
@@ -82,19 +81,23 @@ export function Header() {
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
-                  size="lg"
+                  size="icon"
+                  className="h-11 w-11 rounded-full text-zinc-200 hover:text-white hover:bg-zinc-800/60 focus-visible:ring-2 focus-visible:ring-[#F43F5E]"
                   aria-label="Abrir menú de navegación"
                 >
-                  <Menu className="h-7 w-7" />
+                  <Menu className="h-6 w-6" />
                   <span className="sr-only">Abrir menú</span>
                 </Button>
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="bg-background/95 border-l-border/50 w-[280px]"
+                className="bg-[#09090B]/95 border-l-zinc-800 w-[290px]"
               >
                 <div className="flex flex-col h-full p-6">
-                  <nav className="flex flex-col gap-6 text-center mt-12">
+                  <div className="flex justify-center mb-6">
+                    <JoyasJPLogo variant="horizontal" color="plata" size="sm" />
+                  </div>
+                  <nav className="flex flex-col gap-6 text-center mt-6">
                     {navLinks.map((link) => (
                       <SheetClose asChild key={link.href}>
                         <Link href={link.href} className={linkClassName}>

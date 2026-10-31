@@ -81,6 +81,7 @@ export async function generateMetadata(): Promise<Metadata> {
         'es-CL': '/',
       },
     },
+    manifest: '/manifest.webmanifest',
     openGraph: {
       type: 'website',
       locale: 'es_CL',
@@ -90,20 +91,31 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: storeName,
       images: [
         {
-          url: '/assets/logo.webp',
-          width: 450,
-          height: 200,
-          alt: `${storeName} - Alta joyería urbana`,
+          url: '/brand/joyasjp_og_image_1200x630.png',
+          width: 1200,
+          height: 630,
+          alt: `${storeName} - Alta Joyería Urbana & Plata Fina 925`,
         },
       ],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: title,
+      description: description,
+      images: ['/brand/joyasjp_og_image_1200x630.png'],
+      creator: '@joyasjp',
+    },
     icons: {
       icon: [
-        { url: '/favicon.png', type: 'image/png' },
-        { url: '/assets/logo.webp', type: 'image/webp' }
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+        { url: '/brand/favicon_32.png', sizes: '32x32', type: 'image/png' },
+        { url: '/brand/favicon_48.png', sizes: '48x48', type: 'image/png' },
+        { url: '/favicon.png', sizes: '512x512', type: 'image/png' },
       ],
       shortcut: '/favicon.png',
-      apple: '/favicon.png',
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
     },
     robots: {
       index: true,
@@ -155,9 +167,10 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://aws-us-east-1.turso.io" />
         <link rel="dns-prefetch" href="//aws-us-east-1.turso.io" />
 
-        <link rel="icon" href="/favicon.png?v=3" type="image/png" sizes="any" />
-        <link rel="shortcut icon" href="/favicon.png?v=3" />
-        <link rel="apple-touch-icon" href="/favicon.png?v=3" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
 
         {/* 🔍 GOOGLE SEARCH FAVICON & BRAND LOGO SCHEMA (JSON-LD) */}
         <script
@@ -165,11 +178,21 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
-              '@type': 'Organization',
+              '@type': 'JewelryStore',
               'name': 'Joyas JP',
+              'alternateName': 'Joyas JP Joyería Urbana',
               'url': siteConfig.url,
-              'logo': `${siteConfig.url}/assets/logo.webp`,
-              'image': `${siteConfig.url}/assets/logo.webp`,
+              'logo': `${siteConfig.url}/brand/joyasjp_avatar_redes_1080.jpg`,
+              'image': `${siteConfig.url}/brand/joyasjp_avatar_redes_1080.jpg`,
+              'description': 'Alta joyería urbana en Plata Fina de Milán 925 y Oro. Diseños macizos con despacho express en Punta Arenas y todo Chile.',
+              'telephone': siteConfig.business.contact.phone,
+              'priceRange': '$$',
+              'address': {
+                '@type': 'PostalAddress',
+                'addressLocality': 'Punta Arenas',
+                'addressRegion': 'Magallanes y de la Antártica Chilena',
+                'addressCountry': 'CL'
+              },
               'sameAs': [
                 siteConfig.links.instagram,
                 siteConfig.links.tiktok
@@ -184,15 +207,12 @@ export default async function RootLayout({
         {/* ⚡ Critical CSS optimizado */}
         <style dangerouslySetInnerHTML={{
           __html: `
-            body{background:#0a0a0a;color:#fafafa;font-display:swap}
-            img:not([src]),img[src=""]{visibility:hidden!important;background:#0a0a0a!important}
-            img.lazyload,img.lazyloading{background:#0a0a0a!important;color:transparent!important}
-            img[data-placeholder],img[placeholder]{background:#0a0a0a!important;opacity:0!important}
-            header *{color:#fafafa!important}
-            header a,header nav a{color:#fafafa!important;text-decoration:none!important;background:transparent!important}
-            header .text-foreground{color:#fafafa!important}
+            body{background:#09090B;color:#F4F4F5;font-display:swap}
+            img:not([src]),img[src=""]{visibility:hidden!important;background:#09090B!important}
+            img.lazyload,img.lazyloading{background:#09090B!important;color:transparent!important}
+            img[data-placeholder],img[placeholder]{background:#09090B!important;opacity:0!important}
+            header a,header nav a{text-decoration:none!important}
             header img,header picture{background:transparent!important;opacity:1!important}
-            header button,header [role="button"]{background:transparent!important;border:0!important;color:#fafafa!important}
             .sr-only{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
             .animate-shimmer{animation:shimmer 1.5s infinite;background:linear-gradient(90deg,rgba(39,39,42,0.8) 25%,rgba(63,63,70,0.6) 50%,rgba(39,39,42,0.8) 75%);background-size:200% 100%}
             @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}

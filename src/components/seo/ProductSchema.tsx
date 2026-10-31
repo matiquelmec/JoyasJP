@@ -30,7 +30,7 @@ export function ProductSchema({
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
   const canonicalSlug = product.slug || product.id
   const productUrl = `${siteUrl}/productos/${canonicalSlug}`
-  const imageUrl = product.imageUrl || `${siteUrl}${getSafeUrl('logo.webp')}`
+  const imageUrl = product.imageUrl || `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`
   const effectivePrice =
     product.discount_price && product.discount_price > 0 && product.discount_price < product.price
       ? product.discount_price
@@ -47,14 +47,14 @@ export function ProductSchema({
     brand: {
       '@type': 'Brand',
       name: 'Joyas JP',
-      logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
+      logo: `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`,
       url: siteUrl,
     },
     manufacturer: {
       '@type': 'Organization',
       name: 'Joyas JP',
       url: siteUrl,
-      logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
+      logo: `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`,
     },
     image: [
       {
@@ -79,7 +79,7 @@ export function ProductSchema({
         '@type': 'Organization',
         name: 'Joyas JP',
         url: siteUrl,
-        logo: `${siteUrl}${getSafeUrl('logo.webp')}`,
+        logo: `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`,
       },
       hasMerchantReturnPolicy: {
         '@type': 'MerchantReturnPolicy',

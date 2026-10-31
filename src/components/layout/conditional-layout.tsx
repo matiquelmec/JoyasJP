@@ -42,7 +42,7 @@ export function ConditionalLayout({ children, initialConfig }: ConditionalLayout
           id="main-content"
           className={cn(
             "flex-1",
-            isHeroPage ? "pt-0" : "pt-36 sm:pt-44 md:pt-48 lg:pt-56"
+            isHeroPage ? "pt-0" : "pt-20 md:pt-24"
           )}
         >
           <ErrorBoundary>{children}</ErrorBoundary>

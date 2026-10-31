@@ -300,23 +300,23 @@ const ProductCard = memo(function ProductCard({
 
         <div className="text-sm">
           {product.materials ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold capitalize border border-primary/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#1D0A10] text-[#F43F5E] font-semibold capitalize border border-[#D4113C]/30 text-xs">
               {product.materials}
             </span>
           ) : product.color ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold capitalize border border-primary/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#1D0A10] text-[#F43F5E] font-semibold capitalize border border-[#D4113C]/30 text-xs">
               {normalizeColor(product.color) || product.color}
             </span>
           ) : product.dimensions ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#1D0A10] text-[#F43F5E] font-semibold border border-[#D4113C]/30 text-xs">
               {product.dimensions}
             </span>
           ) : product.code ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold uppercase border border-primary/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#1D0A10] text-[#F43F5E] font-semibold uppercase border border-[#D4113C]/30 text-xs">
               {product.code}
             </span>
           ) : (
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-medium capitalize border border-primary/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#1D0A10] text-[#F43F5E] font-medium capitalize border border-[#D4113C]/30 text-xs">
               {product.category}
             </span>
           )}
@@ -337,13 +337,13 @@ const ProductCard = memo(function ProductCard({
                 <p className="text-xs text-muted-foreground line-through decoration-red-500/50">
                   {priceDisplay.original}
                 </p>
-                <p className="text-2xl font-black text-red-600 font-headline tracking-tighter">
+                <p className="text-2xl font-black text-[#F43F5E] font-headline tracking-tighter">
                   {product.hasVariants ? 'Desde ' : ''}
                   {priceDisplay.discount}
                 </p>
               </>
             ) : (
-              <p className="text-2xl font-bold text-primary font-headline tracking-tighter">
+              <p className="text-2xl font-bold text-white font-headline tracking-tighter">
                 {product.hasVariants ? 'Desde ' : ''}
                 {priceDisplay.original}
               </p>
@@ -354,7 +354,7 @@ const ProductCard = memo(function ProductCard({
             size="icon"
             onClick={handleAddToCart}
             disabled={isAddingToCart || isOutOfStock}
-            className="h-11 w-11 transition-all duration-200 hover:scale-110 shadow-sm disabled:opacity-45"
+            className="h-11 w-11 bg-[#D4113C] hover:bg-[#B30D33] text-white transition-all duration-200 hover:scale-110 shadow-sm disabled:opacity-45 focus-visible:ring-2 focus-visible:ring-[#F43F5E]"
             aria-label={
               isOutOfStock ? `${product.name} agotado` : `Añadir ${product.name} al carrito`
             }

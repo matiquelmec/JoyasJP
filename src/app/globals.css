@@ -13,37 +13,44 @@
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary es ahora Rojo Terciopelo */
-    --primary: 346.8 85% 45%;
-    /* Rojo oscuro, saturado y elegante */
-    --primary-foreground: 0 0% 98%;
-    /* Texto claro para contraste */
+    /* Primary es Carmesí Editorial Joyas JP */
+    --primary: 347 85% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 14.9%;
+    --secondary: 240 5% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
 
-    /* Accent es ahora Plata Líquida */
-    --accent: 210 40% 96.1%;
-    /* Plateado claro y brillante */
-    --accent-foreground: 240 5.9% 10%;
-    /* Texto oscuro para el acento */
+    /* Accent es Plata Fina 925 */
+    --accent: 218 14% 80%;
+    --accent-foreground: 240 6% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 346.8 85% 45%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 347 85% 45%;
+
+    /* 💎 Brand Tokens Joyas JP Oficiales */
+    --brand-obsidian: #09090B;
+    --brand-graphite: #121214;
+    --brand-smoke: #A1A1AA;
+    --brand-crimson: #D4113C;
+    --brand-crimson-light: #F43F5E;
+    --brand-crimson-veil: #1D0A10;
+    --brand-silver: #C4C9D2;
+    --gradient-plata: linear-gradient(135deg, #F6F7FA 0%, #AEB4BE 28%, #EEF0F4 50%, #9AA0AB 75%, #DDE1E7 100%);
+    --shadow-brillo-carmesi: 0 0 24px rgba(212, 17, 60, 0.45);
 
     /* 🏆 Colores Premium para Joyería */
     --gold: 45 80% 45%;
     --gold-light: 45 90% 65%;
     --platinum: 210 10% 90%;
     --platinum-dark: 210 5% 40%;
-    --velvet: 346.8 85% 35%;
+    --velvet: 347 85% 35%;
 
     --radius: 0.5rem;
   }
