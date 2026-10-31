@@ -12,7 +12,7 @@ interface CartState {
   isOpen: boolean
   openCart: () => void
   closeCart: () => void
-  addItem: (item: Product, quantity?: number) => void
+  addItem: (item: Product, quantity?: number) => boolean
   removeItem: (id: string) => void
   updateItemQuantity: (id: string, quantity: number) => void
   clearCart: () => void
@@ -32,40 +32,54 @@ export const useCart = create<CartState>()(
           (cartItem) => cartItem.id === item.id
         )
 
-        const availableStock = item.stock || 0
+        const availableStock = Math.max(0, Number(item.stock ?? 0))
+
+        if (availableStock <= 0) {
+          toast.error('Producto agotado', {
+            description: `"${item.name}" se encuentra sin unidades disponibles actualmente.`,
+          })
+          return false
+        }
 
         if (existingItem) {
           const newQuantity = existingItem.quantity + quantity
 
           if (newQuantity > availableStock) {
-            toast.error(`Stock insuficiente`, {
-              description: `Solo hay ${availableStock} unidades disponibles de "${item.name}".`
+            toast.error('Stock insuficiente', {
+              description: `Solo hay ${availableStock} ${availableStock === 1 ? 'unidad disponible' : 'unidades disponibles'} de "${item.name}".`,
             })
-            return
+            return false
           }
 
           set({
             items: currentItems.map((cartItem) =>
               cartItem.id === item.id
-                ? { ...cartItem, quantity: newQuantity }
+                ? { ...cartItem, stock: availableStock, quantity: newQuantity }
                 : cartItem
             ),
           })
-        } else {
-          if (quantity > availableStock) {
-            toast.error(`Stock insuficiente`, {
-              description: `Solo hay ${availableStock} unidades disponibles de "${item.name}".`
-            })
-            return
-          }
-
-          set({
-            items: [
-              ...currentItems,
-              { ...item, quantity, description: item.description || '' },
-            ],
-          })
+          return true
         }
+
+        if (quantity > availableStock) {
+          toast.error('Stock insuficiente', {
+            description: `Solo hay ${availableStock} ${availableStock === 1 ? 'unidad disponible' : 'unidades disponibles'} de "${item.name}".`,
+          })
+          return false
+        }
+
+        set({
+          items: [
+            ...currentItems,
+            {
+              ...item,
+              stock: availableStock,
+              quantity,
+              description: item.description || '',
+            },
+          ],
+        })
+        return true
       },
 
       removeItem: (id) => {
@@ -79,13 +93,13 @@ export const useCart = create<CartState>()(
         }
 
         const currentItems = get().items
-        const existingItem = currentItems.find(item => item.id === id)
+        const existingItem = currentItems.find((item) => item.id === id)
 
         if (existingItem) {
-          const availableStock = existingItem.stock || 0
+          const availableStock = Math.max(0, Number(existingItem.stock ?? 0))
           if (quantity > availableStock) {
-            toast.error(`Stock máximo alcanzado`, {
-              description: `Solo hay ${availableStock} unidades disponibles de "${existingItem.name}".`
+            toast.error('Stock máximo alcanzado', {
+              description: `Solo hay ${availableStock} ${availableStock === 1 ? 'unidad disponible' : 'unidades disponibles'} de "${existingItem.name}".`,
             })
             return
           }

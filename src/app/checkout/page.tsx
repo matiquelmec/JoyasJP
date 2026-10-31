@@ -491,11 +491,11 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center gap-4">
                       <Image
-                        src={item.imageUrl}
+                        src={item.imageUrl || '/assets/logo.webp'}
                         alt={item.name}
                         width={64}
                         height={64}
-                        className="rounded-lg bg-black"
+                        className="rounded-lg bg-black object-cover"
                       />
                       <div className="flex-grow">
                         <h4 className="font-medium text-sm">{item.name}</h4>
@@ -606,7 +606,7 @@ export default function CheckoutPage() {
                 <form onSubmit={handleSubmit}>
                   <Button
                     type="submit"
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold"
+                    className="w-full min-h-[48px] bg-primary hover:bg-primary/90 text-black font-extrabold"
                     size="lg"
                     disabled={isLoading}
                   >

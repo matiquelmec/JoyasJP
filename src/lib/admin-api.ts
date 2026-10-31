@@ -9,7 +9,9 @@ class AdminAPI {
 
   private handleUnauthorized(response: Response) {
     if ((response.status === 401 || response.status === 403) && typeof window !== 'undefined') {
-      window.location.href = '/admin/login'
+      if (window.location.pathname !== '/admin') {
+        window.location.href = '/admin'
+      }
     }
   }
 
@@ -124,11 +126,15 @@ class AdminAPI {
     const response = await fetch('/api/admin/orders', {
       headers: this.getHeaders(),
       credentials: 'include',
+      cache: 'no-store',
     })
 
     if (!response.ok) {
       this.handleUnauthorized(response)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        `Error ${response.status}: ${errorData.details || errorData.error || response.statusText}`
+      )
     }
 
     const data = await response.json()

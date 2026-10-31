@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import { generateSlug, generateUniqueSlug } from '@/lib/slug-utils'
 import { optimizeCloudinaryUrl, normalizeColor } from '@/lib/utils'
-import { checkoutPayloadSchema, couponValidationSchema } from '@/lib/validations/checkout'
-import { signFlowParams } from '@/lib/flow'
+import {
+  checkoutPayloadSchema,
+  couponValidationSchema,
+  flowTokenSchema,
+} from '@/lib/validations/checkout'
+import { signFlowParams, normalizeCanonicalSiteUrl } from '@/lib/flow'
 
 function calculateEffectivePrice(price: number, discount_price?: number): number {
   if (discount_price && discount_price > 0 && discount_price < price) {
@@ -23,7 +27,7 @@ function calculateDiscount(
 
 function calculateBundleStock(components: Array<{ stock: number; quantity: number }>): number {
   if (components.length === 0) return 0
-  const possibleBundles = components.map(c => Math.floor(c.stock / c.quantity))
+  const possibleBundles = components.map((c) => Math.floor(c.stock / c.quantity))
   return Math.min(...possibleBundles)
 }
 
@@ -53,10 +57,11 @@ describe('Reglas de Negocio Financieras e Inventario Joyas JP', () => {
       { stock: 0, quantity: 1 },
     ]
     expect(calculateBundleStock(outOfStockBundle)).toBe(0)
+    expect(calculateBundleStock([])).toBe(0)
   })
 })
 
-describe('Pasarela de Pagos Flow.cl Nativa (HMAC-SHA256)', () => {
+describe('Pasarela de Pagos Flow.cl Nativa (HMAC-SHA256 & URL Canónica)', () => {
   it('ordena parámetros alfabéticamente y genera firma HMAC-SHA256 oficial', () => {
     const secretKey = 'test_secret_key'
     const params = {
@@ -70,7 +75,13 @@ describe('Pasarela de Pagos Flow.cl Nativa (HMAC-SHA256)', () => {
     const signature = signFlowParams(params, secretKey)
     expect(signature).toBeDefined()
     expect(typeof signature).toBe('string')
-    expect(signature.length).toBe(64) // Longitud sha256 hex
+    expect(signature.length).toBe(64)
+  })
+
+  it('normaliza URL canónica sin subdominio www para evitar redirecciones 301 en webhooks POST', () => {
+    expect(normalizeCanonicalSiteUrl('https://www.joyasjp.cl/')).toBe('https://joyasjp.cl')
+    expect(normalizeCanonicalSiteUrl('https://joyasjp.cl///')).toBe('https://joyasjp.cl')
+    expect(normalizeCanonicalSiteUrl('')).toBe('https://joyasjp.cl')
   })
 })
 
@@ -79,9 +90,9 @@ describe('Utilidades de SEO, CDN y Validación Zod (Titanium Vault Flow)', () =>
     expect(generateSlug('Cadena Cubana Plata 925 (Edición Milano)')).toBe(
       'cadena-cubana-plata-925-edicion-milano'
     )
-    expect(
-      generateUniqueSlug('Cadena Cubana', ['cadena-cubana', 'cadena-cubana-1'])
-    ).toBe('cadena-cubana-2')
+    expect(generateUniqueSlug('Cadena Cubana', ['cadena-cubana', 'cadena-cubana-1'])).toBe(
+      'cadena-cubana-2'
+    )
   })
 
   it('optimiza automáticamente URLs de Cloudinary CDN con f_auto,q_auto:good', () => {
@@ -98,26 +109,55 @@ describe('Utilidades de SEO, CDN y Validación Zod (Titanium Vault Flow)', () =>
     expect(normalizeColor('prueba')).toBe('')
   })
 
-  it('valida contratos de Checkout y Cupones con Zod safeParse', () => {
-    const validCheckout = checkoutPayloadSchema.safeParse({
+  it('valida contratos de Checkout (Starken vs Metro), Token Flow y Cupones con Zod safeParse', () => {
+    const validStarkenCheckout = checkoutPayloadSchema.safeParse({
       cartItems: [{ id: 'prod-1', name: 'Cadena Cubana 925', price: 49990, quantity: 2 }],
       customerInfo: {
         name: 'Matías Riquelme',
         email: 'cliente@joyasjp.cl',
         phone: '+56982990513',
-        commune: 'Providencia',
+        address: 'Av. Providencia 1234',
+        city: 'Santiago',
+        commune: 'Metropolitana de Santiago',
         rut: '12.345.678-9',
         shippingMethod: 'starken',
       },
       couponCode: 'VIP10',
     })
-    expect(validCheckout.success).toBe(true)
+    expect(validStarkenCheckout.success).toBe(true)
 
-    const invalidCheckout = checkoutPayloadSchema.safeParse({
-      cartItems: [],
-      customerInfo: { name: 'A', email: 'correo-invalido' },
+    // Starken sin dirección ni ciudad debe rechazarse
+    const missingAddressStarken = checkoutPayloadSchema.safeParse({
+      cartItems: [{ id: 'prod-1', name: 'Cadena Cubana 925', price: 49990, quantity: 1 }],
+      customerInfo: {
+        name: 'Matías Riquelme',
+        email: 'cliente@joyasjp.cl',
+        phone: '+56982990513',
+        commune: 'Metropolitana de Santiago',
+        rut: '12.345.678-9',
+        shippingMethod: 'starken',
+      },
     })
-    expect(invalidCheckout.success).toBe(false)
+    expect(missingAddressStarken.success).toBe(false)
+
+    // Entrega en Metro permite dirección y ciudad vacías
+    const validMetroCheckout = checkoutPayloadSchema.safeParse({
+      cartItems: [
+        { id: '0f549c7d', name: 'Cubana exótica ICE', price: 15000, quantity: 1 },
+        { id: '9c24cf1b', name: 'Cubana gruesa tuki', price: 10000, quantity: 1 },
+      ],
+      customerInfo: {
+        name: 'Guillermo Alvear',
+        email: 'cliente@joyasjp.cl',
+        phone: '+56982990513',
+        address: '',
+        city: '',
+        commune: 'Metropolitana de Santiago',
+        rut: '12.345.678-5',
+        shippingMethod: 'metro',
+      },
+    })
+    expect(validMetroCheckout.success).toBe(true)
 
     const validCoupon = couponValidationSchema.safeParse({
       code: 'milano925',
@@ -127,5 +167,8 @@ describe('Utilidades de SEO, CDN y Validación Zod (Titanium Vault Flow)', () =>
     if (validCoupon.success) {
       expect(validCoupon.data.code).toBe('MILANO925')
     }
+
+    expect(flowTokenSchema.safeParse({ token: '7368029A61B02C50E9A6' }).success).toBe(true)
+    expect(flowTokenSchema.safeParse({ token: '' }).success).toBe(false)
   })
 })

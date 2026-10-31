@@ -10,9 +10,9 @@ Este archivo define las directrices, contratos arquitectónicos y estándares de
 * **Lenguaje:** TypeScript 5.8+ en modo estricto (`npm run typecheck`).
 * **Base de Datos:** **Turso DB (LibSQL / SQLite Edge Database)** con cliente `@libsql/client`.
 * **ORM & Esquema Centralizado:** **Drizzle ORM** (`src/db/schema.ts`, `src/db/index.ts`).
-* **Validación de Contratos:** **Zod v4** (`zod`) mediante `safeParse` en mutaciones, checkout, cupones y configuraciones.
-* **Pasarela de Pagos:** **Flow.cl Nativo (`src/lib/flow.ts`)** con firma criptográfica **HMAC-SHA256** (`crypto` nativo, 0 dependencias externas), conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return` con redirección `303 See Other`) y deducción atómica de inventario (simples y `bundle_items` en `turso.batch`).
-* **Panel de Administración Blindado:** `StockEditor` con throttle/enter/blur y botones `+`/`-`, gestión de pedidos en tiempo real con cookie `HttpOnly` y soporte para cupones.
+* **Validación de Contratos:** **Zod v4** (`zod`) mediante `safeParse` en mutaciones, checkout, cupones y configuraciones (`src/lib/validations/checkout.ts`, `src/lib/validations/admin.ts`).
+* **Pasarela de Pagos & Conciliación:** **Flow.cl Nativo (`src/lib/flow.ts`)** + **`OrderService` (`src/services/order.service.ts`)** con firma criptográfica **HMAC-SHA256** (`crypto` nativo, 0 dependencias externas), URL canónica sin `www` (`normalizeCanonicalSiteUrl`), conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return` con redirección `303 See Other`) y deducción atómica e idempotente de inventario (simples y `bundle_items` en un único `turso.batch(..., 'write')`).
+* **Panel de Administración Blindado:** `StockEditor` con recálculo reactivo de bundles, gestión de pedidos resiliente (`normalizePaymentDetail`, cero caídas por formatos históricos) autenticada exclusivamente con cookie `HttpOnly` JWT (`joyasjp_admin_session`) y estados visuales completos (skeleton shimmer, empty y error con reintento).
 * **Dirección de Arte & Estilos:** Tailwind CSS con estética *Urban Luxury & Vault* (Negro Obsidiana `#09090B`, Oro Milano `#D4AF37`, Plata Italiana 925 `#E2E8F0` y Rubí Terciopelo), retícula Base 8 y touch targets $\ge 44\text{px}$.
 * **Testing:** **Vitest** (`npm test`) en `tests/unit/*.test.ts`.
 

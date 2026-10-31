@@ -358,37 +358,48 @@ export class ProductService {
                 return product
             }
 
-            let localProduct = LOCAL_MOCK_PRODUCTS.find(p => p.id === idOrSlug || p.slug === idOrSlug)
+            if (process.env.NODE_ENV === 'production') return null
+            const localProduct = LOCAL_MOCK_PRODUCTS.find(p => p.id === idOrSlug || p.slug === idOrSlug)
             return localProduct || null
         } catch (error) {
-            console.error('Error fetching product by ID/Slug, returning mock:', error)
-            let localProduct = LOCAL_MOCK_PRODUCTS.find(p => p.id === idOrSlug || p.slug === idOrSlug)
+            console.error('Error fetching product by ID/Slug:', error)
+            if (process.env.NODE_ENV === 'production') return null
+            const localProduct = LOCAL_MOCK_PRODUCTS.find(p => p.id === idOrSlug || p.slug === idOrSlug)
             return localProduct || null
         }
     }
 
     /**
-     * Obtiene productos por IDs (usado en validación de checkout)
+     * Obtiene productos activos por IDs (usado en validación autoritativa de checkout en servidor).
+     * Prohibido retornar productos eliminados o mocks falsos en producción.
      */
     static async getProductsByIds(ids: string[]): Promise<Product[]> {
         if (ids.length === 0) return []
 
+        const uniqueIds = Array.from(new Set(ids))
+
         try {
-            const placeholders = ids.map(() => '?').join(',')
+            const placeholders = uniqueIds.map(() => '?').join(',')
             const { rows } = await turso.execute({
-                sql: `SELECT * FROM products WHERE id IN (${placeholders})`,
-                args: ids
+                sql: `SELECT * FROM products WHERE id IN (${placeholders}) AND (deleted_at IS NULL OR deleted_at = '')`,
+                args: uniqueIds
             })
 
             if (!rows || rows.length === 0) {
-                return LOCAL_MOCK_PRODUCTS.filter(p => ids.includes(p.id))
+                if (process.env.NODE_ENV !== 'production') {
+                    return LOCAL_MOCK_PRODUCTS.filter(p => uniqueIds.includes(p.id))
+                }
+                return []
             }
 
             const mapped = rows.map(mapDatabaseProductToProduct)
             return await this.resolveBundleStocks(mapped)
         } catch (error) {
             console.error('Error in getProductsByIds:', error)
-            return LOCAL_MOCK_PRODUCTS.filter(p => ids.includes(p.id))
+            if (process.env.NODE_ENV === 'production') {
+                throw new Error('Error al consultar inventario en Turso DB')
+            }
+            return LOCAL_MOCK_PRODUCTS.filter(p => uniqueIds.includes(p.id))
         }
     }
 
@@ -546,16 +557,21 @@ export class ProductService {
                         const childQtyNeeded = Number(bItem.quantity || 1) * qtyPurchased
 
                         await tx.execute({
-                            sql: "UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?",
+                            sql: "UPDATE products SET stock = MAX(0, stock - ?), updated_at = CURRENT_TIMESTAMP WHERE id = ?",
                             args: [childQtyNeeded, childId]
                         })
                         console.log(`📦 Bundles Stock: Componente ${childId} descontado -${childQtyNeeded} unidades por venta de conjunto ${item.id}`)
                     }
+                } else {
+                    await tx.execute({
+                        sql: "UPDATE products SET stock = MAX(0, stock - ?), updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                        args: [qtyPurchased, item.id]
+                    })
                 }
             } else {
                 // Producto simple: decrementar stock directamente
                 await tx.execute({
-                    sql: "UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?",
+                    sql: "UPDATE products SET stock = MAX(0, stock - ?), updated_at = CURRENT_TIMESTAMP WHERE id = ?",
                     args: [qtyPurchased, item.id]
                 })
                 console.log(`🛍️ Stock: Producto ${item.id} descontado -${qtyPurchased} unidades`)

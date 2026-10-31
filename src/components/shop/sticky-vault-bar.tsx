@@ -13,6 +13,7 @@ interface StickyVaultBarProps {
 
 export function StickyVaultBar({ product }: StickyVaultBarProps) {
   const { addItem, openCart } = useCart()
+  const isOutOfStock = (product.stock ?? 0) <= 0
 
   const formatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
@@ -20,23 +21,28 @@ export function StickyVaultBar({ product }: StickyVaultBarProps) {
     minimumFractionDigits: 0,
   })
 
-  const effectivePrice = product.discount_price && product.discount_price < product.price
-    ? product.discount_price
-    : product.price
+  const effectivePrice =
+    product.discount_price && product.discount_price < product.price
+      ? product.discount_price
+      : product.price
 
   const handleAdd = () => {
-    addItem(product)
+    const added = addItem(product)
+    if (!added) return
+
     toast.success('¡Agregado al carrito!', {
       description: `${product.name} listo para comprar.`,
       action: {
         label: 'Ver Carrito',
-        onClick: () => openCart()
-      }
+        onClick: () => openCart(),
+      },
     })
   }
 
   const whatsappMessage = encodeURIComponent(
-    `Hola Joyas JP! 👋 Estoy viendo "${product.name}" (${formatter.format(effectivePrice)}) y me gustaría consultar por disponibilidad y medidas.`
+    isOutOfStock
+      ? `Hola Joyas JP! 👋 Vi que "${product.name}" figura agotado y me gustaría consultar por reposición o alternativas similares.`
+      : `Hola Joyas JP! 👋 Estoy viendo "${product.name}" (${formatter.format(effectivePrice)}) y me gustaría consultar por disponibilidad y medidas.`
   )
   const whatsappUrl = `https://wa.me/56982990513?text=${whatsappMessage}`
 
@@ -46,32 +52,33 @@ export function StickyVaultBar({ product }: StickyVaultBarProps) {
         {/* Precio & Disponibilidad */}
         <div className="flex flex-col min-w-0">
           <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-semibold truncate">
-            {product.dimensions || 'Ley 925 / 18k'}
+            {isOutOfStock ? 'Pieza Agotada' : product.dimensions || 'Ley 925 / 18k'}
           </span>
           <span className="text-xl font-black text-amber-400 font-headline tracking-tight">
             {formatter.format(effectivePrice)}
           </span>
         </div>
 
-        {/* Acciones de Compra y WhatsApp Concierge */}
+        {/* Acciones de Compra y WhatsApp Concierge (+56 9 8299 0513) */}
         <div className="flex items-center gap-2 shrink-0">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="w-12 h-12 rounded-xl bg-zinc-900 border border-emerald-500/30 text-emerald-400 flex items-center justify-center hover:bg-emerald-500/10 transition-colors"
-            aria-label="Consultar por WhatsApp"
+            aria-label="Consultar por WhatsApp (+56 9 8299 0513)"
           >
             <MessageCircle className="w-5 h-5" />
           </a>
 
           <Button
             onClick={handleAdd}
+            disabled={isOutOfStock}
             size="lg"
-            className="h-12 px-5 bg-primary text-black font-extrabold text-sm hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+            className="h-12 px-5 bg-primary text-black font-extrabold text-sm hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)] disabled:opacity-50"
           >
             <ShoppingBag className="w-4 h-4 mr-2" />
-            Comprar
+            {isOutOfStock ? 'Agotado' : 'Comprar'}
           </Button>
         </div>
       </div>

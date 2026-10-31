@@ -26,11 +26,11 @@ Opera bajo una arquitectura unidireccional estricta (`app ➔ components/hooks/s
 * **Framework:** Next.js 14.2 (App Router, Server Components, Route Handlers, Dynamic Sitemap/Robots).
 * **Lenguaje:** TypeScript 5.8+ en modo estricto (`npm run typecheck`).
 * **Base de Datos & ORM:** Turso DB (`@libsql/client`) + **Drizzle ORM** (`src/db/schema.ts`, `src/db/index.ts`).
-* **Validación & Contratos:** **Zod v4** (`src/lib/validations/checkout.ts`).
-* **Seguridad Admin:** **Web Crypto JWT (`jose`)** en cookie `HttpOnly` (`joyasjp_admin_session`) verificada en Edge Middleware (`src/middleware.ts`) y Route Handlers (`src/lib/admin-auth.ts`).
-* **Pasarela de Pagos:** **Flow.cl Nativo (`src/lib/flow.ts`)** con firma HMAC-SHA256, conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return`) y deducción atómica de inventario para productos simples y conjuntos (`bundle_items`).
+* **Validación & Contratos:** **Zod v4** (`src/lib/validations/checkout.ts`, `src/lib/validations/admin.ts`) con deserialización resiliente de órdenes (`normalizePaymentDetail`, `safeParseOrderItems`).
+* **Seguridad Admin:** **Web Crypto JWT (`jose`)** en cookie `HttpOnly` (`joyasjp_admin_session`) verificada con secreto unificado (`getAdminJwtSecret`) en Edge Middleware (`src/middleware.ts`) y Route Handlers (`src/lib/admin-auth.ts`), con cierre formal en `/api/auth/logout` (cero `localStorage` para tokens).
+* **Pasarela de Pagos & Conciliación:** **Flow.cl Nativo (`src/lib/flow.ts`)** + **`OrderService` (`src/services/order.service.ts`)** con firma HMAC-SHA256, URL canónica normalizada (`normalizeCanonicalSiteUrl`), conciliación dual idempotente (`/api/webhook/flow` + `/api/flow/return`) y deducción atómica en un único `turso.batch(..., 'write')` protegida contra *race conditions* para productos simples y conjuntos (`bundle_items`).
 * **CDN & Multimedia:** Cloudinary CDN con transformación automática `f_auto,q_auto:good` vía `optimizeCloudinaryUrl()` (`src/lib/utils.ts`).
-* **Suite de Pruebas:** Vitest (`tests/unit/commerce-rules.test.ts`).
+* **Suite de Pruebas:** Vitest (`tests/unit/commerce-rules.test.ts`, `tests/unit/order-reconciliation.test.ts` — 16 tests unitarios).
 
 ---
 
@@ -58,8 +58,8 @@ JoyasJP_Definitive/
 │   ├── components/              # Componentes modulares (admin, layout, seo, shop, ui)
 │   ├── db/                      # Esquema centralizado Drizzle ORM (schema.ts, index.ts)
 │   ├── hooks/                   # Custom React Hooks
-│   ├── lib/                     # Utilidades puras, clientes DB, auth JWT y validaciones Zod
-│   └── services/                # Capa de dominio y negocio (ProductService)
+│   ├── lib/                     # Utilidades puras, cliente Flow, auth JWT y esquemas Zod
+│   └── services/                # Capa de dominio y negocio (ProductService, OrderService)
 ├── tests/unit/                  # Suite de pruebas unitarias Vitest
 └── AGENTS.md                    # Constitución y protocolo Titanium Vault Flow
 ```

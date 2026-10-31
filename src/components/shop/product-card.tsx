@@ -39,51 +39,53 @@ const ProductCard = memo(function ProductCard({
   }, [])
 
   const isInWishlist = isClient && isItemInWishlist(product.id)
+  const isOutOfStock = (product.stock ?? 0) <= 0
 
   const handleAddToCart = useCallback(
     async (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
 
-      if (isAddingToCart) return
+      if (isAddingToCart || isOutOfStock) return
 
       setIsAddingToCart(true)
 
       try {
-        addItem(product)
+        const added = addItem(product)
+        if (!added) return
 
-        toast.custom((t) => (
-          <div className="flex w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg p-4 gap-4 items-center">
-            <div className="relative w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-zinc-100 shadow-sm">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                className="object-cover"
-              />
+        toast.custom(
+          (t) => (
+            <div className="flex w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg p-4 gap-4 items-center">
+              <div className="relative w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-zinc-100 shadow-sm">
+                <Image
+                  src={product.imageUrl || '/assets/logo.webp'}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0 grid gap-1">
+                <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-none">
+                  ¡Agregado al carrito!
+                </p>
+                <p className="text-xs text-zinc-500 truncate">{product.name}</p>
+              </div>
+              <Button
+                size="sm"
+                className="flex-shrink-0 text-xs h-9"
+                onClick={() => {
+                  openCart()
+                  toast.dismiss(t)
+                }}
+              >
+                Ver Carrito
+              </Button>
             </div>
-            <div className="flex-1 min-w-0 grid gap-1">
-              <p className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-none">
-                ¡Agregado al carrito!
-              </p>
-              <p className="text-xs text-zinc-500 truncate">
-                {product.name}
-              </p>
-            </div>
-            <Button
-              size="sm"
-              className="flex-shrink-0 text-xs h-8"
-              onClick={() => {
-                openCart()
-                toast.dismiss(t)
-              }}
-            >
-              Ver Carrito
-            </Button>
-          </div>
-        ), { duration: 4000 })
-
-      } catch (error) {
+          ),
+          { duration: 4000 }
+        )
+      } catch {
         toast.error('Error', {
           description: 'No se pudo agregar el producto. Intenta nuevamente.',
         })
@@ -91,7 +93,7 @@ const ProductCard = memo(function ProductCard({
         setIsAddingToCart(false)
       }
     },
-    [addItem, product, isAddingToCart, openCart]
+    [addItem, product, isAddingToCart, isOutOfStock, openCart]
   )
 
   const handleWishlistClick = useCallback(
@@ -111,7 +113,7 @@ const ProductCard = memo(function ProductCard({
             description: `${product.name} se agregó a tus favoritos.`,
           })
         }
-      } catch (error) {
+      } catch {
         toast.error('Error', {
           description: 'No se pudo actualizar favoritos.',
         })
@@ -138,49 +140,61 @@ const ProductCard = memo(function ProductCard({
   const badges = useMemo(() => {
     const list = []
 
-    // 1. Etiqueta Personalizada (Prioridad Máxima - Oro/Custom)
+    if (isOutOfStock) {
+      list.push({
+        text: 'AGOTADO',
+        variant: 'soldout',
+        className: 'bg-zinc-950/90 text-zinc-200 border-zinc-700',
+      })
+    } else if (product.stock === 1) {
+      list.push({
+        text: 'ÚLTIMA UNIDAD',
+        variant: 'last',
+        className: 'bg-amber-600/95 text-white border-amber-400/50',
+      })
+    }
+
     if (product.custom_label) {
       list.push({
         text: product.custom_label.toUpperCase(),
         variant: 'custom',
-        className: 'badge-premium badge-custom'
+        className: 'badge-premium badge-custom',
       })
     }
 
-    // 1.5 Etiqueta de Set Exclusivo para conjuntos
     if (product.is_bundle || product.category === 'conjuntos') {
       list.push({
         text: 'SET EXCLUSIVO',
         variant: 'bundle',
-        className: 'badge-premium bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-zinc-950 font-black tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.6)] border border-amber-300/40 text-[9px] uppercase px-2 py-0.5 rounded-sm'
+        className:
+          'badge-premium bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-zinc-950 font-black tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.6)] border border-amber-300/40 text-[9px] uppercase px-2 py-0.5 rounded-sm',
       })
     }
 
-    // 2. Etiqueta de Oferta (Rojo Terciopelo)
     if (product.discount_price && product.discount_price < product.price) {
-      const discountPercent = Math.round(((product.price - product.discount_price) / product.price) * 100);
+      const discountPercent = Math.round(
+        ((product.price - product.discount_price) / product.price) * 100
+      )
       list.push({
         text: `-${discountPercent}%`,
         variant: 'sale',
-        className: 'badge-premium badge-sale animate-pulse-subtle'
+        className: 'badge-premium badge-sale animate-pulse-subtle',
       })
     }
 
-    // 3. Etiqueta de "Nuevo" (Platino)
-    const tenDaysAgo = new Date();
-    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+    const tenDaysAgo = new Date()
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10)
     if (product.created_at && new Date(product.created_at) > tenDaysAgo) {
       list.push({
         text: 'NUEVO',
         variant: 'new',
-        className: 'badge-premium badge-new'
+        className: 'badge-premium badge-new',
       })
     }
 
     return list
-  }, [product])
+  }, [product, isOutOfStock])
 
-  // Precios formateados
   const priceDisplay = useMemo(() => {
     const formatter = new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -191,7 +205,7 @@ const ProductCard = memo(function ProductCard({
     return {
       original: formatter.format(product.price),
       discount: product.discount_price ? formatter.format(product.discount_price) : null,
-      hasDiscount: !!product.discount_price && product.discount_price < product.price
+      hasDiscount: !!product.discount_price && product.discount_price < product.price,
     }
   }, [product.price, product.discount_price])
 
@@ -218,10 +232,11 @@ const ProductCard = memo(function ProductCard({
               alt={`${product.name} - Joya urbana premium`}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              loading={priority ? "eager" : "lazy"}
+              loading={priority ? 'eager' : 'lazy'}
               className={cn(
                 'object-cover product-image-hover transition-all duration-500',
-                imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100'
+                imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100',
+                isOutOfStock && 'grayscale-[40%] opacity-85'
               )}
               onLoad={handleImageLoad}
               onError={handleImageError}
@@ -241,7 +256,7 @@ const ProductCard = memo(function ProductCard({
               <span
                 key={idx}
                 className={cn(
-                  "px-3 py-1 rounded-sm text-[10px] font-black tracking-tighter border shadow-xl",
+                  'px-3 py-1 rounded-sm text-[10px] font-black tracking-tighter border shadow-xl',
                   badge.className
                 )}
               >
@@ -251,9 +266,7 @@ const ProductCard = memo(function ProductCard({
           </div>
 
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex flex-col items-center justify-center">
-            <span
-              className="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs opacity-0 group-hover:opacity-100 duration-300 backdrop-blur-sm"
-            >
+            <span className="inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-8 rounded-md px-3 text-xs opacity-0 group-hover:opacity-100 duration-300 backdrop-blur-sm">
               <Eye className="w-4 h-4 mr-2" />
               Ver Detalles
             </span>
@@ -265,18 +278,14 @@ const ProductCard = memo(function ProductCard({
         <Button
           size="icon"
           variant="ghost"
-          className="bg-white/90 hover:bg-white rounded-full shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-110"
+          className="h-11 w-11 bg-white/90 hover:bg-white rounded-full shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-110"
           onClick={handleWishlistClick}
-          aria-label={
-            isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'
-          }
+          aria-label={isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'}
         >
           <Heart
             className={cn(
               'w-5 h-5 transition-colors duration-200',
-              isInWishlist
-                ? 'text-red-500 fill-current'
-                : 'text-gray-600 hover:text-red-400'
+              isInWishlist ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-400'
             )}
           />
         </Button>
@@ -289,7 +298,6 @@ const ProductCard = memo(function ProductCard({
           </h3>
         </Link>
 
-        {/* Etiqueta llamativa con características del producto */}
         <div className="text-sm">
           {product.materials ? (
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold capitalize border border-primary/20">
@@ -330,12 +338,14 @@ const ProductCard = memo(function ProductCard({
                   {priceDisplay.original}
                 </p>
                 <p className="text-2xl font-black text-red-600 font-headline tracking-tighter">
-                  {product.hasVariants ? 'Desde ' : ''}{priceDisplay.discount}
+                  {product.hasVariants ? 'Desde ' : ''}
+                  {priceDisplay.discount}
                 </p>
               </>
             ) : (
               <p className="text-2xl font-bold text-primary font-headline tracking-tighter">
-                {product.hasVariants ? 'Desde ' : ''}{priceDisplay.original}
+                {product.hasVariants ? 'Desde ' : ''}
+                {priceDisplay.original}
               </p>
             )}
           </div>
@@ -343,9 +353,12 @@ const ProductCard = memo(function ProductCard({
           <Button
             size="icon"
             onClick={handleAddToCart}
-            disabled={isAddingToCart}
-            className="transition-all duration-200 hover:scale-110 shadow-sm"
-            aria-label={`Añadir ${product.name} al carrito`}
+            disabled={isAddingToCart || isOutOfStock}
+            className="h-11 w-11 transition-all duration-200 hover:scale-110 shadow-sm disabled:opacity-45"
+            aria-label={
+              isOutOfStock ? `${product.name} agotado` : `Añadir ${product.name} al carrito`
+            }
+            title={isOutOfStock ? 'Producto agotado' : 'Añadir al carrito'}
           >
             {isAddingToCart ? (
               <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />

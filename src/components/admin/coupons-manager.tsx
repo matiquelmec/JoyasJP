@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -38,7 +38,8 @@ import {
   Trash2,
   MoreHorizontal,
   Calendar,
-  DollarSign
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
@@ -59,42 +60,85 @@ interface Coupon {
   total_sales: number
 }
 
+function CouponsManagerSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="Cargando cupones">
+      <div className="grid gap-6 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <Card key={idx} className="relative overflow-hidden border-slate-200 bg-white">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div className="space-y-2">
+                <div className="h-3 w-24 rounded bg-slate-200 animate-pulse" />
+                <div className="h-7 w-20 rounded bg-slate-200 animate-pulse" />
+              </div>
+              <div className="h-12 w-12 rounded-xl bg-slate-100 animate-pulse" />
+            </CardContent>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/60 to-transparent animate-shimmer pointer-events-none" />
+          </Card>
+        ))}
+      </div>
+      <Card className="border-slate-200 bg-white overflow-hidden">
+        <CardHeader className="bg-slate-950 p-6">
+          <div className="h-6 w-48 rounded bg-zinc-800 animate-pulse" />
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between gap-4 py-3 border-b border-slate-100 last:border-0"
+            >
+              <div className="h-4 w-28 rounded bg-slate-200 animate-pulse" />
+              <div className="h-5 w-20 rounded bg-slate-200 animate-pulse" />
+              <div className="h-4 w-16 rounded bg-slate-200 animate-pulse" />
+              <div className="h-4 w-24 rounded bg-slate-200 animate-pulse" />
+              <div className="h-6 w-16 rounded bg-slate-200 animate-pulse" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
 export function CouponsManager() {
   const [coupons, setCoupons] = useState<Coupon[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<'all' | 'campaign' | 'affiliate'>('all')
   const [deleteCode, setDeleteCode] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
-  const [commissionRate, setCommissionRate] = useState<number>(10) // Porcentaje de comisión sugerido
+  const [commissionRate, setCommissionRate] = useState<number>(10)
 
-  useEffect(() => {
-    loadCoupons()
-  }, [])
-
-  const loadCoupons = async () => {
+  const loadCoupons = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true)
+    setError(null)
     try {
       const data = await adminAPI.getCoupons()
       setCoupons(data || [])
-    } catch (error) {
-      toast.error('Error', {
-        description: 'No se pudieron cargar los cupones.',
-      })
+    } catch (err: any) {
+      const message = err?.message || 'No se pudieron cargar los cupones.'
+      if (!silent) setError(message)
+      toast.error('Error', { description: message })
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadCoupons()
+  }, [loadCoupons])
 
   const handleDeleteCoupon = async () => {
     if (!deleteCode) return
     setDeleting(true)
     try {
       await adminAPI.deleteCoupon(deleteCode)
-      setCoupons(prev => prev.filter(c => c.code !== deleteCode))
+      setCoupons((prev) => prev.filter((c) => c.code !== deleteCode))
       toast.success('Cupón eliminado', {
         description: `El código ${deleteCode} ha sido eliminado permanentemente.`,
       })
-    } catch (error) {
+    } catch {
       toast.error('Error', {
         description: 'No se pudo eliminar el cupón.',
       })
@@ -108,14 +152,16 @@ export function CouponsManager() {
     try {
       const updated = {
         ...coupon,
-        is_active: !coupon.is_active
+        is_active: !coupon.is_active,
       }
       await adminAPI.updateCoupon(updated)
-      setCoupons(prev => prev.map(c => c.code === coupon.code ? { ...c, is_active: !c.is_active } : c))
+      setCoupons((prev) =>
+        prev.map((c) => (c.code === coupon.code ? { ...c, is_active: !c.is_active } : c))
+      )
       toast.success('Estado actualizado', {
         description: `El cupón ${coupon.code} ha sido ${!coupon.is_active ? 'activado' : 'desactivado'}.`,
       })
-    } catch (error) {
+    } catch {
       toast.error('Error', {
         description: 'No se pudo actualizar el estado del cupón.',
       })
@@ -130,13 +176,14 @@ export function CouponsManager() {
     }).format(amount)
   }
 
-  // Filtrar cupones
   const filteredCoupons = useMemo(() => {
-    return coupons.filter(c => {
-      const matchesSearch = c.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return coupons.filter((c) => {
+      const matchesSearch =
+        c.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (c.affiliate_name && c.affiliate_name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-      const matchesType = filterType === 'all' ||
+      const matchesType =
+        filterType === 'all' ||
         (filterType === 'campaign' && !c.affiliate_name) ||
         (filterType === 'affiliate' && c.affiliate_name)
 
@@ -144,21 +191,39 @@ export function CouponsManager() {
     })
   }, [coupons, searchTerm, filterType])
 
-  // Métricas agregadas
   const metrics = useMemo(() => {
-    const active = coupons.filter(c => c.is_active).length
+    const active = coupons.filter((c) => c.is_active).length
     const totalSales = coupons.reduce((sum, c) => sum + (c.total_sales || 0), 0)
     const totalOrders = coupons.reduce((sum, c) => sum + (c.total_orders || 0), 0)
-    const affiliatesCount = coupons.filter(c => c.affiliate_name).length
+    const affiliatesCount = coupons.filter((c) => c.affiliate_name).length
 
     return { active, totalSales, totalOrders, affiliatesCount }
   }, [coupons])
 
   if (loading) {
+    return <CouponsManagerSkeleton />
+  }
+
+  if (error) {
     return (
-      <div className="flex items-center justify-center p-20">
-        <div className="animate-pulse text-muted-foreground uppercase tracking-widest font-black">Cargando Cupones...</div>
-      </div>
+      <Card className="border-red-200 bg-red-50/70 shadow-sm">
+        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-4">
+            <AlertCircle className="w-7 h-7" />
+          </div>
+          <h3 className="text-lg font-black text-red-950 uppercase tracking-tight mb-2">
+            No se pudieron cargar los cupones
+          </h3>
+          <p className="text-sm text-red-800 max-w-md mb-6 font-medium">{error}</p>
+          <Button
+            onClick={() => loadCoupons()}
+            className="min-h-[44px] bg-red-600 hover:bg-red-700 text-white font-bold gap-2"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Reintentar carga
+          </Button>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -166,24 +231,57 @@ export function CouponsManager() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter text-slate-900">Cupones y Afiliados</h1>
-          <p className="text-slate-600 font-medium">Gestiona códigos de campaña y comisiones de influencers.</p>
+          <h1 className="text-4xl font-black font-headline uppercase tracking-tighter text-slate-900">
+            Cupones y Afiliados
+          </h1>
+          <p className="text-slate-600 font-medium">
+            Gestiona códigos de campaña y comisiones de influencers.
+          </p>
         </div>
-        <CouponFormModal mode="create" onSave={loadCoupons} />
+        <CouponFormModal mode="create" onSave={() => loadCoupons(true)} />
       </div>
 
       {/* Tarjetas de Métricas */}
       <div className="grid gap-6 md:grid-cols-4">
         {[
-          { label: 'Cupones Activos', value: metrics.active, icon: Tag, color: 'text-blue-600', bg: 'bg-blue-100' },
-          { label: 'Ventas Generadas', value: formatCLP(metrics.totalSales), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-          { label: 'Uso en Pedidos', value: metrics.totalOrders, icon: Percent, color: 'text-purple-600', bg: 'bg-purple-100' },
-          { label: 'Afiliados / Influencers', value: metrics.affiliatesCount, icon: Users, color: 'text-amber-600', bg: 'bg-amber-100' }
+          {
+            label: 'Cupones Activos',
+            value: metrics.active,
+            icon: Tag,
+            color: 'text-blue-600',
+            bg: 'bg-blue-100',
+          },
+          {
+            label: 'Ventas Generadas',
+            value: formatCLP(metrics.totalSales),
+            icon: TrendingUp,
+            color: 'text-emerald-600',
+            bg: 'bg-emerald-100',
+          },
+          {
+            label: 'Uso en Pedidos',
+            value: metrics.totalOrders,
+            icon: Percent,
+            color: 'text-purple-600',
+            bg: 'bg-purple-100',
+          },
+          {
+            label: 'Afiliados / Influencers',
+            value: metrics.affiliatesCount,
+            icon: Users,
+            color: 'text-amber-600',
+            bg: 'bg-amber-100',
+          },
         ].map((stat, i) => (
-          <Card key={i} className="border-slate-200 shadow-sm hover:shadow-lg transition-all bg-white">
+          <Card
+            key={i}
+            className="border-slate-200 shadow-sm hover:shadow-lg transition-all bg-white"
+          >
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">{stat.label}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1">
+                  {stat.label}
+                </p>
                 <p className="text-2xl font-black text-slate-900">{stat.value}</p>
               </div>
               <div className={`p-3 rounded-xl ${stat.bg}`}>
@@ -198,7 +296,9 @@ export function CouponsManager() {
       <Card className="border-slate-200 shadow-xl overflow-hidden bg-white">
         <CardHeader className="bg-slate-950 text-white p-6 border-b border-slate-900">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <CardTitle className="text-xl font-black uppercase tracking-widest">Códigos de Descuento</CardTitle>
+            <CardTitle className="text-xl font-black uppercase tracking-widest">
+              Códigos de Descuento
+            </CardTitle>
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <Input
                 placeholder="Buscar código o afiliado..."
@@ -217,11 +317,15 @@ export function CouponsManager() {
               </select>
 
               <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-white rounded-md px-2 h-9 text-xs w-full sm:w-auto">
-                <span className="opacity-60 text-[10px] font-bold uppercase shrink-0">% Comisión:</span>
+                <span className="opacity-60 text-[10px] font-bold uppercase shrink-0">
+                  % Comisión:
+                </span>
                 <input
                   type="number"
                   value={commissionRate}
-                  onChange={(e) => setCommissionRate(Math.max(0, parseInt(e.target.value) || 0))}
+                  onChange={(e) =>
+                    setCommissionRate(Math.max(0, parseInt(e.target.value, 10) || 0))
+                  }
                   className="bg-transparent text-white w-10 text-center font-bold outline-none"
                   min="0"
                 />
@@ -234,38 +338,80 @@ export function CouponsManager() {
             <Table>
               <TableHeader className="bg-slate-100 border-b border-slate-200">
                 <TableRow className="hover:bg-slate-100">
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 pl-6 text-slate-700">Código / Afiliado</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Descuento</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Usos</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Ventas Generadas</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Comisión Sugerida</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Expiración</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">Estado</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700 text-right pr-6">Acciones</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 pl-6 text-slate-700">
+                    Código / Afiliado
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Descuento
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Usos
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Ventas Generadas
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Comisión Sugerida
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Expiración
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700">
+                    Estado
+                  </TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider py-4 text-slate-700 text-right pr-6">
+                    Acciones
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCoupons.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-10 text-slate-400 font-medium italic">
-                      No se encontraron cupones con los filtros seleccionados.
+                    <TableCell colSpan={8} className="text-center py-12">
+                      <div className="flex flex-col items-center justify-center space-y-3">
+                        <Tag className="w-8 h-8 text-slate-400" />
+                        <p className="text-sm font-bold text-slate-700">
+                          {coupons.length === 0
+                            ? 'Aún no hay cupones ni códigos de afiliados creados.'
+                            : 'No se encontraron cupones con los filtros seleccionados.'}
+                        </p>
+                        {(searchTerm || filterType !== 'all') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSearchTerm('')
+                              setFilterType('all')
+                            }}
+                          >
+                            Limpiar filtros
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredCoupons.map((c) => {
                     const commission = (c.total_sales || 0) * (commissionRate / 100)
-                    
+
                     return (
-                      <TableRow key={c.code} className="hover:bg-slate-50 transition-colors border-slate-100">
+                      <TableRow
+                        key={c.code}
+                        className="hover:bg-slate-50 transition-colors border-slate-100"
+                      >
                         <TableCell className="py-4 pl-6">
                           <div className="flex flex-col">
-                            <span className="font-mono font-bold text-sm text-zinc-950">{c.code}</span>
+                            <span className="font-mono font-bold text-sm text-zinc-950">
+                              {c.code}
+                            </span>
                             {c.affiliate_name ? (
                               <span className="text-[10px] text-amber-700 font-bold flex items-center gap-1 mt-0.5">
                                 👥 Afiliado: {c.affiliate_name}
                               </span>
                             ) : (
-                              <span className="text-[10px] text-zinc-400 mt-0.5">Campaña General</span>
+                              <span className="text-[10px] text-zinc-400 mt-0.5">
+                                Campaña General
+                              </span>
                             )}
                           </div>
                         </TableCell>
@@ -280,7 +426,9 @@ export function CouponsManager() {
                             </Badge>
                           )}
                           {c.min_cart_amount > 0 && (
-                            <p className="text-[9px] text-zinc-400 mt-1">Mín: {formatCLP(c.min_cart_amount)}</p>
+                            <p className="text-[9px] text-zinc-400 mt-1">
+                              Mín: {formatCLP(c.min_cart_amount)}
+                            </p>
                           )}
                         </TableCell>
                         <TableCell>
@@ -290,9 +438,11 @@ export function CouponsManager() {
                             </span>
                             {c.usage_limit && (
                               <div className="w-16 bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1">
-                                <div 
-                                  className="bg-primary h-full" 
-                                  style={{ width: `${Math.min(100, (c.usage_count / c.usage_limit) * 100)}%` }}
+                                <div
+                                  className="bg-primary h-full"
+                                  style={{
+                                    width: `${Math.min(100, (c.usage_count / c.usage_limit) * 100)}%`,
+                                  }}
                                 />
                               </div>
                             )}
@@ -300,13 +450,19 @@ export function CouponsManager() {
                         </TableCell>
                         <TableCell className="font-bold text-sm text-zinc-900">
                           {formatCLP(c.total_sales || 0)}
-                          <p className="text-[9px] text-zinc-400 mt-0.5">{c.total_orders || 0} compras</p>
+                          <p className="text-[9px] text-zinc-400 mt-0.5">
+                            {c.total_orders || 0} compras
+                          </p>
                         </TableCell>
                         <TableCell>
                           {c.affiliate_name ? (
                             <div className="flex flex-col">
-                              <span className="text-xs font-black text-amber-700">{formatCLP(commission)}</span>
-                              <span className="text-[9px] text-zinc-400 font-bold">{commissionRate}% de ventas</span>
+                              <span className="text-xs font-black text-amber-700">
+                                {formatCLP(commission)}
+                              </span>
+                              <span className="text-[9px] text-zinc-400 font-bold">
+                                {commissionRate}% de ventas
+                              </span>
                             </div>
                           ) : (
                             <span className="text-xs text-zinc-300 italic">-</span>
@@ -323,7 +479,7 @@ export function CouponsManager() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <button 
+                          <button
                             type="button"
                             onClick={() => toggleCouponStatus(c)}
                             className="focus:outline-none"
@@ -342,16 +498,20 @@ export function CouponsManager() {
                         <TableCell className="text-right pr-6">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="icon" className="h-8 w-8 border-slate-300 bg-white">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-9 w-9 border-slate-300 bg-white"
+                              >
                                 <MoreHorizontal className="h-4 w-4 text-slate-700" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-36 p-1">
-                              <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                              <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 outline-none transition-colors hover:bg-accent hover:text-accent-foreground">
                                 <CouponFormModal
                                   mode="edit"
                                   coupon={c}
-                                  onSave={loadCoupons}
+                                  onSave={() => loadCoupons(true)}
                                   trigger={
                                     <div className="flex items-center gap-2 w-full text-xs text-slate-700">
                                       <Edit className="w-3.5 h-3.5" /> Editar Cupón
@@ -359,7 +519,7 @@ export function CouponsManager() {
                                   }
                                 />
                               </div>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-700 flex items-center gap-2 text-xs"
                                 onClick={() => setDeleteCode(c.code)}
                               >
@@ -384,13 +544,14 @@ export function CouponsManager() {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará de forma permanente el cupón <strong className="text-slate-900">{deleteCode}</strong>.
-              Los clientes ya no podrán usar este código de descuento en el checkout.
+              Esta acción eliminará de forma permanente el cupón{' '}
+              <strong className="text-slate-900">{deleteCode}</strong>. Los clientes ya no podrán
+              usar este código de descuento en el checkout.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDeleteCoupon}
               disabled={deleting}
               className="bg-red-600 hover:bg-red-700 text-white"

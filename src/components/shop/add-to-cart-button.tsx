@@ -1,10 +1,10 @@
 'use client'
 
-// Removed Vercel analytics tracking
 import { Button, type ButtonProps } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import Image from 'next/image'
 
 interface AddToCartButtonProps extends ButtonProps {
@@ -17,17 +17,17 @@ export function AddToCartButton({
   size,
 }: AddToCartButtonProps) {
   const { addItem, openCart } = useCart()
+  const isOutOfStock = (product.stock ?? 0) <= 0
 
   const handleAddToCart = () => {
-    addItem(product)
-
-    // Analytics tracking removed (Vercel -> Netlify migration)
+    const added = addItem(product)
+    if (!added) return
 
     toast.custom((t) => (
       <div className="flex w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg p-4 gap-4 items-center">
         <div className="relative w-12 h-12 flex-shrink-0 rounded-md overflow-hidden border border-zinc-100 shadow-sm">
           <Image
-            src={product.imageUrl}
+            src={product.imageUrl || '/assets/logo.webp'}
             alt={product.name}
             fill
             className="object-cover"
@@ -44,7 +44,7 @@ export function AddToCartButton({
         <Button
           size="sm"
           variant="default"
-          className="flex-shrink-0 text-xs h-8"
+          className="flex-shrink-0 text-xs h-9"
           onClick={() => {
             openCart()
             toast.dismiss(t)
@@ -57,8 +57,13 @@ export function AddToCartButton({
   }
 
   return (
-    <Button onClick={handleAddToCart} className={className} size={size}>
-      Añadir al Carrito
+    <Button
+      onClick={handleAddToCart}
+      disabled={isOutOfStock}
+      className={cn('min-h-[48px] font-bold', className)}
+      size={size}
+    >
+      {isOutOfStock ? 'Agotado' : 'Añadir al Carrito'}
     </Button>
   )
 }

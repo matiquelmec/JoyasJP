@@ -1,13 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
-import { ADMIN_COOKIE_NAME } from '@/lib/admin-auth'
-
-const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_API_KEY || 'joyasjp_fallback_secure_key_2026')
+import { ADMIN_COOKIE_NAME, getAdminJwtSecret } from '@/lib/admin-auth'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Proteger endpoints de administración en el Edge (/api/admin/*)
+  // Proteger endpoints de administración en el Edge (/api/admin/*) con Cookie HttpOnly JWT
   if (pathname.startsWith('/api/admin')) {
     const sessionCookie = request.cookies.get(ADMIN_COOKIE_NAME)?.value
 
@@ -16,7 +14,7 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      const { payload } = await jwtVerify(sessionCookie, JWT_SECRET)
+      const { payload } = await jwtVerify(sessionCookie, getAdminJwtSecret())
       if (!payload || payload.role !== 'admin') {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }

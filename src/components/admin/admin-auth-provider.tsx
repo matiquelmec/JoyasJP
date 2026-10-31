@@ -49,12 +49,10 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/login', { method: 'DELETE' })
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
     } catch {
       // Ignorar error de red al salir
     }
-    // Limpieza de claves obsoletas si existiesen
-    localStorage.removeItem('joyasjp-admin-token')
     setIsAuthenticated(false)
     setPassword('')
   }
