@@ -157,7 +157,7 @@ export default function Home() {
           <h1 className="sr-only">Joyas JP - Alta Joyería para la Escena Urbana</h1>
 
           <p className="mt-2 max-w-2xl text-base sm:text-lg md:text-xl font-headline font-bold text-zinc-100 tracking-[0.25em] uppercase mb-8 animate-fadeInUp-delayed-02 drop-shadow-md">
-            ATRÉVETE A JUGAR • PLATA FINA 925
+            ATRÉVETE A JUGAR
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 max-w-md w-full animate-fadeInUp-delayed-04">

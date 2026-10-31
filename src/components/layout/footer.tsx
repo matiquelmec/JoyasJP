@@ -31,7 +31,7 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-start space-y-4">
             <JoyasJPLogo variant="horizontal" color="plata" size="md" />
             <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-headline font-medium uppercase tracking-widest">
-              {config?.store_slogan || 'Atrévete a jugar • Plata Fina 925'}
+              {config?.store_slogan || 'Atrévete a jugar'}
             </p>
           </div>
 
