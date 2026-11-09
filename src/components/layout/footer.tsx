@@ -111,9 +111,21 @@ export function Footer() {
           <p>
             &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author} &bull; Joyería de Autor
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-6">
             <Link href="/privacidad" className="hover:text-primary transition-colors">Privacidad</Link>
-            <Link href="/terminos" className="hover:text-primary transition-colors">Términos</Link>
+            <Link href="/terminos" className="hover:text-primary transition-colors">Términos y Condiciones</Link>
+            <Link href="/derechos-arcop" className="hover:text-primary transition-colors">Derechos ARCOP</Link>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('joyasjp:open-cmp'))
+                }
+              }}
+              className="hover:text-primary transition-colors cursor-pointer uppercase tracking-widest text-[10px]"
+            >
+              Preferencias de Cookies
+            </button>
           </div>
         </div>
       </div>

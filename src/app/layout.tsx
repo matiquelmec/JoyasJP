@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { siteConfig } from '@/lib/config'
 import { getSiteConfig } from '@/lib/server/get-site-config'
 import { MaintenanceScreen } from '@/components/layout/maintenance-screen'
+import { CookieConsentBanner } from '@/components/compliance/CookieConsentBanner'
 import '@/lib/env-validator' // 🛡️ Validador de variables de entorno
 
 const playfairDisplay = Playfair_Display({
@@ -250,6 +251,7 @@ export default async function RootLayout({
             </ConditionalLayout>
           )}
 
+          <CookieConsentBanner />
           <Toaster />
         </PreloaderProvider>
       </body>

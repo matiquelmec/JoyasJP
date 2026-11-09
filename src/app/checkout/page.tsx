@@ -95,6 +95,8 @@ export default function CheckoutPage() {
   const [couponInput, setCouponInput] = useState('')
   const [isCouponLoading, setIsCouponLoading] = useState(false)
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [acceptedMarketing, setAcceptedMarketing] = useState(false)
 
   const [formData, setFormData] = useState<CheckoutFormData>({
     customerName: '',
@@ -602,13 +604,68 @@ export default function CheckoutPage() {
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 space-y-4">
+                {/* Bloque Legal Transparente: Decreto N° 14 y Ley N° 19.496 */}
+                <div className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-4 space-y-3 text-xs text-zinc-300">
+                  <div className="flex items-center gap-2 font-bold text-zinc-100 uppercase tracking-wider text-[11px]">
+                    <span>⚖️</span>
+                    <span>Información Legal Previa al Pago (Reglamento E-Commerce)</span>
+                  </div>
+                  <ul className="space-y-1.5 list-disc pl-4 text-zinc-400 text-[11px]">
+                    <li>
+                      <strong className="text-zinc-200">Vendedor:</strong> {config?.store_name || 'JOYAS JP SPA'} &bull; RUT: 78.489.968-3 &bull; Domicilio: Los Plátanos 3858 DP 1106, Macul &bull; Soporte: empresa.joyasjp.cl@gmail.com.
+                    </li>
+                    <li>
+                      <strong className="text-zinc-200">Garantía Legal (6 Meses):</strong> Ante fallas de fabricación o calidad, tienes derecho irrenunciable a optar entre reparación gratuita, cambio del producto o devolución del dinero (Art. 20 Ley N° 19.496).
+                    </li>
+                    <li>
+                      <strong className="text-zinc-200">Derecho a Retracto (10 Días):</strong> Cuentas con 10 días corridos desde la recepción para retractarte con empaque intacto. <em>Advertencia Sanitaria:</em> Por higiene y salud pública, los aros o piezas perforantes cuyo sello haya sido abierto no admiten retracto voluntario (Art. 3 bis letra b).
+                    </li>
+                  </ul>
+
+                  {/* Casilla de Consentimiento Opt-In desmarcada por defecto */}
+                  <div className="pt-2 border-t border-zinc-800 space-y-2">
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        required
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 accent-primary rounded shrink-0"
+                      />
+                      <span className="text-xs text-zinc-200 leading-snug">
+                        Declaro ser mayor de 18 años y acepto expresamente los{' '}
+                        <Link href="/terminos" target="_blank" className="underline text-primary">
+                          Términos y Condiciones
+                        </Link>{' '}
+                        y la{' '}
+                        <Link href="/privacidad" target="_blank" className="underline text-primary">
+                          Política de Privacidad
+                        </Link>
+                        . *
+                      </span>
+                    </label>
+
+                    <label className="flex items-start gap-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={acceptedMarketing}
+                        onChange={(e) => setAcceptedMarketing(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 accent-primary rounded shrink-0"
+                      />
+                      <span className="text-[11px] text-zinc-400 leading-snug">
+                        (Opcional) Autorizo recibir novedades exclusivas y lanzamientos en mi correo electrónico.
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
                 <form onSubmit={handleSubmit}>
                   <Button
                     type="submit"
                     className="w-full min-h-[48px] bg-primary hover:bg-primary/90 text-black font-extrabold"
                     size="lg"
-                    disabled={isLoading}
+                    disabled={isLoading || !acceptedTerms}
                   >
                     {isLoading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -617,7 +674,7 @@ export default function CheckoutPage() {
                   </Button>
                 </form>
 
-                <p className="text-xs text-muted-foreground text-center mt-4">
+                <p className="text-xs text-muted-foreground text-center mt-2">
                   Al continuar, serás redirigido a Flow.cl para completar tu pago de forma 100% segura (Webpay Plus, Tarjetas de Crédito, Débito o Transferencia).
                 </p>
               </CardContent>
