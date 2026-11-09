@@ -10,19 +10,19 @@ interface LegalLayoutProps {
 export function LegalLayout({ children, title, lastUpdated }: LegalLayoutProps) {
     return (
         <div className="bg-background min-h-screen">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 max-w-4xl">
-                <header className="mb-12 text-center md:text-left">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 max-w-4xl">
+                <header className="mb-10 text-center md:text-left">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-foreground leading-tight">
                         {title}
                     </h1>
                     {lastUpdated && (
-                        <p className="text-muted-foreground">
+                        <p className="text-sm sm:text-base text-muted-foreground">
                             Última actualización: {lastUpdated}
                         </p>
                     )}
                 </header>
 
-                <Separator className="mb-12" />
+                <Separator className="mb-10" />
 
                 <article className="prose prose-zinc dark:prose-invert max-w-none 
           prose-headings:font-bold prose-headings:tracking-tight
