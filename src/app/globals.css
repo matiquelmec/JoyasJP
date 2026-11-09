@@ -508,8 +508,8 @@ html {
   }
 }
 
-/* ✨ FIX PARA HEADER ESTABLE */
-header {
+/* ✨ FIX PARA HEADER ESTABLE (scoped: solo la barra de navegación global, no cualquier <header> semántico) */
+header[data-site-header] {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;

@@ -35,7 +35,7 @@ export function Header() {
     "text-sm font-semibold tracking-wide text-zinc-300 transition-colors hover:text-[#F43F5E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-sm py-1"
 
   return (
-    <header className={cn(
+    <header data-site-header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
       hasScrolled
         ? "bg-[#09090B]/90 backdrop-blur-md shadow-xl border-b border-zinc-800/60"
