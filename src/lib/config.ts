@@ -155,16 +155,12 @@ export const productConfig = {
   ],
   colors: ['Dorado', 'Plateado', 'Mixto', 'Negro'],
   labels: [
-    'PLATA 925 ITALIA',
-    'EDICIÓN MILANO',
     'NUEVO',
-    'OFERTA',
+    'EDICIÓN MILANO',
     'EXCLUSIVO',
     'EDICIÓN LIMITADA',
-    'TENDENCIA',
+    'PIEZA DE COLECCIÓN',
     'PRE-ORDER',
-    'HOT',
-    'ULTIMAS UNIDADES'
   ],
   priceRanges: [
     { label: 'Hasta $25.000', min: 0, max: 25000 },

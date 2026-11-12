@@ -9,6 +9,7 @@ import { useCart } from '@/hooks/use-cart'
 import { toast } from 'sonner'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
+import { getProductBadge } from '@/lib/product-badges'
 import { cn, normalizeColor, getLocalFallbackImage } from '@/lib/utils'
 
 interface ProductCardProps {
@@ -136,64 +137,8 @@ const ProductCard = memo(function ProductCard({
     }
   }, [product.id, product.category, displayUrl])
 
-  // ⚡ Lógica Inteligente de Etiquetas Premium
-  const badges = useMemo(() => {
-    const list = []
-
-    if (isOutOfStock) {
-      list.push({
-        text: 'AGOTADO',
-        variant: 'soldout',
-        className: 'bg-zinc-950/90 text-zinc-200 border-zinc-700',
-      })
-    } else if (product.stock === 1) {
-      list.push({
-        text: 'ÚLTIMA UNIDAD',
-        variant: 'last',
-        className: 'bg-amber-600/95 text-white border-amber-400/50',
-      })
-    }
-
-    if (product.custom_label) {
-      list.push({
-        text: product.custom_label.toUpperCase(),
-        variant: 'custom',
-        className: 'badge-premium badge-custom',
-      })
-    }
-
-    if (product.is_bundle || product.category === 'conjuntos') {
-      list.push({
-        text: 'SET EXCLUSIVO',
-        variant: 'bundle',
-        className:
-          'badge-premium bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-zinc-950 font-black tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.6)] border border-amber-300/40 text-[9px] uppercase px-2 py-0.5 rounded-sm',
-      })
-    }
-
-    if (product.discount_price && product.discount_price < product.price) {
-      const discountPercent = Math.round(
-        ((product.price - product.discount_price) / product.price) * 100
-      )
-      list.push({
-        text: `-${discountPercent}%`,
-        variant: 'sale',
-        className: 'badge-premium badge-sale animate-pulse-subtle',
-      })
-    }
-
-    const tenDaysAgo = new Date()
-    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10)
-    if (product.created_at && new Date(product.created_at) > tenDaysAgo) {
-      list.push({
-        text: 'NUEVO',
-        variant: 'new',
-        className: 'badge-premium badge-new',
-      })
-    }
-
-    return list
-  }, [product, isOutOfStock])
+  // Etiqueta única por tarjeta (estándar alta joyería)
+  const badge = useMemo(() => getProductBadge(product), [product])
 
   const priceDisplay = useMemo(() => {
     const formatter = new Intl.NumberFormat('es-CL', {
@@ -252,9 +197,8 @@ const ProductCard = memo(function ProductCard({
 
           {/* Premium Badges Overlay */}
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-            {badges.map((badge, idx) => (
+            {badge && (
               <span
-                key={idx}
                 className={cn(
                   'px-3 py-1 rounded-sm text-[10px] font-black tracking-tighter border shadow-xl',
                   badge.className
@@ -262,7 +206,7 @@ const ProductCard = memo(function ProductCard({
               >
                 {badge.text}
               </span>
-            ))}
+            )}
           </div>
 
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex flex-col items-center justify-center">
