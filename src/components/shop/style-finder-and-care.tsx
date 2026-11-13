@@ -10,7 +10,9 @@ const CATEGORIES = [
   { label: 'Dijes', value: 'dijes' },
   { label: 'Pulseras', value: 'pulseras' },
   { label: 'Aros', value: 'aros' },
-  { label: 'Sets', value: 'conjuntos' },
+  { label: 'Sets & Conjuntos', value: 'conjuntos' },
+  { label: 'Relojes', value: 'relojes' },
+  { label: 'Enchapado de Plata', value: 'enchapado-plata' },
 ];
 
 const MATERIALS = [

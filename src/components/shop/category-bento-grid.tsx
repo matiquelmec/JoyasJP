@@ -68,6 +68,22 @@ const BENTO_COLLECTIONS: BentoCollection[] = [
     spanClass: 'md:col-span-2 min-h-[220px]',
     matchCategories: ['Sets', 'Conjuntos', 'Sets & Conjuntos', 'conjuntos'],
   },
+  {
+    id: 'relojes',
+    title: 'Relojes',
+    subtitle: 'Relojes urbanos de alto impacto y precisión.',
+    href: '/productos?categoria=relojes',
+    spanClass: 'md:col-span-2 min-h-[220px]',
+    matchCategories: ['Relojes', 'relojes'],
+  },
+  {
+    id: 'enchapado-plata',
+    title: 'Enchapado de Plata',
+    subtitle: 'Piezas con baño de plata de brillo duradero.',
+    href: '/productos?categoria=enchapado-plata',
+    spanClass: 'md:col-span-2 min-h-[220px]',
+    matchCategories: ['Enchapado de Plata', 'enchapado-plata'],
+  },
 ];
 
 function resolveCollectionImage(collection: BentoCollection, products: Product[]): string {
