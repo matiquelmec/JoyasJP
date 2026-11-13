@@ -25,7 +25,7 @@ export function SiteConfigProvider({
     store_email: defaultConfig.business.contact.email,
     store_description: defaultConfig.description,
     shipping_cost: 3000,
-    free_shipping_from: 50000,
+    free_shipping_from: defaultConfig.ecommerce.freeShippingFrom,
     shipping_zones: [...defaultConfig.ecommerce.shippingZones],
     admin_email: defaultConfig.business.contact.email,
     notify_new_orders: true,

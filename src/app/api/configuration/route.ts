@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
           store_email: siteConfig.business.contact.email,
           store_description: siteConfig.description,
           shipping_cost: 3000,
-          free_shipping_from: 50000,
+          free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
           shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
         }
       })
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       instagram_url: data.instagram_url || siteConfig.links.instagram,
       tiktok_url: data.tiktok_url || siteConfig.links.tiktok,
       shipping_cost: 3000,
-      free_shipping_from: 50000,
+      free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
       shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
     }
 
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         store_email: siteConfig.business.contact.email,
         store_description: siteConfig.description,
         shipping_cost: 3000,
-        free_shipping_from: 50000,
+        free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
         shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
       }
     })

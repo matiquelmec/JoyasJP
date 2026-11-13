@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSiteConfig } from '@/hooks/use-site-config'
+import { siteConfig } from '@/lib/config'
 import { cn } from '@/lib/utils'
 
 interface CheckoutFormData {
@@ -91,6 +92,8 @@ const chileanRegions = [
 export default function CheckoutPage() {
   const { items } = useCart()
   const { config } = useSiteConfig()
+  const freeShippingThreshold = config?.free_shipping_from || siteConfig.ecommerce.freeShippingFrom
+  const freeShippingFormatted = `$${freeShippingThreshold.toLocaleString('es-CL')}`
   const [isLoading, setIsLoading] = useState(false)
   const [couponInput, setCouponInput] = useState('')
   const [isCouponLoading, setIsCouponLoading] = useState(false)
@@ -433,10 +436,10 @@ export default function CheckoutPage() {
                         {formData.shippingMethod === 'starken' && <div className="w-2 h-2 rounded-full bg-primary" />}
                       </div>
                       <div>
-                        {cartStats.subtotal >= 50000 ? (
+                        {cartStats.subtotal >= freeShippingThreshold ? (
                           <>
                             <p className="font-semibold text-sm text-green-600">Envío Gratis vía Starken</p>
-                            <p className="text-xs text-muted-foreground">¡Ganaste envío gratis por compras sobre $50.000!</p>
+                            <p className="text-xs text-muted-foreground">¡Ganaste envío gratis por compras sobre {freeShippingFormatted}!</p>
                           </>
                         ) : (
                           <>
@@ -579,15 +582,15 @@ export default function CheckoutPage() {
 
                     <div className="flex justify-between text-sm">
                       <span>Envío a {formData.shippingMethod === 'metro' ? 'Metro' : 'Domicilio'}</span>
-                      <span className={(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "text-green-600 font-bold" : "text-orange-600 font-medium"}>
-                        {(formData.shippingMethod === 'metro' || cartStats.subtotal >= 50000) ? "¡Gratis!" : "Por pagar"}
+                      <span className={(formData.shippingMethod === 'metro' || cartStats.subtotal >= freeShippingThreshold) ? "text-green-600 font-bold" : "text-orange-600 font-medium"}>
+                        {(formData.shippingMethod === 'metro' || cartStats.subtotal >= freeShippingThreshold) ? "¡Gratis!" : "Por pagar"}
                       </span>
                     </div>
 
                     <div className="text-[10px] text-muted-foreground">
                       {formData.shippingMethod === 'metro'
                         ? "Te contactaremos para coordinar en L.Leones, Quilín o Chile España."
-                        : cartStats.subtotal >= 50000
+                        : cartStats.subtotal >= freeShippingThreshold
                           ? "¡El costo de envío corre por nuestra cuenta!"
                           : "Paga tu envío directamente a Starken al recibir tu pedido."}
                     </div>

@@ -77,7 +77,7 @@ export const configuration = sqliteTable('configuration', {
   store_slogan: text('store_slogan'),
   whatsapp_number: text('whatsapp_number'),
   shipping_cost: real('shipping_cost').default(3000),
-  free_shipping_from: real('free_shipping_from').default(50000),
+  free_shipping_from: real('free_shipping_from').default(70000),
   instagram_url: text('instagram_url'),
   tiktok_url: text('tiktok_url'),
 })

@@ -22,7 +22,7 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             store_email: data.store_email || siteConfig.business.contact.email,
             store_description: data.store_description || siteConfig.description,
             shipping_cost: 3000, // Hardcoded in API route
-            free_shipping_from: 50000,
+            free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
             shipping_zones: [...siteConfig.ecommerce.shippingZones],
             admin_email: siteConfig.business.contact.email, // Legacy
             notify_new_orders: true,
@@ -39,7 +39,7 @@ export async function getSiteConfig(): Promise<SiteConfiguration> {
             store_email: siteConfig.business.contact.email,
             store_description: siteConfig.description,
             shipping_cost: 3000,
-            free_shipping_from: 50000,
+            free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
             shipping_zones: [...siteConfig.ecommerce.shippingZones],
             admin_email: siteConfig.business.contact.email,
             notify_new_orders: true,

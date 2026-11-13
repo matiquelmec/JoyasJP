@@ -6,6 +6,7 @@ import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { Badge } from '@/components/ui/badge'
 import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { siteConfig } from '@/lib/config'
 import { parseProductSpecifications } from '@/lib/product-seo'
 
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
@@ -38,7 +39,8 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
     hasDiscount: !!selectedProduct.discount_price && selectedProduct.discount_price < selectedProduct.price
   }
 
-  const freeShippingThreshold = config?.free_shipping_from || 50000
+  const freeShippingThreshold = config?.free_shipping_from || siteConfig.ecommerce.freeShippingFrom
+  const freeShippingFormatted = formatter.format(freeShippingThreshold)
 
   // Ordenar variantes por dimensiones si es posible
   const sortedVariants = useMemo(() => {
@@ -114,7 +116,7 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
             </p>
           )}
           <p className="text-sm text-muted-foreground">
-            Precio incluye IVA. ¡Envío gratis a partir de $50.000!
+            Precio incluye IVA. ¡Envío gratis a partir de {freeShippingFormatted}!
           </p>
 
           {/* 🇮🇹 CERTIFICADO DE AUTENTICIDAD PARA PLATA ITALIANA 925 */}
@@ -144,7 +146,7 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
               </div>
               <div className="text-xs">
                 <p className="font-bold text-blue-700">Envío por Starken</p>
-                <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre $50.000!</span></p>
+                <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre {freeShippingFormatted}!</span></p>
               </div>
             </div>
 

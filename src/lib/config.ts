@@ -84,6 +84,7 @@ export const siteConfig = {
     currency: 'CLP',
     currencySymbol: '$',
     taxRate: 0.19,
+    freeShippingFrom: 70000,
     shippingZones: ['Santiago', 'Regiones'],
     paymentMethods: ['Flow', 'WebPay Plus', 'Servipag', 'Multicaja'],
     returnPolicy: {

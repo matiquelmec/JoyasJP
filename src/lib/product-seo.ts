@@ -1,4 +1,4 @@
-import { productConfig } from '@/lib/config'
+import { productConfig, siteConfig } from '@/lib/config'
 import type { Product } from '@/lib/types'
 
 export interface ProductSpecificationItem {
@@ -161,7 +161,9 @@ export function buildProductSeo(
   if (dimensions && !descSegments[0].toLowerCase().includes(dimensions.toLowerCase())) {
     descSegments.push(`Medidas: ${dimensions}.`)
   }
-  descSegments.push('Envío a todo Chile y gratis desde $50.000.')
+  descSegments.push(
+    `Envío a todo Chile y gratis desde $${siteConfig.ecommerce.freeShippingFrom.toLocaleString('es-CL')}.`
+  )
   const fullDesc = descSegments.join(' ')
   const description = fullDesc.length > 160 ? `${fullDesc.slice(0, 157).trimEnd()}...` : fullDesc
 

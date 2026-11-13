@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
           tiktok_url: siteConfig.links.tiktok,
           whatsapp_number: siteConfig.business.contact.whatsapp,
           shipping_cost: 3000,
-          free_shipping_from: 50000,
+          free_shipping_from: siteConfig.ecommerce.freeShippingFrom,
           shipping_zones: siteConfig.ecommerce.shippingZones.join(', '),
           admin_email: siteConfig.business.contact.email,
           notify_new_orders: true,
