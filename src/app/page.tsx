@@ -246,6 +246,16 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
+      <div className="relative z-10 bg-[#09090B]">
+        <CategoryBentoGridSection />
+      </div>
+
+      {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
+      <div className="relative z-10 bg-[#09090B]">
+        <StyleFinderAndCare />
+      </div>
+
       {/* Featured Products Section */}
       <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
         <div className="container mx-auto px-4 max-w-7xl">
@@ -271,16 +281,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
-      <div className="relative z-10 bg-[#09090B]">
-        <CategoryBentoGridSection />
-      </div>
-
-      {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
-      <div className="relative z-10 bg-[#09090B]">
-        <StyleFinderAndCare />
-      </div>
     </div>
   )
 }
