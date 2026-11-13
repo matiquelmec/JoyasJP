@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Image as ImageIcon, Upload, Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { productConfig } from '@/lib/config'
@@ -129,12 +130,14 @@ export function CategoryCoversManager() {
               key={cat.id}
               className="flex items-center gap-4 rounded-xl border border-white/10 bg-[#09090B] p-4"
             >
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#121214] flex items-center justify-center">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#121214] flex items-center justify-center">
                 {currentUrl ? (
-                  <img
+                  <Image
                     src={currentUrl}
                     alt={cat.name}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="64px"
+                    className="object-cover"
                   />
                 ) : (
                   <ImageIcon className="w-6 h-6 text-[#A1A1AA]/50" />

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import type { Product } from '@/lib/types';
@@ -160,12 +161,13 @@ export function CategoryBentoGrid({ products, customCovers }: CategoryBentoGridP
               href={col.href}
               className={`group relative overflow-hidden bg-[#09090B] focus-visible:outline-none focus-visible:ring-inset focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${col.spanClass}`}
             >
-              <img
+              <Image
                 src={imageUrl}
                 alt={col.title}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105 opacity-100"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                quality={90}
+                className="object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-105 opacity-100"
               />
               {/* Viñeta inferior sutil que deja el 100% de luz en la fotografía */}
               <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#09090B]/95 via-[#09090B]/40 to-transparent" />
