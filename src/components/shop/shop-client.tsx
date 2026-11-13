@@ -248,7 +248,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
     return (
         <div className={cn("min-h-screen overflow-x-hidden transition-all duration-700", isSilverBg ? "smoke-silver-bg" : "smoke-gold-bg")}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+            <div className="w-full px-4 sm:px-8 lg:px-14 py-28 md:py-36">
                 {/* Header Dinámico e Inmersivo */}
                 <div className="text-center mb-12 max-w-3xl mx-auto space-y-3 animate-fadeIn">
                     {categoryHeader.badge && (
@@ -355,7 +355,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
                     {finalFilteredProducts.length > 0 ? (
                         <>
-                            <div className="product-grid responsive-container responsive-grid gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 w-full">
                                 {visibleProducts.map((product, index) => (
                                     <LazyProductCard
                                         key={product.id}

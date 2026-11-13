@@ -105,7 +105,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <div className="min-h-screen bg-background">
       <ProductSchema product={product} availability={availability} />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="w-full px-4 sm:px-8 lg:px-16 pt-28 pb-16 max-w-[1600px] mx-auto">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
           <Link
