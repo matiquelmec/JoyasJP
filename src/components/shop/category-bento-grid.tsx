@@ -4,6 +4,7 @@ import type { Product } from '@/lib/types';
 
 interface CategoryBentoGridProps {
   products: Product[];
+  customCovers?: Record<string, string>;
 }
 
 interface BentoCollection {
@@ -86,7 +87,15 @@ const BENTO_COLLECTIONS: BentoCollection[] = [
   },
 ];
 
-function resolveCollectionImage(collection: BentoCollection, products: Product[]): string {
+function resolveCollectionImage(
+  collection: BentoCollection,
+  products: Product[],
+  customCovers?: Record<string, string>
+): string {
+  const canonicalId = collection.id === 'sets' ? 'conjuntos' : collection.id;
+  if (customCovers?.[canonicalId]) {
+    return customCovers[canonicalId];
+  }
   const match =
     products.find((p) => {
       const catMatch = collection.matchCategories.some(
@@ -102,7 +111,7 @@ function resolveCollectionImage(collection: BentoCollection, products: Product[]
   return match?.gallery?.[0] || '/brand/joyasjp_og_image_1200x630.png';
 }
 
-export function CategoryBentoGrid({ products }: CategoryBentoGridProps) {
+export function CategoryBentoGrid({ products, customCovers }: CategoryBentoGridProps) {
   return (
     <section
       aria-labelledby="bento-collections-heading"
@@ -131,7 +140,7 @@ export function CategoryBentoGrid({ products }: CategoryBentoGridProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
         {BENTO_COLLECTIONS.map((col) => {
-          const imageUrl = resolveCollectionImage(col, products);
+          const imageUrl = resolveCollectionImage(col, products, customCovers);
           return (
             <Link
               key={col.id}

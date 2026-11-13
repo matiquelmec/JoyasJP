@@ -287,10 +287,22 @@ export default function Home() {
 
 async function CategoryBentoGridSection() {
   let products: Product[] = []
+  let customCovers: Record<string, string> = {}
   try {
     products = await ProductService.getFeaturedProducts(40)
   } catch {
     products = []
   }
-  return <CategoryBentoGrid products={products} />
+  try {
+    const { turso } = await import('@/lib/db/turso')
+    const { rows } = await turso.execute('SELECT category_id, image_url FROM category_covers')
+    for (const row of rows as unknown as Array<{ category_id: string; image_url: string }>) {
+      if (row.category_id && row.image_url) {
+        customCovers[row.category_id] = row.image_url
+      }
+    }
+  } catch {
+    // Fallback automático a las imágenes prioritarias del catálogo si la tabla aún no existe
+  }
+  return <CategoryBentoGrid products={products} customCovers={customCovers} />
 }
