@@ -199,81 +199,77 @@ export default function Home() {
         <StyleFinderAndCare />
       </div>
 
-      {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 (Paleta Plata Milán #C4C9D2 & Carmesí #D4113C) */}
-      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-[#09090B] via-[#121214] to-background border-y border-[#C4C9D2]/20 overflow-hidden">
-        {/* Glow de luz Plata Milán y Carmesí sutil de fondo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#C4C9D2]/10 blur-[140px] rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[400px] h-[250px] bg-[#D4113C]/10 blur-[100px] rounded-full pointer-events-none" />
+      {/* 🇮🇹 BANNER SHOWCASE VIP FULL-BLEED: COLECCIÓN PLATA ITALIANA 925 */}
+      <section className="relative z-10 w-full bg-[#121214] border-b border-white/10 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 w-full min-h-[88vh]">
+          {/* Mitad Izquierda: Narrativa Editorial & Sello 925 */}
+          <div className="lg:col-span-5 flex flex-col justify-center p-8 sm:p-14 lg:p-20 space-y-6 bg-gradient-to-br from-[#09090B] via-[#121214] to-[#09090B] border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="inline-flex w-fit items-center gap-2 px-4 py-1.5 bg-[#09090B] border border-[#C4C9D2]/35 text-[#C4C9D2] text-xs font-bold tracking-widest uppercase">
+              <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
+            </div>
 
-        <div className="container mx-auto px-4 max-w-7xl relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Texto & Branding VIP */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#121214] border border-[#C4C9D2]/35 text-[#C4C9D2] text-xs font-bold tracking-widest uppercase shadow-xl backdrop-blur-md">
-                <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
+            <h2 className="text-4xl sm:text-6xl font-body font-bold tracking-tight text-white leading-[1.08] uppercase">
+              {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')} <br />
+              <span className="bg-gradient-to-r from-[#F6F7FA] via-[#C4C9D2] to-[#9AA0AB] bg-clip-text text-transparent">
+                EL NUEVO ESTÁNDAR
+              </span>
+            </h2>
+
+            <p className="text-base sm:text-lg text-[#A1A1AA] max-w-xl leading-[1.6] font-body">
+              Piezas macizas moldeadas en Plata Fina de Milán. Peso real, brillo de ley y acabado pulido a mano para quienes juegan con criterio en la escena urbana.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#09090B] border border-[#C4C9D2]/25 px-4 py-3">
+                <span className="text-[#C4C9D2]">✨</span> 92.5% Pureza Certificada
               </div>
-
-              <h2 className="text-[40px] sm:text-[56px] font-body font-bold tracking-tight text-white leading-[1.1] drop-shadow-[0_2px_20px_rgba(196,201,210,0.2)] uppercase">
-                {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')} <br />
-                <span className="bg-gradient-to-r from-[#F6F7FA] via-[#C4C9D2] to-[#9AA0AB] bg-clip-text text-transparent">
-                  EL NUEVO ESTÁNDAR
-                </span>
-              </h2>
-
-              <p className="text-base text-[#A1A1AA] max-w-xl mx-auto lg:mx-0 leading-[1.6] font-body">
-                Piezas macizas moldeadas en Plata Fina de Milán. Peso real, brillo de ley y acabado pulido a mano para quienes juegan con criterio en la escena urbana.
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#121214] border border-[#C4C9D2]/25 px-3.5 py-2.5 rounded-xl shadow-md">
-                  <span className="text-[#C4C9D2]">✨</span> 92.5% Pureza Certificada
-                </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#121214] border border-[#C4C9D2]/25 px-3.5 py-2.5 rounded-xl shadow-md">
-                  <span className="text-[#C4C9D2]">🛡️</span> Ley 925 Sellada & Hipoalergénica
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Link href="/productos?categoria=plata-925" className="inline-block">
-                  <Button
-                    size="lg"
-                    className="min-h-[48px] font-bold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.45)] transition-all duration-300 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
-                  >
-                    Explorar {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')}
-                    <ChevronRight className="w-5 h-5 ml-1" />
-                  </Button>
-                </Link>
+              <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#09090B] border border-[#C4C9D2]/25 px-4 py-3">
+                <span className="text-[#C4C9D2]">🛡️</span> Ley 925 Sellada & Hipoalergénica
               </div>
             </div>
 
-            {/* Carrusel Visual de Piezas de Plata Ley 925 */}
-            <div className="lg:col-span-5 flex justify-center">
-              <SilverShowcaseCarouselSection />
+            <div className="pt-4">
+              <Link href="/productos?categoria=plata-925" className="inline-block">
+                <Button
+                  size="lg"
+                  className="min-h-[52px] font-bold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white shadow-[0_0_24px_rgba(212,17,60,0.45)] transition-all duration-300 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
+                >
+                  Explorar {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')}
+                  <ChevronRight className="w-5 h-5 ml-1" />
+                </Button>
+              </Link>
             </div>
+          </div>
 
+          {/* Mitad Derecha Full-Bleed: Escaparate Visual de Piezas de Plata Ley 925 */}
+          <div className="lg:col-span-7 flex w-full h-full">
+            <SilverShowcaseCarouselSection />
           </div>
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-[36px] md:text-[40px] leading-[1.1] font-body font-bold mb-4 text-white">
-              Piezas Destacadas
-            </h2>
-            <p className="text-base text-[#A1A1AA] max-w-2xl mx-auto leading-[1.6]">
-              Descubre nuestra selección de piezas con carácter, seleccionadas para
-              destacar tu flow y estilo en la calle.
+      {/* Piezas Destacadas Full-Bleed Fluid Gallery */}
+      <section className="py-20 md:py-28 bg-[#09090B] relative z-10 w-full px-4 sm:px-8 lg:px-14" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
+        <div className="w-full">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#F43F5E] mb-2">
+                Selección Principal
+              </p>
+              <h2 className="text-4xl md:text-6xl leading-[1.08] font-body font-bold text-white uppercase tracking-tight">
+                Piezas Destacadas
+              </h2>
+            </div>
+            <p className="text-base text-[#A1A1AA] max-w-md leading-[1.6]">
+              Piezas con carácter seleccionadas para destacar tu presencia en alta resolución.
             </p>
           </div>
 
           <FeaturedProductsSection />
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-14">
             <Link href="/productos" className="inline-block">
-              <Button size="lg" className="min-h-[48px] font-bold px-8 bg-[#D4113C] hover:bg-[#B30D33] text-white focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]">
+              <Button size="lg" className="min-h-[52px] font-bold px-10 bg-[#D4113C] hover:bg-[#B30D33] text-white focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]">
                 Ver Toda la Colección
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>

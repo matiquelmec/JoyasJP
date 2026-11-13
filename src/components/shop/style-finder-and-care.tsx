@@ -161,35 +161,34 @@ export function StyleFinderAndCare() {
   return (
     <section
       aria-labelledby="finder-care-heading"
-      className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10"
+      className="w-full border-y border-white/10 bg-[#09090B]"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-        {/* 3-Step Interactive Style Finder */}
-        <div className="lg:col-span-6 relative overflow-hidden rounded-2xl border border-white/10 bg-[#121214] p-6 sm:p-8 shadow-2xl">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#D4113C]/10 blur-3xl" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
+        {/* Left 50% Viewport: 3-Step Interactive Style Finder */}
+        <div className="relative overflow-hidden bg-[#121214] p-8 sm:p-12 lg:p-20 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-center min-h-[68vh]">
+          <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#D4113C]/10 blur-3xl" />
 
-          <div className="relative flex items-center justify-between gap-4 mb-6">
+          <div className="relative flex items-center justify-between gap-4 mb-8">
             <div>
-              <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#F43F5E]">
+              <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#F43F5E]">
                 <FacetedGemMark />
                 Asistente de Estilo
               </p>
               <h2
                 id="finder-care-heading"
-                className="mt-1 text-2xl sm:text-3xl font-bold font-body text-white"
+                className="mt-2 text-3xl sm:text-4xl font-bold font-body text-white uppercase tracking-tight"
               >
                 Encuentra tu Pieza en 3 Pasos
               </h2>
             </div>
 
-            {/* 3-Node Step Indicator */}
-            <div className="flex items-center gap-1.5 bg-[#09090B] border border-white/10 rounded-full px-3 py-1.5">
+            <div className="flex items-center gap-1.5 bg-[#09090B] border border-white/10 rounded-full px-3.5 py-2">
               {[1, 2, 3].map((n) => (
                 <span
                   key={n}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     step === n
-                      ? 'w-6 bg-[#D4113C] shadow-[0_0_10px_rgba(212,17,60,0.7)]'
+                      ? 'w-7 bg-[#D4113C] shadow-[0_0_10px_rgba(212,17,60,0.7)]'
                       : step > n
                         ? 'w-2 bg-[#C4C9D2]'
                         : 'w-2 bg-white/15'
@@ -201,10 +200,10 @@ export function StyleFinderAndCare() {
 
           {step === 1 && (
             <div className="relative">
-              <p className="text-sm font-medium text-[#C4C9D2] mb-4">
+              <p className="text-base font-medium text-[#C4C9D2] mb-5">
                 1. ¿Qué tipo de pieza estás buscando hoy?
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {CATEGORIES.map((item) => (
                   <button
                     key={item.value}
@@ -213,13 +212,13 @@ export function StyleFinderAndCare() {
                       setCategory(item.value);
                       setStep(2);
                     }}
-                    className={`group min-h-[52px] flex items-center justify-between rounded-xl border px-4 py-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+                    className={`group min-h-[56px] flex items-center justify-between rounded-xl border px-5 py-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                       category === item.value
                         ? 'border-[#D4113C] bg-[#D4113C]/15 text-white shadow-[0_0_20px_rgba(212,17,60,0.18)]'
-                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white hover:-translate-y-0.5'
+                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white'
                     }`}
                   >
-                    <span className="text-sm font-semibold">{item.label}</span>
+                    <span className="text-sm font-bold">{item.label}</span>
                     <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] group-hover:text-[#F43F5E] transition-colors">
                       {item.tag}
                     </span>
@@ -231,10 +230,10 @@ export function StyleFinderAndCare() {
 
           {step === 2 && (
             <div className="relative">
-              <p className="text-sm font-medium text-[#C4C9D2] mb-4">
+              <p className="text-base font-medium text-[#C4C9D2] mb-5">
                 2. Elige tu material preferido:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {MATERIALS.map((item) => (
                   <button
                     key={item.value}
@@ -243,19 +242,19 @@ export function StyleFinderAndCare() {
                       setMaterial(item.value);
                       setStep(3);
                     }}
-                    className={`group min-h-[56px] flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+                    className={`group min-h-[64px] flex items-center gap-3.5 rounded-xl border px-5 py-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                       material === item.value
                         ? 'border-[#D4113C] bg-[#D4113C]/15 text-white'
-                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white hover:-translate-y-0.5'
+                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`h-7 w-7 shrink-0 rounded-full bg-gradient-to-br ${item.swatch} ring-1 ring-white/20`}
+                      className={`h-8 w-8 shrink-0 rounded-full bg-gradient-to-br ${item.swatch} ring-1 ring-white/20`}
                     />
                     <div>
-                      <span className="block text-sm font-semibold">{item.label}</span>
-                      <span className="block text-[11px] text-[#A1A1AA]">{item.note}</span>
+                      <span className="block text-sm font-bold">{item.label}</span>
+                      <span className="block text-xs text-[#A1A1AA]">{item.note}</span>
                     </div>
                   </button>
                 ))}
@@ -263,7 +262,7 @@ export function StyleFinderAndCare() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Volver al paso anterior
@@ -273,23 +272,23 @@ export function StyleFinderAndCare() {
 
           {step === 3 && (
             <div className="relative">
-              <p className="text-sm font-medium text-[#C4C9D2] mb-4">
+              <p className="text-base font-medium text-[#C4C9D2] mb-5">
                 3. Define tu presupuesto estimado:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {BUDGETS.map((item) => (
                   <button
                     key={item.label}
                     type="button"
                     onClick={() => handleFinishFinder(item.value)}
-                    className={`group min-h-[54px] flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+                    className={`group min-h-[60px] flex items-center justify-between rounded-xl border px-5 py-4 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                       maxPrice === item.value
                         ? 'border-[#D4113C] bg-[#D4113C] text-white'
-                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-[#D4113C] hover:text-white hover:-translate-y-0.5'
+                        : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-[#D4113C] hover:text-white'
                     }`}
                   >
                     <div className="text-left">
-                      <span className="block">{item.label}</span>
+                      <span className="block font-bold">{item.label}</span>
                       <span className="block text-[10px] uppercase tracking-widest text-[#A1A1AA] group-hover:text-white/80">
                         {item.tier}
                       </span>
@@ -301,7 +300,7 @@ export function StyleFinderAndCare() {
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Volver al paso anterior
@@ -310,16 +309,16 @@ export function StyleFinderAndCare() {
           )}
         </div>
 
-        {/* Interactive Size Guide & Silver 925 Care */}
-        <div className="lg:col-span-6 rounded-2xl border border-white/10 bg-[#121214] p-6 sm:p-8 shadow-2xl">
-          <div className="flex flex-wrap gap-2 mb-6 border-b border-white/10 pb-4">
+        {/* Right 50% Viewport: Interactive Size Guide & Silver 925 Care */}
+        <div className="bg-[#09090B] p-8 sm:p-12 lg:p-20 flex flex-col justify-center min-h-[68vh]">
+          <div className="flex flex-wrap gap-2.5 mb-8 border-b border-white/10 pb-5">
             <button
               type="button"
               onClick={() => setActiveTab('sizes')}
-              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                 activeTab === 'sizes'
                   ? 'bg-[#D4113C] text-white'
-                  : 'bg-[#09090B] text-[#A1A1AA] hover:text-white'
+                  : 'bg-[#121214] text-[#A1A1AA] hover:text-white'
               }`}
             >
               <CaliperLinkMark />
@@ -328,10 +327,10 @@ export function StyleFinderAndCare() {
             <button
               type="button"
               onClick={() => setActiveTab('care')}
-              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                 activeTab === 'care'
                   ? 'bg-[#D4113C] text-white'
-                  : 'bg-[#09090B] text-[#A1A1AA] hover:text-white'
+                  : 'bg-[#121214] text-[#A1A1AA] hover:text-white'
               }`}
             >
               <Hallmark925Mark />
@@ -340,10 +339,10 @@ export function StyleFinderAndCare() {
             <button
               type="button"
               onClick={() => setActiveTab('shipping')}
-              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+              className={`min-h-[44px] inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                 activeTab === 'shipping'
                   ? 'bg-[#D4113C] text-white'
-                  : 'bg-[#09090B] text-[#A1A1AA] hover:text-white'
+                  : 'bg-[#121214] text-[#A1A1AA] hover:text-white'
               }`}
             >
               <ExpressRouteMark />
@@ -352,10 +351,9 @@ export function StyleFinderAndCare() {
           </div>
 
           {activeTab === 'sizes' && (
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-              {/* Interactive Neckline Drop Visualizer */}
-              <div className="sm:col-span-4 flex flex-col items-center justify-center rounded-xl border border-white/10 bg-[#09090B] p-4">
-                <svg viewBox="0 0 120 130" className="w-28 h-32" fill="none" aria-hidden="true">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+              <div className="sm:col-span-5 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-[#121214] p-6">
+                <svg viewBox="0 0 120 130" className="w-36 h-40" fill="none" aria-hidden="true">
                   <path
                     d="M36 14c0 16 10 26 24 26s24-10 24-26M18 46c12-10 24-12 42-12s30 2 42 12l8 74H10l8-74Z"
                     stroke="#3F3F46"
@@ -369,19 +367,19 @@ export function StyleFinderAndCare() {
                         key={s.cm}
                         d={`M40 34 Q60 ${s.dropY} 80 34`}
                         stroke={isActive ? '#D4113C' : '#52525B'}
-                        strokeWidth={isActive ? '2.4' : '1'}
+                        strokeWidth={isActive ? '2.6' : '1.1'}
                         strokeDasharray={isActive ? undefined : '2 3'}
                         className="transition-all duration-300"
                       />
                     );
                   })}
                 </svg>
-                <span className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-[#F43F5E]">
+                <span className="mt-2 text-xs font-bold uppercase tracking-widest text-[#F43F5E]">
                   Vista {hoveredSize}
                 </span>
               </div>
 
-              <div className="sm:col-span-8 space-y-2.5">
+              <div className="sm:col-span-7 space-y-3">
                 {CHAIN_SIZES.map((s) => {
                   const isActive = hoveredSize === s.cm;
                   return (
@@ -390,15 +388,15 @@ export function StyleFinderAndCare() {
                       type="button"
                       onMouseEnter={() => setHoveredSize(s.cm)}
                       onClick={() => setHoveredSize(s.cm)}
-                      className={`w-full text-left rounded-xl border p-3.5 transition-all ${
+                      className={`w-full text-left rounded-xl border p-4 transition-all ${
                         isActive
                           ? 'border-[#D4113C] bg-[#D4113C]/10'
-                          : 'border-white/10 bg-[#09090B] hover:border-white/25'
+                          : 'border-white/10 bg-[#121214] hover:border-white/25'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-bold text-white">{s.cm}</span>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#F43F5E]">
+                        <span className="text-base font-bold text-white">{s.cm}</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[#F43F5E]">
                           {s.fit}
                         </span>
                       </div>
@@ -411,13 +409,13 @@ export function StyleFinderAndCare() {
           )}
 
           {activeTab === 'care' && (
-            <div className="space-y-4 text-sm text-[#C4C9D2] leading-relaxed">
+            <div className="space-y-4 text-base text-[#C4C9D2] leading-relaxed">
               <p>
                 La <strong className="text-white">Plata Italy 925</strong> es un metal noble que
                 puede oscurecerse naturalmente con el uso debido al pH de la piel, humedad o
                 perfumes. Esto confirma su autenticidad y es completamente reversible.
               </p>
-              <ul className="space-y-2 text-xs text-[#A1A1AA] list-disc pl-5">
+              <ul className="space-y-2.5 text-sm text-[#A1A1AA] list-disc pl-5">
                 <li>Evita el contacto directo con perfumes, cremas, cloro o agua de mar.</li>
                 <li>Guarda tus piezas individualmente en su bolsa o estuche seco.</li>
                 <li>Límpialas suavemente con un paño pulidor de joyería para recuperar su brillo.</li>
@@ -426,13 +424,13 @@ export function StyleFinderAndCare() {
           )}
 
           {activeTab === 'shipping' && (
-            <div className="space-y-4 text-sm text-[#C4C9D2] leading-relaxed">
+            <div className="space-y-4 text-base text-[#C4C9D2] leading-relaxed">
               <p>
                 Despachamos a todo Chile mediante <strong className="text-white">Starken</strong> y
                 ofrecemos entregas coordinadas en estaciones de{' '}
                 <strong className="text-white">Metro de Santiago</strong>.
               </p>
-              <ul className="space-y-2 text-xs text-[#A1A1AA] list-disc pl-5">
+              <ul className="space-y-2.5 text-sm text-[#A1A1AA] list-disc pl-5">
                 <li>Pagos 100% protegidos vía Flow.cl (Webpay, tarjetas y transferencia).</li>
                 <li>Garantía legal de satisfacción y revisión de calidad previa al envío.</li>
               </ul>
