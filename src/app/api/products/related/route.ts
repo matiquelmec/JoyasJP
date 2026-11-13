@@ -26,9 +26,35 @@ export async function GET(request: NextRequest) {
       ProductService.getAllProducts(),
     ])
 
-    const otherProducts = allProducts
-      .filter((p) => p.category !== category && p.id !== currentProductId && p.stock > 0)
-      .slice(0, 4)
+    const cleanCategory = category.trim().toLowerCase()
+    const candidates = allProducts.filter(
+      (p) =>
+        (p.category || '').trim().toLowerCase() !== cleanCategory &&
+        p.id !== currentProductId &&
+        p.stock > 0
+    )
+
+    // Seleccionar hasta 4 piezas priorizando diversidad de categorías (1 por categoría primero)
+    const otherProducts: typeof candidates = []
+    const seenCategories = new Set<string>()
+
+    for (const item of candidates) {
+      const cat = (item.category || '').trim().toLowerCase()
+      if (!seenCategories.has(cat)) {
+        seenCategories.add(cat)
+        otherProducts.push(item)
+        if (otherProducts.length === 4) break
+      }
+    }
+
+    if (otherProducts.length < 4) {
+      for (const item of candidates) {
+        if (!otherProducts.some((x) => x.id === item.id)) {
+          otherProducts.push(item)
+          if (otherProducts.length === 4) break
+        }
+      }
+    }
 
     return NextResponse.json({
       related: related.slice(0, 4),

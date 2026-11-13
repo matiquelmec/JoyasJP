@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import ProductCard from '@/components/shop/product-card'
 import { Separator } from '@/components/ui/separator'
+import { productConfig } from '@/lib/config'
 import type { Product } from '@/lib/types'
 
 interface RelatedProductsProps {
@@ -19,6 +20,12 @@ export function RelatedProducts({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const categoryLabel =
+    productConfig.categories.find(
+      (c) => c.id.toLowerCase() === (category || '').trim().toLowerCase()
+    )?.name ||
+    category.charAt(0).toUpperCase() + category.slice(1)
+
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -32,11 +39,25 @@ export function RelatedProducts({
         }
 
         const data = await response.json()
+        const cleanCategory = (category || '').trim().toLowerCase()
+        const strictRelated = Array.isArray(data.related)
+          ? data.related.filter(
+              (item: Product) =>
+                (item.category || '').trim().toLowerCase() === cleanCategory &&
+                item.id !== currentProductId
+            )
+          : []
         
-        setRelatedProducts(data.related || [])
+        setRelatedProducts(strictRelated)
         
         // Mezclar aleatoriamente los otros productos para variedad
-        const shuffledOthers = (data.others || []).sort(() => Math.random() - 0.5)
+        const shuffledOthers = (data.others || [])
+          .filter(
+            (item: Product) =>
+              (item.category || '').trim().toLowerCase() !== cleanCategory &&
+              item.id !== currentProductId
+          )
+          .sort(() => Math.random() - 0.5)
         setOtherProducts(shuffledOthers)
         
       } catch (err: any) {
@@ -90,7 +111,7 @@ export function RelatedProducts({
         <div className="space-y-6">
           <div className="text-center space-y-2">
             <h2 className="text-2xl lg:text-3xl font-headline font-bold">
-              Más {category.charAt(0).toUpperCase() + category.slice(1)}
+              Más {categoryLabel}
             </h2>
             <p className="text-muted-foreground">
               Otros productos de la misma categoría que podrían interesarte

@@ -467,14 +467,16 @@ export class ProductService {
         limit: number = 4
     ): Promise<Product[]> {
         try {
+            const cleanCategory = (category || '').trim()
             const { rows } = await turso.execute({
-                sql: "SELECT * FROM products WHERE category = ? AND id != ? AND (deleted_at IS NULL OR deleted_at = '')",
-                args: [category, currentProductId]
+                sql: "SELECT * FROM products WHERE LOWER(TRIM(category)) = LOWER(TRIM(?)) AND id != ? AND (deleted_at IS NULL OR deleted_at = '')",
+                args: [cleanCategory, currentProductId]
             })
 
             if (!rows || rows.length === 0) {
+                if (process.env.NODE_ENV === 'production') return []
                 return LOCAL_MOCK_PRODUCTS
-                    .filter(p => p.category === category && p.id !== currentProductId)
+                    .filter(p => p.category === cleanCategory && p.id !== currentProductId)
                     .slice(0, limit)
             }
 
@@ -492,6 +494,7 @@ export class ProductService {
                 })
         } catch (error) {
             console.error('Error in getRelatedProducts:', error)
+            if (process.env.NODE_ENV === 'production') return []
             return LOCAL_MOCK_PRODUCTS
                 .filter(p => p.category === category && p.id !== currentProductId)
                 .slice(0, limit)

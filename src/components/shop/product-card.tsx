@@ -39,6 +39,12 @@ const ProductCard = memo(function ProductCard({
     setIsClient(true)
   }, [])
 
+  useEffect(() => {
+    setDisplayUrl(product.imageUrl)
+    setImageError(false)
+    setImageLoading(true)
+  }, [product.id, product.imageUrl])
+
   const isInWishlist = isClient && isItemInWishlist(product.id)
   const isOutOfStock = (product.stock ?? 0) <= 0
 

@@ -44,6 +44,7 @@ import {
 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
+import { productConfig } from '@/lib/config'
 import { toast } from 'sonner'
 import { ProductFormModal } from './product-form-modal'
 
@@ -215,7 +216,12 @@ export function ProductsManager() {
     return matchesCategory && matchesSearch
   })
 
-  const categories = Array.from(new Set(products.map((p) => p.category)))
+  const categories = Array.from(
+    new Set([
+      ...productConfig.categories.map((c) => c.id),
+      ...products.map((p) => p.category).filter(Boolean),
+    ])
+  )
   const lowStockProducts = products.filter((p) => !p.is_bundle && p.stock === 1)
 
   const formatCLP = (amount: number) => {
@@ -394,11 +400,14 @@ export function ProductsManager() {
                 className="bg-zinc-900 border-zinc-800 text-white text-xs p-2 rounded-md focus:ring-1 focus:ring-primary h-9"
               >
                 <option value="all">TODAS LAS CATEGORÍAS</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c.toUpperCase()}
-                  </option>
-                ))}
+                {categories.map((c) => {
+                  const label = productConfig.categories.find((cat) => cat.id === c)?.name || c
+                  return (
+                    <option key={c} value={c}>
+                      {label.toUpperCase()}
+                    </option>
+                  )
+                })}
               </select>
             </div>
           </div>
