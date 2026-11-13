@@ -78,14 +78,17 @@ export function JoyasJPLogo({
   const { width, height, containerClass } = DIMENSIONS[variant][size];
 
   const imageBox = (
-    <div className={`relative inline-flex items-center justify-center shrink-0 ${containerClass} ${className}`}>
+    <div
+      style={{ maxWidth: `${width}px`, maxHeight: `${height}px` }}
+      className={`relative inline-flex items-center justify-center shrink-0 ${containerClass} ${className}`}
+    >
       <Image
         src={src}
         alt="Joyas JP"
         width={width}
         height={height}
         priority={priority}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', maxWidth: `${width}px`, maxHeight: `${height}px` }}
         className="w-full h-full object-contain transition-transform duration-300"
       />
     </div>

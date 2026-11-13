@@ -135,8 +135,7 @@ export default function Home() {
           loop
           muted
           playsInline
-          preload="metadata"
-          poster="/brand/joyasjp_og_image_1200x630.png"
+          preload="auto"
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         >
