@@ -289,7 +289,7 @@ export function Header() {
               <span className="text-[11px] uppercase tracking-wider text-[#A1A1AA]">
                 Sugerencias:
               </span>
-              {productConfig.categories.slice(0, 5).map((cat) => (
+              {productConfig.categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/productos?categoria=${cat.id}`}
