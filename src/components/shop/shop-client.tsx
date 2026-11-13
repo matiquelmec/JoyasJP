@@ -25,19 +25,27 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const categoryParam = searchParams.get('categoria') || 'all'
+    const materialParam = searchParams.get('material') || 'all'
+    const maxPriceParam = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : null
 
     const [activeCategory, setActiveCategory] = useState(categoryParam)
     const [activeColor, setActiveColor] = useState('all')
+    const [activeMaterial, setActiveMaterial] = useState(materialParam)
+    const [maxPriceFilter, setMaxPriceFilter] = useState<number | null>(maxPriceParam)
     const [searchQuery, setSearchQuery] = useState('')
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
 
-    // Sincronizar categoría si cambia la URL
+    // Sincronizar categoría, material y presupuesto si cambia la URL
     useEffect(() => {
         if (categoryParam && allCategories.includes(categoryParam)) {
             setActiveCategory(categoryParam)
+        } else {
+            setActiveCategory('all')
         }
-    }, [categoryParam])
+        setActiveMaterial(materialParam || 'all')
+        setMaxPriceFilter(maxPriceParam && !Number.isNaN(maxPriceParam) ? maxPriceParam : null)
+    }, [categoryParam, materialParam, maxPriceParam])
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {
@@ -145,17 +153,31 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         return result;
     }, [groupedProducts, activeCategory, sortBy]);
 
-    // ⚡ Filtro especial: Si la categoría es 'plata-925', filtrar por categoría O por material 'Plata Italiana 925' / 'Plata 925'
+    // ⚡ Filtro especial: Categoría 'plata-925', filtro por material y tope de presupuesto del asistente
     const finalFilteredProducts = useMemo(() => {
-        if (activeCategory === 'plata-925') {
-            return filteredProducts.filter(p => 
+        let list = filteredProducts
+
+        if (activeCategory === 'plata-925' || activeMaterial === 'plata-925') {
+            list = list.filter(p => 
                 p.category === 'plata-925' || 
                 (p.materials && p.materials.toLowerCase().includes('plata')) ||
                 (p.custom_label && p.custom_label.toLowerCase().includes('plata'))
             )
+        } else if (activeMaterial === 'acero') {
+            list = list.filter(p => (p.materials || '').toLowerCase().includes('acero'))
+        } else if (activeMaterial === 'aleacion') {
+            list = list.filter(p => {
+                const m = (p.materials || '').toLowerCase()
+                return m.includes('aleaci') || m.includes('zinc')
+            })
         }
-        return filteredProducts
-    }, [filteredProducts, activeCategory])
+
+        if (maxPriceFilter && maxPriceFilter > 0) {
+            list = list.filter(p => (p.discount_price || p.price) <= maxPriceFilter)
+        }
+
+        return list
+    }, [filteredProducts, activeCategory, activeMaterial, maxPriceFilter])
 
     // Productos visibles (paginación)
     const visibleProducts = useMemo(() => finalFilteredProducts.slice(0, visibleCount), [finalFilteredProducts, visibleCount])
@@ -168,7 +190,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             case 'plata-925':
                 return {
                     title: 'Plata Italy 925',
-                    subtitle: 'Ley 925 legítima importada de Italia. Brillo eterno y acabado pulido a mano.',
+                    subtitle: 'Ley 925 legítima importada de Italia. Peso real, brillo de ley y acabado pulido a mano.',
                     badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
                 }
             case 'relojes':
@@ -216,7 +238,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             default:
                 return {
                     title: 'Nuestra Colección',
-                    subtitle: 'Define tu flow con cada pieza. Alta joyería para la escena urbana.',
+                    subtitle: 'Define tu flow con cada pieza. Joyería urbana premium de plata italiana 925 y piezas de diseño.',
                     badge: null
                 }
         }
@@ -268,7 +290,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                           "px-4 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5 cursor-pointer select-none",
                                           isVip 
                                               ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
-                                              : "data-[state=active]:bg-primary data-[state=active]:text-black"
+                                              : "data-[state=active]:bg-[#D4113C] data-[state=active]:text-white"
                                       )}
                                   >
                                       <Link href={targetHref} scroll={false}>
@@ -327,11 +349,11 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
 
                     {/* Contador de resultados */}
                     <p className="text-sm text-muted-foreground mb-6">
-                        Mostrando <span className="text-foreground font-semibold">{Math.min(visibleCount, filteredProducts.length)}</span> de{' '}
-                        <span className="text-foreground font-semibold">{filteredProducts.length}</span> productos
+                        Mostrando <span className="text-foreground font-semibold">{Math.min(visibleCount, finalFilteredProducts.length)}</span> de{' '}
+                        <span className="text-foreground font-semibold">{finalFilteredProducts.length}</span> productos
                     </p>
 
-                    {filteredProducts.length > 0 ? (
+                    {finalFilteredProducts.length > 0 ? (
                         <>
                             <div className="product-grid responsive-container responsive-grid gap-8">
                                 {visibleProducts.map((product, index) => (
@@ -348,10 +370,10 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                 <div className="flex flex-col items-center mt-14 gap-3">
                                     <button
                                         onClick={() => setVisibleCount(prev => prev + PRODUCTS_PER_PAGE)}
-                                        className="group relative inline-flex items-center gap-3 px-10 py-4 bg-transparent border border-primary/50 text-primary font-semibold rounded-full transition-all duration-300 hover:bg-primary hover:text-black hover:border-primary hover:scale-105 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]"
+                                        className="group relative inline-flex items-center min-h-[48px] gap-3 px-10 py-4 bg-[#D4113C] text-white font-bold rounded-full transition-all duration-300 hover:bg-[#B30D33] hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.4)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
                                     >
                                         <span>Cargar más</span>
-                                        <span className="text-xs opacity-70">({remaining} restantes)</span>
+                                        <span className="text-xs opacity-90">({remaining} restantes)</span>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="16"
@@ -368,7 +390,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                         </svg>
                                     </button>
                                     <p className="text-xs text-muted-foreground">
-                                        {filteredProducts.length} productos en total
+                                        {finalFilteredProducts.length} productos en total
                                     </p>
                                 </div>
                             )}

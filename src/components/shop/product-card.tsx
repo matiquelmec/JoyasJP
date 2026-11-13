@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import { useWishlist } from '@/hooks/use-wishlist'
 import type { Product } from '@/lib/types'
 import { getProductBadge } from '@/lib/product-badges'
-import { cn, normalizeColor, getLocalFallbackImage } from '@/lib/utils'
+import { cn, normalizeColor, getLocalFallbackImage, optimizeCloudinaryUrl } from '@/lib/utils'
 
 interface ProductCardProps {
   product: Product
@@ -140,6 +140,14 @@ const ProductCard = memo(function ProductCard({
   // Etiqueta única por tarjeta (estándar alta joyería)
   const badge = useMemo(() => getProductBadge(product), [product])
 
+  // Segunda imagen de galería para efecto Hover (gestionada desde /admin y optimizada en WebP/AVIF)
+  const secondaryImageUrl = useMemo(() => {
+    if (!product.gallery || product.gallery.length < 2) return null
+    const candidate = product.gallery.find((img) => img && img !== product.imageUrl && img !== displayUrl)
+    if (!candidate) return null
+    return optimizeCloudinaryUrl(candidate, 800)
+  }, [product.gallery, product.imageUrl, displayUrl])
+
   const priceDisplay = useMemo(() => {
     const formatter = new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -172,23 +180,37 @@ const ProductCard = memo(function ProductCard({
           )}
 
           {!imageError ? (
-            <Image
-              src={displayUrl}
-              alt={`${product.name} - Joya urbana premium`}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              loading={priority ? 'eager' : 'lazy'}
-              className={cn(
-                'object-cover product-image-hover transition-all duration-500',
-                imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100',
-                isOutOfStock && 'grayscale-[40%] opacity-85'
+            <>
+              <Image
+                src={displayUrl}
+                alt={`${product.name} - Joya urbana premium`}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading={priority ? 'eager' : 'lazy'}
+                className={cn(
+                  'object-cover product-image-hover transition-all duration-500',
+                  imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100',
+                  secondaryImageUrl && 'group-hover:opacity-0',
+                  isOutOfStock && 'grayscale-[40%] opacity-85'
+                )}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                priority={priority}
+                quality={priority ? 80 : 65}
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+              />
+              {secondaryImageUrl && !isOutOfStock && (
+                <Image
+                  src={secondaryImageUrl}
+                  alt={`${product.name} - Vista alternativa`}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  loading="lazy"
+                  quality={70}
+                  className="object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                />
               )}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              priority={priority}
-              quality={priority ? 80 : 60}
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-            />
+            </>
           ) : (
             <div className="flex items-center justify-center h-full bg-muted">
               <Sparkles className="w-12 h-12 text-muted-foreground" />

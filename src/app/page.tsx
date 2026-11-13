@@ -9,6 +9,8 @@ import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
 import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
+import { CategoryBentoGrid } from '@/components/shop/category-bento-grid'
+import { StyleFinderAndCare } from '@/components/shop/style-finder-and-care'
 
 export const revalidate = 60 // Revalidación ISR de 60s + purga en 0ms vía revalidatePath
 
@@ -269,6 +271,26 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
+      <div className="relative z-10 bg-[#09090B]">
+        <CategoryBentoGridSection />
+      </div>
+
+      {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
+      <div className="relative z-10 bg-[#09090B]">
+        <StyleFinderAndCare />
+      </div>
     </div>
   )
+}
+
+async function CategoryBentoGridSection() {
+  let products: Product[] = []
+  try {
+    products = await ProductService.getFeaturedProducts(40)
+  } catch {
+    products = []
+  }
+  return <CategoryBentoGrid products={products} />
 }
