@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { turso } from '@/lib/db/turso'
+import { verifyAdminAuth, UNAUTHORIZED_RESPONSE } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,11 +47,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const adminCookie =
-      request.cookies.get('admin_session')?.value ||
-      request.cookies.get('kuyen_admin_session')?.value
-    if (!adminCookie) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    const isAuthorized = await verifyAdminAuth(request)
+    if (!isAuthorized) {
+      return NextResponse.json(UNAUTHORIZED_RESPONSE, { status: 401 })
     }
 
     const body = await request.json()
@@ -75,6 +75,8 @@ export async function POST(request: NextRequest) {
       `,
       args: [parsed.data.categoryId, optimizedUrl, now],
     })
+
+    revalidatePath('/')
 
     return NextResponse.json({
       success: true,

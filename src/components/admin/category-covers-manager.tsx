@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { Image as ImageIcon, Upload, Check, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { productConfig } from '@/lib/config'
-import { Button } from '@/components/ui/button'
+import { compressToWebP } from '@/lib/image.utils'
 
 export function CategoryCoversManager() {
   const [covers, setCovers] = useState<Record<string, string>>({})
@@ -14,7 +15,10 @@ export function CategoryCoversManager() {
 
   useEffect(() => {
     fetch('/api/category-covers', { cache: 'no-store' })
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) return null
+        return res.json()
+      })
       .then((data) => {
         if (data?.covers) setCovers(data.covers)
       })
@@ -28,18 +32,24 @@ export function CategoryCoversManager() {
     try {
       const res = await fetch('/api/category-covers', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ categoryId, imageUrl }),
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        throw new Error(data?.error || 'Error al guardar portada')
+        throw new Error(data?.message || data?.error || 'Error al guardar portada')
       }
       setCovers((prev) => ({ ...prev, [categoryId]: data.imageUrl }))
       setSavedId(categoryId)
+      toast.success('Portada actualizada', {
+        description: 'La imagen ya está activa en la grilla Bento de inicio.',
+      })
       setTimeout(() => setSavedId(null), 2500)
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error al guardar portada')
+      const msg = err instanceof Error ? err.message : 'Error al guardar portada'
+      setErrorMsg(msg)
+      toast.error('Error al guardar portada', { description: msg })
     } finally {
       setSavingId(null)
     }
@@ -49,19 +59,39 @@ export function CategoryCoversManager() {
     setSavingId(categoryId)
     setErrorMsg(null)
     try {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+      if (!validTypes.includes(file.type)) {
+        throw new Error('Solo se permiten imágenes JPEG, PNG o WebP.')
+      }
+
+      let fileToUpload = file
+      try {
+        fileToUpload = await compressToWebP(file, 1200, 0.85)
+      } catch {
+        // Fallback al archivo original si el navegador no soporta compresión en Canvas
+      }
+
       const formData = new FormData()
-      formData.append('file', file)
-      const uploadRes = await fetch('/api/upload', {
+      formData.append('file', fileToUpload)
+      formData.append('category', categoryId)
+
+      const uploadRes = await fetch('/api/admin/upload-image', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       })
-      const uploadData = await uploadRes.json()
-      if (!uploadRes.ok || !uploadData?.url) {
+
+      const uploadData = await uploadRes.json().catch(() => ({}))
+      const uploadedUrl = uploadData?.publicUrl || uploadData?.url
+      if (!uploadRes.ok || !uploadedUrl) {
         throw new Error(uploadData?.error || 'Error subiendo imagen a Cloudinary')
       }
-      await saveCover(categoryId, uploadData.url)
+
+      await saveCover(categoryId, uploadedUrl)
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error subiendo imagen')
+      const msg = err instanceof Error ? err.message : 'Error subiendo imagen'
+      setErrorMsg(msg)
+      toast.error('Error al subir imagen', { description: msg })
       setSavingId(null)
     }
   }
@@ -133,6 +163,7 @@ export function CategoryCoversManager() {
                       onChange={(e) => {
                         const file = e.target.files?.[0]
                         if (file) handleFileUpload(cat.id, file)
+                        e.target.value = ''
                       }}
                     />
                   </label>
