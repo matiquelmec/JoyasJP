@@ -18,14 +18,14 @@ const DIMENSIONS: Record<
   JoyasJPLogoVariant,
   Record<JoyasJPLogoSize, { width: number; height: number; containerClass: string }>
 > = {
-  // SVG viewBox: 1894 x 1025 (aspect ~1.848)
+  // SVG viewBox: 1894 x 1025 (aspect ~1.848) - Mínimo digital manual v1.0: 180px
   horizontal: {
-    xs: { width: 96, height: 52, containerClass: 'w-[88px] sm:w-[96px] h-[48px] sm:h-[52px]' },
-    sm: { width: 112, height: 60, containerClass: 'w-[100px] sm:w-[112px] h-[54px] sm:h-[60px]' },
-    md: { width: 126, height: 68, containerClass: 'w-[108px] sm:w-[126px] h-[58px] sm:h-[68px]' },
-    lg: { width: 156, height: 84, containerClass: 'w-[136px] sm:w-[156px] h-[74px] sm:h-[84px]' },
-    xl: { width: 192, height: 104, containerClass: 'w-[166px] sm:w-[192px] h-[90px] sm:h-[104px]' },
-    '2xl': { width: 230, height: 124, containerClass: 'w-[196px] sm:w-[230px] h-[106px] sm:h-[124px]' },
+    xs: { width: 140, height: 76, containerClass: 'w-[140px] h-[76px]' },
+    sm: { width: 160, height: 86, containerClass: 'w-[150px] sm:w-[160px] h-[81px] sm:h-[86px]' },
+    md: { width: 180, height: 97, containerClass: 'w-[160px] sm:w-[180px] h-[86px] sm:h-[97px]' },
+    lg: { width: 200, height: 108, containerClass: 'w-[180px] sm:w-[200px] h-[97px] sm:h-[108px]' },
+    xl: { width: 220, height: 119, containerClass: 'w-[192px] sm:w-[220px] h-[104px] sm:h-[119px]' },
+    '2xl': { width: 248, height: 134, containerClass: 'w-[210px] sm:w-[248px] h-[114px] sm:h-[134px]' },
   },
   // SVG viewBox: 925 x 921 (aspect ~1.0)
   insignia: {
@@ -98,7 +98,7 @@ export function JoyasJPLogo({
   return (
     <Link
       href="/"
-      className="inline-flex items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B]"
+      className="inline-flex items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B]"
       aria-label="Joyas JP - Inicio"
     >
       {imageBox}

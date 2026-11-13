@@ -37,7 +37,7 @@ const bebasNeue = Bebas_Neue({
 
 export async function generateMetadata(): Promise<Metadata> {
   let storeName = 'Joyas JP'
-  let description = 'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico.'
+  let description = 'Joyería urbana premium de plata italiana 925 y piezas de diseño, seleccionadas para la escena urbana. Atrévete a jugar.'
 
   try {
     // Fetch dynamic config from DB with built-in resilience
@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.warn('[Metadata]: Usando valores por defecto debido a error en base de datos.')
   }
 
-  const title = `${storeName} | Alta Joyería para la Escena Urbana`
+  const title = `${storeName} | Joyería Urbana Premium & Plata Italiana 925`
 
   return {
     title: {
@@ -185,7 +185,7 @@ export default async function RootLayout({
               'url': siteConfig.url,
               'logo': `${siteConfig.url}/brand/joyasjp_avatar_redes_1080.jpg`,
               'image': `${siteConfig.url}/brand/joyasjp_avatar_redes_1080.jpg`,
-              'description': 'Alta joyería urbana en Plata Fina de Milán 925 y Oro. Diseños macizos con despacho express en Punta Arenas y todo Chile.',
+              'description': 'Joyería urbana premium de plata italiana 925 y piezas de diseño, seleccionadas para la escena urbana. Despacho express en todo Chile.',
               'telephone': siteConfig.business.contact.phone,
               'priceRange': '$$',
               'address': {

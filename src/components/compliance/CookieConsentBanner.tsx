@@ -71,7 +71,7 @@ export function CookieConsentBanner() {
       <div className="container mx-auto max-w-5xl space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-[#F43F5E] text-xs font-bold uppercase tracking-widest">
               <ShieldCheck className="w-4 h-4" />
               <span>Privacidad y Consentimiento (Ley N° 21.719)</span>
             </div>
@@ -80,7 +80,7 @@ export function CookieConsentBanner() {
             </h2>
             <p id="cmp-desc" className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
               Utilizamos cookies estrictamente necesarias para el funcionamiento del carrito y procesamiento seguro de pagos con Flow.cl. Solo activaremos cookies de análisis o marketing si nos otorgas tu consentimiento expreso e informado. Puedes consultar nuestra{' '}
-              <Link href="/privacidad" className="underline text-primary hover:text-primary/80">
+              <Link href="/privacidad" className="underline text-[#F43F5E] hover:text-[#F43F5E]/80">
                 Política de Privacidad
               </Link>{' '}
               o modificar tus preferencias en cualquier momento desde el pie de página.

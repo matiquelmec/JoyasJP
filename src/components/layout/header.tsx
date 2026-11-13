@@ -30,9 +30,9 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Estilo unificado para todos los enlaces de navegación
+  // Estilo unificado para todos los enlaces de navegación (Touch target >= 44px y foco visible 3px)
   const linkClassName =
-    "text-sm font-semibold tracking-wide text-zinc-300 transition-colors hover:text-[#F43F5E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-sm py-1"
+    "inline-flex items-center min-h-[44px] px-2 text-sm font-semibold tracking-wide text-zinc-300 transition-colors hover:text-[#F43F5E] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-sm"
 
   return (
     <header data-site-header className={cn(

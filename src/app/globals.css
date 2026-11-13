@@ -7,7 +7,8 @@
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    /* Superficie Grafito #121214 oficial del Manual v1.0 */
+    --card: 240 5% 7.5%;
     --card-foreground: 0 0% 98%;
 
     --popover: 0 0% 3.9%;
@@ -58,7 +59,7 @@
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 5% 7.5%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
@@ -271,9 +272,9 @@
 
 .product-card-hover:hover {
   transform: translate3d(0, -10px, 0) scale(1.015);
-  border-color: rgba(212, 175, 55, 0.4); /* Borde de oro translúcido */
+  border-color: rgba(212, 17, 60, 0.45); /* Borde Carmesí oficial */
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
-              0 0 25px rgba(212, 175, 55, 0.15); /* Brillo dorado suave */
+              0 0 24px rgba(212, 17, 60, 0.2); /* Destello Carmesí sutil */
 }
 
 /* Efecto de fondo de Humo Oscuro con destello dorado */
@@ -390,9 +391,9 @@ html {
   }
 }
 
-/* Focus states mejorados */
+/* Focus states mejorados (3px según Manual de Marca v1.0 Pág. 7) */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  @apply focus:outline-none focus:ring-[3px] focus:ring-[#F43F5E] focus:ring-offset-2 focus:ring-offset-background;
 }
 
 /* Grid responsivo para productos */

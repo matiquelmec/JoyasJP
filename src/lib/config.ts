@@ -4,7 +4,7 @@ export const siteConfig = {
   name: 'Joyas JP',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl',
   description:
-    'Alta joyería para la escena urbana. Descubre piezas únicas que definen tu estilo con materiales premium y diseños exclusivos.',
+    'Joyería urbana premium de plata italiana 925 y piezas de diseño, seleccionadas para la escena urbana. Atrévete a jugar.',
   author: 'Joyas JP',
   keywords: [
     'joyas urbanas Chile',
@@ -59,17 +59,17 @@ export const siteConfig = {
   },
   ui: {
     theme: 'dark',
-    primaryColor: '#D4AF37',
-    accentColor: '#1A1A1A',
+    primaryColor: '#D4113C',
+    accentColor: '#121214',
     enableAnimations: true,
     showScrollToTop: true,
     enableSmoothScrolling: true,
   },
   seo: {
-    defaultTitle: 'Joyas JP | Alta Joyería para la Escena Urbana',
+    defaultTitle: 'Joyas JP | Joyería Urbana Premium & Plata Italiana 925',
     titleTemplate: '%s | Joyas JP',
     defaultDescription:
-      'Descubre la exclusiva colección de Joyas JP: alta joyería urbana con diseños únicos, materiales premium y estilo auténtico.',
+      'Joyería urbana premium de plata italiana 925 y piezas de diseño, seleccionadas para la escena urbana. Atrévete a jugar.',
     siteVerification: {
       google: '',
       bing: '',

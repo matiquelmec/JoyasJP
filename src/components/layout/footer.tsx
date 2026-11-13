@@ -21,26 +21,26 @@ export function Footer() {
   const { config } = useSiteConfig()
 
   const linkClassName =
-    'text-sm text-muted-foreground transition-all duration-300 hover:text-primary hover:pl-1'
+    'inline-flex items-center min-h-[44px] text-sm text-[#A1A1AA] transition-all duration-300 hover:text-[#F43F5E] hover:pl-1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm'
 
   return (
-    <footer className="bg-zinc-950/50 border-t border-primary/20 pt-20 pb-10 relative z-20 backdrop-blur-md">
+    <footer className="bg-[#09090B] border-t border-zinc-800/80 pt-20 pb-10 relative z-20 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center md:text-left">
           {/* Columna 1: Marca con Estilo Premium */}
           <div className="flex flex-col items-center md:items-start space-y-4">
             <JoyasJPLogo variant="horizontal" color="plata" size="md" />
-            <p className="text-sm leading-relaxed text-zinc-400 max-w-xs font-headline font-medium uppercase tracking-widest">
+            <p className="text-sm leading-relaxed text-[#A1A1AA] max-w-xs font-headline font-medium uppercase tracking-widest">
               {config?.store_slogan || 'Atrévete a jugar'}
             </p>
           </div>
 
           {/* Columna 2: Navegación Elegante */}
-          <div className="flex flex-col items-center md:items-start space-y-6">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#F43F5E]">
               Colección
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClassName}>
@@ -52,26 +52,26 @@ export function Footer() {
           </div>
 
           {/* Columna 3: Contacto Directo */}
-          <div className="flex flex-col items-center md:items-start space-y-6">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#F43F5E]">
               Atención Personal
             </h4>
-            <div className="space-y-4 text-sm text-zinc-400">
+            <div className="space-y-2 text-sm text-[#A1A1AA]">
               <a
                 href={`mailto:${config?.store_email || siteConfig.business.contact.email}`}
-                className="flex items-center justify-center md:justify-start gap-3 group transition-colors hover:text-white"
+                className="flex items-center justify-center md:justify-start min-h-[44px] gap-3 group transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm"
               >
-                <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-primary/20 transition-colors">
-                  <Mail className="h-4 w-4 text-primary" />
+                <div className="p-2.5 rounded-full bg-[#121214] group-hover:bg-[#D4113C]/20 transition-colors">
+                  <Mail className="h-4 w-4 text-[#F43F5E]" />
                 </div>
                 <span>{config?.store_email || siteConfig.business.contact.email}</span>
               </a>
               <a
                 href={`tel:${(config?.whatsapp_number || siteConfig.business.contact.phone).replace(/\s/g, '')}`}
-                className="flex items-center justify-center md:justify-start gap-3 group transition-colors hover:text-white"
+                className="flex items-center justify-center md:justify-start min-h-[44px] gap-3 group transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm"
               >
-                <div className="p-2 rounded-full bg-zinc-900 group-hover:bg-primary/20 transition-colors">
-                  <Phone className="h-4 w-4 text-primary" />
+                <div className="p-2.5 rounded-full bg-[#121214] group-hover:bg-[#D4113C]/20 transition-colors">
+                  <Phone className="h-4 w-4 text-[#F43F5E]" />
                 </div>
                 <span>{config?.whatsapp_number || siteConfig.business.contact.phone}</span>
               </a>
@@ -79,8 +79,8 @@ export function Footer() {
           </div>
 
           {/* Columna 4: Presencia Social */}
-          <div className="flex flex-col items-center md:items-start space-y-6">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-[#F43F5E]">
               Comunidad
             </h4>
             <div className="flex space-x-4">
@@ -88,7 +88,7 @@ export function Footer() {
                 href={config?.instagram_url || siteConfig.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
+                className="p-3 min-w-[48px] min-h-[48px] inline-flex items-center justify-center rounded-full bg-[#121214] text-[#A1A1AA] hover:text-white hover:bg-[#D4113C]/20 transition-all duration-300 hover:scale-110 shadow-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
                 aria-label="Instagram"
               >
                 <Instagram className="h-6 w-6" />
@@ -97,7 +97,7 @@ export function Footer() {
                 href={config?.tiktok_url || siteConfig.links.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 rounded-full bg-zinc-900 text-zinc-400 hover:text-white hover:bg-primary/20 transition-all duration-300 hover:scale-110 shadow-lg"
+                className="p-3 min-w-[48px] min-h-[48px] inline-flex items-center justify-center rounded-full bg-[#121214] text-[#A1A1AA] hover:text-white hover:bg-[#D4113C]/20 transition-all duration-300 hover:scale-110 shadow-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
                 aria-label="TikTok"
               >
                 <TikTokIcon />
@@ -107,14 +107,14 @@ export function Footer() {
         </div>
 
         {/* Copyright y Créditos */}
-        <div className="mt-20 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-zinc-600">
+        <div className="mt-20 pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] uppercase tracking-widest text-[#A1A1AA]">
           <p>
-            &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author} &bull; Joyería de Autor
+            &copy; {new Date().getFullYear()} {config?.store_name || siteConfig.author} &bull; Joyería Urbana Premium
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <Link href="/privacidad" className="hover:text-primary transition-colors">Privacidad</Link>
-            <Link href="/terminos" className="hover:text-primary transition-colors">Términos y Condiciones</Link>
-            <Link href="/derechos-arcop" className="hover:text-primary transition-colors">Derechos ARCOP</Link>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/privacidad" className="inline-flex items-center min-h-[44px] px-2 hover:text-[#F43F5E] transition-colors">Privacidad</Link>
+            <Link href="/terminos" className="inline-flex items-center min-h-[44px] px-2 hover:text-[#F43F5E] transition-colors">Términos y Condiciones</Link>
+            <Link href="/derechos-arcop" className="inline-flex items-center min-h-[44px] px-2 hover:text-[#F43F5E] transition-colors">Derechos ARCOP</Link>
             <button
               type="button"
               onClick={() => {
@@ -122,7 +122,7 @@ export function Footer() {
                   window.dispatchEvent(new CustomEvent('joyasjp:open-cmp'))
                 }
               }}
-              className="hover:text-primary transition-colors cursor-pointer uppercase tracking-widest text-[10px]"
+              className="inline-flex items-center min-h-[44px] px-2 hover:text-[#F43F5E] transition-colors cursor-pointer uppercase tracking-widest text-[12px]"
             >
               Preferencias de Cookies
             </button>

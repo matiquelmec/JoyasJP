@@ -236,8 +236,11 @@ const ProductCard = memo(function ProductCard({
       </div>
 
       <div className="p-5 flex flex-col flex-grow space-y-4">
-        <Link href={`/productos/${product.slug || product.id}`}>
-          <h3 className="text-xl font-headline font-semibold truncate cursor-pointer link-hover leading-tight">
+        <Link
+          href={`/productos/${product.slug || product.id}`}
+          className="inline-flex items-center min-h-[44px] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm"
+        >
+          <h3 className="text-[22px] sm:text-[28px] leading-[1.2] font-headline font-bold truncate cursor-pointer link-hover text-white">
             {product.name}
           </h3>
         </Link>
@@ -278,16 +281,16 @@ const ProductCard = memo(function ProductCard({
           <div className="flex flex-col">
             {priceDisplay.hasDiscount ? (
               <>
-                <p className="text-xs text-muted-foreground line-through decoration-red-500/50">
+                <p className="text-xs text-[#A1A1AA] line-through decoration-[#F43F5E]/60">
                   {priceDisplay.original}
                 </p>
-                <p className="text-2xl font-black text-[#F43F5E] font-headline tracking-tighter">
+                <p className="text-[24px] sm:text-[28px] leading-[1.1] font-bold text-[#F43F5E] font-headline tracking-tight">
                   {product.hasVariants ? 'Desde ' : ''}
                   {priceDisplay.discount}
                 </p>
               </>
             ) : (
-              <p className="text-2xl font-bold text-white font-headline tracking-tighter">
+              <p className="text-[24px] sm:text-[28px] leading-[1.1] font-bold text-white font-headline tracking-tight">
                 {product.hasVariants ? 'Desde ' : ''}
                 {priceDisplay.original}
               </p>
@@ -298,7 +301,7 @@ const ProductCard = memo(function ProductCard({
             size="icon"
             onClick={handleAddToCart}
             disabled={isAddingToCart || isOutOfStock}
-            className="h-11 w-11 bg-[#D4113C] hover:bg-[#B30D33] text-white transition-all duration-200 hover:scale-110 shadow-sm disabled:opacity-45 focus-visible:ring-2 focus-visible:ring-[#F43F5E]"
+            className="h-11 w-11 bg-[#D4113C] hover:bg-[#B30D33] text-white transition-all duration-200 hover:scale-110 shadow-sm disabled:opacity-45 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
             aria-label={
               isOutOfStock ? `${product.name} agotado` : `Añadir ${product.name} al carrito`
             }

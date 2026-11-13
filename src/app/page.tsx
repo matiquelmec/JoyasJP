@@ -22,7 +22,7 @@ async function SilverShowcaseCarouselSection() {
 
   return (
     <Suspense fallback={
-      <div className="w-full max-w-md h-[450px] rounded-2xl bg-zinc-900/50 border border-amber-500/20 animate-pulse flex items-center justify-center text-zinc-500">
+      <div className="w-full max-w-md h-[450px] rounded-2xl bg-[#121214] border border-[#C4C9D2]/20 animate-pulse flex items-center justify-center text-[#A1A1AA]">
         Cargando Bóveda Plata 925...
       </div>
     }>
@@ -129,20 +129,21 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0 bg-black">
+      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden z-0 bg-[#09090B]">
         <video
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster="/brand/joyasjp_og_image_1200x630.png"
           className="absolute top-0 left-0 w-full h-full object-cover"
           aria-label="Video promocional de Joyas JP"
         >
           <source src={getVideoUrl('mi-video.mp4')} type="video/mp4" />
           <source src={getVideoUrl('mi-video.webm')} type="video/webm" />
         </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
+        <div className="absolute top-0 left-0 w-full h-full bg-black/45" />
 
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 pt-28 pb-16">
           <div className="mb-6 drop-shadow-[0_4px_24px_rgba(255,255,255,0.25)] animate-fadeInScale">
@@ -155,7 +156,7 @@ export default function Home() {
             />
           </div>
 
-          <h1 className="sr-only">Joyas JP - Alta Joyería para la Escena Urbana</h1>
+          <h1 className="sr-only">Joyas JP - Joyería Urbana Premium de Plata Italiana 925 y Piezas de Diseño</h1>
 
           <p className="mt-2 max-w-2xl text-base sm:text-lg md:text-xl font-headline font-bold text-zinc-100 tracking-[0.25em] uppercase mb-8 animate-fadeInUp-delayed-02 drop-shadow-md">
             ATRÉVETE A JUGAR
@@ -187,46 +188,46 @@ export default function Home() {
       {/* Spacer for fixed video */}
       <div className="h-screen"></div>
 
-      {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 */}
-      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-black via-zinc-950 to-background border-y border-amber-500/20 overflow-hidden">
-        {/* Glow de luz dorada y metálica de fondo */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-amber-500/10 blur-[140px] rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[400px] h-[250px] bg-slate-300/10 blur-[100px] rounded-full pointer-events-none" />
+      {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 (Paleta Plata Milán #C4C9D2 & Carmesí #D4113C) */}
+      <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-[#09090B] via-[#121214] to-background border-y border-[#C4C9D2]/20 overflow-hidden">
+        {/* Glow de luz Plata Milán y Carmesí sutil de fondo */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#C4C9D2]/10 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[400px] h-[250px] bg-[#D4113C]/10 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Texto & Branding VIP */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-black tracking-widest uppercase shadow-xl backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#121214] border border-[#C4C9D2]/35 text-[#C4C9D2] text-xs font-bold tracking-widest uppercase shadow-xl backdrop-blur-md">
                 <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
               </div>
 
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_20px_rgba(212,175,55,0.2)] uppercase">
+              <h2 className="text-[40px] sm:text-[56px] font-body font-bold tracking-tight text-white leading-[1.1] drop-shadow-[0_2px_20px_rgba(196,201,210,0.2)] uppercase">
                 {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')} <br />
-                <span className="bg-gradient-to-r from-amber-200 via-primary to-amber-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#F6F7FA] via-[#C4C9D2] to-[#9AA0AB] bg-clip-text text-transparent">
                   EL NUEVO ESTÁNDAR
                 </span>
               </h2>
 
-              <p className="text-base sm:text-lg text-zinc-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-                Piezas macizas moldeadas en Plata Fina de Milán. Brillo eterno, densidad metálica superior y acabado pulido a mano para quienes exigen la más alta calidad urbana.
+              <p className="text-base text-[#A1A1AA] max-w-xl mx-auto lg:mx-0 leading-[1.6] font-body">
+                Piezas macizas moldeadas en Plata Fina de Milán. Peso real, brillo de ley y acabado pulido a mano para quienes juegan con criterio en la escena urbana.
               </p>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-200 bg-zinc-900/90 border border-amber-500/20 px-3.5 py-2 rounded-xl shadow-md">
-                  <span className="text-amber-400">✨</span> 92.5% Pureza Certificada
+                <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#121214] border border-[#C4C9D2]/25 px-3.5 py-2.5 rounded-xl shadow-md">
+                  <span className="text-[#C4C9D2]">✨</span> 92.5% Pureza Certificada
                 </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-zinc-200 bg-zinc-900/90 border border-amber-500/20 px-3.5 py-2 rounded-xl shadow-md">
-                  <span className="text-slate-300">🛡️</span> Inalterable & Hipoalergénico
+                <div className="flex items-center gap-2 text-xs font-semibold text-white bg-[#121214] border border-[#C4C9D2]/25 px-3.5 py-2.5 rounded-xl shadow-md">
+                  <span className="text-[#C4C9D2]">🛡️</span> Ley 925 Sellada & Hipoalergénica
                 </div>
               </div>
 
               <div className="pt-4">
-                <Link href="/productos?categoria=plata-925">
+                <Link href="/productos?categoria=plata-925" className="inline-block">
                   <Button
                     size="lg"
-                    className="font-extrabold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.4)] transition-all duration-300"
+                    className="min-h-[48px] font-bold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.45)] transition-all duration-300 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
                   >
                     Explorar {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')}
                     <ChevronRight className="w-5 h-5 ml-1" />
@@ -248,20 +249,20 @@ export default function Home() {
       <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-headline font-bold mb-4">
+            <h2 className="text-[36px] md:text-[40px] leading-[1.1] font-body font-bold mb-4 text-white">
               Piezas Destacadas
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Descubre nuestra selección de joyas únicas, diseñadas para
-              expresar tu personalidad y estilo.
+            <p className="text-base text-[#A1A1AA] max-w-2xl mx-auto leading-[1.6]">
+              Descubre nuestra selección de piezas con carácter, seleccionadas para
+              destacar tu flow y estilo en la calle.
             </p>
           </div>
 
           <FeaturedProductsSection />
 
           <div className="text-center mt-12">
-            <Link href="/productos">
-              <Button size="lg" className="font-semibold px-8">
+            <Link href="/productos" className="inline-block">
+              <Button size="lg" className="min-h-[48px] font-bold px-8 bg-[#D4113C] hover:bg-[#B30D33] text-white focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]">
                 Ver Toda la Colección
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
