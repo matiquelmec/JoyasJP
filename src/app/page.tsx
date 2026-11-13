@@ -189,6 +189,16 @@ export default function Home() {
       {/* Spacer for fixed video */}
       <div className="h-screen"></div>
 
+      {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
+      <div className="relative z-10 bg-[#09090B]">
+        <CategoryBentoGridSection />
+      </div>
+
+      {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
+      <div className="relative z-10 bg-[#09090B]">
+        <StyleFinderAndCare />
+      </div>
+
       {/* 🇮🇹 BANNER SHOWCASE VIP: COLECCIÓN PLATA ITALIANA 925 (Paleta Plata Milán #C4C9D2 & Carmesí #D4113C) */}
       <section className="relative z-10 py-20 md:py-28 bg-gradient-to-b from-[#09090B] via-[#121214] to-background border-y border-[#C4C9D2]/20 overflow-hidden">
         {/* Glow de luz Plata Milán y Carmesí sutil de fondo */}
@@ -245,16 +255,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
-      <div className="relative z-10 bg-[#09090B]">
-        <CategoryBentoGridSection />
-      </div>
-
-      {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
-      <div className="relative z-10 bg-[#09090B]">
-        <StyleFinderAndCare />
-      </div>
 
       {/* Featured Products Section */}
       <section className="py-20 md:py-28 bg-background relative z-10" style={{ contentVisibility: 'auto', containIntrinsicHeight: '800px' }}>
