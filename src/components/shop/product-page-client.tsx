@@ -6,6 +6,7 @@ import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { Badge } from '@/components/ui/badge'
 import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { parseProductSpecifications } from '@/lib/product-seo'
 
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
@@ -197,25 +198,61 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
           </div>
         )}
 
-        {/* Product Details / Characteristics */}
-        {(selectedProduct.dimensions ||
-          selectedProduct.materials ||
-          selectedProduct.color ||
-          selectedProduct.detail) && (
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Detalles del Producto</h3>
-              <ul className="list-disc list-inside text-muted-foreground">
-                {selectedProduct.dimensions && (
-                  <li>Dimensiones: {selectedProduct.dimensions}</li>
-                )}
-                {selectedProduct.materials && (
-                  <li>Materiales: {selectedProduct.materials}</li>
-                )}
-                {selectedProduct.color && <li>Color: {selectedProduct.color}</li>}
-                {selectedProduct.detail && <li>Detalle: {selectedProduct.detail}</li>}
-              </ul>
+        {/* Product Details / Characteristics & Specifications */}
+        {(() => {
+          const parsedSpecs = parseProductSpecifications(selectedProduct.specifications)
+          const hasBasicDetails = Boolean(
+            selectedProduct.dimensions ||
+              selectedProduct.materials ||
+              selectedProduct.color ||
+              selectedProduct.detail ||
+              selectedProduct.sku
+          )
+
+          if (!hasBasicDetails && parsedSpecs.length === 0) return null
+
+          return (
+            <div className="space-y-4">
+              {hasBasicDetails && (
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Detalles del Producto</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                    {selectedProduct.sku && (
+                      <li>Código / SKU: <span className="font-mono text-foreground">{selectedProduct.sku}</span></li>
+                    )}
+                    {selectedProduct.dimensions && (
+                      <li>Dimensiones: {selectedProduct.dimensions}</li>
+                    )}
+                    {selectedProduct.materials && (
+                      <li>Materiales: {selectedProduct.materials}</li>
+                    )}
+                    {selectedProduct.color && <li>Color: {selectedProduct.color}</li>}
+                    {selectedProduct.detail && <li>Detalle y cuidados: {selectedProduct.detail}</li>}
+                  </ul>
+                </div>
+              )}
+
+              {parsedSpecs.length > 0 && (
+                <div className="space-y-2.5 pt-2">
+                  <h3 className="text-lg font-semibold">Especificaciones Técnicas</h3>
+                  <div className="rounded-xl border border-border/60 overflow-hidden bg-card/40">
+                    <dl className="divide-y divide-border/50">
+                      {parsedSpecs.map((spec, idx) => (
+                        <div
+                          key={`${spec.key}-${idx}`}
+                          className="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 px-4 py-2.5 text-sm"
+                        >
+                          <dt className="font-medium text-foreground">{spec.key}</dt>
+                          <dd className="sm:col-span-2 text-muted-foreground">{spec.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          )
+        })()}
 
         {/* Actions */}
         <div className="space-y-4 pt-4">

@@ -10,6 +10,7 @@ import type { Product } from '@/lib/types'
 import { ProductPageClient } from '@/components/shop/product-page-client'
 import { ProductSchema } from '@/components/seo/ProductSchema'
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
+import { buildProductSeo } from '@/lib/product-seo'
 
 interface ProductPageProps {
   params: {
@@ -38,8 +39,12 @@ export async function generateMetadata({
     }
   }
 
-  const productDescription = product.description || `Descubre ${product.name} - Alta joyería urbana de Joyas JP`
-  const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(product.price)
+  const autoSeo = buildProductSeo(product)
+  const priceFormatted = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(
+    product.discount_price && product.discount_price < product.price
+      ? product.discount_price
+      : product.price
+  )
   
   const galleryImages = Array.isArray(product.gallery) && product.gallery.length > 0 
     ? product.gallery 
@@ -47,11 +52,15 @@ export async function generateMetadata({
 
   return {
     title: `${product.name} - ${priceFormatted} | Joyas JP`,
-    description: `${productDescription}. Envío gratis en compras sobre $50.000.`,
+    description: autoSeo.description,
+    keywords: autoSeo.keywords,
+    alternates: {
+      canonical: `/productos/${product.slug || product.id}`,
+    },
     openGraph: {
       type: 'website',
-      title: `${product.name} | Joyas JP`,
-      description: `${productDescription} - ${priceFormatted}`,
+      title: autoSeo.title,
+      description: `${autoSeo.description} (${priceFormatted})`,
       images: galleryImages.map(img => ({
         url: img,
         width: 1200,
@@ -60,12 +69,12 @@ export async function generateMetadata({
       })),
       siteName: 'Joyas JP',
       locale: 'es_CL',
-      url: `/productos/${product.id}`,
+      url: `/productos/${product.slug || product.id}`,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | Joyas JP`,
-      description: productDescription.slice(0, 140),
+      title: autoSeo.title,
+      description: autoSeo.description.slice(0, 140),
       images: [galleryImages[0]],
     },
   }

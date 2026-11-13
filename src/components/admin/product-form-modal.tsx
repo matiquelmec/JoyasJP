@@ -12,11 +12,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Save, X, Plus, Trash2 } from 'lucide-react'
+import { Save, X, Plus, Trash2, Sparkles, Wand2 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
 import { MultiImageUpload } from './multi-image-upload'
+import {
+  buildProductSeo,
+  extractCustomSeoKeywords,
+  formatSpecificationsText,
+  getSpecTemplateForCategory,
+} from '@/lib/product-seo'
 
 interface ProductFormModalProps {
   mode: 'create' | 'edit'
@@ -75,7 +81,16 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
   useEffect(() => {
     if (product && mode === 'edit') {
-      const productCode = product.id?.startsWith('P') ? product.id : ''
+      const productCode =
+        product.sku ||
+        product.code ||
+        (product.id?.startsWith('P') ? product.id : '')
+      const matchedColor =
+        productConfig.colors.find(
+          (c) => c.toLowerCase() === (product.color || '').trim().toLowerCase()
+        ) ||
+        product.color ||
+        ''
 
       setFormData({
         name: product.name || '',
@@ -88,10 +103,10 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         stock: product.stock?.toString() || '',
         materials: product.materials || '',
         dimensions: product.dimensions || '',
-        color: product.color || '',
+        color: matchedColor,
         detail: product.detail || '',
-        specifications: product.specifications || '',
-        seo: product.seo || '',
+        specifications: formatSpecificationsText(product.specifications),
+        seo: extractCustomSeoKeywords(product.seo),
         discount_price: product.discount_price?.toString() || '',
         custom_label: product.custom_label || '',
         is_priority: product.is_priority || false,
@@ -164,6 +179,17 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         return
       }
 
+      if (
+        formData.discount_price &&
+        parseFloat(formData.discount_price) >= parseFloat(formData.price)
+      ) {
+        toast.error('Error de validación', {
+          description: 'El precio oferta debe ser menor al precio normal.',
+        })
+        setLoading(false)
+        return
+      }
+
       if (!formData.category) {
         toast.error('Error de validación', { description: 'La categoría es requerida.' })
         setLoading(false)
@@ -191,7 +217,8 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
 
       const productData = {
         name: formData.name,
-        code: formData.code || null,
+        code: formData.code.trim() || null,
+        sku: formData.code.trim() || null,
         price: parseFloat(formData.price),
         category: formData.category,
         description: formData.description || null,
@@ -284,17 +311,15 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
             <div>
               <Label htmlFor="code">
-                Código del Producto {mode === 'edit' ? '(no editable)' : '(opcional)'}
+                Código / SKU del Producto (opcional)
               </Label>
               <input
                 id="code"
                 type="text"
                 value={formData.code}
-                onChange={(e) => mode === 'create' && setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                placeholder={mode === 'edit' ? 'El código no se puede cambiar' : "Ej: PCP_21, PDD_11 (si no lo llenas, se genera automático)"}
-                className={`flex h-10 w-full rounded-md border px-3 py-2 text-sm ${mode === 'edit' ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-white text-slate-900 border-slate-300'}`}
-                readOnly={mode === 'edit'}
-                disabled={mode === 'edit'}
+                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
+                placeholder="Ej: PCP_21, CASIO-001 (si lo dejas vacío, se genera slug automático)"
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>
           </div>
@@ -525,27 +550,81 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="specifications" className="text-primary font-bold">Especificaciones Técnicas (Oro, Quilates, etc)</Label>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="specifications" className="text-primary font-bold">
+                Especificaciones Técnicas (Formato Clave: Valor)
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const template = getSpecTemplateForCategory(formData.category)
+                  setFormData((prev) => ({
+                    ...prev,
+                    specifications: prev.specifications.trim()
+                      ? `${prev.specifications.trim()}\n${template}`
+                      : template,
+                  }))
+                }}
+                className="h-7 text-[11px] gap-1 border-slate-300"
+              >
+                <Wand2 className="w-3 h-3" />
+                Plantilla según categoría
+              </Button>
+            </div>
             <textarea
               id="specifications"
               value={formData.specifications}
               onChange={(e) => setFormData(prev => ({ ...prev, specifications: e.target.value }))}
-              placeholder="Ej: Oro de 18k garantizado, Peso: 5g..."
-              rows={2}
-              className="flex min-h-[60px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary resize-y"
+              placeholder={"Pureza: Plata Italiana Ley 925\nPeso: 18g\nCierre: Mosquetón reforzado"}
+              rows={3}
+              className="flex min-h-[76px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary resize-y font-mono text-xs"
             />
+            <p className="text-[10px] text-muted-foreground">
+              Escribe una especificación por línea en formato <strong>Atributo: Valor</strong>. Se mostrará como tabla técnica en la ficha y alimentará Google Schema.org.
+            </p>
+          </div>
+
+          {/* Vista previa SEO Automático + Etiqueta */}
+          <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              SEO Automático Profesional (Google & Rich Snippets)
+            </div>
+            {(() => {
+              const seoPreview = buildProductSeo({
+                name: formData.name || 'Nueva Joya',
+                category: formData.category,
+                materials: formData.materials,
+                color: formData.color,
+                dimensions: formData.dimensions,
+                description: formData.description,
+                sku: formData.code,
+                seo: formData.seo,
+              })
+              return (
+                <div className="space-y-1 text-[11px] bg-white p-2.5 rounded border border-slate-200">
+                  <p className="text-blue-700 font-semibold truncate">{seoPreview.title}</p>
+                  <p className="text-slate-600 line-clamp-2">{seoPreview.description}</p>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    Keywords automáticas: {seoPreview.keywords.slice(0, 6).join(', ')}
+                  </p>
+                </div>
+              )
+            })()}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="seo">Palabras Clave SEO (Búsqueda)</Label>
+              <Label htmlFor="seo">Palabras Clave Extra (Opcional)</Label>
               <input
                 id="seo"
                 type="text"
                 value={formData.seo}
                 onChange={(e) => setFormData(prev => ({ ...prev, seo: e.target.value }))}
-                placeholder="Ej: anillo diamante, plata 925, joyas urbanas"
+                placeholder="Se generan solas; agrega extras solo si quieres (ej: regalo hombre)"
                 className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
               />
             </div>

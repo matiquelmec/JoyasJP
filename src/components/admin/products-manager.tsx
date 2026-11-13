@@ -41,6 +41,7 @@ import {
   Plus,
   Minus,
   RefreshCw,
+  ExternalLink,
 } from 'lucide-react'
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
@@ -208,10 +209,13 @@ export function ProductsManager() {
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory
+    const q = searchTerm.trim().toLowerCase()
     const matchesSearch =
-      searchTerm === '' ||
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.id.toLowerCase().includes(searchTerm.toLowerCase())
+      q === '' ||
+      product.name.toLowerCase().includes(q) ||
+      product.id.toLowerCase().includes(q) ||
+      (product.sku || '').toLowerCase().includes(q) ||
+      (product.category || '').toLowerCase().includes(q)
 
     return matchesCategory && matchesSearch
   })
@@ -502,6 +506,11 @@ export function ProductsManager() {
                               </div>
                               <p className="text-[10px] font-mono text-zinc-400 flex items-center gap-2">
                                 ID: {p.id.slice(0, 8)}
+                                {p.sku && (
+                                  <span className="text-slate-600 font-semibold">
+                                    • SKU: {p.sku}
+                                  </span>
+                                )}
                                 {p.custom_label && (
                                   <span className="text-indigo-500 font-bold uppercase">
                                     [{p.custom_label}]
@@ -601,6 +610,15 @@ export function ProductsManager() {
                                   </div>
                                 }
                               />
+                              <a
+                                href={`/productos/${p.slug || p.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center px-2 py-2 text-xs font-medium cursor-pointer hover:bg-zinc-100 rounded-md mt-1 text-zinc-700"
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4 text-zinc-500" />
+                                Ver en tienda
+                              </a>
                               <div
                                 className="flex items-center px-2 py-2 text-xs font-medium cursor-pointer hover:bg-red-50 text-red-600 rounded-md mt-1"
                                 onClick={() => setDeleteProduct(p)}

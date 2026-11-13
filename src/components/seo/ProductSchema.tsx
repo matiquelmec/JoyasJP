@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Product } from '@/lib/types'
 import { getSafeUrl } from '@/lib/safe-asset'
+import { parseProductSpecifications } from '@/lib/product-seo'
 
 interface ProductSchemaProps {
   product: Product
@@ -23,6 +24,8 @@ export function ProductSchema({
     aros: 'Jewelry > Earrings',
     conjuntos: 'Jewelry > Jewelry Sets',
     'plata-925': 'Jewelry > Sterling Silver 925',
+    relojes: 'Jewelry > Watches',
+    'enchapado-plata': 'Jewelry > Silver Plated Jewelry',
   }
 
   const category =
@@ -31,6 +34,21 @@ export function ProductSchema({
   const canonicalSlug = product.slug || product.id
   const productUrl = `${siteUrl}/productos/${canonicalSlug}`
   const imageUrl = product.imageUrl || `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`
+  const galleryImages =
+    Array.isArray(product.gallery) && product.gallery.length > 0
+      ? product.gallery
+      : [imageUrl]
+  const parsedSpecs = parseProductSpecifications(product.specifications)
+  const additionalProperties = [
+    ...(product.dimensions
+      ? [{ '@type': 'PropertyValue', name: 'Dimensiones', value: product.dimensions }]
+      : []),
+    ...parsedSpecs.map((spec) => ({
+      '@type': 'PropertyValue',
+      name: spec.key,
+      value: spec.value,
+    })),
+  ]
   const effectivePrice =
     product.discount_price && product.discount_price > 0 && product.discount_price < product.price
       ? product.discount_price
@@ -56,15 +74,13 @@ export function ProductSchema({
       url: siteUrl,
       logo: `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`,
     },
-    image: [
-      {
-        '@type': 'ImageObject',
-        url: imageUrl,
-        width: 800,
-        height: 800,
-        caption: product.name,
-      },
-    ],
+    image: galleryImages.map((img) => ({
+      '@type': 'ImageObject',
+      url: img,
+      width: 1200,
+      height: 1200,
+      caption: product.name,
+    })),
     offers: {
       '@type': 'Offer',
       url: productUrl,
@@ -122,6 +138,8 @@ export function ProductSchema({
       audienceType: 'Consumers interested in urban jewelry',
     },
     material: product.materials || 'Plata Italiana 925 / Metales Nobles',
+    ...(product.color ? { color: product.color } : {}),
+    ...(additionalProperties.length > 0 ? { additionalProperty: additionalProperties } : {}),
     sku: product.sku || product.id,
     mpn: product.sku || product.id,
     ...(rating && {

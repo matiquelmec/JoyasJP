@@ -138,7 +138,7 @@ function mapDatabaseProductToProduct(dbProduct: any): Product {
         stock: Number(dbProduct.stock || 0),
         detail: dbProduct.detail || undefined,
         description: dbProduct.description || undefined,
-        specifications: safeParseJSON<any>(dbProduct.specifications, undefined),
+        specifications: dbProduct.specifications || undefined,
         gallery: gallery.map((img: string, idx: number) => {
             if (img && img.includes('supabase')) {
                 return getLocalFallbackImage(`${dbProduct.id}_${idx}`, dbProduct.category)
@@ -147,7 +147,8 @@ function mapDatabaseProductToProduct(dbProduct: any): Product {
         }) as string[],
         variants: safeParseJSON<any>(dbProduct.variants, undefined),
         sku: dbProduct.sku || undefined,
-        seo: safeParseJSON<any>(dbProduct.seo, undefined),
+        code: dbProduct.sku || undefined,
+        seo: dbProduct.seo || undefined,
         image_hint: dbProduct.image_hint || undefined,
         deleted_at: dbProduct.deleted_at || undefined,
         slug: dbProduct.slug || undefined,

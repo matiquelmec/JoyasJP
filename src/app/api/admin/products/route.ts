@@ -5,6 +5,11 @@ import { turso } from '@/lib/db/turso'
 import { verifyAdminAuth } from '@/lib/admin-auth'
 import { generateSlug } from '@/lib/slug-utils'
 import {
+  buildProductSeo,
+  extractCustomSeoKeywords,
+  parseProductSpecifications,
+} from '@/lib/product-seo'
+import {
   adminProductDeleteSchema,
   adminProductMutationSchema,
   adminProductUpdateSchema,
@@ -74,7 +79,7 @@ export async function GET(request: NextRequest) {
         components,
         gallery: safeParseJson<string[]>(r.gallery, []),
         variants: safeParseJson<unknown[]>(r.variants, []),
-        specifications: safeParseJson<unknown[]>(r.specifications, []),
+        specifications: parseProductSpecifications(r.specifications),
         seo: safeParseJson<Record<string, unknown>>(r.seo, {}),
       }
     })
@@ -122,12 +127,24 @@ export async function POST(request: NextRequest) {
     const variants = JSON.stringify(
       Array.isArray(productDataWithoutCode.variants) ? productDataWithoutCode.variants : []
     )
-    const specifications = JSON.stringify(
-      Array.isArray(productDataWithoutCode.specifications)
-        ? productDataWithoutCode.specifications
-        : []
-    )
-    const seo = JSON.stringify(productDataWithoutCode.seo || {})
+    const specificationsList = parseProductSpecifications(productDataWithoutCode.specifications)
+    const specifications = JSON.stringify(specificationsList)
+    const autoSeo = buildProductSeo({
+      name: productDataWithoutCode.name,
+      category: productDataWithoutCode.category,
+      materials: productDataWithoutCode.materials || undefined,
+      color: productDataWithoutCode.color || undefined,
+      dimensions: productDataWithoutCode.dimensions || undefined,
+      description: productDataWithoutCode.description || undefined,
+      sku: sku || undefined,
+      seo: productDataWithoutCode.seo,
+    })
+    const seo = JSON.stringify({
+      title: autoSeo.title,
+      description: autoSeo.description,
+      keywords: autoSeo.keywords,
+      customKeywords: extractCustomSeoKeywords(productDataWithoutCode.seo),
+    })
     const is_priority = productDataWithoutCode.is_priority ? 1 : 0
     const is_bundle = productDataWithoutCode.is_bundle ? 1 : 0
 
@@ -253,10 +270,24 @@ export async function PUT(request: NextRequest) {
     const variants = JSON.stringify(
       Array.isArray(productData.variants) ? productData.variants : []
     )
-    const specifications = JSON.stringify(
-      Array.isArray(productData.specifications) ? productData.specifications : []
-    )
-    const seo = JSON.stringify(productData.seo || {})
+    const specificationsList = parseProductSpecifications(productData.specifications)
+    const specifications = JSON.stringify(specificationsList)
+    const autoSeo = buildProductSeo({
+      name: productData.name,
+      category: productData.category,
+      materials: productData.materials || undefined,
+      color: productData.color || undefined,
+      dimensions: productData.dimensions || undefined,
+      description: productData.description || undefined,
+      sku: sku || undefined,
+      seo: productData.seo,
+    })
+    const seo = JSON.stringify({
+      title: autoSeo.title,
+      description: autoSeo.description,
+      keywords: autoSeo.keywords,
+      customKeywords: extractCustomSeoKeywords(productData.seo),
+    })
     const is_priority = productData.is_priority ? 1 : 0
     const is_bundle = productData.is_bundle ? 1 : 0
 

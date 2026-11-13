@@ -58,12 +58,12 @@ export const bundleComponentInputSchema = z.object({
   quantity: z.coerce.number().int().positive().default(1),
 })
 
-export const adminProductMutationSchema = z.object({
+const baseProductFields = {
   name: z.string().trim().min(1, 'El nombre del producto es obligatorio'),
   price: z.coerce.number().nonnegative('El precio debe ser mayor o igual a 0'),
   discount_price: z.preprocess(
     (val) => (val === '' || val === null || val === undefined ? null : Number(val)),
-    z.number().nonnegative().nullable().optional()
+    z.number().nonnegative('El precio oferta no puede ser negativo').nullable().optional()
   ),
   stock: z.coerce.number().int().min(0).default(0),
   category: z.string().trim().min(1, 'La categoría es obligatoria'),
@@ -85,11 +85,29 @@ export const adminProductMutationSchema = z.object({
   slug: z.string().nullable().optional(),
   custom_label: z.string().nullable().optional(),
   components: z.array(bundleComponentInputSchema).optional(),
-})
+}
 
-export const adminProductUpdateSchema = adminProductMutationSchema.extend({
-  id: z.string().trim().min(1, 'El ID del producto es obligatorio para actualizar'),
-})
+const hasValidDiscountPrice = (data: { price: number; discount_price?: number | null }) =>
+  data.discount_price === null ||
+  data.discount_price === undefined ||
+  data.discount_price < data.price
+
+export const adminProductMutationSchema = z
+  .object(baseProductFields)
+  .refine(hasValidDiscountPrice, {
+    message: 'El precio oferta debe ser menor al precio normal',
+    path: ['discount_price'],
+  })
+
+export const adminProductUpdateSchema = z
+  .object({
+    ...baseProductFields,
+    id: z.string().trim().min(1, 'El ID del producto es obligatorio para actualizar'),
+  })
+  .refine(hasValidDiscountPrice, {
+    message: 'El precio oferta debe ser menor al precio normal',
+    path: ['discount_price'],
+  })
 
 export const adminProductDeleteSchema = z.object({
   id: z.string().trim().min(1, 'El ID del producto es obligatorio'),

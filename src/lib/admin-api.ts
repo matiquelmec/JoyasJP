@@ -62,7 +62,10 @@ class AdminAPI {
 
     if (!response.ok) {
       this.handleUnauthorized(response)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        errorData.error || errorData.details || `HTTP ${response.status}: ${response.statusText}`
+      )
     }
 
     const data = await response.json()
@@ -82,7 +85,10 @@ class AdminAPI {
 
     if (!response.ok) {
       this.handleUnauthorized(response)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        errorData.error || errorData.details || `HTTP ${response.status}: ${response.statusText}`
+      )
     }
 
     const data = await response.json()
@@ -99,7 +105,10 @@ class AdminAPI {
 
     if (!response.ok) {
       this.handleUnauthorized(response)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        errorData.error || errorData.details || `HTTP ${response.status}: ${response.statusText}`
+      )
     }
 
     const data = await response.json()
@@ -116,7 +125,10 @@ class AdminAPI {
 
     if (!response.ok) {
       this.handleUnauthorized(response)
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        errorData.error || errorData.details || `HTTP ${response.status}: ${response.statusText}`
+      )
     }
 
     return response.json()
