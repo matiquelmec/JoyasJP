@@ -167,9 +167,27 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         switch (activeCategory) {
             case 'plata-925':
                 return {
-                    title: 'Plata Italiana 925',
+                    title: 'Plata Italy 925',
                     subtitle: 'Ley 925 legítima importada de Italia. Brillo eterno y acabado pulido a mano.',
                     badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
+                }
+            case 'relojes':
+                return {
+                    title: 'Relojes',
+                    subtitle: 'Relojes urbanos de alto impacto, precisión y presencia.',
+                    badge: null
+                }
+            case 'enchapado-plata':
+                return {
+                    title: 'Enchapado de Plata',
+                    subtitle: 'Piezas con baño de plata de brillo duradero y diseño urbano.',
+                    badge: null
+                }
+            case 'aros':
+                return {
+                    title: 'Aros',
+                    subtitle: 'Aros y arracadas de alto impacto para completar tu estilo.',
+                    badge: null
                 }
             case 'cadenas':
                 return {
@@ -234,7 +252,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                       {/* Fade edge derecho indicando scroll */}
                       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none md:hidden" />
                       
-                      <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center gap-1.5 shadow-2xl backdrop-blur-md">
+                      <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center md:flex-wrap gap-1.5 shadow-2xl backdrop-blur-md">
                           {allCategories.map((catId) => {
                               const isVip = catId === 'plata-925'
                               const catObj = productConfig.categories.find(c => c.id === catId)

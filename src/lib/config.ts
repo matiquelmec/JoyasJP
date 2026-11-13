@@ -141,8 +141,18 @@ export const productConfig = {
     },
     {
       id: 'plata-925',
-      name: '✨ Bóveda Plata Italiana 925 ✨',
+      name: 'Plata Italy 925',
       description: 'Colección VIP de Plata Fina Ley 925 importada directamente de Italia',
+    },
+    {
+      id: 'relojes',
+      name: 'Relojes',
+      description: 'Relojes urbanos de alto impacto y precisión',
+    },
+    {
+      id: 'enchapado-plata',
+      name: 'Enchapado de Plata',
+      description: 'Piezas con baño de plata de brillo duradero',
     },
   ],
   materials: [
