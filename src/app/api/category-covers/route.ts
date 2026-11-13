@@ -19,7 +19,7 @@ async function ensureTable() {
   `)
 }
 
-export function optimizeCoverUrl(url: string): string {
+function optimizeCoverUrl(url: string): string {
   if (!url.includes('res.cloudinary.com') || url.includes('f_auto')) {
     return url
   }
