@@ -12,8 +12,8 @@
  */
 export function compressToWebP(
   file: File,
-  maxDimension: number = 1200,
-  quality: number = 0.82
+  maxDimension: number = 1600,
+  quality: number = 0.90
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     // Si el navegador no soporta FileReader o Canvas, devolver archivo original como fallback de seguridad

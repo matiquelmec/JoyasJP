@@ -15,13 +15,12 @@ export function SilverShowcaseCarousel({ products }: SilverShowcaseCarouselProps
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
-  // Autoplay cada 4 segundos si no se pasa el cursor por encima
   useEffect(() => {
     if (products.length <= 1 || isHovered) return
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % products.length)
-    }, 4200)
+    }, 4500)
 
     return () => clearInterval(timer)
   }, [products.length, isHovered])
@@ -42,7 +41,7 @@ export function SilverShowcaseCarousel({ products }: SilverShowcaseCarouselProps
   const formatter = new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
   })
 
   const prevSlide = () => {
@@ -55,41 +54,88 @@ export function SilverShowcaseCarousel({ products }: SilverShowcaseCarouselProps
 
   return (
     <div
-      className="relative group w-full max-w-md mx-auto rounded-2xl bg-[#121214] border border-[#C4C9D2]/30 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-xl overflow-hidden"
+      className="relative group w-full max-w-xl mx-auto rounded-2xl bg-[#121214] border border-[#C4C9D2]/30 shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Top Badge Stamp (Plata Milán #C4C9D2 sobre Negro Noche #09090B = 11.97:1 WCAG AAA) */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#09090B]/90 border border-[#C4C9D2]/35 backdrop-blur-md shadow-lg">
+      {/* Top Badge Stamp */}
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#09090B]/90 border border-[#C4C9D2]/40 backdrop-blur-md shadow-lg">
         <span className="text-xs">🇮🇹</span>
-        <span className="text-[10px] font-black tracking-widest text-[#C4C9D2] uppercase">
+        <span className="text-[11px] font-black tracking-widest text-[#C4C9D2] uppercase">
           925 STAMPED
         </span>
       </div>
 
       {/* Counter Badge */}
-      <div className="absolute top-4 right-4 z-20 px-2.5 py-0.5 rounded-full bg-[#09090B]/90 border border-zinc-800 text-[10px] font-mono text-[#C4C9D2]">
+      <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-full bg-[#09090B]/90 border border-white/15 text-xs font-mono text-[#C4C9D2]">
         {currentIndex + 1} / {products.length}
       </div>
 
-      {/* Imagen Principal del Producto con Transición */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#09090B]">
+      {/* Imagen Editorial 4:5 en Alta Resolución sin velo que apague el metal */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#09090B]">
         <Image
           key={currentProduct.id}
           src={currentProduct.imageUrl}
           alt={currentProduct.name}
           fill
-          sizes="(max-width: 768px) 100vw, 400px"
-          className="object-cover transition-all duration-700 group-hover:scale-105"
+          quality={92}
+          sizes="(max-width: 768px) 95vw, 560px"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           priority
         />
-        
-        {/* Shadow overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#09090B] via-transparent to-transparent opacity-80" />
+
+        {products.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={prevSlide}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-[#09090B]/85 border border-white/20 text-white flex items-center justify-center hover:bg-[#D4113C] hover:border-[#D4113C] transition-all shadow-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
+              aria-label="Joya anterior"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={nextSlide}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-[#09090B]/85 border border-white/20 text-white flex items-center justify-center hover:bg-[#D4113C] hover:border-[#D4113C] transition-all shadow-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
+              aria-label="Siguiente joya"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Detalle flotante de la joya */}
-      <div className="p-6 space-y-4 text-left relative z-10 -mt-12 bg-gradient-to-t from-[#09090B] via-[#09090B]/95 to-transparent">
+      {/* Barra de Miniaturas Interactivas */}
+      {products.length > 1 && (
+        <div className="flex items-center gap-2 px-5 pt-4 pb-1 overflow-x-auto scrollbar-none bg-[#09090B]">
+          {products.map((item, idx) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setCurrentIndex(idx)}
+              aria-label={`Ver ${item.name}`}
+              className={`relative h-14 w-14 shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                idx === currentIndex
+                  ? 'border-[#D4113C] scale-105 shadow-[0_0_12px_rgba(212,17,60,0.5)]'
+                  : 'border-white/10 opacity-60 hover:opacity-100'
+              }`}
+            >
+              <Image
+                src={item.imageUrl}
+                alt={item.name}
+                fill
+                sizes="56px"
+                quality={75}
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Pie Editorial Separado (No tapa la joya) */}
+      <div className="p-6 space-y-4 text-left bg-[#09090B] border-t border-white/10">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-[#C4C9D2] shrink-0" />
@@ -104,60 +150,25 @@ export function SilverShowcaseCarousel({ products }: SilverShowcaseCarouselProps
 
         <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80">
           <div>
-            <span className="block text-[10px] text-[#A1A1AA] uppercase font-semibold tracking-wider">Precio</span>
+            <span className="block text-[10px] text-[#A1A1AA] uppercase font-semibold tracking-wider">
+              Precio
+            </span>
             <span className="text-[24px] sm:text-[28px] leading-[1.1] font-headline font-bold text-[#C4C9D2]">
               {formatter.format(currentProduct.discount_price || currentProduct.price)}
             </span>
           </div>
 
           <Link href={`/productos/${currentProduct.slug || currentProduct.id}`}>
-            <Button size="sm" className="min-h-[44px] bg-[#D4113C] text-white hover:bg-[#B30D33] font-bold text-xs px-5 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]">
+            <Button
+              size="sm"
+              className="min-h-[44px] bg-[#D4113C] text-white hover:bg-[#B30D33] font-bold text-xs px-5 focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
+            >
               Ver Pieza
               <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Button>
           </Link>
         </div>
       </div>
-
-      {/* Flechas de Navegación manual (Touch target >= 44x44px) */}
-      {products.length > 1 && (
-        <>
-          <button
-            onClick={prevSlide}
-            aria-label="Ver pieza anterior"
-            className="absolute left-2 top-1/3 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#09090B]/80 border border-[#C4C9D2]/35 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#D4113C] hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={nextSlide}
-            aria-label="Ver siguiente pieza"
-            className="absolute right-2 top-1/3 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#09090B]/80 border border-[#C4C9D2]/35 text-white flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-[#D4113C] hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E]"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </>
-      )}
-
-      {/* Indicadores en barra inferior */}
-      {products.length > 1 && (
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-20 flex gap-1">
-          {products.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none"
-              aria-label={`Ir a pieza ${idx + 1}`}
-            >
-              <span
-                className={`block h-1.5 rounded-full transition-all duration-300 ${
-                  currentIndex === idx ? 'w-6 bg-[#C4C9D2]' : 'w-1.5 bg-zinc-700'
-                }`}
-              />
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

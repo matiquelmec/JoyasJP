@@ -25,7 +25,7 @@ function optimizeCoverUrl(url: string): string {
   if (!url.includes('res.cloudinary.com') || url.includes('f_auto')) {
     return url
   }
-  return url.replace('/upload/', '/upload/f_auto,q_auto:good,w_800,c_limit/')
+  return url.replace('/upload/', '/upload/f_auto,q_auto:best,w_1600,c_limit/')
 }
 
 export async function GET() {

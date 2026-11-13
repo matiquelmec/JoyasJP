@@ -145,7 +145,7 @@ const ProductCard = memo(function ProductCard({
     if (!product.gallery || product.gallery.length < 2) return null
     const candidate = product.gallery.find((img) => img && img !== product.imageUrl && img !== displayUrl)
     if (!candidate) return null
-    return optimizeCloudinaryUrl(candidate, 800)
+    return optimizeCloudinaryUrl(candidate, 1200)
   }, [product.gallery, product.imageUrl, displayUrl])
 
   const priceDisplay = useMemo(() => {
@@ -174,9 +174,9 @@ const ProductCard = memo(function ProductCard({
         className="contents"
         aria-label={`Ver detalles de ${product.name}`}
       >
-        <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-800">
+        <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#09090B]">
           {imageLoading && (
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-700 to-zinc-900 animate-shimmer" />
+            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 animate-shimmer" />
           )}
 
           {!imageError ? (
@@ -185,18 +185,18 @@ const ProductCard = memo(function ProductCard({
                 src={displayUrl}
                 alt={`${product.name} - Joya urbana premium`}
                 fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 30vw"
                 loading={priority ? 'eager' : 'lazy'}
                 className={cn(
-                  'object-cover product-image-hover transition-all duration-500',
-                  imageLoading ? 'scale-110 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100',
+                  'object-cover product-image-hover transition-all duration-700 ease-out',
+                  imageLoading ? 'scale-105 blur-sm opacity-0' : 'scale-100 blur-0 opacity-100',
                   secondaryImageUrl && 'group-hover:opacity-0',
                   isOutOfStock && 'grayscale-[40%] opacity-85'
                 )}
                 onLoad={handleImageLoad}
                 onError={handleImageError}
                 priority={priority}
-                quality={priority ? 80 : 65}
+                quality={90}
                 blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
               />
               {secondaryImageUrl && !isOutOfStock && (
@@ -204,10 +204,10 @@ const ProductCard = memo(function ProductCard({
                   src={secondaryImageUrl}
                   alt={`${product.name} - Vista alternativa`}
                   fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 30vw"
                   loading="lazy"
-                  quality={70}
-                  className="object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                  quality={90}
+                  className="object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                 />
               )}
             </>
@@ -240,18 +240,18 @@ const ProductCard = memo(function ProductCard({
         </div>
       </Link>
 
-      <div className="absolute top-2 right-2 z-20">
+      <div className="absolute top-3 right-3 z-20">
         <Button
           size="icon"
           variant="ghost"
-          className="h-11 w-11 bg-white/90 hover:bg-white rounded-full shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-110"
+          className="h-11 w-11 bg-[#09090B]/80 hover:bg-[#09090B] border border-white/15 rounded-full shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:border-[#D4113C]"
           onClick={handleWishlistClick}
           aria-label={isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'}
         >
           <Heart
             className={cn(
               'w-5 h-5 transition-colors duration-200',
-              isInWishlist ? 'text-red-500 fill-current' : 'text-gray-600 hover:text-red-400'
+              isInWishlist ? 'text-[#F43F5E] fill-current' : 'text-white hover:text-[#F43F5E]'
             )}
           />
         </Button>
