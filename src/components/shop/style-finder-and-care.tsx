@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Sparkles, Ruler, ShieldCheck, Truck, ArrowRight, RotateCcw } from 'lucide-react';
 
 const CATEGORIES = [
-  { label: 'Cadenas', value: 'Cadenas' },
-  { label: 'Plata Italy 925', value: 'Plata Italy 925' },
-  { label: 'Dijes', value: 'Dijes' },
-  { label: 'Pulseras', value: 'Pulseras' },
-  { label: 'Aros', value: 'Aros' },
-  { label: 'Sets', value: 'Sets' },
+  { label: 'Cadenas', value: 'cadenas' },
+  { label: 'Plata Italy 925', value: 'plata-925' },
+  { label: 'Dijes', value: 'dijes' },
+  { label: 'Pulseras', value: 'pulseras' },
+  { label: 'Aros', value: 'aros' },
+  { label: 'Sets', value: 'conjuntos' },
 ];
 
 const MATERIALS = [
@@ -53,7 +53,7 @@ const CHAIN_SIZES = [
 export function StyleFinderAndCare() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [category, setCategory] = useState<string>('Cadenas');
+  const [category, setCategory] = useState<string>('cadenas');
   const [material, setMaterial] = useState<string>('plata-925');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'sizes' | 'care' | 'shipping'>('sizes');
