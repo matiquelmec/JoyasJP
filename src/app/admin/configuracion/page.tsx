@@ -11,6 +11,7 @@ import { adminAPI } from '@/lib/admin-api'
 import { toast } from 'sonner'
 import { useSiteConfig } from '@/hooks/use-site-config'
 import { siteConfig } from '@/lib/config'
+import { CategoryCoversManager } from '@/components/admin/category-covers-manager'
 
 export default function ConfiguracionPage() {
   const [loading, setLoading] = useState(true)
@@ -206,6 +207,8 @@ export default function ConfiguracionPage() {
             )}
           </Button>
         </div>
+
+        <CategoryCoversManager />
       </div>
     </div>
   )
