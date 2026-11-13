@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { getVideoUrl } from '@/lib/safe-asset'
+import { productConfig } from '@/lib/config'
 import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import { ProductService } from '@/services/product.service'
 import type { Product } from '@/lib/types'
@@ -201,8 +202,8 @@ export default function Home() {
                 <span>🇮🇹</span> IMPORTADO DE ITALIA • LEY 925 STAMPED
               </div>
 
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_20px_rgba(212,175,55,0.2)]">
-                PLATA ITALIANA 925 <br />
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_20px_rgba(212,175,55,0.2)] uppercase">
+                {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')} <br />
                 <span className="bg-gradient-to-r from-amber-200 via-primary to-amber-400 bg-clip-text text-transparent">
                   EL NUEVO ESTÁNDAR
                 </span>
@@ -227,7 +228,7 @@ export default function Home() {
                     size="lg"
                     className="font-extrabold text-base px-8 py-6 bg-[#D4113C] hover:bg-[#B30D33] text-white hover:scale-105 shadow-[0_0_24px_rgba(212,17,60,0.4)] transition-all duration-300"
                   >
-                    Explorar Bóveda Plata 925
+                    Explorar {(productConfig.categories.find(c => c.id === 'plata-925')?.name || 'Plata Italy 925')}
                     <ChevronRight className="w-5 h-5 ml-1" />
                   </Button>
                 </Link>

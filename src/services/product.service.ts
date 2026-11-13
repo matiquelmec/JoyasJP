@@ -289,14 +289,15 @@ export class ProductService {
             })
 
             if (!rows || rows.length === 0) {
-                return LOCAL_MOCK_PRODUCTS.filter(p => p.category === 'plata-925' || (p.materials && p.materials.toLowerCase().includes('plata 925'))).slice(0, limit)
+                return LOCAL_MOCK_PRODUCTS.filter(p => p.stock > 0 && (p.category === 'plata-925' || (p.materials && p.materials.toLowerCase().includes('plata 925')))).slice(0, limit)
             }
 
             const mapped = rows.map(mapDatabaseProductToProduct)
             const resolved = await this.resolveBundleStocks(mapped)
 
-            // 🛡️ Filtro ESTRICTO: Solo piezas con categoría 'plata-925' o material 'Plata Italiana 925' / 'Plata 925'
+            // 🛡️ Filtro ESTRICTO: Solo piezas con stock > 0 y categoría 'plata-925' o material 'Plata Italiana 925' / 'Plata 925'
             const silverProducts = resolved.filter(p => {
+                if (p.stock <= 0) return false
                 const mat = (p.materials || '').toLowerCase()
                 const cat = (p.category || '').toLowerCase()
                 const label = (p.custom_label || '').toLowerCase()
