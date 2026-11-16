@@ -239,7 +239,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                 return {
                     title: 'Plata Italiana 925',
                     subtitle: 'Ley 925 legítima importada de Italia. Peso real, brillo de ley y acabado pulido a mano.',
-                    badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
+                    badge: '🇮🇹 PLATA ITALIANA LEY 925'
                 }
             case 'acero-inoxidable':
                 return {

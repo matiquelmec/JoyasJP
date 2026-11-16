@@ -184,7 +184,7 @@ export const productConfig = {
   colors: ['Dorado', 'Plateado', 'Mixto', 'Negro'],
   labels: [
     'NUEVO',
-    'EDICIÓN MILANO',
+    'PLATA LEY 925',
     'EXCLUSIVO',
     'EDICIÓN LIMITADA',
     'PIEZA DE COLECCIÓN',

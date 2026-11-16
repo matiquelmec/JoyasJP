@@ -216,7 +216,7 @@ export default function Home() {
             </h2>
 
             <p className="text-base sm:text-lg text-[#A1A1AA] max-w-xl leading-[1.6] font-body">
-              Piezas macizas moldeadas en Plata Fina de Milán. Peso real, brillo de ley y acabado pulido a mano para quienes juegan con criterio en la escena urbana.
+              Piezas macizas en Plata Italiana Ley 925 certificada. Peso real, brillo de ley y acabado pulido a mano para quienes juegan con criterio en la escena urbana.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

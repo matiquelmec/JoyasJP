@@ -23,7 +23,7 @@ const BENTO_COLLECTIONS: BentoCollection[] = [
   {
     id: 'plata-925',
     title: 'Plata Italiana 925',
-    subtitle: 'Ley 925 certificada, brillo milanés y piezas de herencia.',
+    subtitle: 'Ley 925 certificada, brillo espejo y piezas de alta joyería.',
     href: '/productos?categoria=plata-925',
     badge: 'Colección Insignia',
     spanClass: 'md:col-span-3 min-h-[74vh] md:min-h-[82vh]',
