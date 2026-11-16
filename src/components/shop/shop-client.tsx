@@ -11,7 +11,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Product } from '@/lib/types'
 import { productConfig } from '@/lib/config'
 import { resolveCatalogQuery, getAllowedSubcategories } from '@/lib/taxonomy'
-import { cn } from '@/lib/utils'
+import { useSiteConfig } from '@/hooks/use-site-config'
+import { buildWhatsAppUrl, cn } from '@/lib/utils'
 
 interface ShopClientProps {
     initialProducts: Product[]
@@ -25,6 +26,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const { config } = useSiteConfig()
     const categoryParam = searchParams.get('categoria') || 'all'
     const subcategoryParam = searchParams.get('subcategoria') || 'all'
     const materialParam = searchParams.get('material') || 'all'
@@ -546,6 +548,34 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                 >
                                     Limpiar todos los filtros
                                 </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Enganche exclusivo al finalizar la categoría Relojes */}
+                    {activeCategory === 'relojes' && (
+                        <div className="mt-14 rounded-2xl border border-white/15 bg-gradient-to-br from-[#121214] via-[#09090B] to-[#121214] p-8 sm:p-10 text-center shadow-2xl">
+                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-400 mb-2">
+                                Catálogo Extendido a Pedido
+                            </p>
+                            <h2 className="text-2xl sm:text-3xl font-bold font-body text-white tracking-tight">
+                                ¿Buscas otro modelo? +150 modelos disponibles a pedido
+                            </h2>
+                            <p className="mt-2.5 text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto">
+                                Si no ves el reloj que quieres en stock inmediato, consúltanos directamente por WhatsApp y te cotizamos entre más de 150 modelos a pedido.
+                            </p>
+                            <div className="mt-6 flex justify-center">
+                                <a
+                                    href={buildWhatsAppUrl(
+                                        config?.whatsapp_number,
+                                        'Hola Joyas JP, me gustaría consultar por modelos de relojes a pedido (+150 modelos).'
+                                    )}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center justify-center gap-2.5 min-h-[48px] rounded-full bg-[#25D366] hover:bg-[#1FB858] px-8 py-3 text-sm font-bold text-[#09090B] shadow-[0_0_24px_rgba(37,211,102,0.3)] transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-emerald-400"
+                                >
+                                    Consultar modelos a pedido por WhatsApp
+                                </a>
                             </div>
                         </div>
                     )}
