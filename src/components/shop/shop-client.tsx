@@ -94,6 +94,32 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         setVisibleCount(PRODUCTS_PER_PAGE)
     }, [])
 
+    const handleMaxPriceChange = useCallback((value: number | null) => {
+        setMaxPriceFilter(value)
+        setVisibleCount(PRODUCTS_PER_PAGE)
+
+        const params = new URLSearchParams(searchParams.toString())
+        if (!value || value <= 0) {
+            params.delete('maxPrice')
+        } else {
+            params.set('maxPrice', String(value))
+        }
+
+        const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+        router.push(newUrl, { scroll: false })
+    }, [pathname, router, searchParams])
+
+    const handleClearAllFilters = useCallback(() => {
+        setActiveCategory('all')
+        setActiveSubcategory('all')
+        setActiveColor('all')
+        setActiveMaterial('all')
+        setMaxPriceFilter(null)
+        setSearchQuery('')
+        setVisibleCount(PRODUCTS_PER_PAGE)
+        router.push(pathname, { scroll: false })
+    }, [pathname, router])
+
     // ⚡ MEMOIZACIÓN: Filtros de productos optimizados con hook personalizado
     const baseFilteredProducts = useMemoizedProducts({
         products: initialProducts,
@@ -355,11 +381,29 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                             />
                         </div>
 
-                        {/* Contenedor secundario: Selector de orden y filtro de color */}
-                        <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 w-full md:w-auto items-center">
+                        {/* Contenedor secundario: Selector de presupuesto, orden y filtro de color */}
+                        <div className="grid grid-cols-1 sm:flex sm:flex-row gap-3 w-full md:w-auto items-center">
+                            {/* Selector de Presupuesto */}
+                            <div className="w-full sm:w-auto">
+                                <select
+                                    aria-label="Filtrar por presupuesto máximo"
+                                    value={maxPriceFilter ? String(maxPriceFilter) : ''}
+                                    onChange={(e) =>
+                                        handleMaxPriceChange(e.target.value ? Number(e.target.value) : null)
+                                    }
+                                    className="flex h-10 w-full sm:w-[165px] rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-xs font-medium text-zinc-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer shadow-inner"
+                                >
+                                    <option value="">Todos los precios</option>
+                                    <option value="25000">Hasta $25.000</option>
+                                    <option value="50000">Hasta $50.000</option>
+                                    <option value="90000">Hasta $90.000</option>
+                                </select>
+                            </div>
+
                             {/* Selector de Ordenamiento */}
                             <div className="w-full sm:w-auto">
                                 <select
+                                    aria-label="Ordenar productos"
                                     value={sortBy}
                                     onChange={(e) => handleSortChange(e.target.value)}
                                     className="flex h-10 w-full sm:w-[160px] md:w-[180px] rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-xs font-medium text-zinc-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer shadow-inner"
@@ -383,6 +427,49 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     </div>
 
                     <Separator className="mb-12" />
+
+                    {/* Chips de filtros activos */}
+                    {(maxPriceFilter || activeColor !== 'all' || searchQuery.trim() !== '') && (
+                        <div className="flex flex-wrap items-center gap-2 mb-6">
+                            {maxPriceFilter && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleMaxPriceChange(null)}
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-[#D4113C]/15 border border-[#D4113C]/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#D4113C]/25 transition-colors"
+                                >
+                                    <span>Presupuesto: Hasta ${maxPriceFilter.toLocaleString('es-CL')}</span>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            )}
+                            {activeColor !== 'all' && (
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveColor('all')}
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-zinc-900 border border-zinc-700 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-zinc-500 transition-colors"
+                                >
+                                    <span>Color: {activeColor}</span>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            )}
+                            {searchQuery.trim() !== '' && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery('')}
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-zinc-900 border border-zinc-700 px-3 py-1.5 text-xs font-semibold text-zinc-200 hover:border-zinc-500 transition-colors"
+                                >
+                                    <span>Búsqueda: &ldquo;{searchQuery.trim()}&rdquo;</span>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                onClick={handleClearAllFilters}
+                                className="text-xs font-semibold text-zinc-400 hover:text-white underline underline-offset-4 px-2 py-1"
+                            >
+                                Limpiar todo
+                            </button>
+                        </div>
+                    )}
 
                     {/* Contador de resultados */}
                     <p className="text-sm text-muted-foreground mb-6">
@@ -433,13 +520,33 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                             )}
                         </>
                     ) : (
-                        <div className="text-center py-20">
+                        <div className="text-center py-20 space-y-5">
                             <h2 className="text-2xl font-semibold">
                                 No se encontraron productos
                             </h2>
-                            <p className="mt-2 text-muted-foreground">
-                                Prueba a cambiar los filtros.
+                            <p className="text-muted-foreground max-w-md mx-auto">
+                                {maxPriceFilter
+                                    ? `No hay piezas disponibles bajo $${maxPriceFilter.toLocaleString('es-CL')} con esta combinación.`
+                                    : 'Prueba a cambiar los filtros seleccionados.'}
                             </p>
+                            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                                {maxPriceFilter && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleMaxPriceChange(null)}
+                                        className="min-h-[44px] rounded-full bg-[#D4113C] hover:bg-[#B30D33] px-6 py-2.5 text-sm font-bold text-white transition-colors"
+                                    >
+                                        Ver sin límite de precio
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={handleClearAllFilters}
+                                    className="min-h-[44px] rounded-full border border-zinc-700 bg-zinc-900 hover:border-zinc-500 px-6 py-2.5 text-sm font-semibold text-zinc-200 transition-colors"
+                                >
+                                    Limpiar todos los filtros
+                                </button>
+                            </div>
                         </div>
                     )}
                 </Tabs>

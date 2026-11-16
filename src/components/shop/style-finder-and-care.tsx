@@ -307,7 +307,7 @@ export function StyleFinderAndCare() {
               </div>
               <button
                 type="button"
-                onClick={() => setStep(2)}
+                onClick={() => setStep(category === 'relojes' ? 1 : 2)}
                 className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
