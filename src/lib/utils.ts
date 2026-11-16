@@ -88,7 +88,7 @@ export function buildWhatsAppUrl(phone: string | null | undefined, message?: str
 
   const sanitized = message
     .normalize('NFC')
-    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\uD800-\uDFFF]/gu, '')
+    .replace(/[\uD800-\uDFFF]|[\u2600-\u27BF]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
 
