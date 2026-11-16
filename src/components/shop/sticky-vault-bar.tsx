@@ -4,6 +4,8 @@ import React from 'react'
 import { ShoppingBag, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/hooks/use-cart'
+import { useSiteConfig } from '@/hooks/use-site-config'
+import { buildWhatsAppUrl } from '@/lib/utils'
 import type { Product } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -13,6 +15,7 @@ interface StickyVaultBarProps {
 
 export function StickyVaultBar({ product }: StickyVaultBarProps) {
   const { addItem, openCart } = useCart()
+  const { config } = useSiteConfig()
   const isOutOfStock = (product.stock ?? 0) <= 0
 
   const formatter = new Intl.NumberFormat('es-CL', {
@@ -39,12 +42,12 @@ export function StickyVaultBar({ product }: StickyVaultBarProps) {
     })
   }
 
-  const whatsappMessage = encodeURIComponent(
+  const whatsappUrl = buildWhatsAppUrl(
+    config?.whatsapp_number,
     isOutOfStock
-      ? `Hola Joyas JP! 👋 Vi que "${product.name}" figura agotado y me gustaría consultar por reposición o alternativas similares.`
-      : `Hola Joyas JP! 👋 Estoy viendo "${product.name}" (${formatter.format(effectivePrice)}) y me gustaría consultar por disponibilidad y medidas.`
+      ? `Hola Joyas JP, vi que "${product.name}" figura agotado y me gustaría consultar por reposición o alternativas similares.`
+      : `Hola Joyas JP, estoy viendo "${product.name}" (${formatter.format(effectivePrice)}) y me gustaría consultar por disponibilidad y medidas.`
   )
-  const whatsappUrl = `https://wa.me/56982990513?text=${whatsappMessage}`
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 border-t border-amber-500/20 backdrop-blur-lg px-4 py-3 md:hidden shadow-[0_-10px_25px_rgba(0,0,0,0.8)]">

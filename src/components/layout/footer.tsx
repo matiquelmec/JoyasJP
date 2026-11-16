@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { JoyasJPLogo } from '@/components/ui/JoyasJPLogo'
 import { navLinks, siteConfig } from '@/lib/config'
 import { useSiteConfig } from '@/hooks/use-site-config'
+import { buildWhatsAppUrl } from '@/lib/utils'
 
 const TikTokIcon = () => (
   <svg
@@ -67,7 +68,12 @@ export function Footer() {
                 <span>{config?.store_email || siteConfig.business.contact.email}</span>
               </a>
               <a
-                href={`tel:${(config?.whatsapp_number || siteConfig.business.contact.phone).replace(/\s/g, '')}`}
+                href={buildWhatsAppUrl(
+                  config?.whatsapp_number || siteConfig.business.contact.phone,
+                  'Hola Joyas JP, tengo una consulta sobre sus productos.'
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center md:justify-start min-h-[44px] gap-3 group transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm"
               >
                 <div className="p-2.5 rounded-full bg-[#121214] group-hover:bg-[#D4113C]/20 transition-colors">

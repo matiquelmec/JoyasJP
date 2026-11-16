@@ -68,3 +68,29 @@ export function getLocalFallbackImage(productId: string | number, category?: str
     return `/assets/Producto ${index}.jpg`
   }
 }
+
+/**
+ * Construye una URL segura de WhatsApp (https://wa.me/...) normalizando el número
+ * y sanitizando emojis/surrogates para evitar errores de encoding en cualquier dispositivo.
+ */
+export function buildWhatsAppUrl(phone: string | null | undefined, message?: string): string {
+  let digits = (phone || '56982990513').replace(/\D/g, '')
+  if (digits.length === 9 && digits.startsWith('9')) {
+    digits = `56${digits}`
+  }
+  if (!digits) {
+    digits = '56982990513'
+  }
+
+  if (!message || !message.trim()) {
+    return `https://wa.me/${digits}`
+  }
+
+  const sanitized = message
+    .normalize('NFC')
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\uD800-\uDFFF]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return `https://wa.me/${digits}?text=${encodeURIComponent(sanitized)}`
+}

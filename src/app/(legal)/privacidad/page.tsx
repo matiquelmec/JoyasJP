@@ -25,7 +25,15 @@ export default function PrivacyPage() {
                     <a href="mailto:empresa.joyasjp.cl@gmail.com" className="text-primary hover:underline">
                         empresa.joyasjp.cl@gmail.com
                     </a>{' '}
-                    o a través de nuestro teléfono de contacto <strong>+56 9 8299 0513</strong>.
+                    o a través de nuestro WhatsApp oficial{' '}
+                    <a
+                        href="https://wa.me/56982990513?text=Hola%20Joyas%20JP%2C%20tengo%20una%20consulta%20sobre%20privacidad%20de%20datos."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline font-semibold"
+                    >
+                        +56 9 8299 0513
+                    </a>.
                 </p>
             </section>
 

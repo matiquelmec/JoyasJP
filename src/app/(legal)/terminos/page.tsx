@@ -24,7 +24,17 @@ export default function TermsPage() {
                 </p>
                 <ul>
                     <li><strong>Correo electrónico:</strong> empresa.joyasjp.cl@gmail.com</li>
-                    <li><strong>Teléfono / WhatsApp oficial:</strong> +56 9 8299 0513</li>
+                    <li>
+                        <strong>WhatsApp oficial:</strong>{' '}
+                        <a
+                            href="https://wa.me/56982990513?text=Hola%20Joyas%20JP%2C%20tengo%20una%20consulta%20sobre%20los%20t%C3%A9rminos%20del%20servicio."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline font-semibold"
+                        >
+                            +56 9 8299 0513
+                        </a>
+                    </li>
                     <li><strong>Horario de atención:</strong> Lunes a viernes de 09:00 a 18:00 hrs. y sábados de 10:00 a 16:00 hrs.</li>
                 </ul>
             </section>

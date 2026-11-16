@@ -41,7 +41,7 @@ export default function SuccessPage() {
             </p>
             <Button asChild className="bg-[#25D366] hover:bg-[#128C7E] text-white border-none w-full">
               <a
-                href={`https://wa.me/56982990513?text=Hola! Acabo de realizar una compra y tengo una duda sobre la entrega.`}
+                href="https://wa.me/56982990513?text=Hola%20Joyas%20JP%2C%20acabo%20de%20realizar%20una%20compra%20y%20tengo%20una%20consulta%20sobre%20la%20entrega."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2"
