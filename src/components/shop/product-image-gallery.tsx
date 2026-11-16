@@ -76,8 +76,8 @@ export function ProductImageGallery({ images, name, className }: ProductImageGal
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-2 bg-white/80 backdrop-blur-sm hover:bg-white border-none shadow-md" />
-        <CarouselNext className="right-2 bg-white/80 backdrop-blur-sm hover:bg-white border-none shadow-md" />
+        <CarouselPrevious className="left-2 h-11 w-11 bg-[#09090B]/80 text-white backdrop-blur-sm hover:bg-[#D4113C] hover:text-white border border-white/15 shadow-md" />
+        <CarouselNext className="right-2 h-11 w-11 bg-[#09090B]/80 text-white backdrop-blur-sm hover:bg-[#D4113C] hover:text-white border border-white/15 shadow-md" />
       </Carousel>
 
       {/* Thumbnails */}

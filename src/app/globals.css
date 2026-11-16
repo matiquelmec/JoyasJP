@@ -46,6 +46,18 @@
     --gradient-plata: linear-gradient(135deg, #F6F7FA 0%, #AEB4BE 28%, #EEF0F4 50%, #9AA0AB 75%, #DDE1E7 100%);
     --shadow-brillo-carmesi: 0 0 24px rgba(212, 17, 60, 0.45);
 
+    /* W3C Design Tokens (Manual v1.0) */
+    --color-neutral-950: #09090B;
+    --color-neutral-0: #FFFFFF;
+    --color-crimson-500: #D4113C;
+    --color-crimson-400: #F43F5E;
+    --color-crimson-veil: #1D0A10;
+    --bg: var(--color-neutral-950);
+    --cta: var(--color-crimson-500);
+    --on-cta: var(--color-neutral-0);
+    --tag-bg: var(--color-crimson-veil);
+    --tag-text: var(--color-crimson-400);
+
     /* 🏆 Colores Premium para Joyería */
     --gold: 45 80% 45%;
     --gold-light: 45 90% 65%;
@@ -277,10 +289,10 @@
               0 0 24px rgba(212, 17, 60, 0.2); /* Destello Carmesí sutil */
 }
 
-/* Efecto de fondo de Humo Oscuro con destello dorado */
+/* Efecto de fondo Obsidiana con destello Carmesí oficial */
 .smoke-gold-bg {
-  background: radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.08) 0%, rgba(8, 8, 8, 0) 50%),
-              radial-gradient(circle at 10% 20%, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0) 40%),
+  background: radial-gradient(circle at 50% -20%, rgba(212, 17, 60, 0.06) 0%, rgba(9, 9, 11, 0) 50%),
+              radial-gradient(circle at 10% 20%, rgba(18, 18, 20, 0.6) 0%, rgba(9, 9, 11, 0) 40%),
               linear-gradient(180deg, #09090b 0%, #030303 100%);
   position: relative;
   transition: background 0.8s ease-in-out;
@@ -293,7 +305,7 @@
   left: 0;
   right: 0;
   height: 500px;
-  background: radial-gradient(circle at 20% 10%, rgba(212, 175, 55, 0.04) 0%, transparent 60%),
+  background: radial-gradient(circle at 20% 10%, rgba(212, 17, 60, 0.04) 0%, transparent 60%),
               radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
   pointer-events: none;
   z-index: 1;

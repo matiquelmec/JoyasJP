@@ -158,7 +158,9 @@ export function buildProductSeo(
     descSegments.push(product.description.trim())
   } else {
     descSegments.push(
-      `${product.name.trim()} en ${material || categoryName} de alta joyería urbana.`
+      catId === 'aleacion-zinc'
+        ? `${product.name.trim()} en ${material || categoryName} de diseño urbano con carácter.`
+        : `${product.name.trim()} en ${material || categoryName} de alta joyería urbana.`
     )
   }
   if (dimensions && !descSegments[0].toLowerCase().includes(dimensions.toLowerCase())) {

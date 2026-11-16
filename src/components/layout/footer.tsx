@@ -76,12 +76,12 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center md:justify-start min-h-[44px] gap-3 group transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] rounded-sm"
               >
-                <div className="p-2.5 rounded-full bg-[#121214] group-hover:bg-[#25D366]/20 transition-colors">
+                <div className="p-2.5 rounded-full bg-[#121214] group-hover:bg-[#D4113C]/20 transition-colors">
                   <svg
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     aria-hidden="true"
-                    className="h-4 w-4 text-[#25D366]"
+                    className="h-4 w-4 text-[#F43F5E]"
                   >
                     <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2Zm5.78 14.02c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.82-.11-.42-.14-.96-.32-1.65-.62-2.9-1.25-4.8-4.18-4.94-4.37-.15-.19-1.18-1.57-1.18-3 0-1.43.75-2.13 1.02-2.42.27-.29.59-.36.79-.36h.57c.18 0 .43-.07.67.51.24.59.83 2.03.9 2.18.08.15.13.32.03.51-.1.19-.15.32-.29.49-.15.17-.31.38-.44.51-.15.15-.3.31-.13.61.17.29.77 1.27 1.65 2.06 1.13 1.01 2.08 1.32 2.38 1.47.29.15.46.12.63-.07.17-.19.74-.86.94-1.16.2-.29.4-.24.67-.15.27.1 1.72.81 2.01.96.29.15.49.22.56.34.07.12.07.7-.17 1.38Z" />
                   </svg>

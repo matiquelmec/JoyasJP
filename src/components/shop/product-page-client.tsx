@@ -139,30 +139,30 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
                   <span className="bg-slate-200/20 text-[9px] px-1.5 py-0.5 rounded text-slate-300 font-mono">925 STAMPED</span>
                 </p>
                 <p className="text-slate-300/80 leading-relaxed">
-                  Pieza certificada de origen italiano. Elaborada en pureza del 92.5% de plata maciza. Inalterable al uso diario e hipoalergénica.
+                  Pieza certificada de origen italiano. Elaborada en pureza del 92.5% de plata maciza e hipoalergénica. Limpiar periódicamente con paño para plata.
                 </p>
               </div>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            <div className="flex items-center gap-2 p-3 bg-blue-500/5 border border-blue-500/10 rounded-lg">
-              <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                <span className="text-blue-600 font-bold text-xs">S</span>
+            <div className="flex items-center gap-3 p-3.5 bg-[#121214] border border-white/10 rounded-xl">
+              <div className="w-8 h-8 rounded-full bg-[#09090B] border border-white/15 flex items-center justify-center shrink-0">
+                <span className="text-[#C4C9D2] font-bold text-xs">S</span>
               </div>
               <div className="text-xs">
-                <p className="font-bold text-blue-700">Envío por Starken</p>
-                <p className="text-blue-600/70">Envío por pagar. <span className="font-semibold text-green-600">¡Gratis sobre {freeShippingFormatted}!</span></p>
+                <p className="font-bold text-white">Envío por Starken</p>
+                <p className="text-[#A1A1AA]">Envío por pagar. <span className="font-semibold text-[#F43F5E]">¡Gratis sobre {freeShippingFormatted}!</span></p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 p-3 bg-green-500/5 border border-green-500/10 rounded-lg">
-              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
-                <span className="text-green-600 font-bold text-xs">M</span>
+            <div className="flex items-center gap-3 p-3.5 bg-[#121214] border border-white/10 rounded-xl">
+              <div className="w-8 h-8 rounded-full bg-[#09090B] border border-white/15 flex items-center justify-center shrink-0">
+                <span className="text-[#F43F5E] font-bold text-xs">M</span>
               </div>
               <div className="text-xs">
-                <p className="font-bold text-green-700">Entrega en Metro (Gratis)</p>
-                <p className="text-green-600/70">Solo estaciones Los Leones, Quilín o Chile España.</p>
+                <p className="font-bold text-white">Entrega en Metro (Gratis)</p>
+                <p className="text-[#A1A1AA]">Solo estaciones Los Leones, Quilín o Chile España.</p>
               </div>
             </div>
           </div>

@@ -124,7 +124,7 @@ export const productConfig = {
     {
       id: 'acero-inoxidable',
       name: 'Acero Inoxidable',
-      description: 'Acero quirúrgico 316L de alta resistencia y brillo inalterable',
+      description: 'Acero quirúrgico 316L de alta resistencia y acabado pulido',
       defaultMaterial: 'Acero quirúrgico',
     },
     {

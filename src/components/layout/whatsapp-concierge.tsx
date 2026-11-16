@@ -55,14 +55,14 @@ export function WhatsAppConcierge() {
       rel="noopener noreferrer"
       aria-label="Asesoría directa por WhatsApp"
       className={cn(
-        'group fixed bottom-5 right-4 md:bottom-6 md:right-6 z-40 items-center gap-2.5 rounded-full border border-emerald-400/35 bg-[#09090B]/95 px-4 py-3 text-white shadow-[0_8px_30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-emerald-400 hover:shadow-[0_0_24px_rgba(16,185,129,0.35)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-emerald-400 min-h-[48px]',
+        'group fixed bottom-5 right-4 md:bottom-6 md:right-6 z-40 items-center gap-2.5 rounded-full border border-[#C4C9D2]/30 bg-[#09090B]/95 px-4 py-3 text-white shadow-[0_8px_30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-[#D4113C] hover:shadow-[0_0_24px_rgba(212,17,60,0.35)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#F43F5E] min-h-[48px]',
         isProductDetail ? 'hidden md:inline-flex' : 'inline-flex'
       )}
     >
-      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#25D366] text-[#09090B]">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#D4113C] text-white">
         <WhatsAppIcon className="h-4 w-4" />
       </span>
-      <span className="hidden sm:inline text-xs font-bold tracking-wider uppercase text-zinc-100 group-hover:text-emerald-300 transition-colors">
+      <span className="hidden sm:inline text-xs font-bold tracking-wider uppercase text-zinc-100 group-hover:text-[#F43F5E] transition-colors">
         WhatsApp
       </span>
     </a>

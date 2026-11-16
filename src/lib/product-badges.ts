@@ -52,7 +52,7 @@ export function getProductBadge(
       text: 'SET EXCLUSIVO',
       variant: 'bundle',
       className:
-        'badge-premium bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-zinc-950 font-black tracking-wider shadow-[0_0_12px_rgba(245,158,11,0.45)] border border-amber-300/40 text-[9px] uppercase px-2 py-0.5 rounded-sm',
+        'badge-premium bg-[#121214] text-white font-black tracking-wider shadow-lg border border-[#C4C9D2]/50 text-[9px] uppercase px-2 py-0.5 rounded-sm',
     }
   }
 
