@@ -32,7 +32,7 @@ export function SilverShowcaseCarousel({ products }: SilverShowcaseCarouselProps
           🇮🇹
         </div>
         <h3 className="text-2xl font-bold text-white">Sello de Origen Italiano</h3>
-        <p className="text-sm text-[#A1A1AA]">Pureza certificada de Plata Ley 925 importada directamente de Milán.</p>
+        <p className="text-sm text-[#A1A1AA]">Pureza certificada de Plata Italiana Ley 925.</p>
       </div>
     )
   }
