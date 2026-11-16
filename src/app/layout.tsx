@@ -5,7 +5,13 @@ import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { Toaster } from '@/components/ui/sonner'
 import { PreloaderProvider } from '@/components/providers/preloader-provider'
+import dynamic from 'next/dynamic'
 import { cn } from '@/lib/utils'
+
+const WhatsAppConcierge = dynamic(
+  () => import('@/components/layout/whatsapp-concierge').then((m) => m.WhatsAppConcierge),
+  { ssr: false }
+)
 import { siteConfig } from '@/lib/config'
 import { getSiteConfig } from '@/lib/server/get-site-config'
 import { MaintenanceScreen } from '@/components/layout/maintenance-screen'
@@ -248,6 +254,7 @@ export default async function RootLayout({
             /* Hydrate site config from server only when not in maintenance */
             <ConditionalLayout initialConfig={await getSiteConfig()}>
               {children}
+              <WhatsAppConcierge />
             </ConditionalLayout>
           )}
 
