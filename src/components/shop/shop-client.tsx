@@ -262,7 +262,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             case 'relojes':
                 return {
                     title: 'Relojes',
-                    subtitle: 'Relojes urbanos de alto impacto, precisión y presencia.',
+                    subtitle: 'Prestigio atemporal en tu muñeca.',
                     badge: null
                 }
             default:

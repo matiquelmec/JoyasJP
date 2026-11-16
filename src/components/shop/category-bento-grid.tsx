@@ -33,7 +33,7 @@ const BENTO_COLLECTIONS: BentoCollection[] = [
   {
     id: 'relojes',
     title: 'Relojes',
-    subtitle: 'Relojes urbanos de alto impacto y precisión.',
+    subtitle: 'Prestigio atemporal en tu muñeca.',
     href: '/productos?categoria=relojes',
     badge: 'Edición Casio',
     spanClass: 'md:col-span-3 min-h-[74vh] md:min-h-[82vh]',

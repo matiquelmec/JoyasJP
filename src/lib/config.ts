@@ -142,7 +142,7 @@ export const productConfig = {
     {
       id: 'relojes',
       name: 'Relojes',
-      description: 'Relojes urbanos de alto impacto y precisión',
+      description: 'Prestigio atemporal en tu muñeca.',
       defaultMaterial: 'Acero Inoxidable',
     },
   ],
