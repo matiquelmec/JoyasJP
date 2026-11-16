@@ -164,6 +164,23 @@ export function Header() {
                       </Link>
                     ))}
                   </div>
+                  <div className="mt-4 pt-3 border-t border-white/10">
+                    <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-[#A1A1AA] mb-2">
+                      Por Tipo de Pieza
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {productConfig.subcategories.map((sub) => (
+                        <Link
+                          key={sub.id}
+                          href={`/productos?subcategoria=${sub.id}`}
+                          onClick={() => setMegaMenuOpen(false)}
+                          className="rounded-full border border-white/10 bg-[#121214] px-3 py-1 text-xs font-medium text-[#C4C9D2] hover:border-[#D4113C] hover:text-white transition-colors"
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

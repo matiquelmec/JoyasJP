@@ -116,6 +116,38 @@ export const navLinks: NavLink[] = [
 export const productConfig = {
   categories: [
     {
+      id: 'plata-925',
+      name: 'Plata Italiana 925',
+      description: 'Colección VIP de Plata Fina Ley 925 importada directamente de Italia',
+      defaultMaterial: 'Plata Italiana 925',
+    },
+    {
+      id: 'acero-inoxidable',
+      name: 'Acero Inoxidable',
+      description: 'Acero quirúrgico 316L de alta resistencia y brillo inalterable',
+      defaultMaterial: 'Acero quirúrgico',
+    },
+    {
+      id: 'enchapado-plata',
+      name: 'Enchapado de Plata',
+      description: 'Piezas con baño de plata de brillo duradero y diseño urbano',
+      defaultMaterial: 'Enchapado de plata',
+    },
+    {
+      id: 'aleacion-zinc',
+      name: 'Aleación de Zinc',
+      description: 'Piezas urbanas statement y diseños de alto impacto',
+      defaultMaterial: 'Aleación de zinc',
+    },
+    {
+      id: 'relojes',
+      name: 'Relojes',
+      description: 'Relojes urbanos de alto impacto y precisión',
+      defaultMaterial: 'Acero Inoxidable',
+    },
+  ],
+  subcategories: [
+    {
       id: 'cadenas',
       name: 'Cadenas',
       description: 'Eslabones diseñados para dominar la escena',
@@ -139,21 +171,6 @@ export const productConfig = {
       id: 'conjuntos',
       name: 'Sets & Conjuntos',
       description: 'Sets y conjuntos de joyas exclusivas con descuento especial',
-    },
-    {
-      id: 'plata-925',
-      name: 'Plata Italy 925',
-      description: 'Colección VIP de Plata Fina Ley 925 importada directamente de Italia',
-    },
-    {
-      id: 'relojes',
-      name: 'Relojes',
-      description: 'Relojes urbanos de alto impacto y precisión',
-    },
-    {
-      id: 'enchapado-plata',
-      name: 'Enchapado de Plata',
-      description: 'Piezas con baño de plata de brillo duradero',
     },
   ],
   materials: [

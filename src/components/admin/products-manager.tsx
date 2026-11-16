@@ -46,6 +46,7 @@ import {
 import type { Product } from '@/lib/types'
 import { adminAPI } from '@/lib/admin-api'
 import { productConfig } from '@/lib/config'
+import { getCategoryName, getSubcategoryName } from '@/lib/taxonomy'
 import { toast } from 'sonner'
 import { ProductFormModal } from './product-form-modal'
 
@@ -99,6 +100,7 @@ export function ProductsManager() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [filterSubcategory, setFilterSubcategory] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -209,15 +211,18 @@ export function ProductsManager() {
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = filterCategory === 'all' || product.category === filterCategory
+    const matchesSubcategory =
+      filterSubcategory === 'all' || (product.subcategory || '') === filterSubcategory
     const q = searchTerm.trim().toLowerCase()
     const matchesSearch =
       q === '' ||
       product.name.toLowerCase().includes(q) ||
       product.id.toLowerCase().includes(q) ||
       (product.sku || '').toLowerCase().includes(q) ||
-      (product.category || '').toLowerCase().includes(q)
+      (product.category || '').toLowerCase().includes(q) ||
+      (product.subcategory || '').toLowerCase().includes(q)
 
-    return matchesCategory && matchesSearch
+    return matchesCategory && matchesSubcategory && matchesSearch
   })
 
   const categories = Array.from(
@@ -413,6 +418,19 @@ export function ProductsManager() {
                   )
                 })}
               </select>
+
+              <select
+                value={filterSubcategory}
+                onChange={(e) => setFilterSubcategory(e.target.value)}
+                className="bg-zinc-900 border-zinc-800 text-white text-xs p-2 rounded-md focus:ring-1 focus:ring-primary h-9"
+              >
+                <option value="all">TODAS LAS SUBCATEGORÍAS</option>
+                {productConfig.subcategories.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name.toUpperCase()}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </CardHeader>
@@ -543,12 +561,19 @@ export function ProductsManager() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant={'outline' as any}
-                            className="bg-slate-100 text-slate-800 border-slate-300 text-[10px] uppercase font-bold tracking-widest"
-                          >
-                            {p.category}
-                          </Badge>
+                          <div className="flex flex-col gap-1 items-start">
+                            <Badge
+                              variant={'outline' as any}
+                              className="bg-slate-100 text-slate-800 border-slate-300 text-[10px] uppercase font-bold tracking-widest"
+                            >
+                              {getCategoryName(p.category)}
+                            </Badge>
+                            {p.subcategory && (
+                              <span className="text-[10px] font-semibold text-slate-500 pl-0.5">
+                                ↳ {getSubcategoryName(p.subcategory)}
+                              </span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="font-black text-sm text-zinc-900">
                           {p.discount_price ? (

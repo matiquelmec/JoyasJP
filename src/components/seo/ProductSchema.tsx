@@ -18,14 +18,16 @@ export function ProductSchema({
   rating,
 }: ProductSchemaProps) {
   const categoryNames = {
+    'plata-925': 'Jewelry > Sterling Silver 925',
+    'acero-inoxidable': 'Jewelry > Stainless Steel Jewelry',
+    'enchapado-plata': 'Jewelry > Silver Plated Jewelry',
+    'aleacion-zinc': 'Jewelry > Fashion Jewelry',
+    relojes: 'Jewelry > Watches',
     cadenas: 'Jewelry > Necklaces',
     dijes: 'Jewelry > Pendants',
     pulseras: 'Jewelry > Bracelets',
     aros: 'Jewelry > Earrings',
     conjuntos: 'Jewelry > Jewelry Sets',
-    'plata-925': 'Jewelry > Sterling Silver 925',
-    relojes: 'Jewelry > Watches',
-    'enchapado-plata': 'Jewelry > Silver Plated Jewelry',
   }
 
   const category =

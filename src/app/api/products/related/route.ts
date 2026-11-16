@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const parsed = relatedProductsQuerySchema.safeParse({
       category: searchParams.get('category') || '',
+      subcategory: searchParams.get('subcategory') || '',
       id: searchParams.get('id') || '',
     })
 
@@ -19,10 +20,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { category, id: currentProductId } = parsed.data
+    const { category, subcategory, id: currentProductId } = parsed.data
 
     const [related, allProducts] = await Promise.all([
-      ProductService.getRelatedProducts(currentProductId, category),
+      ProductService.getRelatedProducts(currentProductId, category, 4, subcategory),
       ProductService.getAllProducts(),
     ])
 

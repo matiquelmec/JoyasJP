@@ -133,8 +133,11 @@ export function buildProductSeo(
   product: Partial<Product> & { name: string; category?: string }
 ): ProductSeoMetadata {
   const catId = (product.category || '').trim().toLowerCase()
+  const subId = (product.subcategory || '').trim().toLowerCase()
   const catMeta = productConfig.categories.find((c) => c.id.toLowerCase() === catId)
+  const subMeta = productConfig.subcategories.find((s) => s.id.toLowerCase() === subId)
   const categoryName = catMeta?.name || (product.category ? product.category : 'Joyería')
+  const subcategoryName = subMeta?.name || ''
 
   const material = (product.materials || '').trim()
   const color = (product.color || '').trim()
@@ -178,6 +181,10 @@ export function buildProductSeo(
   if (material) {
     autoKeywords.add(material.toLowerCase())
     autoKeywords.add(`${categoryName.toLowerCase()} ${material.toLowerCase()}`)
+  }
+  if (subcategoryName) {
+    autoKeywords.add(subcategoryName.toLowerCase())
+    autoKeywords.add(`${subcategoryName.toLowerCase()} ${categoryName.toLowerCase()}`)
   }
   if (color) {
     autoKeywords.add(`${categoryName.toLowerCase()} ${color.toLowerCase()}`)

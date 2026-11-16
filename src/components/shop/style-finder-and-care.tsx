@@ -4,42 +4,46 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, RotateCcw } from 'lucide-react';
 
-const CATEGORIES = [
-  { label: 'Cadenas', value: 'cadenas', tag: 'Eslabones' },
-  { label: 'Plata Italy 925', value: 'plata-925', tag: 'Ley 925' },
-  { label: 'Dijes', value: 'dijes', tag: 'Símbolos' },
-  { label: 'Pulseras', value: 'pulseras', tag: 'Muñeca' },
-  { label: 'Aros', value: 'aros', tag: 'Argollas' },
-  { label: 'Sets & Conjuntos', value: 'conjuntos', tag: 'Curados' },
-  { label: 'Relojes', value: 'relojes', tag: 'Precisión' },
-  { label: 'Enchapado de Plata', value: 'enchapado-plata', tag: 'Baño Plata' },
-];
-
-const MATERIALS = [
+const MAIN_CATEGORIES = [
   {
-    label: 'Plata 925 Certificada',
+    label: 'Plata Italiana 925',
     value: 'plata-925',
     swatch: 'from-[#F6F7FA] via-[#C4C9D2] to-[#717784]',
     note: 'Plata fina italiana sellada',
   },
   {
-    label: 'Acero Quirúrgico',
-    value: 'acero',
+    label: 'Acero Inoxidable',
+    value: 'acero-inoxidable',
     swatch: 'from-[#D4D4D8] via-[#71717A] to-[#27272A]',
     note: 'Alta resistencia diaria',
   },
   {
-    label: 'Aleación & Diseño',
-    value: 'aleacion',
+    label: 'Enchapado de Plata',
+    value: 'enchapado-plata',
+    swatch: 'from-[#E4E4E7] via-[#A1A1AA] to-[#52525B]',
+    note: 'Baño de plata duradero',
+  },
+  {
+    label: 'Aleación de Zinc',
+    value: 'aleacion-zinc',
     swatch: 'from-[#F43F5E] via-[#D4113C] to-[#881337]',
     note: 'Piezas urbanas statement',
   },
   {
-    label: 'Cualquier Material',
-    value: 'all',
-    swatch: 'from-[#C4C9D2] via-[#D4113C] to-[#18181B]',
-    note: 'Explorar todo el catálogo',
+    label: 'Relojes',
+    value: 'relojes',
+    swatch: 'from-[#C4C9D2] via-[#18181B] to-[#09090B]',
+    note: 'Precisión y estilo Casio',
   },
+];
+
+const SUBCATEGORIES = [
+  { label: 'Cadenas', value: 'cadenas', tag: 'Eslabones' },
+  { label: 'Dijes / Colgantes', value: 'dijes', tag: 'Símbolos' },
+  { label: 'Pulseras', value: 'pulseras', tag: 'Muñeca' },
+  { label: 'Aros', value: 'aros', tag: 'Argollas' },
+  { label: 'Sets & Conjuntos', value: 'conjuntos', tag: 'Curados' },
+  { label: 'Cualquier Pieza', value: 'all', tag: 'Ver Todo' },
 ];
 
 const BUDGETS = [
@@ -143,8 +147,8 @@ function ExpressRouteMark() {
 export function StyleFinderAndCare() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [category, setCategory] = useState<string>('cadenas');
-  const [material, setMaterial] = useState<string>('plata-925');
+  const [category, setCategory] = useState<string>('plata-925');
+  const [subcategory, setSubcategory] = useState<string>('cadenas');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'sizes' | 'care' | 'shipping'>('sizes');
   const [hoveredSize, setHoveredSize] = useState<string>('50 cm');
@@ -153,7 +157,9 @@ export function StyleFinderAndCare() {
     setMaxPrice(selectedBudget);
     const params = new URLSearchParams();
     if (category) params.set('categoria', category);
-    if (material && material !== 'all') params.set('material', material);
+    if (category !== 'relojes' && subcategory && subcategory !== 'all') {
+      params.set('subcategoria', subcategory);
+    }
     if (selectedBudget) params.set('maxPrice', selectedBudget);
     router.push(`/productos?${params.toString()}`);
   };
@@ -201,26 +207,32 @@ export function StyleFinderAndCare() {
           {step === 1 && (
             <div className="relative">
               <p className="text-base font-medium text-[#C4C9D2] mb-5">
-                1. ¿Qué tipo de pieza estás buscando hoy?
+                1. ¿Qué línea o material estás buscando hoy?
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {CATEGORIES.map((item) => (
+                {MAIN_CATEGORIES.map((item) => (
                   <button
                     key={item.value}
                     type="button"
                     onClick={() => {
                       setCategory(item.value);
-                      setStep(2);
+                      if (item.value === 'relojes') {
+                        setSubcategory('all');
+                        setStep(3);
+                      } else {
+                        setStep(2);
+                      }
                     }}
-                    className={`group min-h-[56px] flex items-center justify-between rounded-xl border px-5 py-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+                    className={`group min-h-[64px] flex items-center gap-3.5 rounded-xl border px-5 py-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
                       category === item.value
-                        ? 'border-[#D4113C] bg-[#D4113C]/15 text-white shadow-[0_0_20px_rgba(212,17,60,0.18)]'
+                        ? 'border-[#D4113C] bg-[#D4113C]/15 text-white'
                         : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white'
                     }`}
                   >
-                    <span className="text-sm font-bold">{item.label}</span>
-                    <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] group-hover:text-[#F43F5E] transition-colors">
-                      {item.tag}
+                    <span className={`h-7 w-7 shrink-0 rounded-full bg-gradient-to-br ${item.swatch} border border-white/20 shadow-inner`} />
+                    <span className="flex flex-col">
+                      <span className="text-sm font-bold text-white">{item.label}</span>
+                      <span className="text-[11px] text-[#A1A1AA]">{item.note}</span>
                     </span>
                   </button>
                 ))}
@@ -231,31 +243,27 @@ export function StyleFinderAndCare() {
           {step === 2 && (
             <div className="relative">
               <p className="text-base font-medium text-[#C4C9D2] mb-5">
-                2. Elige tu material preferido:
+                2. Elige el tipo de pieza:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {MATERIALS.map((item) => (
+                {SUBCATEGORIES.map((item) => (
                   <button
                     key={item.value}
                     type="button"
                     onClick={() => {
-                      setMaterial(item.value);
+                      setSubcategory(item.value);
                       setStep(3);
                     }}
-                    className={`group min-h-[64px] flex items-center gap-3.5 rounded-xl border px-5 py-4 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
-                      material === item.value
-                        ? 'border-[#D4113C] bg-[#D4113C]/15 text-white'
+                    className={`group min-h-[56px] flex items-center justify-between rounded-xl border px-5 py-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#D4113C] ${
+                      subcategory === item.value
+                        ? 'border-[#D4113C] bg-[#D4113C]/15 text-white shadow-[0_0_20px_rgba(212,17,60,0.18)]'
                         : 'border-white/10 bg-[#09090B] text-[#C4C9D2] hover:border-white/30 hover:text-white'
                     }`}
                   >
-                    <span
-                      aria-hidden="true"
-                      className={`h-8 w-8 shrink-0 rounded-full bg-gradient-to-br ${item.swatch} ring-1 ring-white/20`}
-                    />
-                    <div>
-                      <span className="block text-sm font-bold">{item.label}</span>
-                      <span className="block text-xs text-[#A1A1AA]">{item.note}</span>
-                    </div>
+                    <span className="text-sm font-bold">{item.label}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA] group-hover:text-[#F43F5E] transition-colors">
+                      {item.tag}
+                    </span>
                   </button>
                 ))}
               </div>

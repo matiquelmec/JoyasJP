@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Product } from '@/lib/types'
 import { productConfig } from '@/lib/config'
+import { resolveCatalogQuery, getAllowedSubcategories } from '@/lib/taxonomy'
 import { cn } from '@/lib/utils'
 
 interface ShopClientProps {
@@ -25,10 +26,13 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const categoryParam = searchParams.get('categoria') || 'all'
+    const subcategoryParam = searchParams.get('subcategoria') || 'all'
     const materialParam = searchParams.get('material') || 'all'
     const maxPriceParam = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : null
 
-    const [activeCategory, setActiveCategory] = useState(categoryParam)
+    const resolvedInitial = resolveCatalogQuery(categoryParam, subcategoryParam)
+    const [activeCategory, setActiveCategory] = useState(resolvedInitial.category)
+    const [activeSubcategory, setActiveSubcategory] = useState(resolvedInitial.subcategory)
     const [activeColor, setActiveColor] = useState('all')
     const [activeMaterial, setActiveMaterial] = useState(materialParam)
     const [maxPriceFilter, setMaxPriceFilter] = useState<number | null>(maxPriceParam)
@@ -36,16 +40,14 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
 
-    // Sincronizar categoría, material y presupuesto si cambia la URL
+    // Sincronizar categoría, subcategoría, material y presupuesto si cambia la URL
     useEffect(() => {
-        if (categoryParam && allCategories.includes(categoryParam)) {
-            setActiveCategory(categoryParam)
-        } else {
-            setActiveCategory('all')
-        }
+        const resolved = resolveCatalogQuery(categoryParam, subcategoryParam)
+        setActiveCategory(resolved.category)
+        setActiveSubcategory(resolved.subcategory)
         setActiveMaterial(materialParam || 'all')
         setMaxPriceFilter(maxPriceParam && !Number.isNaN(maxPriceParam) ? maxPriceParam : null)
-    }, [categoryParam, materialParam, maxPriceParam])
+    }, [categoryParam, subcategoryParam, materialParam, maxPriceParam])
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {
@@ -63,6 +65,25 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         } else {
             params.set('categoria', value)
         }
+        if (value === 'relojes') {
+            setActiveSubcategory('all')
+            params.delete('subcategoria')
+        }
+
+        const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+        router.push(newUrl, { scroll: false })
+    }, [pathname, router, searchParams])
+
+    const handleSubcategoryChange = useCallback((value: string) => {
+        setActiveSubcategory(value)
+        setVisibleCount(PRODUCTS_PER_PAGE)
+
+        const params = new URLSearchParams(searchParams.toString())
+        if (value === 'all') {
+            params.delete('subcategoria')
+        } else {
+            params.set('subcategoria', value)
+        }
 
         const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
         router.push(newUrl, { scroll: false })
@@ -77,6 +98,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const baseFilteredProducts = useMemoizedProducts({
         products: initialProducts,
         category: activeCategory,
+        subcategory: activeSubcategory,
         color: activeColor,
         searchTerm: searchQuery
     })
@@ -184,19 +206,19 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const hasMore = visibleCount < finalFilteredProducts.length
     const remaining = finalFilteredProducts.length - visibleCount
 
-    // Configuración narrativa dinámica por categoría
+    // Configuración narrativa dinámica por categoría principal
     const categoryHeader = useMemo(() => {
         switch (activeCategory) {
             case 'plata-925':
                 return {
-                    title: 'Plata Italy 925',
+                    title: 'Plata Italiana 925',
                     subtitle: 'Ley 925 legítima importada de Italia. Peso real, brillo de ley y acabado pulido a mano.',
                     badge: '🇮🇹 EDICIÓN EXCLUSIVA MILANO'
                 }
-            case 'relojes':
+            case 'acero-inoxidable':
                 return {
-                    title: 'Relojes',
-                    subtitle: 'Relojes urbanos de alto impacto, precisión y presencia.',
+                    title: 'Acero Inoxidable',
+                    subtitle: 'Acero quirúrgico 316L de alta resistencia. Cadenas, dijes, pulseras y aros para uso diario.',
                     badge: null
                 }
             case 'enchapado-plata':
@@ -205,40 +227,22 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     subtitle: 'Piezas con baño de plata de brillo duradero y diseño urbano.',
                     badge: null
                 }
-            case 'aros':
+            case 'aleacion-zinc':
                 return {
-                    title: 'Aros',
-                    subtitle: 'Aros y arracadas de alto impacto para completar tu estilo.',
+                    title: 'Aleación de Zinc',
+                    subtitle: 'Dijes, cadenas y conjuntos statement con actitud urbana.',
                     badge: null
                 }
-            case 'cadenas':
+            case 'relojes':
                 return {
-                    title: 'Cadenas & Cubanas',
-                    subtitle: 'Eslabones diseñados para dominar la escena. Estilos Cubana, Rolo, Espiga y Snake.',
+                    title: 'Relojes',
+                    subtitle: 'Relojes urbanos de alto impacto, precisión y presencia.',
                     badge: null
-                }
-            case 'dijes':
-                return {
-                    title: 'Dijes & Colgantes',
-                    subtitle: 'Detalles únicos con actitud urbana para personalizar tu cadena.',
-                    badge: null
-                }
-            case 'pulseras':
-                return {
-                    title: 'Pulseras & Tuki',
-                    subtitle: 'Piezas exclusivas ajustadas para acompañar tu estilo diario.',
-                    badge: null
-                }
-            case 'conjuntos':
-                return {
-                    title: 'Sets & Conjuntos',
-                    subtitle: 'Combinaciones perfectas de cadena y pulsera con precio preferencial.',
-                    badge: '✨ DESCUENTO ESPECIAL'
                 }
             default:
                 return {
                     title: 'Nuestra Colección',
-                    subtitle: 'Define tu flow con cada pieza. Joyería urbana premium de plata italiana 925 y piezas de diseño.',
+                    subtitle: 'Define tu flow con cada pieza. Joyería urbana premium de plata italiana 925, acero inoxidable y relojes.',
                     badge: null
                 }
         }
@@ -301,6 +305,39 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                           })}
                       </TabsList>
                     </div>
+
+                    {/* Nivel 2: Subcategorías por Tipo de Pieza (oculto en Relojes) */}
+                    {activeCategory !== 'relojes' && (
+                      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-6 md:justify-center">
+                        <button
+                          type="button"
+                          onClick={() => handleSubcategoryChange('all')}
+                          className={cn(
+                            'px-3.5 py-2 rounded-full text-xs font-semibold border transition-all whitespace-nowrap min-h-[38px]',
+                            activeSubcategory === 'all'
+                              ? 'bg-white text-zinc-950 border-white shadow-sm'
+                              : 'bg-zinc-950/80 text-zinc-300 border-zinc-800 hover:border-zinc-600'
+                          )}
+                        >
+                          Todos los tipos
+                        </button>
+                        {getAllowedSubcategories(activeCategory).map((sub) => (
+                          <button
+                            key={sub.id}
+                            type="button"
+                            onClick={() => handleSubcategoryChange(sub.id)}
+                            className={cn(
+                              'px-3.5 py-2 rounded-full text-xs font-semibold border transition-all whitespace-nowrap min-h-[38px]',
+                              activeSubcategory === sub.id
+                                ? 'bg-[#D4113C] text-white border-[#D4113C] shadow-sm'
+                                : 'bg-zinc-950/80 text-zinc-300 border-zinc-800 hover:border-[#D4113C]/60 hover:text-white'
+                            )}
+                          >
+                            {sub.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
 
                     {/* ⚡ BARRA COMPACTA DE FILTROS PARA MÓVIL (Grid de 2 columnas en celulares) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row justify-between items-center gap-3 mb-8 w-full">

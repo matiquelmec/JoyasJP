@@ -168,14 +168,15 @@ export async function POST(request: NextRequest) {
     const batchStatements: InStatement[] = [
       {
         sql: `INSERT INTO products (
-          id, name, price, imageUrl, category, dimensions, materials, color, stock, detail, description, specifications, gallery, variants, sku, seo, image_hint, is_priority, is_bundle, slug, discount_price, custom_label
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, name, price, imageUrl, category, subcategory, dimensions, materials, color, stock, detail, description, specifications, gallery, variants, sku, seo, image_hint, is_priority, is_bundle, slug, discount_price, custom_label
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           productId,
           productDataWithoutCode.name.trim(),
           Number(productDataWithoutCode.price),
           imageUrl,
           productDataWithoutCode.category || null,
+          productDataWithoutCode.subcategory || null,
           productDataWithoutCode.dimensions || null,
           productDataWithoutCode.materials || null,
           productDataWithoutCode.color || null,
@@ -304,13 +305,14 @@ export async function PUT(request: NextRequest) {
     const batchStatements: InStatement[] = [
       {
         sql: `UPDATE products SET 
-          name = ?, price = ?, imageUrl = ?, category = ?, dimensions = ?, materials = ?, color = ?, stock = ?, detail = ?, description = ?, specifications = ?, gallery = ?, variants = ?, sku = ?, seo = ?, image_hint = ?, is_priority = ?, is_bundle = ?, slug = ?, discount_price = ?, custom_label = ?, updated_at = CURRENT_TIMESTAMP
+          name = ?, price = ?, imageUrl = ?, category = ?, subcategory = ?, dimensions = ?, materials = ?, color = ?, stock = ?, detail = ?, description = ?, specifications = ?, gallery = ?, variants = ?, sku = ?, seo = ?, image_hint = ?, is_priority = ?, is_bundle = ?, slug = ?, discount_price = ?, custom_label = ?, updated_at = CURRENT_TIMESTAMP
           WHERE id = ?`,
         args: [
           productData.name.trim(),
           Number(productData.price),
           productData.imageUrl || null,
           productData.category || null,
+          productData.subcategory || null,
           productData.dimensions || null,
           productData.materials || null,
           productData.color || null,

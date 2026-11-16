@@ -9,11 +9,13 @@ import type { Product } from '@/lib/types'
 interface RelatedProductsProps {
   currentProductId: string
   category: string
+  subcategory?: string
 }
 
 export function RelatedProducts({
   currentProductId,
   category,
+  subcategory,
 }: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [otherProducts, setOtherProducts] = useState<Product[]>([])
@@ -32,7 +34,12 @@ export function RelatedProducts({
         setLoading(true)
         setError(null)
         
-        const response = await fetch(`/api/products/related?category=${encodeURIComponent(category)}&id=${encodeURIComponent(currentProductId)}`)
+        const params = new URLSearchParams({
+          category,
+          id: currentProductId,
+        })
+        if (subcategory) params.set('subcategory', subcategory)
+        const response = await fetch(`/api/products/related?${params.toString()}`)
         
         if (!response.ok) {
           throw new Error('Failed to fetch related products from API')
@@ -69,7 +76,7 @@ export function RelatedProducts({
     }
 
     fetchProducts()
-  }, [currentProductId, category])
+  }, [currentProductId, category, subcategory])
 
   if (loading) {
     return (

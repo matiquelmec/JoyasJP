@@ -40,6 +40,7 @@ export interface Product {
   imageUrl: string // Frontend property (camelCase)
   slug?: string // SEO-friendly URL
   category: string
+  subcategory?: string
   stock: number
   created_at?: string
   updated_at?: string
@@ -75,6 +76,7 @@ export interface DatabaseProduct {
   imageUrl?: string  // Some legacies might use this
   slug?: string
   category: string
+  subcategory?: string
   stock: number
   created_at?: string
   updated_at?: string
@@ -98,6 +100,7 @@ export interface DatabaseProduct {
 
 export interface ProductFilters {
   category?: string
+  subcategory?: string
   priceMin?: number
   priceMax?: number
   inStock?: boolean

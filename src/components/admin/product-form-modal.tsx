@@ -23,6 +23,7 @@ import {
   formatSpecificationsText,
   getSpecTemplateForCategory,
 } from '@/lib/product-seo'
+import { getAllowedSubcategories } from '@/lib/taxonomy'
 
 interface ProductFormModalProps {
   mode: 'create' | 'edit'
@@ -47,6 +48,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
     code: '',
     price: '',
     category: '',
+    subcategory: '',
     description: '',
     imageUrl: '',
     gallery: [] as string[],
@@ -97,6 +99,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         code: productCode,
         price: product.price?.toString() || '',
         category: product.category || '',
+        subcategory: product.subcategory || '',
         description: product.description || '',
         imageUrl: product.imageUrl || '',
         gallery: Array.isArray(product.gallery) ? product.gallery : (product.imageUrl ? [product.imageUrl] : []),
@@ -121,6 +124,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         code: '',
         price: '',
         category: '',
+        subcategory: '',
         description: '',
         imageUrl: '',
         gallery: [],
@@ -221,6 +225,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
         sku: formData.code.trim() || null,
         price: parseFloat(formData.price),
         category: formData.category,
+        subcategory: formData.category === 'relojes' ? null : (formData.subcategory || null),
         description: formData.description || null,
         imageUrl: formData.imageUrl || (formData.gallery.length > 0 ? formData.gallery[0] : null),
         gallery: formData.gallery,
@@ -466,22 +471,56 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
             </div>
           )}
 
-          <div>
-            <Label htmlFor="category">Categoría *</Label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-              required
-              className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-            >
-              <option value="">Selecciona una categoría</option>
-              {productConfig.categories.map(cat => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="category">Categoría Principal *</Label>
+              <select
+                id="category"
+                value={formData.category}
+                onChange={(e) => {
+                  const nextCat = e.target.value
+                  const catObj = productConfig.categories.find((c) => c.id === nextCat)
+                  setFormData((prev) => ({
+                    ...prev,
+                    category: nextCat,
+                    subcategory: nextCat === 'relojes' ? '' : prev.subcategory,
+                    materials: prev.materials.trim() ? prev.materials : (catObj?.defaultMaterial || ''),
+                  }))
+                }}
+                required
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
+              >
+                <option value="">Selecciona categoría principal</option>
+                {productConfig.categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <Label htmlFor="subcategory">
+                Subcategoría (Tipo de Pieza) {formData.category === 'relojes' ? '(No aplica)' : '*'}
+              </Label>
+              <select
+                id="subcategory"
+                value={formData.subcategory}
+                onChange={(e) => setFormData((prev) => ({ ...prev, subcategory: e.target.value }))}
+                disabled={formData.category === 'relojes'}
+                required={formData.category !== 'relojes' && formData.category !== ''}
+                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 disabled:bg-slate-100 disabled:text-slate-400"
+              >
+                <option value="">
+                  {formData.category === 'relojes' ? 'Sin subcategoría (Relojes)' : 'Selecciona tipo de pieza'}
                 </option>
-              ))}
-            </select>
+                {getAllowedSubcategories(formData.category).map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <MultiImageUpload
@@ -560,7 +599,7 @@ export function ProductFormModal({ mode, product, onSave, trigger }: ProductForm
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const template = getSpecTemplateForCategory(formData.category)
+                  const template = getSpecTemplateForCategory(formData.subcategory || formData.category)
                   setFormData((prev) => ({
                     ...prev,
                     specifications: prev.specifications.trim()

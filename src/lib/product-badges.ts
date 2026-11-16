@@ -17,7 +17,7 @@ export interface ProductBadge {
  * 4. SET EXCLUSIVO (is_bundle o categoría conjuntos)
  */
 export function getProductBadge(
-  product: Pick<Product, 'stock' | 'price' | 'discount_price' | 'custom_label' | 'is_bundle' | 'category'>
+  product: Pick<Product, 'stock' | 'price' | 'discount_price' | 'custom_label' | 'is_bundle' | 'category' | 'subcategory'>
 ): ProductBadge | null {
   if (product.stock <= 0) {
     return {
@@ -47,7 +47,7 @@ export function getProductBadge(
     }
   }
 
-  if (product.is_bundle || product.category === 'conjuntos') {
+  if (product.is_bundle || product.category === 'conjuntos' || product.subcategory === 'conjuntos') {
     return {
       text: 'SET EXCLUSIVO',
       variant: 'bundle',

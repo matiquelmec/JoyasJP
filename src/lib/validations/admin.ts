@@ -67,6 +67,7 @@ const baseProductFields = {
   ),
   stock: z.coerce.number().int().min(0).default(0),
   category: z.string().trim().min(1, 'La categoría es obligatoria'),
+  subcategory: z.string().trim().nullable().optional(),
   imageUrl: z.string().nullable().optional(),
   dimensions: z.string().nullable().optional(),
   materials: z.string().nullable().optional(),
@@ -173,6 +174,7 @@ export const adminImageUploadSchema = z.object({
 
 export const relatedProductsQuerySchema = z.object({
   category: z.string().trim().min(1, 'El parámetro category es obligatorio'),
+  subcategory: z.string().trim().optional().default(''),
   id: z.string().trim().optional().default(''),
 })
 

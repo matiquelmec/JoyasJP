@@ -5,6 +5,7 @@ import { normalizeColor } from '@/lib/utils'
 interface UseMemoizedProductsProps {
   products: Product[]
   category: string
+  subcategory?: string
   color: string
   searchTerm?: string
 }
@@ -12,15 +13,21 @@ interface UseMemoizedProductsProps {
 export function useMemoizedProducts({
   products,
   category,
+  subcategory = 'all',
   color,
   searchTerm = ''
 }: UseMemoizedProductsProps) {
   return useMemo(() => {
     return products.filter((product) => {
-      // Filtro por categoría
+      // Filtro por categoría principal
       const matchesCategory = 
         category === 'all' || 
         product.category?.toLowerCase() === category.toLowerCase()
+
+      // Filtro por subcategoría (tipo de pieza)
+      const matchesSubcategory =
+        subcategory === 'all' ||
+        (product.subcategory || '').toLowerCase() === subcategory.toLowerCase()
 
       // Filtro por color - comparación exacta después de normalización
       const matchesColor = 
@@ -34,9 +41,9 @@ export function useMemoizedProducts({
         product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.materials?.toLowerCase().includes(searchTerm.toLowerCase())
 
-      return matchesCategory && matchesColor && matchesSearch
+      return matchesCategory && matchesSubcategory && matchesColor && matchesSearch
     })
-  }, [products, category, color, searchTerm])
+  }, [products, category, subcategory, color, searchTerm])
 }
 
 // Hook para estadísticas memoizadas

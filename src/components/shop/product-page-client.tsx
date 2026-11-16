@@ -8,6 +8,7 @@ import type { Product } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { siteConfig } from '@/lib/config'
 import { parseProductSpecifications } from '@/lib/product-seo'
+import { getCategoryName, getSubcategoryName } from '@/lib/taxonomy'
 
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 import { AddToWishlistButton } from '@/components/shop/add-to-wishlist-button'
@@ -83,10 +84,15 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
       <div className="space-y-8">
         {/* Header */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Badge className="capitalize">
-              {selectedProduct.category}
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge>
+              {getCategoryName(selectedProduct.category)}
             </Badge>
+            {selectedProduct.subcategory && (
+              <Badge variant="outline">
+                {getSubcategoryName(selectedProduct.subcategory)}
+              </Badge>
+            )}
           </div>
 
           <h1 className="text-3xl lg:text-4xl font-headline font-bold">

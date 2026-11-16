@@ -22,70 +22,50 @@ interface BentoCollection {
 const BENTO_COLLECTIONS: BentoCollection[] = [
   {
     id: 'plata-925',
-    title: 'Plata Italy 925',
+    title: 'Plata Italiana 925',
     subtitle: 'Ley 925 certificada, brillo milanés y piezas de herencia.',
     href: '/productos?categoria=plata-925',
     badge: 'Colección Insignia',
-    spanClass: 'md:col-span-2 min-h-[78vh] md:min-h-[86vh]',
-    matchCategories: ['Plata Italy 925', 'plata-925'],
+    spanClass: 'md:col-span-3 min-h-[74vh] md:min-h-[82vh]',
+    matchCategories: ['plata-925', 'Plata Italiana 925', 'Plata Italy 925'],
     matchMaterial: '925',
-  },
-  {
-    id: 'cadenas',
-    title: 'Cadenas & Cubanas',
-    subtitle: 'Eslabones sólidos de 45 a 60 cm en acero y plata.',
-    href: '/productos?categoria=cadenas',
-    badge: 'Más Buscados',
-    spanClass: 'md:col-span-2 min-h-[78vh] md:min-h-[86vh]',
-    matchCategories: ['Cadenas', 'cadenas'],
-  },
-  {
-    id: 'dijes',
-    title: 'Dijes & Colgantes',
-    subtitle: 'Cruces, medallas y símbolos con carácter.',
-    href: '/productos?categoria=dijes',
-    spanClass: 'md:col-span-1 min-h-[68vh] md:min-h-[72vh]',
-    matchCategories: ['Dijes', 'Colgantes', 'Dijes / Colgantes', 'dijes'],
-  },
-  {
-    id: 'pulseras',
-    title: 'Pulseras',
-    subtitle: 'Esclavas, figaro y tejido italiano.',
-    href: '/productos?categoria=pulseras',
-    spanClass: 'md:col-span-1 min-h-[68vh] md:min-h-[72vh]',
-    matchCategories: ['Pulseras', 'pulseras'],
-  },
-  {
-    id: 'aros',
-    title: 'Aros & Argollas',
-    subtitle: 'Diseños minimalistas y de alto impacto.',
-    href: '/productos?categoria=aros',
-    spanClass: 'md:col-span-1 min-h-[68vh] md:min-h-[72vh]',
-    matchCategories: ['Aros', 'aros'],
-  },
-  {
-    id: 'sets',
-    title: 'Sets & Conjuntos',
-    subtitle: 'Combinaciones curadas listas para regalar.',
-    href: '/productos?categoria=conjuntos',
-    spanClass: 'md:col-span-1 min-h-[68vh] md:min-h-[72vh]',
-    matchCategories: ['Sets', 'Conjuntos', 'Sets & Conjuntos', 'conjuntos'],
   },
   {
     id: 'relojes',
     title: 'Relojes',
     subtitle: 'Relojes urbanos de alto impacto y precisión.',
     href: '/productos?categoria=relojes',
-    spanClass: 'md:col-span-2 min-h-[72vh] md:min-h-[76vh]',
-    matchCategories: ['Relojes', 'relojes'],
+    badge: 'Edición Casio',
+    spanClass: 'md:col-span-3 min-h-[74vh] md:min-h-[82vh]',
+    matchCategories: ['relojes', 'Relojes'],
+  },
+  {
+    id: 'acero-inoxidable',
+    title: 'Acero Inoxidable',
+    subtitle: 'Acero quirúrgico 316L en cadenas, dijes, pulseras y aros.',
+    href: '/productos?categoria=acero-inoxidable',
+    badge: 'Más Buscados',
+    spanClass: 'md:col-span-2 min-h-[64vh] md:min-h-[72vh]',
+    matchCategories: ['acero-inoxidable', 'Acero Inoxidable'],
+    matchMaterial: 'acero',
   },
   {
     id: 'enchapado-plata',
     title: 'Enchapado de Plata',
     subtitle: 'Piezas con baño de plata de brillo duradero.',
     href: '/productos?categoria=enchapado-plata',
-    spanClass: 'md:col-span-2 min-h-[72vh] md:min-h-[76vh]',
-    matchCategories: ['Enchapado de Plata', 'enchapado-plata'],
+    spanClass: 'md:col-span-2 min-h-[64vh] md:min-h-[72vh]',
+    matchCategories: ['enchapado-plata', 'Enchapado de Plata'],
+    matchMaterial: 'enchap',
+  },
+  {
+    id: 'aleacion-zinc',
+    title: 'Aleación de Zinc',
+    subtitle: 'Dijes, cadenas y conjuntos statement con actitud urbana.',
+    href: '/productos?categoria=aleacion-zinc',
+    spanClass: 'md:col-span-2 min-h-[64vh] md:min-h-[72vh]',
+    matchCategories: ['aleacion-zinc', 'Aleación de Zinc'],
+    matchMaterial: 'aleaci',
   },
 ];
 
@@ -152,7 +132,7 @@ export function CategoryBentoGrid({ products, customCovers }: CategoryBentoGridP
       </div>
 
       {/* Full-Bleed Edge-to-Edge Editorial Panels (100% Viewport Width) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-0.5 bg-white/10 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-0.5 bg-white/10 w-full">
         {BENTO_COLLECTIONS.map((col) => {
           const imageUrl = resolveCollectionImage(col, products, customCovers);
           return (

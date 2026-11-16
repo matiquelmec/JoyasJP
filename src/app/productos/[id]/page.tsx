@@ -11,6 +11,7 @@ import { ProductPageClient } from '@/components/shop/product-page-client'
 import { ProductSchema } from '@/components/seo/ProductSchema'
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 import { buildProductSeo } from '@/lib/product-seo'
+import { getCategoryName, getSubcategoryName } from '@/lib/taxonomy'
 
 interface ProductPageProps {
   params: {
@@ -116,16 +117,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <div className="w-full px-4 sm:px-8 lg:px-16 pt-28 pb-16 max-w-[1600px] mx-auto">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
+        <nav className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-8">
           <Link
             href="/productos"
             className="flex items-center gap-2 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Volver a la tienda
+            Tienda
           </Link>
           <span>/</span>
-          <span className="text-foreground">{product.name}</span>
+          <Link
+            href={`/productos?categoria=${encodeURIComponent(product.category)}`}
+            className="hover:text-primary transition-colors"
+          >
+            {getCategoryName(product.category)}
+          </Link>
+          {product.subcategory && (
+            <>
+              <span>/</span>
+              <Link
+                href={`/productos?categoria=${encodeURIComponent(product.category)}&subcategoria=${encodeURIComponent(product.subcategory)}`}
+                className="hover:text-primary transition-colors"
+              >
+                {getSubcategoryName(product.subcategory)}
+              </Link>
+            </>
+          )}
+          <span>/</span>
+          <span className="text-foreground truncate max-w-[240px] sm:max-w-none">{product.name}</span>
         </nav>
 
         {/* Main Product Section */}
@@ -177,6 +196,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <RelatedProducts
           currentProductId={product.id}
           category={product.category}
+          subcategory={product.subcategory}
         />
       </div>
     </div>

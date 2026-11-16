@@ -132,6 +132,7 @@ function mapDatabaseProductToProduct(dbProduct: any): Product {
         price: Number(dbProduct.price),
         imageUrl: imageUrl,
         category: dbProduct.category,
+        subcategory: dbProduct.subcategory || undefined,
         dimensions: dbProduct.dimensions || undefined,
         materials: dbProduct.materials || undefined,
         color: dbProduct.color || undefined,
@@ -465,10 +466,12 @@ export class ProductService {
     static async getRelatedProducts(
         currentProductId: string,
         category: string,
-        limit: number = 4
+        limit: number = 4,
+        subcategory?: string
     ): Promise<Product[]> {
         try {
             const cleanCategory = (category || '').trim()
+            const cleanSub = (subcategory || '').trim().toLowerCase()
             const { rows } = await turso.execute({
                 sql: "SELECT * FROM products WHERE LOWER(TRIM(category)) = LOWER(TRIM(?)) AND id != ? AND (deleted_at IS NULL OR deleted_at = '')",
                 args: [cleanCategory, currentProductId]
@@ -484,8 +487,16 @@ export class ProductService {
             const mapped = rows.map(mapDatabaseProductToProduct)
             const resolved = await this.resolveBundleStocks(mapped)
 
-            return resolved
-                .filter(p => p.stock > 0)
+            const inStock = resolved.filter(p => p.stock > 0)
+            if (cleanSub) {
+                inStock.sort((a, b) => {
+                    const aMatch = (a.subcategory || '').trim().toLowerCase() === cleanSub ? 1 : 0
+                    const bMatch = (b.subcategory || '').trim().toLowerCase() === cleanSub ? 1 : 0
+                    return bMatch - aMatch
+                })
+            }
+
+            return inStock
                 .slice(0, limit)
                 .map(product => {
                     if (product.color) {

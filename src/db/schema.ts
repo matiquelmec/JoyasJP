@@ -8,6 +8,7 @@ export const products = sqliteTable('products', {
   discount_price: real('discount_price'),
   stock: integer('stock').notNull().default(0),
   category: text('category').notNull(),
+  subcategory: text('subcategory'),
   imageUrl: text('imageUrl'),
   dimensions: text('dimensions'),
   materials: text('materials'),
