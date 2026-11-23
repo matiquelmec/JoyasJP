@@ -1,22 +1,74 @@
 {
-  "name": "Joyas JP | Joyer�a Urbana & Plata Fina 925",
+  "id": "/",
+  "name": "Joyas JP | Joyería Urbana & Plata Italiana 925",
   "short_name": "Joyas JP",
-  "description": "Joyas de alta gama en Plata Fina de Mil�n 925 y Oro. Dise�os macizos con despacho express en Punta Arenas y todo Chile.",
+  "description": "Joyería urbana premium en Plata Italiana Ley 925, acero quirúrgico 316L y relojes Casio. Envíos a todo Chile.",
+  "lang": "es-CL",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#09090B",
   "theme_color": "#09090B",
+  "categories": ["shopping", "lifestyle"],
   "icons": [
     {
       "src": "/brand/favicon_192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/brand/favicon_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/favicon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Plata Italiana 925",
+      "short_name": "Plata 925",
+      "description": "Explorar cadenas y piezas de Plata Italiana Ley 925",
+      "url": "/productos?categoria=plata-925",
+      "icons": [{ "src": "/brand/favicon_192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Catálogo Completo",
+      "short_name": "Catálogo",
+      "description": "Ver toda la colección de Joyas JP",
+      "url": "/productos",
+      "icons": [{ "src": "/brand/favicon_192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Relojes",
+      "short_name": "Relojes",
+      "description": "Prestigio atemporal en tu muñeca",
+      "url": "/productos?categoria=relojes",
+      "icons": [{ "src": "/brand/favicon_192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Mis Favoritos",
+      "short_name": "Favoritos",
+      "description": "Piezas guardadas en tu lista de deseos",
+      "url": "/favoritos",
+      "icons": [{ "src": "/brand/favicon_192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/brand/joyasjp_og_image_1200x630.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Joyas JP — Joyería Urbana & Plata Italiana 925"
     }
   ]
 }

@@ -89,6 +89,11 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     manifest: '/manifest.webmanifest',
+    appleWebApp: {
+      capable: true,
+      title: storeName,
+      statusBarStyle: 'black-translucent',
+    },
     openGraph: {
       type: 'website',
       locale: 'es_CL',
@@ -144,8 +149,8 @@ export async function generateMetadata(): Promise<Metadata> {
 // ⚡ DYNAMIC IMPORT para componente pesado
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0a0a0a' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: '(prefers-color-scheme: light)', color: '#09090B' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090B' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -196,8 +201,8 @@ export default async function RootLayout({
               'priceRange': '$$',
               'address': {
                 '@type': 'PostalAddress',
-                'addressLocality': 'Punta Arenas',
-                'addressRegion': 'Magallanes y de la Antártica Chilena',
+                'addressLocality': 'Santiago',
+                'addressRegion': 'Región Metropolitana de Santiago',
                 'addressCountry': 'CL'
               },
               'sameAs': [
