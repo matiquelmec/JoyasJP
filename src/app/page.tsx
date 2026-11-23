@@ -11,6 +11,7 @@ import type { Product } from '@/lib/types'
 import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
 import { CategoryBentoGrid } from '@/components/shop/category-bento-grid'
 import { StyleFinderAndCare } from '@/components/shop/style-finder-and-care'
+import { BlackFridayShowcase } from '@/components/shop/black-friday-showcase'
 import { buildCatalogAvailabilityMap } from '@/lib/taxonomy'
 
 export const revalidate = 60 // Revalidación ISR de 60s + purga en 0ms vía revalidatePath
@@ -189,6 +190,9 @@ export default function Home() {
 
       {/* Spacer for fixed video */}
       <div className="h-screen"></div>
+
+      {/* Campaña Editorial Black Friday 2026 (auto-oculta tras el 30 de nov) */}
+      <BlackFridayShowcase />
 
       {/* Bento Grid de Colecciones (Imágenes dinámicas desde el catálogo / admin) */}
       <div className="relative z-10 bg-[#09090B]">

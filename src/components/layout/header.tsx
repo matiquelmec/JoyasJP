@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sheet'
 import { useWishlist } from '@/hooks/use-wishlist'
 import { navLinks, productConfig } from '@/lib/config'
+import { BLACK_FRIDAY_CONFIG, getBlackFridayState, type BlackFridaySnapshot } from '@/lib/black-friday'
 import { cn } from '@/lib/utils'
 
 const ANNOUNCEMENTS = [
@@ -30,8 +31,34 @@ export function Header() {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [bfSnapshot, setBfSnapshot] = useState<BlackFridaySnapshot | null>(null)
+  const [bfBarDismissed, setBfBarDismissed] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const { items: wishlistItems } = useWishlist()
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('joyasjp_bf2026_bar_closed') === '1') {
+        setBfBarDismissed(true)
+      }
+    } catch {
+      // Ignore storage errors
+    }
+    setBfSnapshot(getBlackFridayState())
+    const timer = setInterval(() => {
+      setBfSnapshot(getBlackFridayState())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const handleDismissBfBar = () => {
+    setBfBarDismissed(true)
+    try {
+      sessionStorage.setItem('joyasjp_bf2026_bar_closed', '1')
+    } catch {
+      // Ignore storage errors
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,12 +119,39 @@ export function Header() {
           : 'bg-gradient-to-b from-[#09090B]/80 to-transparent backdrop-blur-[2px] border-b border-transparent'
       )}
     >
-      {/* Barra de Anuncios Dinámica */}
-      <div className="bg-[#121214]/95 border-b border-white/10 px-4 py-1.5 text-center">
-        <p className="text-[11px] sm:text-xs font-medium tracking-wider text-[#C4C9D2] truncate">
-          {ANNOUNCEMENTS[announcementIndex]}
-        </p>
-      </div>
+      {/* Barra de Anuncios Dinámica (Modo Black Friday automático en soon/live) */}
+      {bfSnapshot && bfSnapshot.state !== 'over' && !bfBarDismissed ? (
+        <div
+          role="region"
+          aria-label="Anuncio Black Friday 2026"
+          className="relative flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-[#D4113C] px-10 py-2 text-center text-xs sm:text-sm font-bold text-white"
+        >
+          <span>
+            Black Friday 2026 · {BLACK_FRIDAY_CONFIG.offerLabel}
+          </span>
+          <span className="tabular-nums text-white/95">{bfSnapshot.formattedShort}</span>
+          <Link
+            href={bfSnapshot.state === 'live' ? '/productos?ofertas=true' : '/productos'}
+            className="rounded-full bg-white px-3 py-0.5 text-xs font-bold text-[#09090B] transition-opacity hover:opacity-90"
+          >
+            Ver ofertas
+          </Link>
+          <button
+            type="button"
+            onClick={handleDismissBfBar}
+            aria-label="Cerrar anuncio Black Friday"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full text-white/90 hover:bg-black/15 hover:text-white"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      ) : (
+        <div className="bg-[#121214]/95 border-b border-white/10 px-4 py-1.5 text-center">
+          <p className="text-[11px] sm:text-xs font-medium tracking-wider text-[#C4C9D2] truncate">
+            {ANNOUNCEMENTS[announcementIndex]}
+          </p>
+        </div>
+      )}
 
       <div className="container mx-auto flex h-16 md:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center shrink-0">

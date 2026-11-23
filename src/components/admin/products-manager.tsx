@@ -105,10 +105,54 @@ export function ProductsManager() {
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null)
+  const [bfCategory, setBfCategory] = useState<string>('all')
+  const [bfPercent, setBfPercent] = useState<number>(20)
+  const [bfLoading, setBfLoading] = useState(false)
   const [recentlyDeleted, setRecentlyDeleted] = useState<{
     product: Product
     timestamp: number
   } | null>(null)
+
+  const handleBlackFridayCampaign = async (action: 'apply' | 'restore') => {
+    const scopeLabel = bfCategory === 'all' ? 'todo el catálogo' : getCategoryName(bfCategory)
+    const confirmMsg =
+      action === 'apply'
+        ? `¿Aplicar ${bfPercent}% de descuento Black Friday a ${scopeLabel}?`
+        : `¿Restaurar los precios normales (quitar ofertas) en ${scopeLabel}?`
+
+    if (!window.confirm(confirmMsg)) return
+
+    setBfLoading(true)
+    try {
+      const res = await fetch('/api/admin/black-friday', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          action === 'apply'
+            ? { action: 'apply', category: bfCategory, discountPercent: bfPercent }
+            : { action: 'restore', category: bfCategory }
+        ),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'No se pudo actualizar la campaña')
+
+      toast.success(
+        action === 'apply'
+          ? `Descuento -${bfPercent}% aplicado a ${data.updatedCount} productos`
+          : `Precios normales restaurados en ${data.updatedCount} productos`,
+        {
+          description: 'Catálogo web y Google Shopping actualizados al instante.',
+        }
+      )
+      await loadProducts(true)
+    } catch (err: any) {
+      toast.error('Error en campaña Black Friday', {
+        description: err?.message || 'Ocurrió un error inesperado.',
+      })
+    } finally {
+      setBfLoading(false)
+    }
+  }
 
   const loadProducts = useCallback(async (silent = false) => {
     if (!silent) setLoading(true)
@@ -385,6 +429,75 @@ export function ProductsManager() {
           </Card>
         ))}
       </div>
+
+      {/* Gestor Masivo de Campaña Black Friday 2026 (1-Clic) */}
+      <Card className="border-[#D4113C]/40 bg-[#09090B] text-white shadow-xl overflow-hidden">
+        <CardContent className="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-2">
+              <span className="rounded bg-[#D4113C] px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-white">
+                Black Friday 2026
+              </span>
+              <span className="text-xs font-semibold text-[#C4C9D2]">
+                {products.filter((p) => p.discount_price && p.discount_price < p.price).length} piezas en oferta hoy
+              </span>
+            </div>
+            <p className="text-sm font-bold text-white">
+              Gestor Masivo de Descuentos en 1 Clic (Web + Google Shopping)
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <select
+              aria-label="Categoría para campaña Black Friday"
+              value={bfCategory}
+              onChange={(e) => setBfCategory(e.target.value)}
+              disabled={bfLoading}
+              className="h-10 rounded-lg border border-white/15 bg-[#121214] px-3 text-xs font-semibold text-white"
+            >
+              <option value="all">Todas las categorías</option>
+              {productConfig.categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              aria-label="Porcentaje de descuento Black Friday"
+              value={bfPercent}
+              onChange={(e) => setBfPercent(Number(e.target.value))}
+              disabled={bfLoading}
+              className="h-10 rounded-lg border border-white/15 bg-[#121214] px-3 text-xs font-bold text-white"
+            >
+              {[10, 15, 20, 25, 30, 40].map((pct) => (
+                <option key={pct} value={pct}>
+                  -{pct}% OFF
+                </option>
+              ))}
+            </select>
+
+            <Button
+              type="button"
+              disabled={bfLoading}
+              onClick={() => handleBlackFridayCampaign('apply')}
+              className="h-10 bg-[#D4113C] hover:bg-[#B80E33] text-white font-bold text-xs px-4"
+            >
+              {bfLoading ? 'Aplicando...' : 'Aplicar Oferta'}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={bfLoading}
+              onClick={() => handleBlackFridayCampaign('restore')}
+              className="h-10 border-white/20 bg-transparent text-[#C4C9D2] hover:bg-white/10 hover:text-white font-semibold text-xs px-3.5"
+            >
+              Restaurar Precios
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-slate-200 shadow-xl overflow-hidden bg-white">
         <CardHeader className="bg-slate-950 text-white p-6 border-b border-slate-900">

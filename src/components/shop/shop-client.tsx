@@ -34,6 +34,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const subcategoryParam = searchParams.get('subcategoria') || 'all'
     const materialParam = searchParams.get('material') || 'all'
     const maxPriceParam = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : null
+    const offersParam = searchParams.get('ofertas') === 'true'
 
     const resolvedInitial = resolveCatalogQuery(categoryParam, subcategoryParam)
     const [activeCategory, setActiveCategory] = useState(resolvedInitial.category)
@@ -41,6 +42,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const [activeColor, setActiveColor] = useState('all')
     const [activeMaterial, setActiveMaterial] = useState(materialParam)
     const [maxPriceFilter, setMaxPriceFilter] = useState<number | null>(maxPriceParam)
+    const [onlyOffers, setOnlyOffers] = useState(offersParam)
     const [searchQuery, setSearchQuery] = useState('')
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
@@ -107,7 +109,8 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         setActiveSubcategory(subIsAvailable ? resolved.subcategory : 'all')
         setActiveMaterial(materialParam || 'all')
         setMaxPriceFilter(maxPriceParam && !Number.isNaN(maxPriceParam) ? maxPriceParam : null)
-    }, [categoryParam, subcategoryParam, materialParam, maxPriceParam, initialProducts])
+        setOnlyOffers(offersParam)
+    }, [categoryParam, subcategoryParam, materialParam, maxPriceParam, offersParam, initialProducts])
 
     // Auto-resetear el color si deja de existir en la categoría/subcategoría actual
     useEffect(() => {
@@ -185,12 +188,27 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         router.push(newUrl, { scroll: false })
     }, [pathname, router, searchParams])
 
+    const handleToggleOffers = useCallback((nextValue: boolean) => {
+        setOnlyOffers(nextValue)
+        setVisibleCount(PRODUCTS_PER_PAGE)
+
+        const params = new URLSearchParams(searchParams.toString())
+        if (nextValue) {
+            params.set('ofertas', 'true')
+        } else {
+            params.delete('ofertas')
+        }
+        const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+        router.push(newUrl, { scroll: false })
+    }, [pathname, router, searchParams])
+
     const handleClearAllFilters = useCallback(() => {
         setActiveCategory('all')
         setActiveSubcategory('all')
         setActiveColor('all')
         setActiveMaterial('all')
         setMaxPriceFilter(null)
+        setOnlyOffers(false)
         setSearchQuery('')
         setVisibleCount(PRODUCTS_PER_PAGE)
         router.push(pathname, { scroll: false })
@@ -300,8 +318,22 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
             list = list.filter(p => (p.discount_price || p.price) <= maxPriceFilter)
         }
 
+        if (onlyOffers) {
+            list = list.filter(
+                p => Boolean(p.discount_price && p.discount_price > 0 && p.discount_price < p.price)
+            )
+        }
+
         return list
-    }, [filteredProducts, activeCategory, activeMaterial, maxPriceFilter])
+    }, [filteredProducts, activeCategory, activeMaterial, maxPriceFilter, onlyOffers])
+
+    const activeOffersCount = useMemo(
+        () =>
+            initialProducts.filter(
+                (p) => Boolean(p.discount_price && p.discount_price > 0 && p.discount_price < p.price)
+            ).length,
+        [initialProducts]
+    )
 
     // Productos visibles (paginación)
     const visibleProducts = useMemo(() => finalFilteredProducts.slice(0, visibleCount), [finalFilteredProducts, visibleCount])
@@ -461,8 +493,22 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                             />
                         </div>
 
-                        {/* Contenedor secundario: Selector de presupuesto, orden y filtro de color */}
+                        {/* Contenedor secundario: Ofertas Black Friday, presupuesto, orden y color */}
                         <div className="grid grid-cols-1 sm:flex sm:flex-row gap-3 w-full md:w-auto items-center">
+                            {activeOffersCount > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleToggleOffers(!onlyOffers)}
+                                    className={cn(
+                                        'h-11 px-4 rounded-lg border text-xs font-bold tracking-wide transition-all whitespace-nowrap flex items-center justify-center gap-1.5',
+                                        onlyOffers
+                                            ? 'bg-[#D4113C] text-white border-[#D4113C] shadow-[0_0_16px_rgba(212,17,60,0.45)]'
+                                            : 'bg-[#D4113C]/10 text-[#F43F5E] border-[#F43F5E]/45 hover:bg-[#D4113C]/20 hover:text-white'
+                                    )}
+                                >
+                                    <span>Black Friday ({activeOffersCount})</span>
+                                </button>
+                            )}
                             {/* Selector de Presupuesto */}
                             <div className="w-full sm:w-auto">
                                 <select
@@ -509,8 +555,18 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                     <Separator className="mb-12" />
 
                     {/* Chips de filtros activos */}
-                    {(maxPriceFilter || activeColor !== 'all' || searchQuery.trim() !== '') && (
+                    {(onlyOffers || maxPriceFilter || activeColor !== 'all' || searchQuery.trim() !== '') && (
                         <div className="flex flex-wrap items-center gap-2 mb-6">
+                            {onlyOffers && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleToggleOffers(false)}
+                                    className="inline-flex items-center gap-1.5 rounded-full bg-[#D4113C] border border-[#D4113C] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#B80E33] transition-colors"
+                                >
+                                    <span>Solo ofertas Black Friday</span>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            )}
                             {maxPriceFilter && (
                                 <button
                                     type="button"
