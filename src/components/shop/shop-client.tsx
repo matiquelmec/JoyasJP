@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState, useEffect } from 'react'
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import LazyProductCard from '@/components/shop/lazy-product-card'
@@ -44,6 +44,23 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const [searchQuery, setSearchQuery] = useState('')
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
+    const tabsListRef = useRef<HTMLDivElement>(null)
+
+    // Auto-centrar la pestaña de categoría activa en la barra horizontal móvil
+    useEffect(() => {
+        const container = tabsListRef.current
+        if (!container) return
+        const activeTab = container.querySelector<HTMLElement>(
+            `[data-category-tab="${activeCategory}"]`
+        )
+        if (activeTab) {
+            activeTab.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest',
+            })
+        }
+    }, [activeCategory])
 
     // Categorías y subcategorías dinámicas con productos reales (0ms en memoria)
     const availableCategories = useMemo(
@@ -363,7 +380,10 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                       {/* Fade edge derecho indicando scroll */}
                       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none md:hidden" />
                       
-                      <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center md:flex-wrap gap-1.5 shadow-2xl backdrop-blur-md">
+                      <TabsList
+                          ref={tabsListRef}
+                          className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center md:flex-wrap gap-1.5 shadow-2xl backdrop-blur-md"
+                      >
                           {availableCategories.map((catId) => {
                               const isVip = catId === 'plata-925'
                               const catObj = productConfig.categories.find(c => c.id === catId)
@@ -374,12 +394,13 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                                   <TabsTrigger
                                       key={catId}
                                       value={catId}
+                                      data-category-tab={catId}
                                       asChild
                                       className={cn(
                                           "min-h-[44px] px-4 py-2.5 text-xs font-bold tracking-wider transition-all duration-300 rounded-lg flex-shrink-0 flex items-center gap-1.5 cursor-pointer select-none",
                                           isVip 
-                                              ? "data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 border border-slate-400/40 text-slate-300 shadow-[0_0_15px_rgba(226,232,240,0.2)]" 
-                                              : "data-[state=active]:bg-[#D4113C] data-[state=active]:text-white"
+                                              ? "text-zinc-300 hover:text-white data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-200 data-[state=active]:to-slate-400 data-[state=active]:text-slate-950 data-[state=active]:border data-[state=active]:border-slate-300/60 data-[state=active]:shadow-[0_0_15px_rgba(226,232,240,0.25)]" 
+                                              : "text-zinc-400 hover:text-white data-[state=active]:bg-[#D4113C] data-[state=active]:text-white"
                                       )}
                                   >
                                       <Link href={targetHref} scroll={false}>
