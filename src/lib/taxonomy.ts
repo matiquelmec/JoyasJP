@@ -44,6 +44,84 @@ export function getAllowedSubcategories(categoryId: string | null | undefined) {
   return [...productConfig.subcategories]
 }
 
+export interface CatalogProductLike {
+  category?: string | null
+  subcategory?: string | null
+  color?: string | null
+}
+
+export interface CatalogAvailabilityMap {
+  categories: MainCategoryId[]
+  subcategoriesByCategory: Record<string, SubcategoryId[]>
+}
+
+/**
+ * Devuelve solo las categorías principales que tienen al menos 1 producto activo.
+ */
+export function getAvailableCategoriesForProducts(products: CatalogProductLike[]) {
+  const present = new Set<string>()
+  for (const product of products) {
+    const cat = (product.category || '').trim().toLowerCase()
+    if (isMainCategoryId(cat)) {
+      present.add(cat)
+    }
+  }
+  return productConfig.categories.filter((c) => present.has(c.id))
+}
+
+/**
+ * Devuelve solo las subcategorías que tienen al menos 1 producto activo
+ * dentro de la categoría seleccionada ('all' evalúa todo el catálogo).
+ */
+export function getAvailableSubcategoriesForCategory(
+  products: CatalogProductLike[],
+  categoryId: string | null | undefined
+) {
+  const cleanCategory = (categoryId || 'all').trim().toLowerCase()
+  if (cleanCategory === 'relojes') {
+    return []
+  }
+
+  const allowed = getAllowedSubcategories(cleanCategory)
+  const present = new Set<string>()
+
+  for (const product of products) {
+    const prodCat = (product.category || '').trim().toLowerCase()
+    const prodSub = (product.subcategory || '').trim().toLowerCase()
+    if (!isSubcategoryId(prodSub)) continue
+
+    if (cleanCategory === 'all' || prodCat === cleanCategory) {
+      present.add(prodSub)
+    }
+  }
+
+  return allowed.filter((sub) => present.has(sub.id))
+}
+
+/**
+ * Construye un mapa ligero de disponibilidad por categoría y subcategoría
+ * ideal para pasar desde Server Components (ej. Home) a Client Components.
+ */
+export function buildCatalogAvailabilityMap(
+  products: CatalogProductLike[]
+): CatalogAvailabilityMap {
+  const availableCategories = getAvailableCategoriesForProducts(products).map((c) => c.id)
+  const subcategoriesByCategory: Record<string, SubcategoryId[]> = {
+    all: getAvailableSubcategoriesForCategory(products, 'all').map((s) => s.id),
+  }
+
+  for (const catId of availableCategories) {
+    subcategoriesByCategory[catId] = getAvailableSubcategoriesForCategory(products, catId).map(
+      (s) => s.id
+    )
+  }
+
+  return {
+    categories: availableCategories,
+    subcategoriesByCategory,
+  }
+}
+
 /**
  * Resuelve parámetros de URL del catálogo manteniendo retrocompatibilidad con enlaces antiguos
  * (ej. /productos?categoria=cadenas -> category='all', subcategory='cadenas').

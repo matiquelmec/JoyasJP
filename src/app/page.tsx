@@ -11,6 +11,7 @@ import type { Product } from '@/lib/types'
 import { SilverShowcaseCarousel } from '@/components/shop/silver-showcase-carousel'
 import { CategoryBentoGrid } from '@/components/shop/category-bento-grid'
 import { StyleFinderAndCare } from '@/components/shop/style-finder-and-care'
+import { buildCatalogAvailabilityMap } from '@/lib/taxonomy'
 
 export const revalidate = 60 // Revalidación ISR de 60s + purga en 0ms vía revalidatePath
 
@@ -196,7 +197,9 @@ export default function Home() {
 
       {/* Asistente de Estilo en 3 Pasos + Guía de Largos y Cuidado Plata 925 */}
       <div className="relative z-10 bg-[#09090B]">
-        <StyleFinderAndCare />
+        <Suspense fallback={<StyleFinderAndCare />}>
+          <StyleFinderSection />
+        </Suspense>
       </div>
 
       {/* 🇮🇹 BANNER SHOWCASE VIP FULL-BLEED: COLECCIÓN PLATA ITALIANA 925 */}
@@ -301,4 +304,17 @@ async function CategoryBentoGridSection() {
     // Fallback automático a las imágenes prioritarias del catálogo si la tabla aún no existe
   }
   return <CategoryBentoGrid products={products} customCovers={customCovers} />
+}
+
+async function StyleFinderSection() {
+  try {
+    const allProducts = await ProductService.getAllProducts()
+    const validProducts = allProducts.filter(
+      (p) => p.name && p.name.toLowerCase() !== 'prueba' && p.price > 0
+    )
+    const availability = buildCatalogAvailabilityMap(validProducts)
+    return <StyleFinderAndCare availability={availability} />
+  } catch {
+    return <StyleFinderAndCare />
+  }
 }

@@ -10,16 +10,19 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Product } from '@/lib/types'
 import { productConfig } from '@/lib/config'
-import { resolveCatalogQuery, getAllowedSubcategories } from '@/lib/taxonomy'
+import {
+    resolveCatalogQuery,
+    getAvailableCategoriesForProducts,
+    getAvailableSubcategoriesForCategory,
+} from '@/lib/taxonomy'
 import { useSiteConfig } from '@/hooks/use-site-config'
-import { buildWhatsAppUrl, cn } from '@/lib/utils'
+import { buildWhatsAppUrl, cn, normalizeColor } from '@/lib/utils'
 
 interface ShopClientProps {
     initialProducts: Product[]
     initialColors: string[]
 }
 
-const allCategories = ['all', ...productConfig.categories.map(c => c.id)]
 const PRODUCTS_PER_PAGE = 12
 
 export function ShopClient({ initialProducts, initialColors }: ShopClientProps) {
@@ -42,14 +45,62 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
     const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE)
     const [sortBy, setSortBy] = useState('featured')
 
+    // Categorías y subcategorías dinámicas con productos reales (0ms en memoria)
+    const availableCategories = useMemo(
+        () => ['all', ...getAvailableCategoriesForProducts(initialProducts).map((c) => c.id)],
+        [initialProducts]
+    )
+
+    const availableSubcategories = useMemo(
+        () => getAvailableSubcategoriesForCategory(initialProducts, activeCategory),
+        [initialProducts, activeCategory]
+    )
+
+    // Colores dinámicos disponibles para la categoría y subcategoría activas
+    const availableColors = useMemo(() => {
+        const present = new Set<string>()
+        for (const product of initialProducts) {
+            const matchesCat =
+                activeCategory === 'all' ||
+                (product.category || '').toLowerCase() === activeCategory.toLowerCase()
+            const matchesSub =
+                activeSubcategory === 'all' ||
+                (product.subcategory || '').toLowerCase() === activeSubcategory.toLowerCase()
+            if (!matchesCat || !matchesSub) continue
+            const normalized = normalizeColor(product.color)
+            if (normalized) {
+                present.add(normalized.toLowerCase())
+            }
+        }
+        const filtered = initialColors.filter(
+            (c) => c === 'all' || present.has(c.toLowerCase())
+        )
+        return filtered.length > 1 ? filtered : ['all']
+    }, [initialProducts, initialColors, activeCategory, activeSubcategory])
+
     // Sincronizar categoría, subcategoría, material y presupuesto si cambia la URL
     useEffect(() => {
         const resolved = resolveCatalogQuery(categoryParam, subcategoryParam)
+        const validSubsForCat = getAvailableSubcategoriesForCategory(initialProducts, resolved.category)
+        const subIsAvailable =
+            resolved.subcategory === 'all' ||
+            validSubsForCat.some((s) => s.id === resolved.subcategory)
+
         setActiveCategory(resolved.category)
-        setActiveSubcategory(resolved.subcategory)
+        setActiveSubcategory(subIsAvailable ? resolved.subcategory : 'all')
         setActiveMaterial(materialParam || 'all')
         setMaxPriceFilter(maxPriceParam && !Number.isNaN(maxPriceParam) ? maxPriceParam : null)
-    }, [categoryParam, subcategoryParam, materialParam, maxPriceParam])
+    }, [categoryParam, subcategoryParam, materialParam, maxPriceParam, initialProducts])
+
+    // Auto-resetear el color si deja de existir en la categoría/subcategoría actual
+    useEffect(() => {
+        if (
+            activeColor !== 'all' &&
+            !availableColors.some((c) => c.toLowerCase() === activeColor.toLowerCase())
+        ) {
+            setActiveColor('all')
+        }
+    }, [availableColors, activeColor])
 
     // Optimización: Callback memoizado para el cambio de color
     const handleColorChange = useCallback((value: string) => {
@@ -67,14 +118,20 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
         } else {
             params.set('categoria', value)
         }
-        if (value === 'relojes') {
+
+        const nextValidSubs = getAvailableSubcategoriesForCategory(initialProducts, value)
+        const currentSubStillValid =
+            activeSubcategory !== 'all' &&
+            nextValidSubs.some((s) => s.id === activeSubcategory)
+
+        if (value === 'relojes' || !currentSubStillValid) {
             setActiveSubcategory('all')
             params.delete('subcategoria')
         }
 
         const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
         router.push(newUrl, { scroll: false })
-    }, [pathname, router, searchParams])
+    }, [pathname, router, searchParams, initialProducts, activeSubcategory])
 
     const handleSubcategoryChange = useCallback((value: string) => {
         setActiveSubcategory(value)
@@ -307,7 +364,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-950 to-transparent z-10 pointer-events-none md:hidden" />
                       
                       <TabsList className="flex w-full overflow-x-auto scrollbar-none h-auto p-1.5 bg-zinc-950/90 border border-zinc-800/80 rounded-xl justify-start md:justify-center md:flex-wrap gap-1.5 shadow-2xl backdrop-blur-md">
-                          {allCategories.map((catId) => {
+                          {availableCategories.map((catId) => {
                               const isVip = catId === 'plata-925'
                               const catObj = productConfig.categories.find(c => c.id === catId)
                               const label = catId === 'all' ? 'Todos' : (catObj?.name || catId)
@@ -334,8 +391,8 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                       </TabsList>
                     </div>
 
-                    {/* Nivel 2: Subcategorías por Tipo de Pieza (oculto en Relojes) */}
-                    {activeCategory !== 'relojes' && (
+                    {/* Nivel 2: Subcategorías dinámicas (solo se muestran si existen 2+ tipos de pieza con stock en la categoría) */}
+                    {availableSubcategories.length > 1 && (
                       <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 mb-6 md:justify-center">
                         <button
                           type="button"
@@ -349,7 +406,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                         >
                           Todos los tipos
                         </button>
-                        {getAllowedSubcategories(activeCategory).map((sub) => (
+                        {availableSubcategories.map((sub) => (
                           <button
                             key={sub.id}
                             type="button"
@@ -420,7 +477,7 @@ export function ShopClient({ initialProducts, initialColors }: ShopClientProps) 
                             {/* Color Filter */}
                             <div className="w-full sm:w-auto">
                                 <ColorFilter
-                                    colors={initialColors}
+                                    colors={availableColors}
                                     activeColor={activeColor}
                                     onColorChange={handleColorChange}
                                 />

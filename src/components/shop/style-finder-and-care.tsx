@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, RotateCcw } from 'lucide-react';
+import type { CatalogAvailabilityMap } from '@/lib/taxonomy';
 
 const MAIN_CATEGORIES = [
   {
@@ -144,7 +145,11 @@ function ExpressRouteMark() {
   );
 }
 
-export function StyleFinderAndCare() {
+interface StyleFinderAndCareProps {
+  availability?: CatalogAvailabilityMap;
+}
+
+export function StyleFinderAndCare({ availability }: StyleFinderAndCareProps = {}) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [category, setCategory] = useState<string>('plata-925');
@@ -152,6 +157,34 @@ export function StyleFinderAndCare() {
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'sizes' | 'care' | 'shipping'>('sizes');
   const [hoveredSize, setHoveredSize] = useState<string>('50 cm');
+
+  const visibleMainCategories = useMemo(() => {
+    if (!availability || availability.categories.length === 0) return MAIN_CATEGORIES;
+    const allowed = new Set<string>(availability.categories);
+    return MAIN_CATEGORIES.filter((c) => allowed.has(c.value));
+  }, [availability]);
+
+  const getSubcategoriesForCategory = (catId: string) => {
+    if (catId === 'relojes') return [];
+    if (!availability) return SUBCATEGORIES;
+    const allowedIds = availability.subcategoriesByCategory[catId];
+    if (!allowedIds) return [];
+    const allowed = new Set<string>(allowedIds);
+    return SUBCATEGORIES.filter((s) => s.value === 'all' || allowed.has(s.value));
+  };
+
+  const visibleSubcategories = useMemo(
+    () => getSubcategoriesForCategory(category),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [availability, category]
+  );
+
+  const hasMultipleSubcategories = (catId: string) => {
+    if (catId === 'relojes') return false;
+    if (!availability) return true;
+    const allowedIds = availability.subcategoriesByCategory[catId] || [];
+    return allowedIds.length > 1;
+  };
 
   const handleFinishFinder = (selectedBudget: string) => {
     setMaxPrice(selectedBudget);
@@ -210,13 +243,13 @@ export function StyleFinderAndCare() {
                 1. ¿Qué línea o material estás buscando hoy?
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {MAIN_CATEGORIES.map((item) => (
+                {visibleMainCategories.map((item) => (
                   <button
                     key={item.value}
                     type="button"
                     onClick={() => {
                       setCategory(item.value);
-                      if (item.value === 'relojes') {
+                      if (!hasMultipleSubcategories(item.value)) {
                         setSubcategory('all');
                         setStep(3);
                       } else {
@@ -246,7 +279,7 @@ export function StyleFinderAndCare() {
                 2. Elige el tipo de pieza:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {SUBCATEGORIES.map((item) => (
+                {visibleSubcategories.map((item) => (
                   <button
                     key={item.value}
                     type="button"
@@ -307,7 +340,7 @@ export function StyleFinderAndCare() {
               </div>
               <button
                 type="button"
-                onClick={() => setStep(category === 'relojes' ? 1 : 2)}
+                onClick={() => setStep(hasMultipleSubcategories(category) ? 2 : 1)}
                 className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-[#A1A1AA] hover:text-white min-h-[44px]"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
