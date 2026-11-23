@@ -114,10 +114,16 @@ export default function CheckoutPage() {
     shippingMethod: 'starken'
   })
 
-  // ⚡ Memoize expensive calculations
+  // ⚡ Memoize expensive calculations using effective discount_price
   const cartStats = useMemo(() => ({
     totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
-    subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    subtotal: items.reduce((sum, item) => {
+      const unitPrice =
+        item.discount_price && item.discount_price > 0 && item.discount_price < item.price
+          ? item.discount_price
+          : item.price
+      return sum + unitPrice * item.quantity
+    }, 0)
   }), [items])
 
   const handleApplyCoupon = async () => {

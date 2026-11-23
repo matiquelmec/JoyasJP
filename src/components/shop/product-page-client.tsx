@@ -124,6 +124,11 @@ export function ProductPageClient({ product: initialProduct, variants = [] }: Pr
           <p className="text-sm text-muted-foreground">
             Precio incluye IVA. ¡Envío gratis a partir de {freeShippingFormatted}!
           </p>
+          {selectedProduct.stock === 1 && (
+            <p className="inline-flex items-center gap-2 rounded-lg border border-[#D4113C]/35 bg-[#1D0A10] px-3 py-1.5 text-xs font-semibold text-[#F43F5E]">
+              Última unidad disponible para despacho inmediato
+            </p>
+          )}
 
           {/* 🇮🇹 CERTIFICADO DE AUTENTICIDAD PARA PLATA ITALIANA 925 */}
           {((selectedProduct.materials && selectedProduct.materials.toLowerCase().includes('plata')) ||

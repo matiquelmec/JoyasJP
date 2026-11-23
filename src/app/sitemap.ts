@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { ProductService } from '@/services/product.service'
+import { productConfig } from '@/lib/config'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://joyasjp.cl'
@@ -51,5 +52,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error generating sitemap for products:', error)
   }
 
-  return [...staticPages, ...productPages]
+  const categoryPages: MetadataRoute.Sitemap = productConfig.categories.map((cat) => ({
+    url: `${baseUrl}/productos?categoria=${cat.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: 0.9,
+  }))
+
+  return [...staticPages, ...categoryPages, ...productPages]
 }

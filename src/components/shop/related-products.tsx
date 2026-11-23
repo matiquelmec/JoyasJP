@@ -10,16 +10,21 @@ interface RelatedProductsProps {
   currentProductId: string
   category: string
   subcategory?: string
+  initialRelated?: Product[]
+  initialOthers?: Product[]
 }
 
 export function RelatedProducts({
   currentProductId,
   category,
   subcategory,
+  initialRelated,
+  initialOthers,
 }: RelatedProductsProps) {
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
-  const [otherProducts, setOtherProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+  const hasServerData = initialRelated !== undefined || initialOthers !== undefined
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>(initialRelated || [])
+  const [otherProducts, setOtherProducts] = useState<Product[]>(initialOthers || [])
+  const [loading, setLoading] = useState(!hasServerData)
   const [error, setError] = useState<string | null>(null)
 
   const categoryLabel =
@@ -29,6 +34,12 @@ export function RelatedProducts({
     category.charAt(0).toUpperCase() + category.slice(1)
 
   useEffect(() => {
+    if (hasServerData) {
+      setRelatedProducts(initialRelated || [])
+      setOtherProducts(initialOthers || [])
+      setLoading(false)
+      return
+    }
     async function fetchProducts() {
       try {
         setLoading(true)

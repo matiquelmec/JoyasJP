@@ -2,6 +2,8 @@ import React from 'react'
 import type { Product } from '@/lib/types'
 import { getSafeUrl } from '@/lib/safe-asset'
 import { parseProductSpecifications } from '@/lib/product-seo'
+import { resolveProductBrandAndMpn } from '@/lib/google-shopping'
+import { siteConfig } from '@/lib/config'
 
 interface ProductSchemaProps {
   product: Product
@@ -55,6 +57,9 @@ export function ProductSchema({
     product.discount_price && product.discount_price > 0 && product.discount_price < product.price
       ? product.discount_price
       : product.price
+  const { brand: resolvedBrand, mpn: resolvedMpn } = resolveProductBrandAndMpn(product)
+  const shippingRateValue =
+    effectivePrice >= siteConfig.ecommerce.freeShippingFrom ? '0' : '3000'
 
   const schema = {
     '@context': 'https://schema.org',
@@ -66,7 +71,7 @@ export function ProductSchema({
     category,
     brand: {
       '@type': 'Brand',
-      name: 'Joyas JP',
+      name: resolvedBrand,
       logo: `${siteUrl}/brand/joyasjp_avatar_redes_1080.jpg`,
       url: siteUrl,
     },
@@ -111,7 +116,7 @@ export function ProductSchema({
         '@type': 'OfferShippingDetails',
         shippingRate: {
           '@type': 'MonetaryAmount',
-          value: '3000',
+          value: shippingRateValue,
           currency: 'CLP',
         },
         shippingDestination: {
@@ -143,7 +148,7 @@ export function ProductSchema({
     ...(product.color ? { color: product.color } : {}),
     ...(additionalProperties.length > 0 ? { additionalProperty: additionalProperties } : {}),
     sku: product.sku || product.id,
-    mpn: product.sku || product.id,
+    mpn: resolvedMpn,
     ...(rating && {
       aggregateRating: {
         '@type': 'AggregateRating',

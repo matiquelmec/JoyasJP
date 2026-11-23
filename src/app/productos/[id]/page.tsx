@@ -111,6 +111,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const availability = (product.stock && product.stock > 0) ? 'InStock' : 'OutOfStock'
 
+  const [variants, initialRelated, allProducts] = await Promise.all([
+    ProductService.getSiblings(product),
+    ProductService.getRelatedProducts(product.id, product.category, 4, product.subcategory),
+    ProductService.getAllProducts(),
+  ])
+
+  const cleanCat = (product.category || '').trim().toLowerCase()
+  const otherCandidates = allProducts.filter(
+    (p) => (p.category || '').trim().toLowerCase() !== cleanCat && p.id !== product.id && p.stock > 0
+  )
+  const initialOthers: Product[] = []
+  const seenCats = new Set<string>()
+  for (const item of otherCandidates) {
+    const cat = (item.category || '').trim().toLowerCase()
+    if (!seenCats.has(cat)) {
+      seenCats.add(cat)
+      initialOthers.push(item)
+      if (initialOthers.length === 4) break
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <ProductSchema product={product} availability={availability} />
@@ -152,7 +173,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {/* Price y Lógica interactiva que envuelve la Galería y Detalles del Producto */}
           <ProductPageClient
             product={product}
-            variants={await ProductService.getSiblings(product)}
+            variants={variants}
           />
         </div>
 
@@ -192,11 +213,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         )}
 
-        {/* Related Products */}
+        {/* Related Products (Pre-rendered SSR 0ms) */}
         <RelatedProducts
           currentProductId={product.id}
           category={product.category}
           subcategory={product.subcategory}
+          initialRelated={initialRelated}
+          initialOthers={initialOthers}
         />
       </div>
     </div>
